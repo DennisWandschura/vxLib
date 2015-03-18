@@ -1,0 +1,624 @@
+﻿Build started 18.03.2015 18:02:41.
+     1>Project "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\source\vxLib.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Intel\Composer XE 2015\bin\Intel64\icl.exe /c /Qvc12 /Qlocation,link,"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64" /Zi /nologo /W4 /Od /Ob1 /Qftz- /D __INTEL_COMPILER=1500 /D _VX_WINDOWS /D _VX_ASSERT /D NOMINMAX /D _UNICODE /D UNICODE /RTC1 /MDd /GS /arch:SSE2 /fp:fast /Zc:wchar_t /Zc:forScope /GR- /Qstd=c++11 /Qrestrict /Fo"x64\test\\" /Fd"x64\test\vc120.pdb" /TP Graphics\Camera.cpp Graphics\Mesh.cpp RawInput.cpp Window.cpp gl\RenderContext.cpp gl\StateManager.cpp gl\Texture.cpp
+         Camera.cpp
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(14): error : expected an identifier
+           	const F32 2PI = 6.283185307f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(15): error : expected an identifier
+           	const F32 1DIVPI = 0.318309886f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(16): error : expected an identifier
+           	const F32 1DIV2PI = 0.159154943f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(88): error : user-defined literal operator not found
+           		float quotient = 1DIV2PI * Value;
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(97): error : identifier "VX_2PI" is undefined
+           		float y = Value - VX_2PI * quotient;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(101): error : identifier "VX_PIDIV2" is undefined
+           		if (y > VX_PIDIV2)
+           		        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(103): error : identifier "VX_PI" is undefined
+           			y = VX_PI - y;
+           			    ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(108): error : identifier "VX_PI" is undefined
+           			y = -VX_PI - y;
+           			     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(135): error : identifier "VX_PI" is undefined
+           		Angle = Angle + VX_PI;
+           		                ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(138): error : identifier "VX_2PI" is undefined
+           		fTemp = fTemp - (VX_2PI * (float)((I32)(fTemp / VX_2PI)));
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(154): error : identifier "VX_DEGTORAD" is undefined
+           		return degAngle * VX_DEGTORAD;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(159): error : identifier "VX_RADTODEG" is undefined
+           		return radAngle * VX_RADTODEG;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(954): error : identifier "VX_DEGTORAD" is undefined
+           	VX_GLOBALCONST float4a g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(955): error : identifier "VX_RADTODEG" is undefined
+           	VX_GLOBALCONST float4a g_VXRadToDeg = { VX_RADTODEG, VX_RADTODEG, VX_RADTODEG, VX_RADTODEG };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(971): error : identifier "VX_PIDIV2" is undefined
+           	VX_GLOBALCONST float4a g_VXHalfPi = { VX_PIDIV2, VX_PIDIV2, VX_PIDIV2, VX_PIDIV2 };
+           	                                      ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(972): error : identifier "VX_PI" is undefined
+           	VX_GLOBALCONST float4a g_VXPi = { VX_PI, VX_PI, VX_PI, VX_PI };
+           	                                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(973): error : identifier "VX_2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXTwoPi = { VX_2PI, VX_2PI, VX_2PI, VX_2PI };
+           	                                     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(974): error : identifier "VX_1DIV2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXReciprocalTwoPi = { VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI };
+           	                                               ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(979): error : identifier "VX_EPSILON" is undefined
+           	VX_GLOBALCONST float4a g_VXEpsilon = { VX_EPSILON, VX_EPSILON, VX_EPSILON, VX_EPSILON };
+           	                                       ^
+         
+         Mesh.cpp
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(14): error : expected an identifier
+           	const F32 2PI = 6.283185307f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(15): error : expected an identifier
+           	const F32 1DIVPI = 0.318309886f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(16): error : expected an identifier
+           	const F32 1DIV2PI = 0.159154943f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(88): error : user-defined literal operator not found
+           		float quotient = 1DIV2PI * Value;
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(97): error : identifier "VX_2PI" is undefined
+           		float y = Value - VX_2PI * quotient;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(101): error : identifier "VX_PIDIV2" is undefined
+           		if (y > VX_PIDIV2)
+           		        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(103): error : identifier "VX_PI" is undefined
+           			y = VX_PI - y;
+           			    ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(108): error : identifier "VX_PI" is undefined
+           			y = -VX_PI - y;
+           			     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(135): error : identifier "VX_PI" is undefined
+           		Angle = Angle + VX_PI;
+           		                ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(138): error : identifier "VX_2PI" is undefined
+           		fTemp = fTemp - (VX_2PI * (float)((I32)(fTemp / VX_2PI)));
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(154): error : identifier "VX_DEGTORAD" is undefined
+           		return degAngle * VX_DEGTORAD;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(159): error : identifier "VX_RADTODEG" is undefined
+           		return radAngle * VX_RADTODEG;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(954): error : identifier "VX_DEGTORAD" is undefined
+           	VX_GLOBALCONST float4a g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(955): error : identifier "VX_RADTODEG" is undefined
+           	VX_GLOBALCONST float4a g_VXRadToDeg = { VX_RADTODEG, VX_RADTODEG, VX_RADTODEG, VX_RADTODEG };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(971): error : identifier "VX_PIDIV2" is undefined
+           	VX_GLOBALCONST float4a g_VXHalfPi = { VX_PIDIV2, VX_PIDIV2, VX_PIDIV2, VX_PIDIV2 };
+           	                                      ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(972): error : identifier "VX_PI" is undefined
+           	VX_GLOBALCONST float4a g_VXPi = { VX_PI, VX_PI, VX_PI, VX_PI };
+           	                                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(973): error : identifier "VX_2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXTwoPi = { VX_2PI, VX_2PI, VX_2PI, VX_2PI };
+           	                                     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(974): error : identifier "VX_1DIV2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXReciprocalTwoPi = { VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI };
+           	                                               ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(979): error : identifier "VX_EPSILON" is undefined
+           	VX_GLOBALCONST float4a g_VXEpsilon = { VX_EPSILON, VX_EPSILON, VX_EPSILON, VX_EPSILON };
+           	                                       ^
+         
+         RawInput.cpp
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(14): error : expected an identifier
+           	const F32 2PI = 6.283185307f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(15): error : expected an identifier
+           	const F32 1DIVPI = 0.318309886f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(16): error : expected an identifier
+           	const F32 1DIV2PI = 0.159154943f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(88): error : user-defined literal operator not found
+           		float quotient = 1DIV2PI * Value;
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(97): error : identifier "VX_2PI" is undefined
+           		float y = Value - VX_2PI * quotient;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(101): error : identifier "VX_PIDIV2" is undefined
+           		if (y > VX_PIDIV2)
+           		        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(103): error : identifier "VX_PI" is undefined
+           			y = VX_PI - y;
+           			    ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(108): error : identifier "VX_PI" is undefined
+           			y = -VX_PI - y;
+           			     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(135): error : identifier "VX_PI" is undefined
+           		Angle = Angle + VX_PI;
+           		                ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(138): error : identifier "VX_2PI" is undefined
+           		fTemp = fTemp - (VX_2PI * (float)((I32)(fTemp / VX_2PI)));
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(154): error : identifier "VX_DEGTORAD" is undefined
+           		return degAngle * VX_DEGTORAD;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(159): error : identifier "VX_RADTODEG" is undefined
+           		return radAngle * VX_RADTODEG;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(954): error : identifier "VX_DEGTORAD" is undefined
+           	VX_GLOBALCONST float4a g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(955): error : identifier "VX_RADTODEG" is undefined
+           	VX_GLOBALCONST float4a g_VXRadToDeg = { VX_RADTODEG, VX_RADTODEG, VX_RADTODEG, VX_RADTODEG };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(971): error : identifier "VX_PIDIV2" is undefined
+           	VX_GLOBALCONST float4a g_VXHalfPi = { VX_PIDIV2, VX_PIDIV2, VX_PIDIV2, VX_PIDIV2 };
+           	                                      ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(972): error : identifier "VX_PI" is undefined
+           	VX_GLOBALCONST float4a g_VXPi = { VX_PI, VX_PI, VX_PI, VX_PI };
+           	                                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(973): error : identifier "VX_2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXTwoPi = { VX_2PI, VX_2PI, VX_2PI, VX_2PI };
+           	                                     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(974): error : identifier "VX_1DIV2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXReciprocalTwoPi = { VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI };
+           	                                               ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(979): error : identifier "VX_EPSILON" is undefined
+           	VX_GLOBALCONST float4a g_VXEpsilon = { VX_EPSILON, VX_EPSILON, VX_EPSILON, VX_EPSILON };
+           	                                       ^
+         
+         Window.cpp
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(14): error : expected an identifier
+           	const F32 2PI = 6.283185307f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(15): error : expected an identifier
+           	const F32 1DIVPI = 0.318309886f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(16): error : expected an identifier
+           	const F32 1DIV2PI = 0.159154943f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(88): error : user-defined literal operator not found
+           		float quotient = 1DIV2PI * Value;
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(97): error : identifier "VX_2PI" is undefined
+           		float y = Value - VX_2PI * quotient;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(101): error : identifier "VX_PIDIV2" is undefined
+           		if (y > VX_PIDIV2)
+           		        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(103): error : identifier "VX_PI" is undefined
+           			y = VX_PI - y;
+           			    ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(108): error : identifier "VX_PI" is undefined
+           			y = -VX_PI - y;
+           			     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(135): error : identifier "VX_PI" is undefined
+           		Angle = Angle + VX_PI;
+           		                ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(138): error : identifier "VX_2PI" is undefined
+           		fTemp = fTemp - (VX_2PI * (float)((I32)(fTemp / VX_2PI)));
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(154): error : identifier "VX_DEGTORAD" is undefined
+           		return degAngle * VX_DEGTORAD;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(159): error : identifier "VX_RADTODEG" is undefined
+           		return radAngle * VX_RADTODEG;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(954): error : identifier "VX_DEGTORAD" is undefined
+           	VX_GLOBALCONST float4a g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(955): error : identifier "VX_RADTODEG" is undefined
+           	VX_GLOBALCONST float4a g_VXRadToDeg = { VX_RADTODEG, VX_RADTODEG, VX_RADTODEG, VX_RADTODEG };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(971): error : identifier "VX_PIDIV2" is undefined
+           	VX_GLOBALCONST float4a g_VXHalfPi = { VX_PIDIV2, VX_PIDIV2, VX_PIDIV2, VX_PIDIV2 };
+           	                                      ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(972): error : identifier "VX_PI" is undefined
+           	VX_GLOBALCONST float4a g_VXPi = { VX_PI, VX_PI, VX_PI, VX_PI };
+           	                                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(973): error : identifier "VX_2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXTwoPi = { VX_2PI, VX_2PI, VX_2PI, VX_2PI };
+           	                                     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(974): error : identifier "VX_1DIV2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXReciprocalTwoPi = { VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI };
+           	                                               ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(979): error : identifier "VX_EPSILON" is undefined
+           	VX_GLOBALCONST float4a g_VXEpsilon = { VX_EPSILON, VX_EPSILON, VX_EPSILON, VX_EPSILON };
+           	                                       ^
+         
+         RenderContext.cpp
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(14): error : expected an identifier
+           	const F32 2PI = 6.283185307f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(15): error : expected an identifier
+           	const F32 1DIVPI = 0.318309886f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(16): error : expected an identifier
+           	const F32 1DIV2PI = 0.159154943f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(88): error : user-defined literal operator not found
+           		float quotient = 1DIV2PI * Value;
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(97): error : identifier "VX_2PI" is undefined
+           		float y = Value - VX_2PI * quotient;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(101): error : identifier "VX_PIDIV2" is undefined
+           		if (y > VX_PIDIV2)
+           		        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(103): error : identifier "VX_PI" is undefined
+           			y = VX_PI - y;
+           			    ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(108): error : identifier "VX_PI" is undefined
+           			y = -VX_PI - y;
+           			     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(135): error : identifier "VX_PI" is undefined
+           		Angle = Angle + VX_PI;
+           		                ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(138): error : identifier "VX_2PI" is undefined
+           		fTemp = fTemp - (VX_2PI * (float)((I32)(fTemp / VX_2PI)));
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(154): error : identifier "VX_DEGTORAD" is undefined
+           		return degAngle * VX_DEGTORAD;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(159): error : identifier "VX_RADTODEG" is undefined
+           		return radAngle * VX_RADTODEG;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(954): error : identifier "VX_DEGTORAD" is undefined
+           	VX_GLOBALCONST float4a g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(955): error : identifier "VX_RADTODEG" is undefined
+           	VX_GLOBALCONST float4a g_VXRadToDeg = { VX_RADTODEG, VX_RADTODEG, VX_RADTODEG, VX_RADTODEG };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(971): error : identifier "VX_PIDIV2" is undefined
+           	VX_GLOBALCONST float4a g_VXHalfPi = { VX_PIDIV2, VX_PIDIV2, VX_PIDIV2, VX_PIDIV2 };
+           	                                      ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(972): error : identifier "VX_PI" is undefined
+           	VX_GLOBALCONST float4a g_VXPi = { VX_PI, VX_PI, VX_PI, VX_PI };
+           	                                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(973): error : identifier "VX_2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXTwoPi = { VX_2PI, VX_2PI, VX_2PI, VX_2PI };
+           	                                     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(974): error : identifier "VX_1DIV2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXReciprocalTwoPi = { VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI };
+           	                                               ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(979): error : identifier "VX_EPSILON" is undefined
+           	VX_GLOBALCONST float4a g_VXEpsilon = { VX_EPSILON, VX_EPSILON, VX_EPSILON, VX_EPSILON };
+           	                                       ^
+         
+       gl\RenderContext.cpp(12): message #3280: declaration hides member "vx::gl::OpenGLDescription::pGlStateManager" (declared at line 21 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           		OpenGLDescription OpenGLDescription::create(const Window &window, StateManager* pGlStateManager, const vx::uint2 &resolution, 
+           		                                                                                ^
+         
+       gl\RenderContext.cpp(12): message #3280: declaration hides member "vx::gl::OpenGLDescription::resolution" (declared at line 20 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           		OpenGLDescription OpenGLDescription::create(const Window &window, StateManager* pGlStateManager, const vx::uint2 &resolution, 
+           		                                                                                                                  ^
+         
+       gl\RenderContext.cpp(13): message #3280: declaration hides member "vx::gl::OpenGLDescription::fovRad" (declared at line 22 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			    ^
+         
+       gl\RenderContext.cpp(13): message #3280: declaration hides member "vx::gl::OpenGLDescription::nearZ" (declared at line 23 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			                ^
+         
+       gl\RenderContext.cpp(13): message #3280: declaration hides member "vx::gl::OpenGLDescription::farZ" (declared at line 24 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			                           ^
+         
+       gl\RenderContext.cpp(13): message #3280: declaration hides member "vx::gl::OpenGLDescription::majVersion" (declared at line 25 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			                                    ^
+         
+       gl\RenderContext.cpp(13): message #3280: declaration hides member "vx::gl::OpenGLDescription::minVersion" (declared at line 26 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			                                                   ^
+         
+       gl\RenderContext.cpp(13): message #3280: declaration hides member "vx::gl::OpenGLDescription::bVsync" (declared at line 27 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			                                                                    ^
+         
+       gl\RenderContext.cpp(13): message #3280: declaration hides member "vx::gl::OpenGLDescription::bDebugMode" (declared at line 28 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			                                                                                 ^
+         
+       gl\RenderContext.cpp(30): message #3280: declaration hides member "vx::gl::OpenGLDescription::hwnd" (declared at line 19 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           		OpenGLDescription OpenGLDescription::create(HWND hwnd, StateManager *pGlStateManager, const vx::uint2 &resolution, 
+           		                                                 ^
+         
+       gl\RenderContext.cpp(30): message #3280: declaration hides member "vx::gl::OpenGLDescription::pGlStateManager" (declared at line 21 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           		OpenGLDescription OpenGLDescription::create(HWND hwnd, StateManager *pGlStateManager, const vx::uint2 &resolution, 
+           		                                                                     ^
+         
+       gl\RenderContext.cpp(30): message #3280: declaration hides member "vx::gl::OpenGLDescription::resolution" (declared at line 20 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           		OpenGLDescription OpenGLDescription::create(HWND hwnd, StateManager *pGlStateManager, const vx::uint2 &resolution, 
+           		                                                                                                       ^
+         
+       gl\RenderContext.cpp(31): message #3280: declaration hides member "vx::gl::OpenGLDescription::fovRad" (declared at line 22 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			    ^
+         
+       gl\RenderContext.cpp(31): message #3280: declaration hides member "vx::gl::OpenGLDescription::nearZ" (declared at line 23 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			                ^
+         
+       gl\RenderContext.cpp(31): message #3280: declaration hides member "vx::gl::OpenGLDescription::farZ" (declared at line 24 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			                           ^
+         
+       gl\RenderContext.cpp(31): message #3280: declaration hides member "vx::gl::OpenGLDescription::majVersion" (declared at line 25 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			                                    ^
+         
+       gl\RenderContext.cpp(31): message #3280: declaration hides member "vx::gl::OpenGLDescription::minVersion" (declared at line 26 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			                                                   ^
+         
+       gl\RenderContext.cpp(31): message #3280: declaration hides member "vx::gl::OpenGLDescription::bVsync" (declared at line 27 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			                                                                    ^
+         
+       gl\RenderContext.cpp(31): message #3280: declaration hides member "vx::gl::OpenGLDescription::bDebugMode" (declared at line 28 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\gl\RenderContext.h")
+           			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+           			                                                                                 ^
+         
+         StateManager.cpp
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(14): error : expected an identifier
+           	const F32 2PI = 6.283185307f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(15): error : expected an identifier
+           	const F32 1DIVPI = 0.318309886f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(16): error : expected an identifier
+           	const F32 1DIV2PI = 0.159154943f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(88): error : user-defined literal operator not found
+           		float quotient = 1DIV2PI * Value;
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(97): error : identifier "VX_2PI" is undefined
+           		float y = Value - VX_2PI * quotient;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(101): error : identifier "VX_PIDIV2" is undefined
+           		if (y > VX_PIDIV2)
+           		        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(103): error : identifier "VX_PI" is undefined
+           			y = VX_PI - y;
+           			    ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(108): error : identifier "VX_PI" is undefined
+           			y = -VX_PI - y;
+           			     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(135): error : identifier "VX_PI" is undefined
+           		Angle = Angle + VX_PI;
+           		                ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(138): error : identifier "VX_2PI" is undefined
+           		fTemp = fTemp - (VX_2PI * (float)((I32)(fTemp / VX_2PI)));
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(154): error : identifier "VX_DEGTORAD" is undefined
+           		return degAngle * VX_DEGTORAD;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(159): error : identifier "VX_RADTODEG" is undefined
+           		return radAngle * VX_RADTODEG;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(954): error : identifier "VX_DEGTORAD" is undefined
+           	VX_GLOBALCONST float4a g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(955): error : identifier "VX_RADTODEG" is undefined
+           	VX_GLOBALCONST float4a g_VXRadToDeg = { VX_RADTODEG, VX_RADTODEG, VX_RADTODEG, VX_RADTODEG };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(971): error : identifier "VX_PIDIV2" is undefined
+           	VX_GLOBALCONST float4a g_VXHalfPi = { VX_PIDIV2, VX_PIDIV2, VX_PIDIV2, VX_PIDIV2 };
+           	                                      ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(972): error : identifier "VX_PI" is undefined
+           	VX_GLOBALCONST float4a g_VXPi = { VX_PI, VX_PI, VX_PI, VX_PI };
+           	                                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(973): error : identifier "VX_2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXTwoPi = { VX_2PI, VX_2PI, VX_2PI, VX_2PI };
+           	                                     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(974): error : identifier "VX_1DIV2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXReciprocalTwoPi = { VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI };
+           	                                               ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/Vector.h(979): error : identifier "VX_EPSILON" is undefined
+           	VX_GLOBALCONST float4a g_VXEpsilon = { VX_EPSILON, VX_EPSILON, VX_EPSILON, VX_EPSILON };
+           	                                       ^
+         
+         Texture.cpp
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(14): error : expected an identifier
+           	const F32 2PI = 6.283185307f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(15): error : expected an identifier
+           	const F32 1DIVPI = 0.318309886f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(16): error : expected an identifier
+           	const F32 1DIV2PI = 0.159154943f;
+           	          ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(88): error : user-defined literal operator not found
+           		float quotient = 1DIV2PI * Value;
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(97): error : identifier "VX_2PI" is undefined
+           		float y = Value - VX_2PI * quotient;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(101): error : identifier "VX_PIDIV2" is undefined
+           		if (y > VX_PIDIV2)
+           		        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(103): error : identifier "VX_PI" is undefined
+           			y = VX_PI - y;
+           			    ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(108): error : identifier "VX_PI" is undefined
+           			y = -VX_PI - y;
+           			     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(135): error : identifier "VX_PI" is undefined
+           		Angle = Angle + VX_PI;
+           		                ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(138): error : identifier "VX_2PI" is undefined
+           		fTemp = fTemp - (VX_2PI * (float)((I32)(fTemp / VX_2PI)));
+           		                 ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(154): error : identifier "VX_DEGTORAD" is undefined
+           		return degAngle * VX_DEGTORAD;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/math/math.h(159): error : identifier "VX_RADTODEG" is undefined
+           		return radAngle * VX_RADTODEG;
+           		                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(954): error : identifier "VX_DEGTORAD" is undefined
+           	VX_GLOBALCONST float4a g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(955): error : identifier "VX_RADTODEG" is undefined
+           	VX_GLOBALCONST float4a g_VXRadToDeg = { VX_RADTODEG, VX_RADTODEG, VX_RADTODEG, VX_RADTODEG };
+           	                                        ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(971): error : identifier "VX_PIDIV2" is undefined
+           	VX_GLOBALCONST float4a g_VXHalfPi = { VX_PIDIV2, VX_PIDIV2, VX_PIDIV2, VX_PIDIV2 };
+           	                                      ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(972): error : identifier "VX_PI" is undefined
+           	VX_GLOBALCONST float4a g_VXPi = { VX_PI, VX_PI, VX_PI, VX_PI };
+           	                                  ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(973): error : identifier "VX_2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXTwoPi = { VX_2PI, VX_2PI, VX_2PI, VX_2PI };
+           	                                     ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(974): error : identifier "VX_1DIV2PI" is undefined
+           	VX_GLOBALCONST float4a g_VXReciprocalTwoPi = { VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI };
+           	                                               ^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\Vector.h(979): error : identifier "VX_EPSILON" is undefined
+           	VX_GLOBALCONST float4a g_VXEpsilon = { VX_EPSILON, VX_EPSILON, VX_EPSILON, VX_EPSILON };
+           	                                       ^
+         
+     1>Done Building Project "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\source\vxLib.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:02.97

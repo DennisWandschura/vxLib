@@ -1,0 +1,50 @@
+﻿Build started 20.02.2015 00:36:02.
+     1>Project "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\source\vxLib.vcxproj" on node 2 (Build target(s)).
+     1>_MASM:
+         Assembling Vector_Basic.asm...
+         cmd.exe /C "C:\Users\dw\AppData\Local\Temp\tmpb846e756189e44e7adee84910e453492.cmd"
+         ml64.exe /c /nologo /Zi /Fo"x64\Debug\Vector_Basic.obj" /W3 /errorReport:prompt  /TaVector_Basic.asm
+       ClCompile:
+         C:\Program Files (x86)\Intel\Composer XE 2015\bin\Intel64\icl.exe /c /Qvc12 /Qlocation,link,"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64" /Zi /nologo /W4 /Od /Ob1 /Qftz- /D __INTEL_COMPILER=1500 /D _VX_WINDOWS /D _VX_ASSERT /D _UNICODE /D UNICODE /RTC1 /MDd /GS /arch:SSE2 /fp:fast /Zc:wchar_t /Zc:forScope /GR- /Qstd=c++11 /Qrestrict /Fo"x64\Debug\\" /Fd"x64\Debug\vc120.pdb" /TP Graphics\Camera.cpp Graphics\Mesh.cpp RawInput.cpp Window.cpp gl\RenderContext.cpp gl\StateManager.cpp gl\Texture.cpp
+         Camera.cpp
+       Graphics\Camera.cpp(27): message #177: variable "v" was declared but never referenced
+           		auto v = vx::dot(position, position);
+           		     ^
+         
+         Mesh.cpp
+         RawInput.cpp
+         Window.cpp
+         RenderContext.cpp
+         StateManager.cpp
+         Texture.cpp
+       Lib:
+         C:\Program Files (x86)\Intel\Composer XE 2015\bin\Intel64\xilib.exe /OUT:"lib\vxLib.lib" /NOLOGO /MACHINE:X64 x64\Debug\CityHash.obj
+         x64\Debug\DebugPrint.obj
+         x64\Debug\Base.obj
+         x64\Debug\BufferBindingManager.obj
+         x64\Debug\Debug.obj
+         x64\Debug\flextGL.obj
+         x64\Debug\Framebuffer.obj
+         x64\Debug\gl_core.obj
+         x64\Debug\ProgramPipeline.obj
+         x64\Debug\RenderContext.obj
+         x64\Debug\ShaderProgram.obj
+         x64\Debug\StateManager.obj
+         x64\Debug\Texture.obj
+         x64\Debug\wgl_core.obj
+         x64\Debug\Camera.obj
+         x64\Debug\Mesh.obj
+         x64\Debug\RawInput.obj
+         x64\Debug\stb_image.obj
+         x64\Debug\stb_image_write.obj
+         x64\Debug\Window.obj
+         x64\Debug\math.obj
+         x64\Debug\Vector.obj
+         x64\Debug\Vector_Basic.obj
+         xilib: executing 'lib'
+         vxLib.vcxproj -> d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\source\lib\vxLib.lib
+     1>Done Building Project "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\source\vxLib.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.35

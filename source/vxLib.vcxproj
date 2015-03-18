@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="test|x64">
+      <Configuration>test</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A5CEF299-52A6-4D84-B0CC-AC809DB0897F}</ProjectGuid>
+    <RootNamespace>vxLib</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>Intel C++ Compiler XE 15.0</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='test|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>Intel C++ Compiler XE 15.0</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>Intel C++ Compiler XE 15.0</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='test|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>E:\dev\libraries\boost_1_55_0\include;d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include;$(IncludePath)</IncludePath>
+    <OutDir>lib\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='test|x64'">
+    <IncludePath>E:\dev\libraries\boost_1_55_0\include;d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include;$(IncludePath)</IncludePath>
+    <OutDir>lib\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ExceptionHandling>false</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <CallingConvention>FastCall</CallingConvention>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <PreprocessorDefinitions>_VX_WINDOWS;_VX_ASSERT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <OptimizeForWindowsApplication>false</OptimizeForWindowsApplication>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <Cpp0xSupport>true</Cpp0xSupport>
+      <RecognizeRestrictKeyword>true</RecognizeRestrictKeyword>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='test|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ExceptionHandling>false</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <CallingConvention>FastCall</CallingConvention>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <PreprocessorDefinitions>_VX_WINDOWS;_VX_ASSERT;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <OptimizeForWindowsApplication>false</OptimizeForWindowsApplication>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <Cpp0xSupport>true</Cpp0xSupport>
+      <RecognizeRestrictKeyword>true</RecognizeRestrictKeyword>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <ExceptionHandling>false</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <Cpp0xSupport>true</Cpp0xSupport>
+      <RecognizeRestrictKeyword>true</RecognizeRestrictKeyword>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\vxLib\AlignedStorage.h" />
+    <ClInclude Include="..\include\vxLib\Allocator\Allocator.h" />
+    <ClInclude Include="..\include\vxLib\Container\array.h" />
+    <ClInclude Include="..\include\vxLib\Container\bitset.h" />
+    <ClInclude Include="..\include\vxLib\Container\iterator.h" />
+    <ClInclude Include="..\include\vxLib\Container\sorted_vector.h" />
+    <ClInclude Include="..\include\vxLib\Container\vector.h" />
+    <ClInclude Include="..\include\vxLib\gl\Base.h" />
+    <ClInclude Include="..\include\vxLib\gl\Buffer.h" />
+    <ClInclude Include="..\include\vxLib\gl\BufferBindingManager.h" />
+    <ClInclude Include="..\include\vxLib\gl\Debug.h" />
+    <ClInclude Include="..\include\vxLib\gl\flextGL_45.h" />
+    <ClInclude Include="..\include\vxLib\gl\Framebuffer.h" />
+    <ClInclude Include="..\include\vxLib\gl\gl.h" />
+    <ClInclude Include="..\include\vxLib\gl\ProgramPipeline.h" />
+    <ClInclude Include="..\include\vxLib\gl\RenderContext.h" />
+    <ClInclude Include="..\include\vxLib\gl\ShaderProgram.h" />
+    <ClInclude Include="..\include\vxLib\gl\SharedObject.h" />
+    <ClInclude Include="..\include\vxLib\gl\StateManager.h" />
+    <ClInclude Include="..\include\vxLib\gl\Texture.h" />
+    <ClInclude Include="..\include\vxLib\gl\VertexArray.h" />
+    <ClInclude Include="..\include\vxLib\gl\wgl_core.h" />
+    <ClInclude Include="..\include\vxLib\Graphics\Camera.h" />
+    <ClInclude Include="..\include\vxLib\Graphics\Mesh.h" />
+    <ClInclude Include="..\include\vxLib\math\math.h" />
+    <ClInclude Include="..\include\vxLib\math\matrix.h" />
+    <ClInclude Include="..\include\vxLib\math\Vector.h" />
+    <ClInclude Include="..\include\vxLib\RawInput.h" />
+    <ClInclude Include="..\include\vxLib\ScopeGuard.h" />
+    <ClInclude Include="..\include\vxLib\Singleton.h" />
+    <ClInclude Include="..\include\vxLib\stb_image.h" />
+    <ClInclude Include="..\include\vxLib\stb_image_write.h" />
+    <ClInclude Include="..\include\vxLib\StringID.h" />
+    <ClInclude Include="..\include\vxLib\types.h" />
+    <ClInclude Include="..\include\vxLib\type_traits.h" />
+    <ClInclude Include="..\include\vxLib\util\CityHash.h" />
+    <ClInclude Include="..\include\vxLib\util\DebugPrint.h" />
+    <ClInclude Include="..\include\vxLib\util\streamHelper.h" />
+    <ClInclude Include="..\include\vxLib\Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\include\vxLib\math\matrix.inl" />
+    <None Include="..\include\vxLib\math\Vector.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CityHash.cpp" />
+    <ClCompile Include="DebugPrint.cpp" />
+    <ClCompile Include="gl\Base.cpp" />
+    <ClCompile Include="gl\Buffer.cpp" />
+    <ClCompile Include="gl\BufferBindingManager.cpp" />
+    <ClCompile Include="gl\Debug.cpp" />
+    <ClCompile Include="gl\flextGL_45.c" />
+    <ClCompile Include="gl\Framebuffer.cpp" />
+    <ClCompile Include="gl\gl_core.cpp" />
+    <ClCompile Include="gl\ProgramPipeline.cpp" />
+    <ClCompile Include="gl\RenderContext.cpp" />
+    <ClCompile Include="gl\ShaderProgram.cpp" />
+    <ClCompile Include="gl\SharedObject.cpp" />
+    <ClCompile Include="gl\StateManager.cpp" />
+    <ClCompile Include="gl\Texture.cpp" />
+    <ClCompile Include="gl\VertexArray.cpp" />
+    <ClCompile Include="gl\wgl_core.c" />
+    <ClCompile Include="Graphics\Camera.cpp" />
+    <ClCompile Include="Graphics\Mesh.cpp" />
+    <ClCompile Include="RawInput.cpp" />
+    <ClCompile Include="stb_image.c" />
+    <ClCompile Include="stb_image_write.c" />
+    <ClCompile Include="Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="asm_include.inc">
+      <FileType>Document</FileType>
+    </None>
+    <MASM Include="math.asm" />
+    <MASM Include="Vector_Basic.asm" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+  </ImportGroup>
+</Project>

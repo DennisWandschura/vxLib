@@ -1,0 +1,61 @@
+﻿Build started 06.01.2015 21:27:16.
+     1>Project "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\source\vxLib.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Intel\Composer XE 2015\bin\Intel64\icl.exe /c /Qvc12 /Qlocation,link,"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\amd64" /Zi /nologo /W3 /O2 /Oi /Qipo /Qftz- /D __INTEL_COMPILER=1500 /D _UNICODE /D UNICODE /MD /GS /Gy /fp:fast /Zc:wchar_t /Zc:forScope /GR- /Qstd=c++11 /Qrestrict /Fo"x64\Release\\" /Fd"x64\Release\vc120.pdb" /TP CityHash.cpp DebugPrint.cpp gl\BufferBindingManager.cpp gl\Base.cpp gl\Framebuffer.cpp gl\gl_core.cpp gl\Debug.cpp gl\ProgramPipeline.cpp gl\RenderContext.cpp gl\ShaderProgram.cpp gl\StateManager.cpp gl\Texture.cpp Graphics\Camera.cpp Graphics\Mesh.cpp RawInput.cpp Window.cpp
+         CityHash.cpp
+         DebugPrint.cpp
+         BufferBindingManager.cpp
+         Base.cpp
+         Framebuffer.cpp
+         gl_core.cpp
+         Debug.cpp
+         ProgramPipeline.cpp
+         RenderContext.cpp
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\matrix.h(12): error : identifier "aligned" is undefined
+           	VX_ALIGN(64) struct mat4x4;
+           	^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\matrix.h(46): error : variable "vx::__attribute__" has already been defined
+           	VX_ALIGN(64) struct mat4x4
+           	^
+         
+         ShaderProgram.cpp
+         StateManager.cpp
+         Texture.cpp
+         Camera.cpp
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\matrix.h(12): error : identifier "aligned" is undefined
+           	VX_ALIGN(64) struct mat4x4;
+           	^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\math\matrix.h(46): error : variable "vx::__attribute__" has already been defined
+           	VX_ALIGN(64) struct mat4x4
+           	^
+         
+         Mesh.cpp
+         RawInput.cpp
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\type_traits.h(9): error : identifier "aligned" is undefined
+           	VX_ALIGN(16) struct Aligned16{};
+           	^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\type_traits.h(10): error : variable "vx::__attribute__" has already been defined
+           	VX_ALIGN(32) struct Aligned32{};
+           	^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\type_traits.h(11): error : variable "vx::__attribute__" has already been defined
+           	VX_ALIGN(64) struct Aligned64{};
+           	^
+         
+     1>d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\type_traits.h(77): error : static assertion failed with "Alignment too large !"
+           			static_assert(__alignof(T) <= __alignof(max_align_t), "Alignment too large !");
+           			^
+                   detected during:
+                     instantiation of class "vx::detail::SelectAlign<T> [with T=vx::KeyEvent]" at line 33 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib/AlignedStorage.h"
+                     instantiation of class "vx::AlignedStorageN<T, N> [with T=vx::KeyEvent, N=10U]" at line 63 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\Container\vector.h"
+                     instantiation of class "vx::hybrid_vector<T, N, Allocator, <unnamed>> [with T=vx::KeyEvent, N=10U, Allocator=vx::StlAllocator<vx::KeyEvent, vx::HeapAllocator>, <unnamed>=std::enable_if_t<1, void>]" at line 42 of "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include\vxLib\RawInput.h"
+         
+         Window.cpp
+     1>Done Building Project "d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\source\vxLib.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:05.22

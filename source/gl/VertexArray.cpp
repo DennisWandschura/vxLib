@@ -1,0 +1,117 @@
+#include <vxLib\gl\VertexArray.h>
+#include <vxLib\gl\gl.h>
+
+namespace vx
+{
+	namespace gl
+	{
+		VertexArray::VertexArray():MyBase(){}
+
+		VertexArray::VertexArray(VertexArray &&rhs)
+			: MyBase(std::move(rhs))
+		{
+		}
+
+		VertexArray::~VertexArray()
+		{
+		}
+
+		VertexArray& VertexArray::operator=(VertexArray &&rhs)
+		{
+			MyBase::operator=(std::move(rhs));
+			return *this;
+		}
+
+		void VertexArray::create()
+		{
+			auto id = getId();
+			if (id == 0)
+			{
+				glCreateVertexArrays(1, &id);
+				MyBase::create(id);
+			}
+		}
+
+		void VertexArray::destroy()
+		{
+			auto id = MyBase::destroy();
+			if (id != 0)
+			{
+				glBindVertexArray(0);
+				glDeleteVertexArrays(1, &id);
+			}
+		}
+
+		void VertexArray::bind()
+		{
+			glBindVertexArray(getId());
+		}
+
+		void VertexArray::bindZero()
+		{
+			glBindVertexArray(0);
+		}
+
+		void VertexArray::enableArrayAttrib(U32 index)
+		{
+			glEnableVertexArrayAttrib(getId(), index);
+		}
+
+		void VertexArray::arrayAttribBinding(U32 attribIndex, U32 bindingIndex)
+		{
+			glVertexArrayAttribBinding(getId(), attribIndex, bindingIndex);
+		}
+
+		void VertexArray::arrayAttribFormatI(U32 attribIndex, U32 size, DataType type, U32 relativeOffset)
+		{
+			U32 dataType = 0;
+			switch (type)
+			{
+			case vx::gl::UNSIGNED_INT:
+				dataType = GL_UNSIGNED_INT;
+				break;
+			case vx::gl::UNSIGNED_BYTE:
+				dataType = GL_UNSIGNED_BYTE;
+				break;
+			case vx::gl::BYTE:
+				dataType = GL_BYTE;
+				break;
+			case vx::gl::UNSIGNED_SHORT:
+				dataType = GL_UNSIGNED_SHORT;
+				break;
+			case vx::gl::SHORT:
+				dataType = GL_SHORT;
+				break;
+			case vx::gl::INT:
+				dataType = GL_INT;
+				break;
+			default:
+				// only valid for integer types
+				VX_ASSERT(false, "Type not supported !");
+				break;
+			}
+
+			glVertexArrayAttribIFormat(getId(), attribIndex, size, dataType, relativeOffset);
+		}
+
+		void VertexArray::arrayAttribFormatF(U32 attribIndex, U32 size, U8 normalized, U32 relativeOffset)
+		{
+			glVertexArrayAttribFormat(getId(), attribIndex, size, GL_FLOAT, normalized, relativeOffset);
+		}
+
+		void VertexArray::arrayBindingDivisor(U32 bindingIndex, U32 divisor)
+		{
+			glVertexArrayBindingDivisor(getId(), bindingIndex, divisor);
+		}
+
+		void VertexArray::bindIndexBuffer(U32 ibo)
+		{
+			glVertexArrayElementBuffer(getId(), ibo);
+		}
+
+		void VertexArray::bindVertexBuffer(U32 vbo, U32 bindingIndex, size_t offset, size_t stride)
+		{
+			glVertexArrayVertexBuffer(getId(), bindingIndex, vbo, offset, stride);
+		}
+	}
+}
