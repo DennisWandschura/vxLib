@@ -140,6 +140,8 @@ namespace vx
 			};
 		}
 
+		class MappedBuffer;
+
 		class Buffer : public Base<Buffer>
 		{
 			// contains the opengl enum in first 24 bits, and BufferType enum in last 8 bits
@@ -158,22 +160,50 @@ namespace vx
 
 			void bind() const;
 
-			void* map(Map access);
+			MappedBuffer map(Map access);
 
-			template<typename T>
-			T* map(Map access){ return  reinterpret_cast<T*>(map(access)); }
+			MappedBuffer mapRange(U32 offsetBytes, U32 sizeBytes, MapRange::Access access);
 
-			void* mapRange(U32 offsetBytes, U32 sizeBytes, MapRange::Access access);
-
-			template<typename T>
-			T* mapRange(U32 offsetBytes, U32 sizeBytes, MapRange::Access access){ return  reinterpret_cast<T*>(mapRange(offsetBytes, sizeBytes, access)); }
-
-			void unmap();
+			void unmap() const;
 
 			void subData(I64 offset, I64 size, const void* data);
 
 			U32 getTarget() const noexcept;
 			BufferType getType() const noexcept;
+		};
+
+		class MappedBuffer
+		{
+			void* m_ptr;
+			const Buffer& m_buffer;
+
+		public:
+			MappedBuffer(const Buffer &buffer, void* ptr) :m_ptr(ptr), m_buffer(buffer){}
+
+			~MappedBuffer()
+			{
+				unmap();
+			}
+
+			void* get()
+			{
+				return m_ptr;
+			}
+
+			template<typename T>
+			T* get()
+			{
+				return reinterpret_cast<T*>(m_ptr);
+			}
+
+			void unmap()
+			{
+				if (m_ptr)
+				{
+					m_buffer.unmap();
+					m_ptr = nullptr;
+				}
+			}
 		};
 
 		template<BufferType Type>

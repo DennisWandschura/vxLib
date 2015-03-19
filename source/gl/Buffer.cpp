@@ -128,17 +128,19 @@ namespace vx
 			glBindBuffer((m_target & 0x00FFFFFF), m_id);
 		}
 
-		void* Buffer::map(Map access)
+		MappedBuffer Buffer::map(Map access)
 		{
-			return detail::BufferInterface::map(m_id, access);
+			auto ptr = detail::BufferInterface::map(m_id, access);
+			return MappedBuffer(*this, ptr);
 		}
 
-		void* Buffer::mapRange(U32 offsetBytes, U32 sizeBytes, MapRange::Access access)
+		MappedBuffer Buffer::mapRange(U32 offsetBytes, U32 sizeBytes, MapRange::Access access)
 		{
-			return detail::BufferInterface::mapRange(m_id, offsetBytes, sizeBytes, access);
+			auto ptr = detail::BufferInterface::mapRange(m_id, offsetBytes, sizeBytes, access);
+			return MappedBuffer(*this, ptr);
 		}
 
-		void Buffer::unmap()
+		void Buffer::unmap() const
 		{
 			detail::BufferInterface::unmap(m_id);
 		}

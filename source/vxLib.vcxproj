@@ -131,9 +131,12 @@
   <ItemGroup>
     <ClInclude Include="..\include\vxLib\AlignedStorage.h" />
     <ClInclude Include="..\include\vxLib\Allocator\Allocator.h" />
+    <ClInclude Include="..\include\vxLib\Allocator\PoolAllocator.h" />
+    <ClInclude Include="..\include\vxLib\Allocator\StackAllocator.h" />
     <ClInclude Include="..\include\vxLib\Container\array.h" />
     <ClInclude Include="..\include\vxLib\Container\bitset.h" />
     <ClInclude Include="..\include\vxLib\Container\iterator.h" />
+    <ClInclude Include="..\include\vxLib\Container\sorted_array.h" />
     <ClInclude Include="..\include\vxLib\Container\sorted_vector.h" />
     <ClInclude Include="..\include\vxLib\Container\vector.h" />
     <ClInclude Include="..\include\vxLib\gl\Base.h" />

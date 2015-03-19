@@ -61,31 +61,8 @@ namespace vx
 			AlignedStorageN<T, N> m_data;
 			pointer m_pData;
 		};
-		U32 m_size;
-		U32 m_capacity;
-
-		/*void rangeDestroy(pointer start, pointer end)
-		{
-			VX_ASSERT(start <= end, "Pointer out of bounds");
-
-			while (start != end)
-			{
-				Allocator::destroy(start++);
-			}
-		}
-
-		void rangeMove(pointer scr, pointer scrEnd, pointer dest)
-		{
-			VX_ASSERT(scr <= scrEnd, "Pointer out of bounds");
-
-			while (scr != scrEnd)
-			{
-				auto current = scr++;
-
-				(*dest) = std::move(*current);
-				++dest;
-			}
-		}*/
+		size_type m_size;
+		size_type m_capacity;
 
 		pointer getPtr()
 		{
