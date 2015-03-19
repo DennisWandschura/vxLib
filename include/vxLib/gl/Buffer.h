@@ -140,12 +140,13 @@ namespace vx
 			};
 		}
 
-		class MappedBuffer;
-
 		class Buffer : public Base<Buffer>
 		{
+			friend class MappedBuffer;
 			// contains the opengl enum in first 24 bits, and BufferType enum in last 8 bits
 			U32 m_target;
+
+			void unmap() const;
 
 		public:
 			Buffer();
@@ -163,8 +164,6 @@ namespace vx
 			MappedBuffer map(Map access);
 
 			MappedBuffer mapRange(U32 offsetBytes, U32 sizeBytes, MapRange::Access access);
-
-			void unmap() const;
 
 			void subData(I64 offset, I64 size, const void* data);
 

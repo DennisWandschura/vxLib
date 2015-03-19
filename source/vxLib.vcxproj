@@ -196,7 +196,9 @@
     <ClCompile Include="gl\wgl_core.c" />
     <ClCompile Include="Graphics\Camera.cpp" />
     <ClCompile Include="Graphics\Mesh.cpp" />
+    <ClCompile Include="PoolAllocator.cpp" />
     <ClCompile Include="RawInput.cpp" />
+    <ClCompile Include="StackAllocator.cpp" />
     <ClCompile Include="stb_image.c" />
     <ClCompile Include="stb_image_write.c" />
     <ClCompile Include="Window.cpp" />
