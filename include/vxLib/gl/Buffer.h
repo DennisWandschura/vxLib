@@ -174,14 +174,30 @@ namespace vx
 		class MappedBuffer
 		{
 			void* m_ptr;
-			const Buffer& m_buffer;
+			const Buffer* m_buffer;
 
 		public:
-			MappedBuffer(const Buffer &buffer, void* ptr) :m_ptr(ptr), m_buffer(buffer){}
+			MappedBuffer(const Buffer &buffer, void* ptr) :m_ptr(ptr), m_buffer(&buffer){}
+			MappedBuffer(const MappedBuffer&) = delete;
+			MappedBuffer(MappedBuffer &&rhs)
+				:m_ptr(rhs.m_ptr),
+				m_buffer(rhs.m_buffer)
+			{}
 
 			~MappedBuffer()
 			{
 				unmap();
+			}
+
+			MappedBuffer& operator=(const MappedBuffer&) = delete;
+			MappedBuffer& operator=(MappedBuffer &&rhs)
+			{
+				if (this != &rhs)
+				{
+					std::swap(m_ptr, rhs.m_ptr);
+					std::swap(m_buffer, rhs.m_buffer);
+				}
+				return *this;
 			}
 
 			void* get()
@@ -199,7 +215,7 @@ namespace vx
 			{
 				if (m_ptr)
 				{
-					m_buffer.unmap();
+					m_buffer->unmap();
 					m_ptr = nullptr;
 				}
 			}
