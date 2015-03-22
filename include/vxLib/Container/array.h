@@ -96,7 +96,7 @@ namespace vx
 			++m_size;
 		}
 
-		template<typename = typename std::enable_if_t<std::is_nothrow_move_constructible<value_type>::value>>
+		//template<typename = typename std::enable_if_t<std::is_nothrow_move_constructible<value_type>::value>>
 		void push_back(value_type &&value)
 		{
 			VX_ASSERT(m_size < m_capacity);

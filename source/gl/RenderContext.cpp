@@ -9,13 +9,12 @@ namespace vx
 {
 	namespace gl
 	{
-		OpenGLDescription OpenGLDescription::create(const Window &window, StateManager* pGlStateManager, const vx::uint2 &resolution, 
+		OpenGLDescription OpenGLDescription::create(const Window &window, const vx::uint2 &resolution, 
 			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
 		{
 			OpenGLDescription params;
 			params.hwnd = window.getHwnd();
 			params.resolution = resolution;
-			params.pGlStateManager = pGlStateManager;
 			params.fovRad = fovRad;
 			params.nearZ = nearZ;
 			params.farZ = farZ;
@@ -27,13 +26,12 @@ namespace vx
 			return params;
 		}
 
-		OpenGLDescription OpenGLDescription::create(HWND hwnd, StateManager *pGlStateManager, const vx::uint2 &resolution, 
+		OpenGLDescription OpenGLDescription::create(HWND hwnd,const vx::uint2 &resolution, 
 			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
 		{
 			OpenGLDescription params;
 			params.hwnd = hwnd;
 			params.resolution = resolution;
-			params.pGlStateManager = pGlStateManager;
 			params.fovRad = fovRad;
 			params.nearZ = nearZ;
 			params.farZ = farZ;
@@ -45,13 +43,13 @@ namespace vx
 			return params;
 		}
 
-		ContextDescription ContextDescription::create(const Window &window, StateManager *pGlStateManager, const vx::uint2 &resolution, F32 fovRad, F32 nearZ, F32 farZ,
+		ContextDescription ContextDescription::create(const Window &window, const vx::uint2 &resolution, F32 fovRad, F32 nearZ, F32 farZ,
 			U8 majVersion, U8 minVersion,  bool bVsync, bool bDebugMode)
 		{
 			ContextDescription params;
 			params.hInstance = window.getHinstance();
 			params.windowClass = window.getClassName();
-			params.glParams = OpenGLDescription::create(window, pGlStateManager, resolution, fovRad, nearZ, farZ, majVersion,minVersion, bVsync, bDebugMode);
+			params.glParams = OpenGLDescription::create(window, resolution, fovRad, nearZ, farZ, majVersion,minVersion, bVsync, bDebugMode);
 
 			return params;
 		}
@@ -326,17 +324,7 @@ namespace vx
 			glClearDepth(1.0f);
 
 			// set opengl defaults
-			params.pGlStateManager->enable(Capabilities::Depth_Test);
-			params.pGlStateManager->enable(Capabilities::Cull_Face);
-			params.pGlStateManager->setViewport(0, 0, params.resolution.x, params.resolution.y);
-
-			glViewport(0, 0, params.resolution.x, params.resolution.y);
-			//glEnable(GL_DEPTH_TEST);
-			glFrontFace(GL_CCW);
-			// Enable back face culling.
-			//glEnable(GL_CULL_FACE);
-			glCullFace(GL_BACK);
-			glDepthFunc(GL_LESS);
+			setDefaultStates(params);
 
 			// get version info
 			auto renderer = glGetString(GL_RENDERER); // get renderer string
@@ -364,6 +352,20 @@ namespace vx
 			puts("Initialized OpgenGL");
 
 			return true;
+		}
+
+		void RenderContext::setDefaultStates(const OpenGLDescription &params)
+		{
+			StateManager::enable(Capabilities::Depth_Test);
+			StateManager::enable(Capabilities::Cull_Face);
+			StateManager::setViewport(0, 0, params.resolution.x, params.resolution.y);
+
+			StateManager::enable(Capabilities::Multisample);
+			StateManager::enable(Capabilities::Dither);
+
+			glFrontFace(GL_CCW);
+			glCullFace(GL_BACK);
+			glDepthFunc(GL_LESS);
 		}
 
 		void RenderContext::shutdown(HWND hwnd)

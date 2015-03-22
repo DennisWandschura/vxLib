@@ -114,9 +114,6 @@
     <ClInclude Include="..\include\vxLib\gl\Base.h">
       <Filter>Header Files\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vxLib\gl\BufferBindingManager.h">
-      <Filter>Header Files\gl</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\vxLib\gl\Debug.h">
       <Filter>Header Files\gl</Filter>
     </ClInclude>
@@ -195,9 +192,6 @@
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="gl\Base.cpp">
-      <Filter>Source Files\gl</Filter>
-    </ClCompile>
-    <ClCompile Include="gl\BufferBindingManager.cpp">
       <Filter>Source Files\gl</Filter>
     </ClCompile>
     <ClCompile Include="gl\Debug.cpp">

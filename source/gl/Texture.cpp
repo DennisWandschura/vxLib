@@ -731,6 +731,11 @@ namespace vx
 			glGenerateTextureMipmap(m_id);
 		}
 
+		void Texture::clearImage(U32 level, U32 format, U32 type, const void* data)
+		{
+			glClearTexImage(m_id, level, format, type, data);
+		}
+
 		U32 Texture::getId() const
 		{
 			return m_id;

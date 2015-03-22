@@ -70,7 +70,7 @@ namespace vx
 
 		pointer operator->() const
 		{
-			VX_ASSERT(m_pObject, "No object");
+			VX_ASSERT(m_pObject);
 			checkPtr();
 
 			return m_pObject;
@@ -78,7 +78,7 @@ namespace vx
 
 		reference operator*() const
 		{
-			VX_ASSERT(m_pObject, "No object");
+			VX_ASSERT(m_pObject);
 			checkPtr();
 
 			return *m_pObject;

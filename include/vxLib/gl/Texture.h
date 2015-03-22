@@ -175,6 +175,7 @@ namespace vx
 			void makeTextureResident();
 			void makeTextureNonResident();
 			void generateMipmaps();
+			void clearImage(U32 level, U32 format, U32 type, const void* data);
 
 			U32 getId() const;
 			U64 getTextureHandle() const;

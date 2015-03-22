@@ -6,45 +6,46 @@ namespace vx
 {
 	namespace gl
 	{
+		U32 StateManager::s_currentFrameBuffer{0};
+		U32 StateManager::s_currentPipeline{0};
+		U32 StateManager::s_currentVao{0};
+		vx::ushort4 StateManager::s_viewPort{ 0, 0, 0, 0 };
+		vx::bitset<32> StateManager::s_currentCapabilities{};
+		U32 StateManager::s_bindBuffer[s_bufferTypeCount]{};
+		vx::float4 StateManager::s_clearColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+
 		StateManager::StateManager()
-			: m_currentFrameBuffer(0),
-			m_currentPipeline(0),
-			m_currentVao(0),
-			m_currentCapabilities(),
-			m_bindBuffer()
 		{
-			m_currentCapabilities.set((U32)Capabilities::Multisample);
-			m_currentCapabilities.set((U32)Capabilities::Dither);
 		}
 
 		void StateManager::enable(Capabilities cap)
 		{
-			if (!m_currentCapabilities.get((U32)cap))
+			if (!s_currentCapabilities.get((U32)cap))
 			{
 				auto glCap = detail::getCapability(cap);
 				glEnable(glCap);
-				m_currentCapabilities.set((U32)cap);
+				s_currentCapabilities.set((U32)cap);
 			}
 		}
 
 		void StateManager::disable(Capabilities cap)
 		{
-			if (m_currentCapabilities.get((U32)cap))
+			if (s_currentCapabilities.get((U32)cap))
 			{
 				auto glCap = detail::getCapability(cap);
 				glDisable(glCap);
-				m_currentCapabilities.clear((U32)cap);
+				s_currentCapabilities.clear((U32)cap);
 			}
 		}
 
 		void StateManager::setClearColor(F32 r, F32 g, F32 b, F32 a)
 		{
-			if (m_clearColor.x != r || m_clearColor.y != g || m_clearColor.z != b || m_clearColor.w != a)
+			if (s_clearColor.x != r || s_clearColor.y != g || s_clearColor.z != b || s_clearColor.w != a)
 			{
-				m_clearColor.x = r;
-				m_clearColor.y = g;
-				m_clearColor.z = b;
-				m_clearColor.w = a;
+				s_clearColor.x = r;
+				s_clearColor.y = g;
+				s_clearColor.z = b;
+				s_clearColor.w = a;
 
 				glClearColor(r, g, b, a);
 			}
@@ -52,30 +53,30 @@ namespace vx
 
 		void StateManager::setViewport(U32 x, U32 y, U32 width, U32 height)
 		{
-			if (m_viewPort.z != width || m_viewPort.w != height || m_viewPort.x != x || m_viewPort.y != y)
+			if (s_viewPort.z != width || s_viewPort.w != height || s_viewPort.x != x || s_viewPort.y != y)
 			{
 				glViewport(x, y, width, height);
-				m_viewPort.x = x;
-				m_viewPort.y = y;
-				m_viewPort.z = width;
-				m_viewPort.w = height;
+				s_viewPort.x = x;
+				s_viewPort.y = y;
+				s_viewPort.z = width;
+				s_viewPort.w = height;
 			}
 		}
 		void StateManager::bindFrameBuffer(U32 id)
 		{
-			if (m_currentFrameBuffer != id)
+			if (s_currentFrameBuffer != id)
 			{
 				glBindFramebuffer(GL_FRAMEBUFFER, id);
-				m_currentFrameBuffer = id;
+				s_currentFrameBuffer = id;
 			}
 		}
 
 		void StateManager::bindVertexArray(U32 id)
 		{
-			if (m_currentVao != id)
+			if (s_currentVao != id)
 			{
 				glBindVertexArray(id);
-				m_currentVao = id;
+				s_currentVao = id;
 			}
 		}
 
@@ -130,19 +131,19 @@ namespace vx
 				return;
 			}
 
-			if (m_bindBuffer[index] != id)
+			if (s_bindBuffer[index] != id)
 			{
 				glBindBuffer(target, id);
-				m_bindBuffer[index] = id;
+				s_bindBuffer[index] = id;
 			}
 		}
 
 		void StateManager::bindPipeline(U32 pipeline)
 		{
-			if (m_currentPipeline != pipeline)
+			if (s_currentPipeline != pipeline)
 			{
 				glBindProgramPipeline(pipeline);
-				m_currentPipeline = pipeline;
+				s_currentPipeline = pipeline;
 			}
 		}
 	}

@@ -142,10 +142,13 @@ namespace vx
 
 		class Buffer : public Base<Buffer>
 		{
+			template<typename T>
 			friend class MappedBuffer;
 			// contains the opengl enum in first 24 bits, and BufferType enum in last 8 bits
 			U32 m_target;
 
+			void* map(Map access);
+			void* mapRange(U32 offsetBytes, U32 sizeBytes, MapRange::Access access);
 			void unmap() const;
 
 		public:
@@ -161,9 +164,19 @@ namespace vx
 
 			void bind() const;
 
-			MappedBuffer map(Map access);
+			template<typename T>
+			MappedBuffer<T> map(Map access)
+			{
+				void* ptr = map(access);
+				return MappedBuffer<T>(this, ptr);
+			}
 
-			MappedBuffer mapRange(U32 offsetBytes, U32 sizeBytes, MapRange::Access access);
+			template<typename T>
+			MappedBuffer<T> mapRange(U32 offsetBytes, U32 sizeBytes, MapRange::Access access)
+			{
+				void* ptr = mapRange(offsetBytes, sizeBytes, access);
+				return MappedBuffer<T>(this, ptr);
+			}
 
 			void subData(I64 offset, I64 size, const void* data);
 
@@ -171,13 +184,18 @@ namespace vx
 			BufferType getType() const noexcept;
 		};
 
+		template<typename T>
 		class MappedBuffer
 		{
-			void* m_ptr;
+			typedef T value_type;
+			typedef value_type& reference;
+			typedef value_type* pointer;
+
+			pointer m_ptr;
 			const Buffer* m_buffer;
 
 		public:
-			MappedBuffer(const Buffer &buffer, void* ptr) :m_ptr(ptr), m_buffer(&buffer){}
+			MappedBuffer(const Buffer* buffer, void* ptr) :m_ptr(reinterpret_cast<pointer>(ptr)), m_buffer(buffer){}
 			MappedBuffer(const MappedBuffer&) = delete;
 			MappedBuffer(MappedBuffer &&rhs)
 				:m_ptr(rhs.m_ptr),
@@ -200,15 +218,44 @@ namespace vx
 				return *this;
 			}
 
-			void* get()
+			pointer get()
 			{
 				return m_ptr;
 			}
 
-			template<typename T>
-			T* get()
+			const pointer get() const
 			{
-				return reinterpret_cast<T*>(m_ptr);
+				return m_ptr;
+			}
+
+			pointer operator->()
+			{
+				return m_ptr;
+			}
+
+			const pointer operator->() const
+			{
+				return m_ptr;
+			}
+
+			reference operator*()
+			{
+				return *m_ptr;
+			}
+
+			const reference operator*() const
+			{
+				return *m_ptr;
+			}
+
+			reference operator[](U32 i)
+			{
+				return m_ptr[i];
+			}
+
+			const reference operator[](U32 i) const
+			{
+				return m_ptr[i];
 			}
 
 			void unmap()
@@ -216,8 +263,14 @@ namespace vx
 				if (m_ptr)
 				{
 					m_buffer->unmap();
+					m_buffer = nullptr;
 					m_ptr = nullptr;
 				}
+			}
+
+			bool isValid() const
+			{
+				return m_ptr != nullptr;
 			}
 		};
 

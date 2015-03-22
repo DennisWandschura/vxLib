@@ -1,8 +1,7 @@
 #pragma once
 
 #include <vxLib/Container/iterator.h>
-#include "StackAllocator.h"
-
+#include <vxLib/Allocator/StackAllocator.h>
 #include <vxLib/Container/sorted_vector.h>
 
 namespace vx

@@ -12,13 +12,10 @@ namespace vx
 	
 	namespace gl
 	{
-		class StateManager;
-
 		struct OpenGLDescription
 		{
 			HWND hwnd;
 			vx::uint2 resolution;
-			StateManager* pGlStateManager;
 			F32 fovRad; 
 			F32 nearZ;
 			F32 farZ;
@@ -27,8 +24,8 @@ namespace vx
 			bool bVsync;
 			bool bDebugMode;
 
-			static OpenGLDescription create(const Window &window, StateManager *pGlStateManager, const vx::uint2 &resolution, F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode);
-			static OpenGLDescription create(HWND hwnd, StateManager *pGlStateManager, const vx::uint2 &resolution, F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode);
+			static OpenGLDescription create(const Window &window, const vx::uint2 &resolution, F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode);
+			static OpenGLDescription create(HWND hwnd, const vx::uint2 &resolution, F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode);
 		};
 
 		struct ContextDescription
@@ -37,7 +34,7 @@ namespace vx
 			LPCWSTR windowClass;
 			OpenGLDescription glParams;
 
-			static ContextDescription create(const Window &window, StateManager *pGlStateManager, const vx::uint2 &resolution, F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode);
+			static ContextDescription create(const Window &window, const vx::uint2 &resolution, F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode);
 		};
 
 		class RenderContext
@@ -50,6 +47,8 @@ namespace vx
 
 			bool initializeExtensionsWithTempWindow(HINSTANCE hInstance, LPCWSTR windowClass);
 			bool initializeOpenGl(const OpenGLDescription &params, const int *pContextAttribs);
+
+			void setDefaultStates(const OpenGLDescription &params);
 
 		public:
 			RenderContext();
