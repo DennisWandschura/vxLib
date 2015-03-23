@@ -10,6 +10,10 @@ namespace vx
 {
 	namespace gl
 	{
+		class VertexArray;
+		class ProgramPipeline;
+		class Framebuffer;
+
 		class StateManager
 		{
 			static const U32 s_bufferTypeCount = 14;
@@ -30,9 +34,12 @@ namespace vx
 			static void setClearColor(F32 r, F32 g, F32 b, F32 a);
 			static void setViewport(U32 x, U32 y, U32 width, U32 height);
 			static void bindFrameBuffer(U32 id);
+			static void bindFrameBuffer(const Framebuffer &fbo);
 			static void bindVertexArray(U32 id);
+			static void bindVertexArray(const VertexArray &vao);
 			static void bindBuffer(U32 target, U32 id);
 			static void bindPipeline(U32 pipeline);
+			static void bindPipeline(const ProgramPipeline &pipe);
 		};
 	}
 }

@@ -165,6 +165,9 @@
     <ClInclude Include="..\include\vxLib\Allocator\PoolAllocator.h">
       <Filter>Header Files\Allocator</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\vxLib\gl\ShaderManager.h">
+      <Filter>Header Files\gl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CityHash.cpp">
@@ -238,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="StackAllocator.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gl\ShaderManager.cpp">
+      <Filter>Source Files\gl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

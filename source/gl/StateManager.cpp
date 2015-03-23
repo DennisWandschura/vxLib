@@ -1,6 +1,9 @@
 #include <vxLib\gl\StateManager.h>
 #include <vxLib/gl/gl.h>
 #include <cstring>
+#include <vxLib/gl/VertexArray.h>
+#include <vxLib/gl/Framebuffer.h>
+#include <vxLib/gl/ProgramPipeline.h>
 
 namespace vx
 {
@@ -71,6 +74,11 @@ namespace vx
 			}
 		}
 
+		void StateManager::bindFrameBuffer(const Framebuffer &fbo)
+		{
+			bindFrameBuffer(fbo.getId());
+		}
+
 		void StateManager::bindVertexArray(U32 id)
 		{
 			if (s_currentVao != id)
@@ -78,6 +86,11 @@ namespace vx
 				glBindVertexArray(id);
 				s_currentVao = id;
 			}
+		}
+
+		void StateManager::bindVertexArray(const VertexArray &vao)
+		{
+			bindVertexArray(vao.getId());
 		}
 
 		void StateManager::bindBuffer(U32 target, U32 id)
@@ -145,6 +158,11 @@ namespace vx
 				glBindProgramPipeline(pipeline);
 				s_currentPipeline = pipeline;
 			}
+		}
+
+		void StateManager::bindPipeline(const ProgramPipeline &pipe)
+		{
+			bindPipeline(pipe.getId());
 		}
 	}
 }

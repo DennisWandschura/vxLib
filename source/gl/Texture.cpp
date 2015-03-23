@@ -6,7 +6,7 @@ namespace vx
 {
 	namespace gl
 	{
-		static TextureDescription create(TextureType type, TextureFormat format, const vx::ushort3 &size, U16 miplevels, U8 sparse)
+		TextureDescription TextureDescription::create(TextureType type, TextureFormat format, const vx::ushort3 &size, U16 miplevels, U8 sparse)
 		{
 			TextureDescription desc;
 			desc.type = type;
@@ -18,7 +18,7 @@ namespace vx
 			return desc;
 		}
 
-		static TextureDescription createMultisampled(TextureType type, TextureFormat format, const vx::ushort3 &size, U16 samples, U8 fixedsamplelocations, U8 sparse)
+		TextureDescription TextureDescription::createMultisampled(TextureType type, TextureFormat format, const vx::ushort3 &size, U16 samples, U8 fixedsamplelocations, U8 sparse)
 		{
 			TextureDescription desc;
 			desc.type = type;
