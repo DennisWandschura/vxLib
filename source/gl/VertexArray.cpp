@@ -67,27 +67,27 @@ namespace vx
 			U32 dataType = 0;
 			switch (type)
 			{
-			case vx::gl::UNSIGNED_INT:
+			case vx::gl::DataType::Unsigned_Int:
 				dataType = GL_UNSIGNED_INT;
 				break;
-			case vx::gl::UNSIGNED_BYTE:
+			case vx::gl::DataType::Unsigned_Byte:
 				dataType = GL_UNSIGNED_BYTE;
 				break;
-			case vx::gl::BYTE:
+			case vx::gl::DataType::Byte:
 				dataType = GL_BYTE;
 				break;
-			case vx::gl::UNSIGNED_SHORT:
+			case vx::gl::DataType::Unsigned_Short:
 				dataType = GL_UNSIGNED_SHORT;
 				break;
-			case vx::gl::SHORT:
+			case vx::gl::DataType::Short:
 				dataType = GL_SHORT;
 				break;
-			case vx::gl::INT:
+			case vx::gl::DataType::Int:
 				dataType = GL_INT;
 				break;
 			default:
 				// only valid for integer types
-				VX_ASSERT(false, "Type not supported !");
+				VX_ASSERT(false);
 				break;
 			}
 

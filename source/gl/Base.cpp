@@ -58,7 +58,7 @@ namespace vx
 
 			U32 getDataType(DataType dataType)
 			{
-				return detail::g_dataTypes[dataType];
+				return detail::g_dataTypes[(U8)dataType];
 			}
 
 			U32 getShaderProgramType(ShaderProgramType type)

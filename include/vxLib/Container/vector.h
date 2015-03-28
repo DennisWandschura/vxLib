@@ -165,7 +165,7 @@ namespace vx
 
 		void pop_back()
 		{
-			VX_ASSERT(!empty(), "vector::pop(): vector is empty");
+			VX_ASSERT(!empty());
 			Allocator::destroy(getPtr() + m_size - 1);
 			--m_size;
 		}
@@ -227,13 +227,13 @@ namespace vx
 
 		reference operator[](size_type i)
 		{
-			VX_ASSERT(i < m_size, "Index out of bounds");
+			VX_ASSERT(i < m_size);
 			return getPtr()[i];
 		}
 
 		const_reference operator[](size_type i) const
 		{
-			VX_ASSERT(i < m_size, "Index out of bounds");
+			VX_ASSERT(i < m_size);
 			return getPtr()[i];
 		}
 
@@ -393,7 +393,7 @@ namespace vx
 
 		void pop_back()
 		{
-			VX_ASSERT(!empty(), "vector::pop(): vector is empty");
+			VX_ASSERT(!empty());
 			Allocator::destroy(&this->back());
 			--m_size;
 		}
@@ -460,13 +460,13 @@ namespace vx
 
 		reference operator[](size_type i)
 		{
-			VX_ASSERT(i < m_size, "Index out of bounds");
+			VX_ASSERT(i < m_size);
 			return getPtr()[i];
 		}
 
 		const_reference operator[](size_type i) const
 		{
-			VX_ASSERT(i < m_size, "Index out of bounds");
+			VX_ASSERT(i < m_size);
 			return getPtr()[i];
 		}
 

@@ -8,22 +8,117 @@
 
 namespace
 {
-	std::unique_ptr<char[]> loadProgramImpl(std::ifstream &is, U32 &size)
+	bool loadFile(const char* str, std::unique_ptr<char[]> &buffer, U32 &size)
 	{
-		auto start = is.tellg();
-		is.seekg(0, std::ifstream::end);
-		auto end = is.tellg();
+		std::ifstream inFile(str);
 
-		size_t sz = end - start;
-		is.seekg(-static_cast<I64>(sz), std::ifstream::cur);
+		if (!inFile.is_open())
+		{
+			printf("could not open file %s\n", str);
+			return false;
+		}
 
-		auto ptr = std::make_unique<char[]>(sz + 1);
+		inFile.seekg(0, std::ios::end);
+		size = inFile.tellg();
+		inFile.seekg(0, std::ios::beg);
 
-		is.read(ptr.get(), sz);
-		ptr[sz] = '\0';
-		size = sz;
+		buffer = std::make_unique<char[]>(size);
+		inFile.read(buffer.get(), size);
 
-		return ptr;
+		return true;
+	}
+
+	std::unique_ptr<char[]> appendInclude(const std::unique_ptr<char[]>* programBuffer, U32* programSize, const std::string &include, const char* includeStart)
+	{
+		auto includeSize = include.size();
+		auto newProgram = std::make_unique<char[]>(*programSize + includeSize);
+		U32 currentSize = 0;
+
+		auto size = includeStart - programBuffer->get();
+
+		memcpy(newProgram.get(), programBuffer->get(), size);
+		currentSize += size;
+
+		auto includeBufferEnd = strchr(include.data(), '\0');
+		includeSize = includeBufferEnd - include.data();
+
+		memcpy(newProgram.get() + currentSize, include.data(), includeSize);
+		currentSize += includeSize;
+
+		auto includeEnd = strchr(includeStart, '\n');
+
+		size = (programBuffer->get() + *programSize) - includeEnd;
+		memcpy(newProgram.get() + currentSize, includeEnd, size);
+		currentSize += includeSize;
+
+		*programSize = currentSize;
+
+		return newProgram;
+	}
+
+	bool getAndAppendInclude(std::unique_ptr<char[]>* programBuffer, U32* programSize, const std::string &includeDir, vx::sorted_vector<vx::StringID64, std::string>* includeFiles)
+	{
+		std::unique_ptr<char[]> includeBuffer;
+		U32 includeSize = 0;
+		auto includeStart = strstr(programBuffer->get(), "#include");
+		if (includeStart)
+		{
+			auto includeFile = strchr(includeStart, ' ');
+			if (includeFile)
+			{
+				char buffer[64];
+				auto strSize = sscanf(includeFile, "%s", buffer);
+
+				auto sid = vx::make_sid(buffer + 1);
+
+				auto it = includeFiles->find(sid);
+				if (it == includeFiles->end())
+				{
+					std::string file = includeDir + (buffer + 1);
+					file.pop_back();
+
+					if (!loadFile(file.c_str(), includeBuffer, includeSize))
+					{
+						return false;
+					}
+
+					std::string includeFile;
+					includeFile.assign(includeBuffer.get());
+
+					it = includeFiles->insert(sid, std::move(includeFile));
+				}
+
+				*programBuffer = appendInclude(programBuffer, programSize, *it, includeStart);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	bool loadShaderProgram(const char* programFile, const std::string &includeDir, vx::gl::ShaderProgram* program, vx::sorted_vector<vx::StringID64, std::string>* includeFiles)
+	{
+		std::unique_ptr<char[]> programBuffer;
+		U32 programSize;
+		if (!loadFile(programFile, programBuffer, programSize))
+			return false;
+
+		while (getAndAppendInclude(&programBuffer, &programSize, includeDir, includeFiles))
+		{
+
+		}
+
+		const char* ptr = programBuffer.get();
+
+		I32 logSize = 0;
+		auto log = program->create(&ptr, logSize);
+		if (log)
+		{
+			printf("Error '%s'\n%s\n", programFile, log.get());
+			return false;
+		}
+
+		return true;
 	}
 }
 
@@ -33,7 +128,8 @@ namespace vx
 	{
 		ShaderManager::ShaderManager()
 			:m_programPipelines(),
-			m_shaderPrograms()
+			m_shaderPrograms(),
+			m_includeFiles()
 		{
 
 		}
@@ -42,42 +138,10 @@ namespace vx
 		{
 		}
 
-		bool ShaderManager::loadIncludes(const std::string &dataDir)
+		bool ShaderManager::loadPipelines()
 		{
-			auto fullPath = dataDir + "shaders/include/";
-			auto searchMask = dataDir + "shaders/include/*.glsl";
-
-			HANDLE fileHandle = nullptr;
-			WIN32_FIND_DATAA fileData;
-			if ((fileHandle = FindFirstFileA(searchMask.c_str(), &fileData)) == INVALID_HANDLE_VALUE)
-			{
-				return false;
-			}
-
-			bool result = fileHandle != INVALID_HANDLE_VALUE;
-			while (result)
-			{
-				const bool is_directory = (fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
-
-				if (!is_directory)
-				{
-					auto file = fullPath + fileData.cFileName;
-					if (!loadShaderInclude(file.c_str()))
-					{
-						return false;
-					}
-				}
-
-				result = FindNextFileA(fileHandle, &fileData);
-			}
-
-			return true;
-		}
-
-		bool ShaderManager::loadPipelines(const std::string &dataDir)
-		{
-			auto fullPath = dataDir + "shaders/";
-			auto searchMask = dataDir + "shaders/*.pipe";
+			auto fullPath = m_dataDir + "shaders/";
+			auto searchMask = m_dataDir + "shaders/*.pipe";
 
 			HANDLE fileHandle = nullptr;
 			WIN32_FIND_DATAA fileData;
@@ -86,6 +150,9 @@ namespace vx
 				//	printf("error\n");
 			}
 
+			const std::string programDir(m_dataDir + "shaders/programs/");
+			const std::string includeDir = m_dataDir + "shaders/include/";
+
 			bool result = fileHandle != INVALID_HANDLE_VALUE;
 			while (result)
 			{
@@ -94,7 +161,7 @@ namespace vx
 				if (!is_directory)
 				{
 					auto file = fullPath + fileData.cFileName;
-					if (!loadPipeline(file.c_str()))
+					if (!loadPipeline(file.c_str(), programDir, includeDir))
 					{
 						return false;
 					}
@@ -110,13 +177,7 @@ namespace vx
 		{
 			m_dataDir = dataDir;
 
-			if (!loadIncludes(dataDir))
-			{
-				printf("error loading shader includes\n");
-				return false;
-			}
-
-			if (!loadPipelines(dataDir))
+			if (!loadPipelines())
 			{
 				printf("error loading shader pipelines\n");
 				return false;
@@ -125,55 +186,17 @@ namespace vx
 			return true;
 		}
 
-		bool ShaderManager::loadShaderInclude(const char *file)
-		{
-			std::ifstream inFile(file);
-			if (!inFile.is_open())
-				return false;
-
-			std::string id = "/";
-			id += PathFindFileNameA(file);
-
-			U32 strCount = 0;
-			auto program = ::loadProgramImpl(inFile, strCount);
-			if (!program)
-				return false;
-
-			glNamedStringARB(GL_SHADER_INCLUDE_ARB, id.size(), id.c_str(), strCount, program.get());
-
-			return true;
-		}
-
-		bool ShaderManager::loadProgram(const char *file, vx::gl::ShaderProgramType type)
+		bool ShaderManager::loadProgram(const char *file, vx::gl::ShaderProgramType type, const std::string &includeDir)
 		{
 			std::string fileName = PathFindFileNameA(file);
+
 			auto sid = vx::make_sid(fileName.c_str());
 			auto it = m_shaderPrograms.find(sid);
 			if (it == m_shaderPrograms.end())
 			{
-				std::ifstream inFile(file);
-				if (!inFile.is_open())
-				{
-					printf("ShaderManager::loadProgram(): Could not open file '%s'\n", file);
-					return false;
-				}
-
-				U32 size = 0;
-				auto ptr = ::loadProgramImpl(inFile, size);
-				if (!ptr)
-					return false;
-
-				const char *p = ptr.get();
-
-				I32 logSize = 0;
 				vx::gl::ShaderProgram program(type);
-				auto pLog = program.create(&p, logSize);
-				if (pLog)
+				if (!loadShaderProgram(file, includeDir, &program, &m_includeFiles))
 				{
-
-					std::ofstream out("error_" + fileName);
-					out.write(pLog.get(), logSize - 1);
-
 					return false;
 				}
 
@@ -193,7 +216,7 @@ namespace vx
 			return true;
 		}
 
-		bool ShaderManager::loadUseProgram(vx::gl::ProgramPipeline &pipe, const char *id, vx::gl::ShaderProgramType type, const std::string &dataDir)
+		bool ShaderManager::loadUseProgram(vx::gl::ProgramPipeline &pipe, const char *id, vx::gl::ShaderProgramType type, const std::string &programDir, const std::string &includeDir)
 		{
 			// check for not used shader stage
 			if (strcmp(id, "''") == 0)
@@ -201,7 +224,7 @@ namespace vx
 				return true;
 			}
 
-			if (!loadProgram((dataDir + id).c_str(), type))
+			if (!loadProgram((programDir + id).c_str(), type, includeDir))
 				return false;
 			if (!useProgram(pipe, id))
 				return false;
@@ -209,7 +232,7 @@ namespace vx
 			return true;
 		}
 
-		bool ShaderManager::loadPipeline(const char *file)
+		bool ShaderManager::loadPipeline(const char *file, const std::string &programDir, const std::string &includeDir)
 		{
 			std::ifstream inFile(file);
 			if (!inFile.is_open())
@@ -232,21 +255,19 @@ namespace vx
 				shaders[shaderIndex++] = buffer;
 			}
 
-			const std::string programDir(m_dataDir + "shaders/programs/");
-
 			vx::gl::ProgramPipeline pipe;
 			pipe.create();
 
-			if (!loadUseProgram(pipe, shaders[0].c_str(), vx::gl::ShaderProgramType::VERTEX, programDir))
+			if (!loadUseProgram(pipe, shaders[0].c_str(), vx::gl::ShaderProgramType::VERTEX, programDir, includeDir))
 				return false;
 
-			if (!loadUseProgram(pipe, shaders[1].c_str(), vx::gl::ShaderProgramType::GEOMETRY, programDir))
+			if (!loadUseProgram(pipe, shaders[1].c_str(), vx::gl::ShaderProgramType::GEOMETRY, programDir, includeDir))
 				return false;
 
-			if (!loadUseProgram(pipe, shaders[2].c_str(), vx::gl::ShaderProgramType::FRAGMENT, programDir))
+			if (!loadUseProgram(pipe, shaders[2].c_str(), vx::gl::ShaderProgramType::FRAGMENT, programDir, includeDir))
 				return false;
 
-			if (!loadUseProgram(pipe, shaders[3].c_str(), vx::gl::ShaderProgramType::COMPUTE, programDir))
+			if (!loadUseProgram(pipe, shaders[3].c_str(), vx::gl::ShaderProgramType::COMPUTE, programDir, includeDir))
 				return false;
 
 			auto sid = vx::make_sid(PathFindFileNameA(file));
@@ -254,6 +275,17 @@ namespace vx
 			m_programPipelines.insert(sid, std::move(pipe));
 
 			return true;
+		}
+
+		bool ShaderManager::loadPipeline(const char *fileName)
+		{
+			auto pipelineDir = m_dataDir + "shaders/";
+			const std::string programDir(m_dataDir + "shaders/programs/");
+			const std::string includeDir = m_dataDir + "shaders/include/";
+
+			auto file = pipelineDir + fileName;
+
+			return loadPipeline(file.c_str(), programDir, includeDir);
 		}
 
 		const vx::gl::ShaderProgram* ShaderManager::getProgram(const char *id) const

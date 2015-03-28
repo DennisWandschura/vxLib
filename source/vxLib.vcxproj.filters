@@ -168,6 +168,9 @@
     <ClInclude Include="..\include\vxLib\gl\ShaderManager.h">
       <Filter>Header Files\gl</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\vxLib\Container\DoubleBuffer.h">
+      <Filter>Header Files\Container</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CityHash.cpp">

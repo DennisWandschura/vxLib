@@ -9,15 +9,15 @@ namespace vx
 {
 	namespace gl
 	{
-		enum DataType : U8
+		enum class DataType : U8
 		{
-			UNSIGNED_BYTE,
-			BYTE,
-			UNSIGNED_SHORT,
-			SHORT,
-			UNSIGNED_INT,
-			INT,
-			FLOAT
+			Unsigned_Byte,
+			Byte,
+			Unsigned_Short,
+			Short,
+			Unsigned_Int,
+			Int,
+			Float
 		};
 
 		enum class Capabilities : U8
