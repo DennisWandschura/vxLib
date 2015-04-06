@@ -267,5 +267,8 @@
     <MASM Include="math.asm">
       <Filter>Source Files\math</Filter>
     </MASM>
+    <MASM Include="Vector_dot.asm">
+      <Filter>Source Files\math</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

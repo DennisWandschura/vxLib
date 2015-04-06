@@ -2,7 +2,7 @@
 
 namespace vx
 {
-	inline vx::float4a VX_CALLCONV normalize(cfloat4a V)
+	inline __m128 VX_CALLCONV normalize(__m128 V)
 	{
 		auto vLengthSq = _mm_dp_ps(V, V, 0xff);
 
@@ -27,7 +27,7 @@ namespace vx
 		return vResult;
 	}
 
-	inline bool VX_CALLCONV Vector3IsInfinite(cfloat4a V)
+	inline bool VX_CALLCONV Vector3IsInfinite(__m128 V)
 	{
 		// Mask off the sign bit
 		__m128 vTemp = _mm_and_ps(V, g_VXAbsMask);
@@ -37,27 +37,27 @@ namespace vx
 		return ((_mm_movemask_ps(vTemp) & 7) != 0);
 	}
 
-	inline bool VX_CALLCONV Vector3Equal(cfloat4a V1, cfloat4a V2)
+	inline bool VX_CALLCONV Vector3Equal(__m128 V1, __m128 V2)
 	{
 		auto vTemp = _mm_cmpeq_ps(V1, V2);
 		return (((_mm_movemask_ps(vTemp) & 7) == 7) != 0);
 	}
 
-	inline __m128 VX_CALLCONV VectorSelect(cfloat4a V1, cfloat4a V2, cfloat4a Control)
+	inline __m128 VX_CALLCONV VectorSelect(__m128 V1, __m128 V2, __m128 Control)
 	{
 		auto vTemp1 = _mm_andnot_ps(Control, V1);
 		auto vTemp2 = _mm_and_ps(V2, Control);
 		return _mm_or_ps(vTemp1, vTemp2);
 	}
 
-	inline __m128 VX_CALLCONV VectorNegate(cfloat4a V)
+	inline __m128 VX_CALLCONV VectorNegate(__m128 V)
 	{
 		auto zero = _mm_setzero_ps();
 
 		return _mm_sub_ps(zero, V);
 	}
 
-	inline __m128 VX_CALLCONV Vector3Cross(cfloat4a v1, cfloat4a v2)
+	inline __m128 VX_CALLCONV Vector3Cross(__m128 v1, __m128 v2)
 	{
 		auto tmp = _mm_shuffle_ps(v1, v1, _MM_SHUFFLE(3, 0, 2, 1));
 		auto c1 = _mm_shuffle_ps(v2, v2, _MM_SHUFFLE(3, 1, 0, 2));
@@ -72,8 +72,8 @@ namespace vx
 
 	inline __m128 VX_CALLCONV Vector3Dot
 		(
-		cfloat4a V1,
-		cfloat4a V2
+		__m128 V1,
+		__m128 V2
 		)
 	{
 		// Perform the dot product
@@ -92,8 +92,8 @@ namespace vx
 
 	inline __m128 VX_CALLCONV Vector4Dot
 		(
-		cfloat4a V1,
-		cfloat4a V2
+		__m128 V1,
+		__m128 V2
 		)
 	{
 		return _mm_dp_ps(V1, V2, 255);
@@ -101,7 +101,7 @@ namespace vx
 
 	inline __m128 VX_CALLCONV Vector3Normalize
 		(
-		cfloat4a V
+		__m128 V
 		)
 	{
 		// Perform the dot product on x,y and z only
@@ -133,8 +133,8 @@ namespace vx
 
 	inline __m128 VX_CALLCONV Vector3Rotate
 		(
-		cfloat4a V,
-		cfloat4a RotationQuaternion
+		__m128 V,
+		__m128 RotationQuaternion
 		)
 	{
 		__m128 A = VectorSelect(g_VXSelect1110.v, V, g_VXSelect1110.v);
@@ -143,7 +143,7 @@ namespace vx
 		return QuaternionMultiply(Result, RotationQuaternion);
 	}
 
-	inline __m128 VX_CALLCONV QuaternionMultiply(cfloat4a Q1, cfloat4a Q2)
+	inline __m128 VX_CALLCONV QuaternionMultiply(__m128 Q1, __m128 Q2)
 	{
 		static const __m128 ControlWZYX = { 1.0f, -1.0f, 1.0f, -1.0f };
 		static const __m128 ControlZWXY = { 1.0f, 1.0f, -1.0f, -1.0f };
@@ -183,13 +183,13 @@ namespace vx
 		return vResult;
 	}
 
-	inline __m128 VX_CALLCONV QuaternionConjugate(cfloat4a Q)
+	inline __m128 VX_CALLCONV QuaternionConjugate(__m128 Q)
 	{
 		static const __m128 NegativeOne3 = { -1.0f, -1.0f, -1.0f, 1.0f };
 		return _mm_mul_ps(Q, NegativeOne3);
 	}
 
-	inline __m128 VX_CALLCONV QuaternionRotationRollPitchYawFromVector(cfloat4a Angles)
+	inline __m128 VX_CALLCONV QuaternionRotationRollPitchYawFromVector(__m128 Angles)
 	{
 		static const __m128  Sign = { 1.0f, -1.0f, -1.0f, 1.0f };
 
@@ -215,7 +215,7 @@ namespace vx
 		return Q;
 	}
 
-	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, cfloat4a V)
+	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, __m128 V)
 	{
 		// Force the value within the bounds of pi
 		__m128 x = VectorModAngles(V);
@@ -286,7 +286,7 @@ namespace vx
 		*pCos = Result;
 	}
 
-	inline __m128 VX_CALLCONV VectorModAngles(cfloat4a Angles)
+	inline __m128 VX_CALLCONV VectorModAngles(__m128 Angles)
 	{
 		// Modulo the range of the given angles such that -XM_PI <= Angles < XM_PI
 		auto vResult = _mm_mul_ps(Angles, g_VXReciprocalTwoPi);

@@ -58,8 +58,6 @@ namespace vx
 				return v;
 			}
 
-
-
 			value_type& operator[](U32 i)
 			{
 				return v[i];
@@ -621,7 +619,7 @@ namespace vx
 		{
 			typedef __m128 xmm_type;
 
-			static xmm_type loadu_ps(const vec4<F32> &src)
+			static xmm_type load(const vec4<F32> &src)
 			{
 				return _mm_loadu_ps(src.v);
 			}
@@ -632,7 +630,7 @@ namespace vx
 		{
 			typedef __m128i xmm_type;
 
-			static xmm_type loadu_ps(const vec4<I32> &src)
+			static xmm_type load(const vec4<I32> &src)
 			{
 				return _mm_loadu_si128((const xmm_type*)src.v);
 			}
@@ -643,7 +641,7 @@ namespace vx
 		{
 			typedef __m128i xmm_type;
 
-			static xmm_type loadu_ps(const vec4<U32> &src)
+			static xmm_type load(const vec4<U32> &src)
 			{
 				return _mm_loadu_si128((const xmm_type*)src.v);
 			}
@@ -695,7 +693,7 @@ namespace vx
 
 			vec4a() :v(){}
 			vec4a(value_type vx, value_type vy, value_type vz, value_type vw) :x(vx),y(vy),z(vz),w(vw){}
-			vec4a(const vec4<T> &vu) :v(XMM_TYPE<value_type>::loadu_ps(vu)){}
+			vec4a(const vec4<T> &vu) :v(XMM_TYPE<value_type>::load(vu)){}
 			vec4a(const xmm_type &m) :v(m){}
 
 			vec4a& operator=(const xmm_type &m)
@@ -716,7 +714,7 @@ namespace vx
 		};
 	}
 
-	struct vint4a
+	struct ivec4
 	{
 		union
 		{
@@ -729,7 +727,7 @@ namespace vx
 		inline operator __m128d() const { return _mm_castps_pd(v); }
 	};
 
-	struct vuint4a
+	struct uvec4
 	{
 		union
 		{
@@ -753,70 +751,45 @@ namespace vx
 			);
 	}
 
-	extern __m128 VX_CALLCONV loadFloat2a(const detail::vec2a<F32>* v);
-
-	inline __m128 VX_CALLCONV loadFloat(const detail::vec2<F32> *pSource)
+	inline __m128 VX_CALLCONV loadFloat(const detail::vec2<F32> &source)
 	{
-		__m128 x = _mm_load_ss(&pSource->x);
-		__m128 y = _mm_load_ss(&pSource->y);
+		__m128 x = _mm_load_ss(&source.x);
+		__m128 y = _mm_load_ss(&source.y);
 		return _mm_unpacklo_ps(x, y);
 	}
 
-	inline __m128 VX_CALLCONV loadFloat(const detail::vec2a<F32> *pSource)
-	{
-		return loadFloat2a(pSource);
-	}
+	extern __m128 VX_CALLCONV loadFloat(const detail::vec2a<F32> &v);
 
-	inline __m128 VX_CALLCONV loadFloat(const detail::vec3<F32> *pSource)
+	inline __m128 VX_CALLCONV loadFloat(const detail::vec3<F32> &source)
 	{
-		__m128 x = _mm_load_ss(&pSource->x);
-		__m128 y = _mm_load_ss(&pSource->y);
-		__m128 z = _mm_load_ss(&pSource->z);
+		__m128 x = _mm_load_ss(&source.x);
+		__m128 y = _mm_load_ss(&source.y);
+		__m128 z = _mm_load_ss(&source.z);
 		__m128 xy = _mm_unpacklo_ps(x, y);
 		return _mm_movelh_ps(xy, z);
 	}
 
-	inline __m128 VX_CALLCONV loadFloat(const detail::vec4<F32> *pSource)
+	inline __m128 VX_CALLCONV loadFloat(const detail::vec4<F32> &source)
 	{
-		return _mm_loadu_ps(&pSource->x);
+		return _mm_loadu_ps(&source.x);
 	}
 
-	inline void VX_CALLCONV storeFloat2(F32* pDestination, const __m128 V)
+	inline void VX_CALLCONV storeFloat(detail::vec2<F32>* pDestination, const __m128 V)
 	{
 		auto T = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
-		_mm_store_ss(&pDestination[0], V);
-		_mm_store_ss(&pDestination[1], T);
+		_mm_store_ss(&pDestination->x, V);
+		_mm_store_ss(&pDestination->y, T);
 	}
 
-	extern void VX_CALLCONV storeFloat2a(detail::vec2a<F32>* dst, const __m128 V);
+	extern void VX_CALLCONV storeFloat(detail::vec2a<F32>* dst, const __m128 V);
 
-	inline void VX_CALLCONV storeFloat3(F32* pDestination, const __m128 &V)
+	inline void VX_CALLCONV storeFloat(detail::vec3<F32>* pDestination, const __m128 &V)
 	{
 		auto T1 = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
 		auto T2 = _mm_shuffle_ps(V, V, _MM_SHUFFLE(2, 2, 2, 2));
-		_mm_store_ss(&pDestination[0], V);
-		_mm_store_ss(&pDestination[1], T1);
-		_mm_store_ss(&pDestination[2], T2);
-	}
-
-	inline void VX_CALLCONV storeFloat4(F32* pDestination, const __m128 &V)
-	{
-		_mm_storeu_ps(pDestination, V);
-	}
-
-	inline void VX_CALLCONV storeFloat(detail::vec2<F32> *pDestination, const __m128 V)
-	{
-		storeFloat2(pDestination->v, V);
-	}
-
-	inline void VX_CALLCONV storeFloat(detail::vec2a<F32> *pDestination, const __m128 V)
-	{
-		storeFloat2a(pDestination, V);
-	}
-
-	inline void VX_CALLCONV storeFloat(detail::vec3<F32> *pDestination, const __m128 V)
-	{
-		storeFloat3(pDestination->v, V);
+		_mm_store_ss(&pDestination->x, V);
+		_mm_store_ss(&pDestination->y, T1);
+		_mm_store_ss(&pDestination->z, T2);
 	}
 
 	inline void VX_CALLCONV storeFloat(detail::vec4<F32> *pDestination, const __m128 V)
@@ -935,57 +908,51 @@ namespace vx
 	using float4 = detail::vec4 < F32 > ;
 	using float4a = detail::vec4a < F32 > ;
 
-#if _VX_CALLCONV_TYPE
-	using cfloat4a = const float4a;
-#else
-	using cfloat4a = const float4a&;
-#endif
-
-	VX_GLOBALCONST float4a g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD };
-	VX_GLOBALCONST float4a g_VXRadToDeg = { VX_RADTODEG, VX_RADTODEG, VX_RADTODEG, VX_RADTODEG };
-	VX_GLOBALCONST float4a g_VXIdentityR0 = { 1.0f, 0.0f, 0.0f, 0.0f };
-	VX_GLOBALCONST float4a g_VXIdentityR1 = { 0.0f, 1.0f, 0.0f, 0.0f };
-	VX_GLOBALCONST float4a g_VXIdentityR2 = { 0.0f, 0.0f, 1.0f, 0.0f };
-	VX_GLOBALCONST float4a g_VXIdentityR3 = { 0.0f, 0.0f, 0.0f, 1.0f };
-	VX_GLOBALCONST float4a g_VXNegIdentityR0 = { -1.0f, 0.0f, 0.0f, 0.0f };
-	VX_GLOBALCONST float4a g_VXNegIdentityR1 = { 0.0f, -1.0f, 0.0f, 0.0f };
-	VX_GLOBALCONST float4a g_VXNegIdentityR2 = { 0.0f, 0.0f, -1.0f, 0.0f };
-	VX_GLOBALCONST float4a g_VXNegIdentityR3 = { 0.0f, 0.0f, 0.0f, -1.0f };
-	VX_GLOBALCONST float4a g_VXNegativeTwo = { -2.0f, -2.0f, -2.0f, -2.0f };
-	VX_GLOBALCONST float4a g_VXNegativeOne = { -1.0f, -1.0f, -1.0f, -1.0f };
-	VX_GLOBALCONST float4a g_VXNegativeOneHalf = { -0.5f, -0.5f, -0.5f, -0.5f };
-	VX_GLOBALCONST float4a g_VXZero = { 0.0f, 0.0f, 0.0f, 0.0f };
-	VX_GLOBALCONST float4a g_VXOneHalf = { 0.5f, 0.5f, 0.5f, 0.5f };
-	VX_GLOBALCONST float4a g_VXOne = { 1.0f, 1.0f, 1.0f, 1.0f };
-	VX_GLOBALCONST float4a g_VXTwo = { 2.0f, 2.0f, 2.0f, 2.0f };
-	VX_GLOBALCONST float4a g_VXHalfPi = { VX_PIDIV2, VX_PIDIV2, VX_PIDIV2, VX_PIDIV2 };
-	VX_GLOBALCONST float4a g_VXPi = { VX_PI, VX_PI, VX_PI, VX_PI };
-	VX_GLOBALCONST float4a g_VXTwoPi = { VX_2PI, VX_2PI, VX_2PI, VX_2PI };
-	VX_GLOBALCONST float4a g_VXReciprocalTwoPi = { VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI };
-	VX_GLOBALCONST float4a g_VXNegateX = { -1.0f, 1.0f, 1.0f, 1.0f };
-	VX_GLOBALCONST float4a g_VXNegateY = { 1.0f, -1.0f, 1.0f, 1.0f };
-	VX_GLOBALCONST float4a g_VXNegateZ = { 1.0f, 1.0f, -1.0f, 1.0f };
-	VX_GLOBALCONST float4a g_VXNegateW = { 1.0f, 1.0f, 1.0f, -1.0f };
-	VX_GLOBALCONST float4a g_VXEpsilon = { VX_EPSILON, VX_EPSILON, VX_EPSILON, VX_EPSILON };
-	VX_GLOBALCONST float4a g_VXSinCoefficients0 = { -0.16666667f, +0.0083333310f, -0.00019840874f, +2.7525562e-06f };
-	VX_GLOBALCONST float4a g_VXSinCoefficients1 = { -2.3889859e-08f, -0.16665852f /*Est1*/, +0.0083139502f /*Est2*/, -0.00018524670f /*Est3*/ };
-	VX_GLOBALCONST float4a g_VXCosCoefficients0 = { -0.5f, +0.041666638f, -0.0013888378f, +2.4760495e-05f };
-	VX_GLOBALCONST float4a g_VXCosCoefficients1 = { -2.6051615e-07f, -0.49992746f /*Est1*/, +0.041493919f /*Est2*/, -0.0012712436f /*Est3*/ };
-	VX_GLOBALCONST vint4a g_VXInfinity = { 0x7F800000, 0x7F800000, 0x7F800000, 0x7F800000 };
-	VX_GLOBALCONST vint4a g_VXQNaN = { 0x7FC00000, 0x7FC00000, 0x7FC00000, 0x7FC00000 };
-	VX_GLOBALCONST vint4a g_VXQNaNTest = { 0x007FFFFF, 0x007FFFFF, 0x007FFFFF, 0x007FFFFF };
-	VX_GLOBALCONST vint4a g_VXAbsMask = { 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF };
-	VX_GLOBALCONST vint4a g_VXSelect1000 = { g_SELECT_1, g_SELECT_0, g_SELECT_0, g_SELECT_0 };
-	VX_GLOBALCONST vint4a g_VXSelect1100 = { g_SELECT_1, g_SELECT_1, g_SELECT_0, g_SELECT_0 };
-	VX_GLOBALCONST vint4a g_VXSelect1110 = { g_SELECT_1, g_SELECT_1, g_SELECT_1, g_SELECT_0 };
-	VX_GLOBALCONST vint4a g_VXSelect1011 = { g_SELECT_1, g_SELECT_0, g_SELECT_1, g_SELECT_1 };
-	VX_GLOBALCONST vint4a g_VXMaskX = { 0xFFFFFFFF, 0x00000000, 0x00000000, 0x00000000 };
-	VX_GLOBALCONST vint4a g_VXMaskY = { 0x00000000, 0xFFFFFFFF, 0x00000000, 0x00000000 };
-	VX_GLOBALCONST vint4a g_VXMaskZ = { 0x00000000, 0x00000000, 0xFFFFFFFF, 0x00000000 };
-	VX_GLOBALCONST vint4a g_vMaskW = { 0x00000000, 0x00000000, 0x00000000, 0xFFFFFFFF };
-	VX_GLOBALCONST vint4a g_VXNegativeZero = { 0x80000000, 0x80000000, 0x80000000, 0x80000000 };
-	VX_GLOBALCONST vint4a g_VXNegate3 = { 0x80000000, 0x80000000, 0x80000000, 0x00000000 };
-	VX_GLOBALCONST vint4a g_VXMask3 = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x00000000 };
+	VX_GLOBALCONST __m128 g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD };
+	VX_GLOBALCONST __m128 g_VXRadToDeg = { VX_RADTODEG, VX_RADTODEG, VX_RADTODEG, VX_RADTODEG };
+	VX_GLOBALCONST __m128 g_VXIdentityR0 = { 1.0f, 0.0f, 0.0f, 0.0f };
+	VX_GLOBALCONST __m128 g_VXIdentityR1 = { 0.0f, 1.0f, 0.0f, 0.0f };
+	VX_GLOBALCONST __m128 g_VXIdentityR2 = { 0.0f, 0.0f, 1.0f, 0.0f };
+	VX_GLOBALCONST __m128 g_VXIdentityR3 = { 0.0f, 0.0f, 0.0f, 1.0f };
+	VX_GLOBALCONST __m128 g_VXNegIdentityR0 = { -1.0f, 0.0f, 0.0f, 0.0f };
+	VX_GLOBALCONST __m128 g_VXNegIdentityR1 = { 0.0f, -1.0f, 0.0f, 0.0f };
+	VX_GLOBALCONST __m128 g_VXNegIdentityR2 = { 0.0f, 0.0f, -1.0f, 0.0f };
+	VX_GLOBALCONST __m128 g_VXNegIdentityR3 = { 0.0f, 0.0f, 0.0f, -1.0f };
+	VX_GLOBALCONST __m128 g_VXNegativeTwo = { -2.0f, -2.0f, -2.0f, -2.0f };
+	VX_GLOBALCONST __m128 g_VXNegativeOne = { -1.0f, -1.0f, -1.0f, -1.0f };
+	VX_GLOBALCONST __m128 g_VXNegativeOneHalf = { -0.5f, -0.5f, -0.5f, -0.5f };
+	VX_GLOBALCONST __m128 g_VXZero = { 0.0f, 0.0f, 0.0f, 0.0f };
+	VX_GLOBALCONST __m128 g_VXOneHalf = { 0.5f, 0.5f, 0.5f, 0.5f };
+	VX_GLOBALCONST __m128 g_VXOne = { 1.0f, 1.0f, 1.0f, 1.0f };
+	VX_GLOBALCONST __m128 g_VXTwo = { 2.0f, 2.0f, 2.0f, 2.0f };
+	VX_GLOBALCONST __m128 g_VXHalfPi = { VX_PIDIV2, VX_PIDIV2, VX_PIDIV2, VX_PIDIV2 };
+	VX_GLOBALCONST __m128 g_VXPi = { VX_PI, VX_PI, VX_PI, VX_PI };
+	VX_GLOBALCONST __m128 g_VXTwoPi = { VX_2PI, VX_2PI, VX_2PI, VX_2PI };
+	VX_GLOBALCONST __m128 g_VXReciprocalTwoPi = { VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI, VX_1DIV2PI };
+	VX_GLOBALCONST __m128 g_VXNegateX = { -1.0f, 1.0f, 1.0f, 1.0f };
+	VX_GLOBALCONST __m128 g_VXNegateY = { 1.0f, -1.0f, 1.0f, 1.0f };
+	VX_GLOBALCONST __m128 g_VXNegateZ = { 1.0f, 1.0f, -1.0f, 1.0f };
+	VX_GLOBALCONST __m128 g_VXNegateW = { 1.0f, 1.0f, 1.0f, -1.0f };
+	VX_GLOBALCONST __m128 g_VXEpsilon = { VX_EPSILON, VX_EPSILON, VX_EPSILON, VX_EPSILON };
+	VX_GLOBALCONST __m128 g_VXSinCoefficients0 = { -0.16666667f, +0.0083333310f, -0.00019840874f, +2.7525562e-06f };
+	VX_GLOBALCONST __m128 g_VXSinCoefficients1 = { -2.3889859e-08f, -0.16665852f /*Est1*/, +0.0083139502f /*Est2*/, -0.00018524670f /*Est3*/ };
+	VX_GLOBALCONST __m128 g_VXCosCoefficients0 = { -0.5f, +0.041666638f, -0.0013888378f, +2.4760495e-05f };
+	VX_GLOBALCONST __m128 g_VXCosCoefficients1 = { -2.6051615e-07f, -0.49992746f /*Est1*/, +0.041493919f /*Est2*/, -0.0012712436f /*Est3*/ };
+	VX_GLOBALCONST ivec4 g_VXInfinity = { 0x7F800000, 0x7F800000, 0x7F800000, 0x7F800000 };
+	VX_GLOBALCONST ivec4 g_VXQNaN = { 0x7FC00000, 0x7FC00000, 0x7FC00000, 0x7FC00000 };
+	VX_GLOBALCONST ivec4 g_VXQNaNTest = { 0x007FFFFF, 0x007FFFFF, 0x007FFFFF, 0x007FFFFF };
+	VX_GLOBALCONST ivec4 g_VXAbsMask = { 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF };
+	VX_GLOBALCONST ivec4 g_VXSelect1000 = { g_SELECT_1, g_SELECT_0, g_SELECT_0, g_SELECT_0 };
+	VX_GLOBALCONST ivec4 g_VXSelect1100 = { g_SELECT_1, g_SELECT_1, g_SELECT_0, g_SELECT_0 };
+	VX_GLOBALCONST ivec4 g_VXSelect1110 = { g_SELECT_1, g_SELECT_1, g_SELECT_1, g_SELECT_0 };
+	VX_GLOBALCONST ivec4 g_VXSelect1011 = { g_SELECT_1, g_SELECT_0, g_SELECT_1, g_SELECT_1 };
+	VX_GLOBALCONST ivec4 g_VXMaskX = { 0xFFFFFFFF, 0x00000000, 0x00000000, 0x00000000 };
+	VX_GLOBALCONST ivec4 g_VXMaskY = { 0x00000000, 0xFFFFFFFF, 0x00000000, 0x00000000 };
+	VX_GLOBALCONST ivec4 g_VXMaskZ = { 0x00000000, 0x00000000, 0xFFFFFFFF, 0x00000000 };
+	VX_GLOBALCONST ivec4 g_vMaskW = { 0x00000000, 0x00000000, 0x00000000, 0xFFFFFFFF };
+	VX_GLOBALCONST ivec4 g_VXNegativeZero = { 0x80000000, 0x80000000, 0x80000000, 0x80000000 };
+	VX_GLOBALCONST ivec4 g_VXNegate3 = { 0x80000000, 0x80000000, 0x80000000, 0x00000000 };
+	VX_GLOBALCONST ivec4 g_VXMask3 = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x00000000 };
 
 	namespace detail
 	{
@@ -1010,14 +977,14 @@ namespace vx
 		extern vx::int4 max(const vx::int4 &a, const vx::int4 &b);
 
 		extern vx::float4 abs(const vx::float4 &v);
-		extern __m128 VX_CALLCONV abs(cfloat4a v);
+		extern __m128 VX_CALLCONV abs(__m128 v);
 
 		extern F32 dot(const vx::float2 &v1, const vx::float2 &v2);
 		extern F32 dot(const vx::float3 &v1, const vx::float3 &v2);
 		// unaligned float4
-		extern F32 VX_CALLCONV dot(const F32 *v1, const F32 *v2);
+		extern F32 VX_CALLCONV dot(const vx::float4 &v1, const vx::float4 &v2);
 		// aligned float4
-		extern F32 VX_CALLCONV dot(cfloat4a v1, cfloat4a v2);
+		extern F32 VX_CALLCONV dot(__m128 v1, __m128 v2);
 
 		extern F32 distance2(const vx::float2 &a, const vx::float2 &b);
 		extern F32 distance2(const vx::float3 &a, const vx::float3 &b);
@@ -1027,7 +994,7 @@ namespace vx
 		extern F32 distance(const vx::float2 &a, const vx::float2 &b);
 		extern F32 distance(const vx::float3 &a, const vx::float3 &b);
 		extern F32 distance(const vx::float4 &a, const vx::float4 &b);
-		extern F32 VX_CALLCONV distance(cfloat4a a, cfloat4a b);
+		extern F32 VX_CALLCONV distance(__m128 a, __m128 b);
 
 		extern F32 length(const vx::float2 &v);
 		extern F32 length(const vx::float3 &v);
@@ -1058,7 +1025,7 @@ namespace vx
 		return result;
 	}
 
-	inline float4a VX_CALLCONV abs(cfloat4a v)
+	inline float4a VX_CALLCONV abs(float4a v)
 	{
 		return detail::abs(v);
 	}
@@ -1096,10 +1063,10 @@ namespace vx
 	template<>
 	F32 dot<F32>(const float4 &v1, const float4 &v2)
 	{
-		return detail::dot(&v1.x, &v2.x);
+		return detail::dot(v1, v2);
 	}
 
-	inline F32 VX_CALLCONV dot(cfloat4a v1, cfloat4a v2)
+	inline F32 VX_CALLCONV dot(float4a v1, float4a v2)
 	{
 		return detail::dot(v1, v2);
 	}
@@ -1143,7 +1110,7 @@ namespace vx
 		return detail::distance2(v1, v2);
 	}
 
-	inline F32 VX_CALLCONV distance2(cfloat4a v1, cfloat4a v2)
+	inline F32 VX_CALLCONV distance2(float4a v1, float4a v2)
 	{
 		return detail::distance2(v1.v, v2.v);
 	}
@@ -1187,7 +1154,7 @@ namespace vx
 		return detail::distance(v1, v2);
 	}
 
-	inline F32 VX_CALLCONV distance(cfloat4a v1, cfloat4a v2)
+	inline F32 VX_CALLCONV distance(float4a v1, float4a v2)
 	{
 		return detail::distance(v1, v2);
 	}
@@ -1228,7 +1195,7 @@ namespace vx
 		return detail::length(v);
 	}
 
-	inline F32 length(cfloat4a v)
+	inline F32 length(float4a v)
 	{
 		return distance(v.v, v.v);
 	}
@@ -1257,19 +1224,6 @@ namespace vx
 			result.y /= l;
 			result.z /= l;
 		}
-
-		return result;
-	}
-
-	inline vx::float4a VX_CALLCONV normalize(cfloat4a V);
-
-	inline float4 normalize(const float4 &v1)
-	{
-		float4a tmp = v1;
-		tmp = normalize(tmp);
-
-		float4 result;
-		storeFloat(&result, tmp);
 
 		return result;
 	}
@@ -1376,12 +1330,12 @@ namespace vx
 		return  vx::float3(degAngle.x * VX_DEGTORAD, degAngle.y * VX_DEGTORAD, degAngle.z * VX_DEGTORAD);
 	}
 
-	inline __m128 degToRad(cfloat4a deg)
+	inline __m128 degToRad(__m128 deg)
 	{
 		return _mm_mul_ps(deg, g_VXDegToRad);
 	}
 
-	inline __m128 radToDeg(cfloat4a rad)
+	inline __m128 radToDeg(__m128 rad)
 	{
 		return _mm_mul_ps(rad, g_VXRadToDeg);
 	}
@@ -1392,9 +1346,9 @@ namespace vx
 		// Slow path fallback for permutes that do not map to a single SSE shuffle opcode.
 		template<U32 Shuffle, bool WhichX, bool WhichY, bool WhichZ, bool WhichW> struct PermuteHelper
 		{
-			static __m128     VX_CALLCONV     Permute(cfloat4a v1, cfloat4a v2)
+			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2)
 			{
-				static const vuint4a selectMask =
+				static const uvec4 selectMask =
 				{
 					WhichX ? 0xFFFFFFFF : 0,
 					WhichY ? 0xFFFFFFFF : 0,
@@ -1416,33 +1370,33 @@ namespace vx
 		template<U32 Shuffle> 
 		struct PermuteHelper<Shuffle, false, false, false, false>
 		{
-			static __m128     VX_CALLCONV     Permute(cfloat4a v1, cfloat4a v2) { (v2); return VX_PERMUTE_PS(v1, Shuffle); }
+			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2) { (v2); return VX_PERMUTE_PS(v1, Shuffle); }
 		};
 
 		// Fast path for permutes that only read from the second vector.
 		template<U32 Shuffle> 
 		struct PermuteHelper<Shuffle, true, true, true, true>
 		{
-			static __m128     VX_CALLCONV     Permute(cfloat4a v1, cfloat4a v2){ (v1); return VX_PERMUTE_PS(v2, Shuffle); }
+			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2){ (v1); return VX_PERMUTE_PS(v2, Shuffle); }
 		};
 
 		// Fast path for permutes that read XY from the first vector, ZW from the second.
 		template<U32 Shuffle> 
 		struct PermuteHelper<Shuffle, false, false, true, true>
 		{
-			static __m128     VX_CALLCONV     Permute(cfloat4a v1, cfloat4a v2) { return _mm_shuffle_ps(v1, v2, Shuffle); }
+			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2) { return _mm_shuffle_ps(v1, v2, Shuffle); }
 		};
 
 		// Fast path for permutes that read XY from the second vector, ZW from the first.
 		template<U32 Shuffle> struct PermuteHelper<Shuffle, true, true, false, false>
 		{
-			static __m128     VX_CALLCONV     Permute(cfloat4a v1, cfloat4a v2) { return _mm_shuffle_ps(v2, v1, Shuffle); }
+			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2) { return _mm_shuffle_ps(v2, v1, Shuffle); }
 		};
 	};
 
 	// General permute template
 	template<U32 PermuteX, U32 PermuteY, U32 PermuteZ, U32 PermuteW>
-	inline __m128 VX_CALLCONV VectorPermute(cfloat4a V1, cfloat4a V2)
+	inline __m128 VX_CALLCONV VectorPermute(__m128 V1, __m128 V2)
 	{
 		static_assert(PermuteX <= 7, "PermuteX template parameter out of range");
 		static_assert(PermuteY <= 7, "PermuteY template parameter out of range");
@@ -1460,30 +1414,30 @@ namespace vx
 	}
 
 	// Special-case permute templates
-	template<> inline __m128      VX_CALLCONV     VectorPermute<0, 1, 2, 3>(cfloat4a V1, cfloat4a V2) { (V2); return V1; }
-	template<> inline __m128      VX_CALLCONV     VectorPermute<4, 5, 6, 7>(cfloat4a V1, cfloat4a V2) { (V1); return V2; }
+	template<> inline __m128      VX_CALLCONV     VectorPermute<0, 1, 2, 3>(__m128 V1, __m128 V2) { (V2); return V1; }
+	template<> inline __m128      VX_CALLCONV     VectorPermute<4, 5, 6, 7>(__m128 V1, __m128 V2) { (V1); return V2; }
 
-	inline bool VX_CALLCONV Vector3IsInfinite(cfloat4a V);
-	inline bool VX_CALLCONV Vector3Equal(cfloat4a V1, cfloat4a V2);
+	inline bool VX_CALLCONV Vector3IsInfinite(__m128 V);
+	inline bool VX_CALLCONV Vector3Equal(__m128 V1, __m128 V2);
 
-	inline __m128 VX_CALLCONV VectorSelect(cfloat4a V1, cfloat4a V2, cfloat4a Control);
-	inline __m128 VX_CALLCONV VectorNegate(cfloat4a V);
+	inline __m128 VX_CALLCONV VectorSelect(__m128 V1, __m128 V2, __m128 Control);
+	inline __m128 VX_CALLCONV VectorNegate(__m128 V);
 
-	inline __m128 VX_CALLCONV Vector3Cross(cfloat4a v1, cfloat4a v2);
+	inline __m128 VX_CALLCONV Vector3Cross(__m128 v1, __m128 v2);
 
-	inline __m128 VX_CALLCONV Vector3Dot(cfloat4a V1, cfloat4a V2);
-	inline __m128 VX_CALLCONV Vector4Dot(cfloat4a V1, cfloat4a V2);
+	inline __m128 VX_CALLCONV Vector3Dot(__m128 V1, __m128 V2);
+	inline __m128 VX_CALLCONV Vector4Dot(__m128 V1, __m128 V2);
 
-	inline __m128 VX_CALLCONV Vector3Normalize(cfloat4a V);
+	inline __m128 VX_CALLCONV Vector3Normalize(__m128 V);
 
-	inline __m128 VX_CALLCONV Vector3Rotate(cfloat4a V, cfloat4a RotationQuaternion);
+	inline __m128 VX_CALLCONV Vector3Rotate(__m128 V, __m128 RotationQuaternion);
 
-	inline __m128 VX_CALLCONV QuaternionMultiply(cfloat4a Q1, cfloat4a Q2);
-	inline __m128 VX_CALLCONV QuaternionConjugate(cfloat4a Q);
-	inline __m128 VX_CALLCONV QuaternionRotationRollPitchYawFromVector(cfloat4a vector);
+	inline __m128 VX_CALLCONV QuaternionMultiply(__m128 Q1, __m128 Q2);
+	inline __m128 VX_CALLCONV QuaternionConjugate(__m128 Q);
+	inline __m128 VX_CALLCONV QuaternionRotationRollPitchYawFromVector(__m128 vector);
 
-	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, cfloat4a V);
-	inline __m128 VX_CALLCONV VectorModAngles(cfloat4a Angles);
+	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, __m128 V);
+	inline __m128 VX_CALLCONV VectorModAngles(__m128 Angles);
 
 	//////////////////////// inline functions
 }
@@ -1520,7 +1474,7 @@ inline vx::float4 VX_CALLCONV operator + (const vx::float4 &lhs, const vx::float
 	return vx::detail::addFloat4(lhs, rhs);
 }
 
-inline vx::float4a VX_CALLCONV operator + (vx::cfloat4a lhs, vx::cfloat4a rhs)
+inline vx::float4a VX_CALLCONV operator + (vx::float4a lhs, vx::float4a rhs)
 {
 	return _mm_add_ps(lhs.v, rhs.v);
 }
@@ -1541,7 +1495,7 @@ inline vx::float4 VX_CALLCONV operator - (const vx::float4 &lhs, const vx::float
 	return vx::detail::subFloat4(lhs, rhs);
 }
 
-inline vx::float4a VX_CALLCONV operator - (vx::cfloat4a lhs, vx::cfloat4a rhs)
+inline vx::float4a VX_CALLCONV operator - (vx::float4a lhs, vx::float4a rhs)
 {
 	return _mm_sub_ps(lhs.v, rhs.v);
 }
@@ -1562,7 +1516,7 @@ inline vx::float4 VX_CALLCONV operator*(const vx::float4 &lhs, const vx::float4 
 	return vx::detail::mulFloat4(lhs, rhs);
 }
 
-inline vx::float4a VX_CALLCONV operator*(vx::cfloat4a lhs, vx::cfloat4a rhs)
+inline vx::float4a VX_CALLCONV operator*(vx::float4a lhs, vx::float4a rhs)
 {
 	return _mm_mul_ps(lhs.v, rhs.v);
 }
@@ -1583,7 +1537,7 @@ inline vx::float4 VX_CALLCONV operator / (const vx::float4 &lhs, const vx::float
 	return vx::detail::divFloat4(lhs, rhs);
 }
 
-inline vx::float4a VX_CALLCONV operator / (vx::cfloat4a lhs, vx::cfloat4a rhs)
+inline vx::float4a VX_CALLCONV operator / (vx::float4a lhs, vx::float4a rhs)
 {
 	return _mm_div_ps(lhs.v, rhs.v);
 }

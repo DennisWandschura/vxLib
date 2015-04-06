@@ -41,17 +41,8 @@ namespace vx
 		std::swap(m_indexCount, rhs.m_indexCount);
 	}
 
-	/*void Mesh::allocateMemory()
-	{
-		auto sizeVertexFloat2 = sizeof(vx::float2) * m_vertexCount;
-		auto sizeVertexFloat3 = sizeof(vx::float3) * m_vertexCount;
-		m_pMemory = (U8*)::operator new(sizeVertexFloat3 * 4 + sizeVertexFloat2 + sizeof(U32) * m_indexCount);
-	}*/
-
 	void Mesh::setPointers(U8* p)
 	{
-		//auto memPtr = m_pMemory;
-
 		auto sizeF3 = sizeof(MeshVertex) * m_vertexCount;
 		m_pVertices = (MeshVertex*)p;
 
@@ -59,27 +50,6 @@ namespace vx
 
 		m_pIndices = (U32*)p;
 	}
-
-	/*bool Mesh::load(std::istream &inStream)
-	{
-		assert(m_pMemory == nullptr);
-		inStream.flags(std::istream::binary);
-
-		if (!read(inStream, m_vertexCount))
-			return false;
-		if (!read(inStream, m_indexCount))
-			return false;
-
-		allocateMemory();
-
-		auto totalSize = (sizeof(vx::float3) * 4 + sizeof(vx::float2)) * m_vertexCount + sizeof(U32) * m_indexCount;
-		if (!read(inStream, m_pMemory, totalSize))
-			return false;
-
-		setPointers();
-
-		return true;
-	}*/
 
 	void Mesh::load(const U8 *src, U8* pMemory)
 	{
@@ -89,9 +59,6 @@ namespace vx
 		m_indexCount = *reinterpret_cast<const U32*>(src);
 		src += sizeof(U32);
 
-		// allocate space
-		//allocateMemory();
-	//	m_pMemory = pMemory;
 		auto totalSize = sizeof(MeshVertex) * m_vertexCount + sizeof(U32) * m_indexCount;
 		memcpy(pMemory, src, totalSize);
 
@@ -123,7 +90,6 @@ namespace vx
 		if (!write(outStream, m_indexCount))
 			return false;
 
-		//auto totalSize = sizeof(MeshVertex) * m_vertexCount + sizeof(U32) * m_indexCount;
 		if (!write(outStream, m_pVertices, m_vertexCount))
 			return false;
 		if (!write(outStream, m_pIndices, m_indexCount))
@@ -144,14 +110,4 @@ namespace vx
 
 		return save(outfile);
 	}
-
-	/*bool Mesh::loadFromFile(const char *filename)
-	{
-		std::ifstream infile(filename, std::ifstream::in | std::ifstream::binary);
-
-		if (!infile.is_open())
-			return false;
-
-		return load(infile);
-	}*/
 }

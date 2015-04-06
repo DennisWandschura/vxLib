@@ -2,27 +2,27 @@ include asm_include.inc
 
 .code
 
-; __m128 VX_CALLCONV loadFloat2a(const detail::vec2a<F32>* v)
+; __m128 VX_CALLCONV loadFloat(const detail::vec2a<F32> &v)
 ; ret : xmm0
 ; v* : rcx
-?loadFloat2a@vx@@YQ?AT__m128@@PEBU?$vec2a@M@detail@1@@Z proc
+?loadFloat@vx@@YQ?AT__m128@@PEBU?$vec2a@M@detail@1@@Z proc
 
 	VMOVQ xmm0, qword ptr[rcx]
 
 	ret
 
-?loadFloat2a@vx@@YQ?AT__m128@@PEBU?$vec2a@M@detail@1@@Z endp
+?loadFloat@vx@@YQ?AT__m128@@PEBU?$vec2a@M@detail@1@@Z endp
 
-; void VX_CALLCONV storeFloat2a(detail::vec2a<F32>* dst, const __m128 V)
+; void VX_CALLCONV storeFloat(detail::vec2a<F32>* dst, const __m128 V)
 ; dst* : rcx
 ; V : xmm0
-?storeFloat2a@vx@@YQXPEAU?$vec2a@M@detail@1@T__m128@@@Z proc
+?storeFloat@vx@@YQXPEAU?$vec2a@M@detail@1@T__m128@@@Z proc
 
 	VMOVQ qword ptr[rcx], xmm0
 
 	ret
 
-?storeFloat2a@vx@@YQXPEAU?$vec2a@M@detail@1@T__m128@@@Z endp
+?storeFloat@vx@@YQXPEAU?$vec2a@M@detail@1@T__m128@@@Z endp
 
 ;  __m128i VX_CALLCONV loadInt(const I32* src);
 ; dest : xmm0
@@ -341,60 +341,6 @@ include asm_include.inc
 
 	ret
 ?abs@detail@vx@@YQ?AT__m128@@T3@@Z endp
-
-; F32 dot(const vx::float2 &v1, const vx::float2 &v2);
-; ret value = xmm0, v1 = rcx, v2 = rdx
-?dot@detail@vx@@YAMAEBU?$vec2@M@12@0@Z proc
-	movss xmm1, dword ptr[rcx]
-	movss xmm2, dword ptr[rdx]
-
-	mulss xmm1, xmm2
-
-	movss xmm0, dword ptr[rcx + 4]
-	movss xmm3, dword ptr[rdx + 4]
-
-	VFMADD213SS xmm0, xmm3, xmm1
-
-	ret
-?dot@detail@vx@@YAMAEBU?$vec2@M@12@0@Z endp
-
-; F32 dot(const vx::float3 &v1, const vx::float3 &v2);
-; ret value = xmm0, v1 = rcx, v2 = rdx
-?dot@detail@vx@@YAMAEBU?$vec3@M@12@0@Z proc
-	movss xmm1, dword ptr[rcx]
-	movss xmm2, dword ptr[rdx]
-
-	mulss xmm1, xmm2
-
-	movss xmm3, dword ptr[rcx + 4]
-	movss xmm4, dword ptr[rdx + 4]
-
-	VFMADD213SS xmm3, xmm4, xmm1
-
-	movss xmm0, dword ptr[rcx + 8]
-	movss xmm1, dword ptr[rdx + 8]
-
-	VFMADD213SS xmm0, xmm1, xmm3
-
-	ret
-?dot@detail@vx@@YAMAEBU?$vec3@M@12@0@Z endp
-
-; F32 VX_CALLCONV dot(
-; const F32 *v1 = rdx,
-; const F32 *v2 = r8);
-?dot@detail@vx@@YQMPEBM0@Z proc
-	movups xmm0, xmmword ptr[rcx]
-	movups xmm1, xmmword ptr[rdx]
-
-	dpps xmm0, xmm1, 255
-	ret
-?dot@detail@vx@@YQMPEBM0@Z endp
-
-; F32 VX_CALLCONV dot(const __m128 v1, const __m128 v2);
-?dot@detail@vx@@YQMT__m128@@0@Z proc
-	dpps xmm0, xmm1, 255
-	ret
-?dot@detail@vx@@YQMT__m128@@0@Z endp
 
 ?distance2@detail@vx@@YAMAEBU?$vec2@M@12@0@Z proc
 	movss xmm2, dword ptr[rcx]

@@ -49,7 +49,7 @@ namespace
 
 		size = (programBuffer->get() + *programSize) - includeEnd;
 		memcpy(newProgram.get() + currentSize, includeEnd, size);
-		currentSize += includeSize;
+		currentSize += size;
 
 		*programSize = currentSize;
 

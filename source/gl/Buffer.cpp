@@ -88,6 +88,36 @@ namespace vx
 			}
 		}
 
+		Buffer BufferDescription::createImmutable(BufferType type, ptrdiff_t size, BufferStorageFlags::Flags flags, const void* data)
+		{
+			BufferDescription desc;
+			desc.bufferType = type;
+			desc.size = size;
+			desc.flags = flags;
+			desc.pData = data;
+			desc.immutable = 1;
+
+			Buffer b;
+			b.create(desc);
+
+			return b;
+		}
+
+		Buffer BufferDescription::createMutable(BufferType type, ptrdiff_t size, BufferDataUsage usage, const void* data)
+		{
+			BufferDescription desc;
+			desc.bufferType = type;
+			desc.size = size;
+			desc.usage = usage;
+			desc.pData = data;
+			desc.immutable = 0;
+
+			Buffer b;
+			b.create(desc);
+
+			return b;
+		}
+
 		Buffer::Buffer()
 			:Base(),
 			m_target(0)

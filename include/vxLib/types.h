@@ -65,6 +65,7 @@ extern "C" {
 #define VX_CALLCONV __fastcall
 #else
 #define VX_CALLCONV __vectorcall
+#define _VX_CALLCONV_TYPE 1
 #endif
 
 #define VX_UNREFERENCED_PARAMETER(P) (P)

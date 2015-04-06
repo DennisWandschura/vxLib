@@ -23,7 +23,7 @@ namespace vx
 
 	void Camera::setPosition(const vx::float3 &position)
 	{
-		m_position = vx::loadFloat(&position);
+		m_position = vx::loadFloat(position);
 	}
 
 	void VX_CALLCONV Camera::setPosition(const __m128 position)

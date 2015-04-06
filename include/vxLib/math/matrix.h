@@ -9,7 +9,7 @@ Matrix
 */
 namespace vx
 {
-	struct VX_ALIGN(64) mat4x4
+	struct VX_ALIGN(16) mat4x4
 	{
 		__m128 c[4];
 
@@ -41,6 +41,10 @@ namespace vx
 			c[1] = rhs.c[1];
 			c[2] = rhs.c[2];
 			c[3] = rhs.c[3];
+		}
+
+		~mat4x4()
+		{
 		}
 
 		operator float*()

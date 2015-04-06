@@ -7,6 +7,8 @@ namespace vx
 {
 	namespace gl
 	{
+		class Buffer;
+		 
 		enum class BufferType : U8
 		{
 			Array_Buffer,
@@ -99,29 +101,8 @@ namespace vx
 
 			BufferDescription() :flags(BufferStorageFlags::None) {}
 
-			static BufferDescription createImmutable(BufferType type, ptrdiff_t size, BufferStorageFlags::Flags flags, const void* data)
-			{
-				BufferDescription desc;
-				desc.bufferType = type;
-				desc.size = size;
-				desc.flags = flags;
-				desc.pData = data;
-				desc.immutable = 1;
-
-				return desc;
-			}
-
-			static BufferDescription createMutable(BufferType type, ptrdiff_t size, BufferDataUsage usage, const void* data)
-			{
-				BufferDescription desc;
-				desc.bufferType = type;
-				desc.size = size;
-				desc.usage = usage;
-				desc.pData = data;
-				desc.immutable = 0;
-
-				return desc;
-			}
+			static Buffer createImmutable(BufferType type, ptrdiff_t size, BufferStorageFlags::Flags flags, const void* data);
+			static Buffer createMutable(BufferType type, ptrdiff_t size, BufferDataUsage usage, const void* data);
 		};
 
 		namespace detail
