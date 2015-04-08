@@ -10,7 +10,7 @@ namespace vx
 {
 	namespace gl
 	{
-		enum TextureType : U8
+		enum class TextureType : U8
 		{
 			Texture_1D,
 			Texture_2D,
@@ -23,7 +23,7 @@ namespace vx
 			Texture_2D_MS_Array
 		};
 
-		enum TextureFormat : U8
+		enum class TextureFormat : U8
 		{
 			R8,
 			R8S,

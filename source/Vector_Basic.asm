@@ -5,13 +5,13 @@ include asm_include.inc
 ; __m128 VX_CALLCONV loadFloat(const detail::vec2a<F32> &v)
 ; ret : xmm0
 ; v* : rcx
-?loadFloat@vx@@YQ?AT__m128@@PEBU?$vec2a@M@detail@1@@Z proc
+?loadFloat@vx@@YQ?AT__m128@@AEBU?$vec2a@M@detail@1@@Z proc
 
 	VMOVQ xmm0, qword ptr[rcx]
 
 	ret
 
-?loadFloat@vx@@YQ?AT__m128@@PEBU?$vec2a@M@detail@1@@Z endp
+?loadFloat@vx@@YQ?AT__m128@@AEBU?$vec2a@M@detail@1@@Z endp
 
 ; void VX_CALLCONV storeFloat(detail::vec2a<F32>* dst, const __m128 V)
 ; dst* : rcx
@@ -67,6 +67,28 @@ include asm_include.inc
 	ret
 
 ?storeInt@vx@@YQXPEAIT__m128i@@@Z endp
+
+; __m128i VX_CALLCONV loadInt(const vx::detail::vec2a<I32> &src);
+; dest : XMM0
+; src : qwort ptr[rcx]
+?loadInt@vx@@YQ?AT__m128i@@AEBU?$vec2a@H@detail@1@@Z proc
+
+	VMOVQ	xmm0,	qword ptr[rcx]
+
+	ret
+
+?loadInt@vx@@YQ?AT__m128i@@AEBU?$vec2a@H@detail@1@@Z endp
+
+; __m128i VX_CALLCONV loadInt(const vx::detail::vec2a<U32> &src);
+; dest : XMM0
+; src : qwort ptr[rcx]
+?loadInt@vx@@YQ?AT__m128i@@AEBU?$vec2a@I@detail@1@@Z proc
+
+	VMOVQ	xmm0,	qword ptr[rcx]
+
+	ret
+
+?loadInt@vx@@YQ?AT__m128i@@AEBU?$vec2a@I@detail@1@@Z endp
 
 ; int2 AddInt2(const int2 &a, const int2 &b);
 ?addInt2@detail@vx@@YA?AU?$vec2@H@12@AEBU312@0@Z proc

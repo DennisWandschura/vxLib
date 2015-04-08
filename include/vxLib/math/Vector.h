@@ -42,7 +42,7 @@ namespace vx
 			};
 
 			vec2() :x(), y(){}
-			vec2(value_type v) :x(v), y(v){}
+			explicit vec2(value_type v) :x(v), y(v){}
 			vec2(value_type vx, value_type vy) : x(vx), y(vy){}
 
 			template<typename U>
@@ -204,7 +204,7 @@ namespace vx
 			};
 
 			vec2a() :x(), y(){}
-			vec2a(value_type v) :x(v), y(v){}
+			explicit vec2a(value_type v) :x(v), y(v){}
 			vec2a(value_type vx, value_type vy) : x(vx), y(vy){}
 			vec2a(const vec2<T> &v) :x(v.x), y(v.y){}
 
@@ -367,7 +367,7 @@ namespace vx
 			};
 
 			vec3() :x(), y(), z(){}
-			vec3(value_type v) :x(v), y(v), z(v){}
+			explicit vec3(value_type v) :x(v), y(v), z(v){}
 			vec3(value_type vx, value_type vy, value_type vz) : x(vx), y(vy), z(vz){}
 			vec3(const vec2<T> &v, value_type vz) : x(v.x), y(v.y), z(vz){}
 			vec3(const vec2a<T> &v, value_type vz) : x(v.x), y(v.y), z(vz){}
@@ -544,7 +544,7 @@ namespace vx
 			};
 
 			vec4() :x(), y(), z(), w(){}
-			vec4(value_type v) :x(v), y(v), z(v), w(){}
+			explicit vec4(value_type v) :x(v), y(v), z(v), w(){}
 			vec4(value_type vx, value_type vy, value_type vz, value_type vw) : x(vx), y(vy), z(vz), w(vw){}
 			vec4(const vec2<T> &v, value_type vz, value_type vw) : x(v.x), y(v.y), z(vz), w(vw){}
 			vec4(const vec2<T> &v1, const vec2<T> &v2) : x(v1.x), y(v1.y), z(v2.x), w(v2.y){}
@@ -806,12 +806,10 @@ namespace vx
 	////////////////////////
 
 	extern __m128i VX_CALLCONV loadInt(const I32* src);
-	// stores first 32 bit int in dest
-	extern void VX_CALLCONV storeInt(I32* dest, __m128i V);
-
 	extern __m128i VX_CALLCONV loadInt(const U32* src);
-	// stores first 32 bit uint in dest
-	extern void VX_CALLCONV storeInt(U32* dest, __m128i V);
+
+	extern __m128i VX_CALLCONV loadInt(const vx::detail::vec2a<I32> &src);
+	extern __m128i VX_CALLCONV loadInt(const vx::detail::vec2a<U32> &src);
 
 	inline __m128i VX_CALLCONV loadInt(const detail::vec3<I32> *pSource)
 	{
@@ -820,20 +818,6 @@ namespace vx
 		__m128i z = loadInt(&pSource->z);
 		__m128i xy = _mm_unpacklo_epi32(x, z);
 		return _mm_unpacklo_epi32(xy, y);
-	}
-
-	inline void VX_CALLCONV storeInt(detail::vec3<I32>* pDestination, const __m128i &V)
-	{
-		auto T1 = _mm_shuffle_epi32(V, _MM_SHUFFLE(1, 1, 1, 1));
-		auto T2 = _mm_shuffle_epi32(V, _MM_SHUFFLE(2, 2, 2, 2));
-		storeInt(&pDestination->x, V);
-		storeInt(&pDestination->y, T1);
-		storeInt(&pDestination->z, T2);
-	}
-
-	inline void VX_CALLCONV storeInt(detail::vec4<I32>* pDestination, const __m128i &V)
-	{
-		_mm_storeu_si128((__m128i*)pDestination, V);
 	}
 
 	inline __m128i VX_CALLCONV loadInt(const detail::vec3<U32> *pSource)
@@ -845,6 +829,18 @@ namespace vx
 		return _mm_unpacklo_epi32(xy, y);
 	}
 
+	extern void VX_CALLCONV storeInt(I32* dest, __m128i V);
+	extern void VX_CALLCONV storeInt(U32* dest, __m128i V);
+
+	inline void VX_CALLCONV storeInt(detail::vec3<I32>* pDestination, const __m128i &V)
+	{
+		auto T1 = _mm_shuffle_epi32(V, _MM_SHUFFLE(1, 1, 1, 1));
+		auto T2 = _mm_shuffle_epi32(V, _MM_SHUFFLE(2, 2, 2, 2));
+		storeInt(&pDestination->x, V);
+		storeInt(&pDestination->y, T1);
+		storeInt(&pDestination->z, T2);
+	}
+
 	inline void VX_CALLCONV storeInt(detail::vec3<U32>* pDestination, const __m128i &V)
 	{
 		auto T1 = _mm_shuffle_epi32(V, _MM_SHUFFLE(1, 1, 1, 1));
@@ -852,6 +848,11 @@ namespace vx
 		storeInt(&pDestination->x, V);
 		storeInt(&pDestination->y, T1);
 		storeInt(&pDestination->z, T2);
+	}
+
+	inline void VX_CALLCONV storeInt(detail::vec4<I32>* pDestination, const __m128i &V)
+	{
+		_mm_storeu_si128((__m128i*)pDestination, V);
 	}
 
 	inline void VX_CALLCONV storeInt(detail::vec4<U32>* pDestination, const __m128i &V)
@@ -892,11 +893,13 @@ namespace vx
 	using ushort4 = detail::vec4 < U16 > ;
 
 	using int2 = detail::vec2 < I32 > ;
+	using int2a = detail::vec2a < I32 >;
 	using int3 = detail::vec3 < I32 > ;
 	using int4 = detail::vec4 < I32 > ;
 	using int4a = detail::vec4a < I32 >;
 
 	using uint2 = detail::vec2 < U32 > ;
+	using uint2a = detail::vec2a < U32 >;
 	using uint3 = detail::vec3 < U32 > ;
 	using uint4 = detail::vec4 < U32 > ;
 	using uint4a = detail::vec4a < U32 >;

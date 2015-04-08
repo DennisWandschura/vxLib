@@ -5,14 +5,10 @@
 #include <vxLib\math\Vector.h>
 #include <vxLib\Container\vector.h>
 #include <Windows.h>
+#include <vxLib/Keyboard.h>
 
 namespace vx
 {
-	struct Keyboard
-	{
-		U8 m_keys[256];
-	};
-
 	struct Mouse
 	{
 		vx::int2 m_relative;

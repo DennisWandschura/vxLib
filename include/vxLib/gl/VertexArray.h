@@ -1,14 +1,14 @@
 #pragma once
 
-#include <vxLib/gl/SharedObject.h>
+#include <vxLib/gl/Base.h>
 
 namespace vx
 {
 	namespace gl
 	{
-		class VertexArray : public SharedObject < VertexArray >
+		class VertexArray : public Base < VertexArray >
 		{
-			using MyBase = SharedObject < VertexArray >;
+			using MyBase = Base < VertexArray >;
 
 		public:
 			VertexArray();

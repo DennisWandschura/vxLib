@@ -24,21 +24,18 @@ namespace vx
 
 		void VertexArray::create()
 		{
-			auto id = getId();
-			if (id == 0)
+			if (m_id == 0)
 			{
-				glCreateVertexArrays(1, &id);
-				MyBase::create(id);
+				glCreateVertexArrays(1, &m_id);
 			}
 		}
 
 		void VertexArray::destroy()
 		{
-			auto id = MyBase::destroy();
-			if (id != 0)
+			if (m_id != 0)
 			{
 				glBindVertexArray(0);
-				glDeleteVertexArrays(1, &id);
+				glDeleteVertexArrays(1, &m_id);
 			}
 		}
 

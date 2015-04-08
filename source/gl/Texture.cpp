@@ -38,352 +38,352 @@ namespace vx
 
 			switch (textureFormat)
 			{
-			case gl::R8:
+			case TextureFormat::R8:
 			{
 				format = GL_RED;
 				internalFormat = GL_R8;
 			}break;
-			case gl::R8S:
+			case TextureFormat::R8S:
 			{
 				format = GL_RED;
 				internalFormat = GL_R8_SNORM;
 			}break;
-			case gl::R16:
+			case TextureFormat::R16:
 			{
 				format = GL_RED;
 				internalFormat = GL_R16;
 			}break;
-			case gl::R16S:
+			case TextureFormat::R16S:
 			{
 				internalFormat = GL_R16_SNORM;
 				format = GL_RED;
 			}break;
-			case gl::RG8:
+			case TextureFormat::RG8:
 			{
 				internalFormat = GL_RGB8;
 				format = GL_RG;
 			}break;
-			case gl::RG8S:
+			case TextureFormat::RG8S:
 			{
 				internalFormat = GL_RG8_SNORM;
 				format = GL_RG;
 			}break;
-			case gl::RG16:
+			case TextureFormat::RG16:
 			{
 				internalFormat = GL_RGB16;
 				format = GL_RG;
 			}break;
-			case gl::RG16S:
+			case TextureFormat::RG16S:
 			{
 				internalFormat = GL_RGB16_SNORM;
 				format = GL_RG;
 			}break;
-			case gl::RGB4:
+			case TextureFormat::RGB4:
 			{
 				internalFormat = GL_RGB4;
 				format = GL_RGB;
 			}break;
-			case gl::RGB5:
+			case TextureFormat::RGB5:
 			{
 				internalFormat = GL_RGB5;
 				format = GL_RGB;
 			}break;
-			case gl::RGB8:
+			case TextureFormat::RGB8:
 			{
 				internalFormat = GL_RGB8;
 				format = GL_RGB;
 			}break;
-			case gl::RGB8S:
+			case TextureFormat::RGB8S:
 			{
 				internalFormat = GL_RGB8_SNORM;
 				format = GL_RGB;
 			}break;
-			case gl::RGB10:
+			case TextureFormat::RGB10:
 			{
 				internalFormat = GL_RGB10;
 				format = GL_RGB;
 			}break;
-			case gl::RGB12:
+			case TextureFormat::RGB12:
 			{
 				internalFormat = GL_RGB12;
 				format = GL_RGB;
 			}break;
-			case gl::RGB16S:
+			case TextureFormat::RGB16S:
 			{
 				internalFormat = GL_RGB16_SNORM;
 				format = GL_RGB;
 			}break;
-			case gl::RGBA2:
+			case TextureFormat::RGBA2:
 			{
 				internalFormat = GL_RGBA2;
 				format = GL_RGBA;
 			}break;
-			case gl::RGBA4:
+			case TextureFormat::RGBA4:
 			{
 				internalFormat = GL_RGBA4;
 				format = GL_RGBA;
 			}break;
-			case gl::RGB5A1:
+			case TextureFormat::RGB5A1:
 			{
 				internalFormat = GL_RGB5_A1;
 				format = GL_RGBA;
 			}break;
-			case gl::RGBA8:
+			case TextureFormat::RGBA8:
 			{
 				internalFormat = GL_RGBA8;
 				format = GL_RGBA;
 			}break;
-			case gl::RGBA8S:
+			case TextureFormat::RGBA8S:
 			{
 				internalFormat = GL_RGBA8_SNORM;
 				format = GL_RGBA;
 			}break;
-			case gl::RGB10A2:
+			case TextureFormat::RGB10A2:
 			{
 				format = GL_RGB;
 				internalFormat = GL_RGB10_A2;
 			}break;
-			case gl::RGB10A2UI:
+			case TextureFormat::RGB10A2UI:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_RGB10_A2UI;
 			}break;
-			case gl::RGBA12:
+			case TextureFormat::RGBA12:
 			{
 				internalFormat = GL_RGBA12;
 				format = GL_RGBA;
 			}break;
-			case gl::RGBA16:
+			case TextureFormat::RGBA16:
 			{
 				internalFormat = GL_RGBA16;
 				format = GL_RGBA;
 			}break;
-			case gl::SRGB8:
+			case TextureFormat::SRGB8:
 			{
 				format = GL_RGB;
 				internalFormat = GL_SRGB8;
 			}break;
-			case gl::SRGBA8:
+			case TextureFormat::SRGBA8:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_SRGB8_ALPHA8;
 			}break;
-			case gl::RGB_DXT1:
+			case TextureFormat::RGB_DXT1:
 			{
 				format = GL_RGB;
 				internalFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
 			}break;
-			case gl::RGBA_DXT1:
+			case TextureFormat::RGBA_DXT1:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
 			}break;
-			case gl::RGBA_DXT3:
+			case TextureFormat::RGBA_DXT3:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
 			}break;
-			case gl::RGBA_DXT5:
+			case TextureFormat::RGBA_DXT5:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 			}break;
-			case gl::SRGB_DXT1:
+			case TextureFormat::SRGB_DXT1:
 			{
 				format = GL_RGB;
 				internalFormat = GL_COMPRESSED_SRGB_S3TC_DXT1_EXT;
 			}break;
-			case gl::SRGBA_DXT1:
+			case TextureFormat::SRGBA_DXT1:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
 			}break;
-			case gl::SRGBA_DXT3:
+			case TextureFormat::SRGBA_DXT3:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
 			}break;
-			case gl::SRGBA_DXT5:
+			case TextureFormat::SRGBA_DXT5:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
 			}break;
-			case gl::R16F:
+			case TextureFormat::R16F:
 			{
 				format = GL_RED;
 				internalFormat = GL_R16F;
 			}break;
-			case gl::RG16F:
+			case TextureFormat::RG16F:
 			{
 				format = GL_RG;
 				internalFormat = GL_RG16F;
 			}break;
-			case gl::RGB16F:
+			case TextureFormat::RGB16F:
 			{
 				format = GL_RGB;
 				internalFormat = GL_RGB16F;
 			}break;
-			case gl::RGBA16F:
+			case TextureFormat::RGBA16F:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_RGBA16F;
 			}break;
-			case gl::R32F:
+			case TextureFormat::R32F:
 			{
 				format = GL_RED;
 				internalFormat = GL_R32F;
 			}break;
-			case gl::RG32F:
+			case TextureFormat::RG32F:
 			{
 				format = GL_RG;
 				internalFormat = GL_RG32F;
 			}break;
-			case gl::RGB32F:
+			case TextureFormat::RGB32F:
 			{
 				format = GL_RGB;
 				internalFormat = GL_RGB32F;
 			}break;
-			case gl::RGBA32F:
+			case TextureFormat::RGBA32F:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_RGBA32F;
 			}break;
-			case gl::R8I:
+			case TextureFormat::R8I:
 			{
 				format = GL_RED;
 				internalFormat = GL_R8I;
 			}break;
-			case gl::R8UI:
+			case TextureFormat::R8UI:
 			{
 				format = GL_RED;
 				internalFormat = GL_R8UI;
 			}break;
-			case gl::R16I:
+			case TextureFormat::R16I:
 			{
 				format = GL_RED;
 				internalFormat = GL_R16I;
 			}break;
-			case gl::R16UI:
+			case TextureFormat::R16UI:
 			{
 				format = GL_RED;
 				internalFormat = GL_R16UI;
 			}break;
-			case gl::R32I:
+			case TextureFormat::R32I:
 			{
 				format = GL_RED;
 				internalFormat = GL_R32I;
 			}break;
-			case gl::R32UI:
+			case TextureFormat::R32UI:
 			{
 				format = GL_RED;
 				internalFormat = GL_R32UI;
 			}break;
-			case gl::RG8I:
+			case TextureFormat::RG8I:
 			{
 				internalFormat = GL_RG8I;
 				format = GL_RG;
 			}break;
-			case gl::RG8UI:
+			case TextureFormat::RG8UI:
 			{
 				internalFormat = GL_RG8UI;
 				format = GL_RG;
 			}break;
-			case gl::RG16I:
+			case TextureFormat::RG16I:
 			{
 				internalFormat = GL_RG16I;
 				format = GL_RG;
 			}break;
-			case gl::RG16UI:
+			case TextureFormat::RG16UI:
 			{
 				internalFormat = GL_RG16UI;
 				format = GL_RG;
 			}break;
-			case gl::RG32I:
+			case TextureFormat::RG32I:
 			{
 				internalFormat = GL_RG32I;
 				format = GL_RG;
 			}break;
-			case gl::RG32UI:
+			case TextureFormat::RG32UI:
 			{
 				internalFormat = GL_RG32UI;
 				format = GL_RG;
 			}break;
-			case gl::RGB8I:
+			case TextureFormat::RGB8I:
 			{
 				internalFormat = GL_RGB8I;
 				format = GL_RGB;
 			}break;
-			case gl::RGB8UI:
+			case TextureFormat::RGB8UI:
 			{
 				internalFormat = GL_RGB8UI;
 				format = GL_RGB;
 			}break;
-			case gl::RGB16I:
+			case TextureFormat::RGB16I:
 			{
 				internalFormat = GL_RGB16I;
 				format = GL_RGB;
 			}break;
-			case gl::RGB16UI:
+			case TextureFormat::RGB16UI:
 			{
 				internalFormat = GL_RGB16UI;
 				format = GL_RGB;
 			}break;
-			case gl::RGB32I:
+			case TextureFormat::RGB32I:
 			{
 				internalFormat = GL_RGB32I;
 				format = GL_RGB;
 			}break;
-			case gl::RGB32UI:
+			case TextureFormat::RGB32UI:
 			{
 				internalFormat = GL_RGB32UI;
 				format = GL_RGB;
 			}break;
-			case gl::RGBA8I:
+			case TextureFormat::RGBA8I:
 			{
 				internalFormat = GL_RGBA8I;
 				format = GL_RGBA;
 			}break;
-			case gl::RGBA8UI:
+			case TextureFormat::RGBA8UI:
 			{
 				internalFormat = GL_RGBA8UI;
 				format = GL_RGBA;
 			}break;
-			case gl::RGBA16I:
+			case TextureFormat::RGBA16I:
 			{
 				internalFormat = GL_RGBA16I;
 				format = GL_RGBA;
 			}break;
-			case gl::RGBA16UI:
+			case TextureFormat::RGBA16UI:
 			{
 				internalFormat = GL_RGBA16UI;
 				format = GL_RGBA;
 			}break;
-			case gl::RGBA32I:
+			case TextureFormat::RGBA32I:
 			{
 				internalFormat = GL_RGBA32I;
 				format = GL_RGBA;
 			}break;
-			case gl::RGBA32UI:
+			case TextureFormat::RGBA32UI:
 			{
 				internalFormat = GL_RGBA32UI;
 				format = GL_RGBA;
 			}break;
-			case DEPTH16:
+			case TextureFormat::DEPTH16:
 			{
 				internalFormat = GL_DEPTH_COMPONENT16;
 				format = GL_DEPTH_COMPONENT;
 			}break;
-			case DEPTH24:
+			case TextureFormat::DEPTH24:
 			{
 				internalFormat = GL_DEPTH_COMPONENT24;
 				format = GL_DEPTH_COMPONENT;
 			}break;
-			case DEPTH32:
+			case TextureFormat::DEPTH32:
 			{
 				internalFormat = GL_DEPTH_COMPONENT32;
 				format = GL_DEPTH_COMPONENT;
 			}break;
-			case DEPTH32F:
+			case TextureFormat::DEPTH32F:
 			{
 				internalFormat = GL_DEPTH_COMPONENT32F;
 				format = GL_DEPTH_COMPONENT;
@@ -401,31 +401,31 @@ namespace vx
 				auto target = 0u;
 				switch (type)
 				{
-				case gl::Texture_1D:
+				case gl::TextureType::Texture_1D:
 					target = GL_TEXTURE_1D;
 					break;
-				case gl::Texture_2D:
+				case gl::TextureType::Texture_2D:
 					target = GL_TEXTURE_2D;
 					break;
-				case gl::Texture_2D_MS:
+				case gl::TextureType::Texture_2D_MS:
 					target = GL_TEXTURE_2D_MULTISAMPLE;
 					break;
-				case gl::Texture_3D:
+				case gl::TextureType::Texture_3D:
 					target = GL_TEXTURE_3D;
 					break;
-				case gl::Texture_Cubemap:
+				case gl::TextureType::Texture_Cubemap:
 					target = GL_TEXTURE_CUBE_MAP;
 					break;
-				case gl::Texture_Cubemap_Array:
+				case gl::TextureType::Texture_Cubemap_Array:
 					target = GL_TEXTURE_CUBE_MAP_ARRAY;
 					break;
-				case gl::Texture_1D_Array:
+				case gl::TextureType::Texture_1D_Array:
 					target = GL_TEXTURE_1D_ARRAY;
 					break;
-				case gl::Texture_2D_Array:
+				case gl::TextureType::Texture_2D_Array:
 					target = GL_TEXTURE_2D_ARRAY;
 					break;
-				case gl::Texture_2D_MS_Array:
+				case gl::TextureType::Texture_2D_MS_Array:
 					target = GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
 					break;
 				default:
@@ -601,31 +601,31 @@ namespace vx
 
 				switch (desc.type)
 				{
-				case gl::Texture_2D:
+				case gl::TextureType::Texture_2D:
 					m_formatData.set<2>();
 					allocate2D(desc);
 					break;
-				case gl::Texture_2D_Array:
+				case gl::TextureType::Texture_2D_Array:
 					m_formatData.set<2>();
 					allocate3D(desc);
 					break;
-				case gl::Texture_3D:
+				case gl::TextureType::Texture_3D:
 					m_formatData.set<3>();
 					allocate3D(desc);
 					break;
-				case gl::Texture_1D:
+				case gl::TextureType::Texture_1D:
 					m_formatData.set<1>();
 					allocate1D(desc);
 					break;
-				case gl::Texture_2D_MS:
+				case gl::TextureType::Texture_2D_MS:
 					m_formatData.set<2>();
 					allocate2D_MS(desc);
 					break;
-				case gl::Texture_Cubemap:
+				case gl::TextureType::Texture_Cubemap:
 					allocate2D(desc);
 					m_formatData.set<2>();
 					break;
-				case gl::Texture_Cubemap_Array:
+				case gl::TextureType::Texture_Cubemap_Array:
 					allocate3D(desc);
 					m_formatData.set<3>();
 					break;
