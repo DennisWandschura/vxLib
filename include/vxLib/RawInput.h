@@ -11,6 +11,7 @@ namespace vx
 {
 	struct Mouse
 	{
+		vx::int2 m_position;
 		vx::int2 m_relative;
 		U8 m_keys[4];
 	};

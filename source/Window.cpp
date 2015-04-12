@@ -14,7 +14,7 @@ namespace vx
 	}
 
 	Window::Window(Window &&rhs)
-		:m_msg(rhs.m_msg),
+		: m_msg(rhs.m_msg),
 		m_windowName(rhs.m_windowName),
 		m_hinstance(rhs.m_hinstance),
 		m_hwnd(rhs.m_hwnd),
@@ -199,7 +199,7 @@ namespace vx
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 
-			switch (msg.message)
+			/*switch (msg.message)
 			{
 			case WM_INPUT:
 			{
@@ -207,15 +207,32 @@ namespace vx
 				handleInput(msg.lParam);
 				//return 0;
 			}
+			case WM_ACTIVATE:
+			{
+				if (msg.wParam == 1)
+				{
+					puts("WM_ACTIVATE");
+					SetCursorPos(0, 0);
+				}
+			}
 			case WM_ACTIVATEAPP:
 			{
-				//puts("WM_ACTIVATEAPP");
-
+				//
+				puts("WM_ACTIVATEAPP");
 				if (msg.wParam == 1)
+				{
 					SetFocus(m_hwnd);
 
+					RECT windowRect;
+					GetWindowRect(m_hwnd, &windowRect);
+					auto halfExtend = m_windowSize / 2u;
+
+					auto mouse = RawInput::getMouse();
+					SetCursorPos(0, 0);
+				}
+
 				//return 0;
-			}
+			};
 			case WM_CLOSE:
 			{
 				if (m_windowCloseCallback)
@@ -226,7 +243,7 @@ namespace vx
 			}break;
 			default:
 				break;
-			}
+			}*/
 		}
 
 		RawInput::endFrame();
@@ -262,7 +279,7 @@ namespace vx
 		ShowCursor(b);
 	}
 
-	void Window::setCursorPos(const vx::uint2 &pos)
+	void Window::setCursorPos(const vx::int2 &pos)
 	{
 		RECT windowRect;
 		GetWindowRect(m_hwnd, &windowRect);
@@ -272,7 +289,7 @@ namespace vx
 		//SetCursorPos(pos.x, pos.y);
 	}
 
-	void Window::setCursorPos(U32 x, U32 y)
+	void Window::setCursorPos(I32 x, I32 y)
 	{
 		RECT windowRect;
 		GetWindowRect(m_hwnd, &windowRect);
@@ -296,9 +313,54 @@ namespace vx
 		SetFocus(m_hwnd);
 	}
 
+#include <DirectXMath.h>
+
 	LRESULT CALLBACK Window::messageHandler(HWND hwnd, UINT umsg, WPARAM wParam, LPARAM lParam)
 	{
-		return DefWindowProc(hwnd, umsg, wParam, lParam);
+		DirectX::XMVector3Normalize;
+		switch (umsg)
+		{
+		case WM_INPUT:
+		{
+			//m_inputCallback(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+			handleInput(lParam);
+			return 0;
+		}
+		case WM_ACTIVATE:
+		{
+			auto lo = LOWORD(wParam);
+			if (lo == 1)
+			{
+				auto mouse = RawInput::getMouse();
+				setCursorPos(mouse.m_position.x, mouse.m_position.y);
+				focus();
+
+				return 0;
+			}
+		}
+		/*case WM_ACTIVATEAPP:
+		{
+			if (wParam == 1)
+			{
+				puts("WM_ACTIVATEAPP");
+				SetCursorPos(0, 0);
+				focus();
+				return 0;
+			}
+		}*/
+		case WM_CLOSE:
+		{
+			if (m_windowCloseCallback)
+			{
+				m_windowCloseCallback();
+				return 0;
+			}
+		}
+		default:
+			return DefWindowProc(hwnd, umsg, wParam, lParam);
+		}
+
+		return 0;
 	}
 
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wParam, LPARAM lParam)

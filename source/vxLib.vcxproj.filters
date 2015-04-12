@@ -254,6 +254,9 @@
     <ClCompile Include="gl\ShaderManager.cpp">
       <Filter>Source Files\gl</Filter>
     </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\include\vxLib\math\matrix.inl">

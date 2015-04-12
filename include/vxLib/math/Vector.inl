@@ -4,7 +4,7 @@ namespace vx
 {
 	inline __m128 VX_CALLCONV normalize(__m128 V)
 	{
-		auto vLengthSq = _mm_dp_ps(V, V, 0xff);
+		auto vLengthSq = _mm_dp_ps(V, V, 255);
 
 		// Prepare for the division
 		auto vResult = _mm_sqrt_ps(vLengthSq);
@@ -76,18 +76,7 @@ namespace vx
 		__m128 V2
 		)
 	{
-		// Perform the dot product
-		auto vDot = _mm_mul_ps(V1, V2);
-		// x=Dot.vector4_f32[1], y=Dot.vector4_f32[2]
-		auto vTemp = VX_PERMUTE_PS(vDot, _MM_SHUFFLE(2, 1, 2, 1));
-		// Result.vector4_f32[0] = x+y
-		vDot = _mm_add_ss(vDot, vTemp);
-		// x=Dot.vector4_f32[2]
-		vTemp = VX_PERMUTE_PS(vTemp, _MM_SHUFFLE(1, 1, 1, 1));
-		// Result.vector4_f32[0] = (x+y)+z
-		vDot = _mm_add_ss(vDot, vTemp);
-		// Splat x
-		return VX_PERMUTE_PS(vDot, _MM_SHUFFLE(0, 0, 0, 0));
+		return _mm_dp_ps(V1, V2, _VX_DOT(1, 1, 1, 1, 1, 1, 1, 0));
 	}
 
 	inline __m128 VX_CALLCONV Vector4Dot
@@ -105,12 +94,8 @@ namespace vx
 		)
 	{
 		// Perform the dot product on x,y and z only
-		auto vLengthSq = _mm_mul_ps(V, V);
-		auto vTemp = VX_PERMUTE_PS(vLengthSq, _MM_SHUFFLE(2, 1, 2, 1));
-		vLengthSq = _mm_add_ss(vLengthSq, vTemp);
-		vTemp = VX_PERMUTE_PS(vTemp, _MM_SHUFFLE(1, 1, 1, 1));
-		vLengthSq = _mm_add_ss(vLengthSq, vTemp);
-		vLengthSq = VX_PERMUTE_PS(vLengthSq, _MM_SHUFFLE(0, 0, 0, 0));
+		auto vLengthSq = _mm_dp_ps(V, V, _VX_DOT(1, 1, 1, 1, 1, 1, 1, 0));
+
 		// Prepare for the division
 		auto vResult = _mm_sqrt_ps(vLengthSq);
 		// Create zero with a single instruction

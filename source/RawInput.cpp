@@ -40,6 +40,8 @@ namespace vx
 			return false;
 		}
 
+		s_mouse.m_position.x = 0;
+		s_mouse.m_position.y = 0;
 		s_mouse.m_relative.x = 0;
 		s_mouse.m_relative.y = 0;
 
@@ -77,6 +79,9 @@ namespace vx
 		{
 			s_mouse.m_relative.x = mouse.lLastX;
 			s_mouse.m_relative.y = mouse.lLastY;
+
+			s_mouse.m_position.x += mouse.lLastX;
+			s_mouse.m_position.y += mouse.lLastY;
 		}
 	}
 

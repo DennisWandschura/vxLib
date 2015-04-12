@@ -64,6 +64,8 @@ namespace vx
 
 			void swapBuffers();
 
+			void makeCurrent();
+
 			const mat4& VX_CALLCONV getProjectionMatrix() const
 			{
 				return m_projectionMatrix;

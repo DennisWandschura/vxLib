@@ -62,8 +62,8 @@ namespace vx
 
 		void showCursor(bool b);
 		// in relation to center of window
-		void setCursorPos(const vx::uint2 &pos);
-		void setCursorPos(U32 x, U32 y);
+		void setCursorPos(const vx::int2 &pos);
+		void setCursorPos(I32 x, I32 y);
 
 		void setWindowCloseCallback(WindowCloseCallback fn);
 		void setForeground();

@@ -396,5 +396,10 @@ namespace vx
 			// Present the back buffer to the screen since rendering is complete.
 			SwapBuffers(m_pDeviceContext);
 		}
+
+		void RenderContext::makeCurrent()
+		{
+			wglMakeCurrent(m_pDeviceContext, m_pRenderingContext);
+		}
 	}
 }

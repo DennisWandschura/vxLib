@@ -6,6 +6,7 @@
 #include <smmintrin.h>
 
 #define VX_PERMUTE_PS(V, U) _mm_shuffle_ps(V, V, U)
+#define _VX_DOT(M0, M1, M2, M3, X, Y, Z, W) M0 << 0 | M1 << 1 | M2 << 2 | M3 << 3 | X << 4 | Y << 5 | Z << 6 | W << 7
 
 namespace vx
 {
@@ -293,6 +294,11 @@ namespace vx
 				y /= rhs;
 
 				return *this;
+			}
+
+			friend vec2a operator+(const vec2a &lhs, const vec2a &rhs)
+			{
+				return vec2a(lhs.x + rhs.x, lhs.y + rhs.y);
 			}
 
 			friend vec2a operator-(const vec2a &lhs, const vec2a &rhs)
@@ -1046,6 +1052,12 @@ namespace vx
 	}
 
 	template<class T>
+	F32 dot(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
+	{
+		return v1.x*v2.x + v1.y*v2.y;
+	}
+
+	template<class T>
 	F32 dot(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
 		return v1.x*v2.x + v1.y*v2.y + v1.z * v2.z;
@@ -1207,6 +1219,19 @@ namespace vx
 	{
 		auto l = sqrt(dot(v1, v1));
 		float2 result(v1);
+		if (l > 0.0f)
+		{
+			result.x /= l;
+			result.y /= l;
+		}
+
+		return result;
+	}
+
+	inline float2a normalize(const float2a &v1)
+	{
+		auto l = sqrt(dot(v1, v1));
+		float2a result(v1);
 		if (l > 0.0f)
 		{
 			result.x /= l;

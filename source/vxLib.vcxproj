@@ -200,6 +200,7 @@
     <ClCompile Include="gl\wgl_core.c" />
     <ClCompile Include="Graphics\Camera.cpp" />
     <ClCompile Include="Graphics\Mesh.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="PoolAllocator.cpp" />
     <ClCompile Include="RawInput.cpp" />
     <ClCompile Include="StackAllocator.cpp" />

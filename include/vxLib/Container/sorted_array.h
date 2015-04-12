@@ -54,9 +54,39 @@ namespace vx
 			assert(m_pValues);
 		}
 
+		sorted_array(const sorted_array&) = delete;
+
+		sorted_array(sorted_array &&rhs)
+			:m_pKeys(rhs.m_pKeys),
+			m_pValues(rhs.m_pValues),
+			m_size(rhs.m_size),
+			m_capacity(rhs.m_capacity),
+			m_pAllocator(rhs.m_pAllocator)
+		{
+			rhs.m_pKeys = nullptr;
+			rhs.m_pValues = nullptr;
+			rhs.m_size = 0;
+			rhs.m_capacity = 0;
+			rhs.m_pAllocator = nullptr;
+		}
+
 		~sorted_array()
 		{
 			cleanup();
+		}
+
+		sorted_array& operator=(const sorted_array&) = delete;
+		sorted_array& operator=(sorted_array &&rhs)
+		{
+			if (this != &rhs)
+			{
+				std::swap(m_pKeys, rhs.m_pKeys);
+				std::swap(m_pValues, rhs.m_pValues);
+				std::swap(m_size, rhs.m_size);
+				std::swap(m_capacity, rhs.m_capacity);
+				std::swap(m_pAllocator, rhs.m_pAllocator);
+			}
+			return *this;
 		}
 
 		// destroys all values and sets everything to zero
