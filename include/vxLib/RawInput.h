@@ -2,9 +2,8 @@
 #define __VX_RAWINPUT_H
 #pragma once
 
-#include <vxLib\math\Vector.h>
-#include <vxLib\Container\vector.h>
-#include <Windows.h>
+#include <vxLib/math/Vector.h>
+#include <vxLib/Container/vector.h>
 #include <vxLib/Keyboard.h>
 
 namespace vx
@@ -42,16 +41,13 @@ namespace vx
 		static Input::KeyEventCallback s_keyEventPressedCallback;
 		static Input::KeyEventCallback s_keyEventReleasedCallback;
 
-		static void handleKeyboard(const RAWKEYBOARD &keyboard);
-		static void handleMouse(const RAWMOUSE &mouse);
-
 		RawInput();
 		~RawInput();
 
-		static bool initialize(HWND window);
+		static bool initialize(void* window);
 		static void shutdown();
 
-		static void update(LPARAM lparam);
+		static void update(I64 lparam);
 		// call before updating input
 		static void beginFrame();
 		// call after gathering input events

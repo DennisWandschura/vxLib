@@ -130,7 +130,16 @@ namespace vx
 			U32 miplevel;
 			vx::uint3 offset;
 			vx::uint3 size;
-			DataType dataType;
+			vx::gl::DataType dataType;
+			const void *p;
+		};
+
+		struct TextureCompressedSubImageDescription
+		{
+			U32 miplevel;
+			vx::uint3 offset;
+			vx::uint3 size;
+			U32 dataSize;
 			const void *p;
 		};
 
@@ -141,6 +150,7 @@ namespace vx
 			U32 m_internalFormat;
 			vx::ushort3 m_size;
 			vx::bitset<4> m_formatData; // 1. bit sparse, 2. bit 1d, 3. bit 2d, 4. bit 3d
+			U8 m_compressed;
 
 			void allocate1D(const TextureDescription &desc);
 			void allocate2D(const TextureDescription &desc);
@@ -167,6 +177,7 @@ namespace vx
 			void commit(const TextureCommitDescription &desc);
 
 			void subImage(const TextureSubImageDescription &desc);
+			void subImageCompressed(const TextureCompressedSubImageDescription &desc);
 
 			void setWrapMode1D(TextureWrapMode wrap_s);
 			void setWrapMode2D(TextureWrapMode wrap_s, TextureWrapMode wrap_t);
@@ -187,6 +198,7 @@ namespace vx
 			bool is1D() const;
 			bool is2D() const;
 			bool is3D() const;
+			bool isCompressed() const;
 		};
 	}
 }

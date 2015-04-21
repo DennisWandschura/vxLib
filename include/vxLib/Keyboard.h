@@ -10,6 +10,16 @@ namespace vx
 	{
 		U8 m_keys[256];
 
+		U8& operator[](U32 i)
+		{
+			return m_keys[i];
+		}
+
+		const U8& operator[](U32 i) const
+		{
+			return m_keys[i];
+		}
+
 		static U8 Key_A;
 		static U8 Key_B;
 		static U8 Key_C;

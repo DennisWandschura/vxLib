@@ -31,10 +31,11 @@ namespace vx
 			return desc;
 		}
 
-		void getTextureFormat(TextureFormat textureFormat, U32 &format, U32 &internalFormat)
+		void getTextureFormat(TextureFormat textureFormat, U32 &format, U32 &internalFormat, bool* compressed)
 		{
 			format = 0;
 			internalFormat = 0;
+			*compressed = false;
 
 			switch (textureFormat)
 			{
@@ -172,41 +173,49 @@ namespace vx
 			{
 				format = GL_RGB;
 				internalFormat = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
+				*compressed = true;
 			}break;
 			case TextureFormat::RGBA_DXT1:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+				*compressed = true;
 			}break;
 			case TextureFormat::RGBA_DXT3:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+				*compressed = true;
 			}break;
 			case TextureFormat::RGBA_DXT5:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+				*compressed = true;
 			}break;
 			case TextureFormat::SRGB_DXT1:
 			{
 				format = GL_RGB;
 				internalFormat = GL_COMPRESSED_SRGB_S3TC_DXT1_EXT;
+				*compressed = true;
 			}break;
 			case TextureFormat::SRGBA_DXT1:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
+				*compressed = true;
 			}break;
 			case TextureFormat::SRGBA_DXT3:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+				*compressed = true;
 			}break;
 			case TextureFormat::SRGBA_DXT5:
 			{
 				format = GL_RGBA;
 				internalFormat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+				*compressed = true;
 			}break;
 			case TextureFormat::R16F:
 			{
@@ -456,7 +465,7 @@ namespace vx
 
 			void subImage2D(
 				U32 id,
-				GLenum target, 
+				GLenum target,
 				U32 level,
 				U32 xoffset,
 				U32 yoffset,
@@ -471,6 +480,41 @@ namespace vx
 
 				glBindTexture(target, id);
 				glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, dtaType, p);
+				glBindTexture(target, 0);
+			}
+
+			void compressedSubImage2D
+				(
+				U32 id,
+				U32 level,
+				U32 xoffset,
+				U32 yoffset,
+				U32 width,
+				U32 height,
+				U32 format,
+				U32 dataSize,
+				const void *p
+				)
+			{
+				glCompressedTextureSubImage2D(id, level, xoffset, yoffset, width, height, format, dataSize, p);
+			}
+
+			void compressedSubImage2D
+				(
+				U32 id,
+				GLenum target,
+				U32 level,
+				U32 xoffset,
+				U32 yoffset,
+				U32 width,
+				U32 height,
+				U32 format,
+				U32 dataSize,
+				const void *p
+				)
+			{
+				glBindTexture(target, id);
+				glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, dataSize, p);
 				glBindTexture(target, 0);
 			}
 
@@ -493,6 +537,24 @@ namespace vx
 
 				glTextureSubImage3D(id, level, xoffset, yoffset, zoffset, width, height, depth, format, dtaType, p);
 			}
+
+			void compressedSubImage3D
+				(
+				U32 id,
+				U32 level,
+				U32 xoffset,
+				U32 yoffset,
+				U32 zoffset,
+				U32 width,
+				U32 height,
+				U32 depth,
+				U32 format,
+				U32 dataSize,
+				const void *p
+				)
+			{
+				glCompressedTextureSubImage3D(id, level, xoffset, yoffset, zoffset, width, height, depth, format, dataSize, p);
+			}
 		}
 
 		/*
@@ -507,7 +569,8 @@ namespace vx
 			m_format(0),
 			m_internalFormat(0),
 			m_size(),
-			m_formatData()
+			m_formatData(),
+			m_compressed(0)
 		{
 		}
 
@@ -541,7 +604,7 @@ namespace vx
 			return *this;
 		}
 
-		void Texture::allocate1D(const TextureDescription &desc)
+			void Texture::allocate1D(const TextureDescription &desc)
 		{
 			assert(desc.miplevels >= 1);
 			assert(desc.size.x != 0);
@@ -588,7 +651,10 @@ namespace vx
 				m_target = ::vx::gl::detail::getTarget(desc.type);
 				m_size = desc.size;
 
-				getTextureFormat(desc.format, m_format, m_internalFormat);
+				bool compressed;
+				getTextureFormat(desc.format, m_format, m_internalFormat, &compressed);
+
+				m_compressed = (U8)compressed;
 
 				glCreateTextures(m_target, 1, &m_id);
 
@@ -652,6 +718,9 @@ namespace vx
 
 		void Texture::subImage(const TextureSubImageDescription &desc)
 		{
+			bool compressed = isCompressed();
+			VX_ASSERT(!compressed);
+
 			switch (m_target)
 			{
 			case GL_TEXTURE_2D_ARRAY:
@@ -674,6 +743,36 @@ namespace vx
 				VX_ASSERT(false);
 				break;
 			}
+		}
+
+		void Texture::subImageCompressed(const TextureCompressedSubImageDescription &desc)
+		{
+			bool compressed = isCompressed();
+			VX_ASSERT(compressed);
+
+			switch (m_target)
+			{
+			case GL_TEXTURE_2D_ARRAY:
+				vx::gl::detail::compressedSubImage3D(m_id, desc.miplevel, desc.offset.x, desc.offset.y, desc.offset.z, desc.size.x, desc.size.y, desc.size.z, m_internalFormat, desc.dataSize, desc.p);
+				break;
+			case GL_TEXTURE_2D:
+				vx::gl::detail::compressedSubImage2D(m_id, desc.miplevel, desc.offset.x, desc.offset.y, desc.size.x, desc.size.y, m_internalFormat, desc.dataSize, desc.p);
+				break;
+			case GL_TEXTURE_3D:
+				vx::gl::detail::compressedSubImage3D(m_id, desc.miplevel, desc.offset.x, desc.offset.y, desc.offset.z, desc.size.x, desc.size.y, desc.size.z, m_internalFormat, desc.dataSize, desc.p);
+				break;
+			case GL_TEXTURE_1D_ARRAY:
+				vx::gl::detail::compressedSubImage2D(m_id, desc.miplevel, desc.offset.x, desc.offset.y, desc.size.x, desc.size.y, m_internalFormat, desc.dataSize, desc.p);
+				break;
+			case GL_TEXTURE_CUBE_MAP:
+			{
+				::vx::gl::detail::compressedSubImage2D(m_id, GL_TEXTURE_CUBE_MAP_POSITIVE_X + desc.offset.z, desc.miplevel, desc.offset.x, desc.offset.y, desc.size.x, desc.size.y, m_internalFormat, desc.dataSize, desc.p);
+			}break;
+			default:
+				VX_ASSERT(false);
+				break;
+			}
+
 		}
 
 		void Texture::commit(const TextureCommitDescription &desc)
@@ -779,6 +878,11 @@ namespace vx
 		bool Texture::is3D() const
 		{
 			return m_formatData.get<3>();
+		}
+
+		bool Texture::isCompressed() const
+		{
+			return m_compressed != 0;
 		}
 	}
 }

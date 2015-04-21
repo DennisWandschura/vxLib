@@ -359,8 +359,6 @@ namespace vx
 		default:
 			return DefWindowProc(hwnd, umsg, wParam, lParam);
 		}
-
-		return 0;
 	}
 
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wParam, LPARAM lParam)

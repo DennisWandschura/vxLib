@@ -397,9 +397,16 @@ namespace vx
 			SwapBuffers(m_pDeviceContext);
 		}
 
-		void RenderContext::makeCurrent()
+		void RenderContext::makeCurrent(bool b)
 		{
-			wglMakeCurrent(m_pDeviceContext, m_pRenderingContext);
+			if (b)
+			{
+				wglMakeCurrent(m_pDeviceContext, m_pRenderingContext);
+			}
+			else
+			{
+				wglMakeCurrent(m_pDeviceContext, nullptr);
+			}
 		}
 	}
 }

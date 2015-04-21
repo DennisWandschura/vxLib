@@ -1,4 +1,5 @@
-#include <vxLib\RawInput.h>
+#include <vxLib/RawInput.h>
+#include <Windows.h>
 
 namespace vx
 {
@@ -7,6 +8,39 @@ namespace vx
 	vx::hybrid_vector<KeyEvent, 10> RawInput::s_keyEvents{};
 	Input::KeyEventCallback RawInput::s_keyEventPressedCallback{ nullptr };
 	Input::KeyEventCallback RawInput::s_keyEventReleasedCallback{ nullptr };
+
+	struct InputHandler
+	{
+		static void handleKeyboard(const RAWKEYBOARD &rawKeyboard, Keyboard* keyboard, vx::hybrid_vector<KeyEvent, 10>* keyEvents)
+		{
+			auto flag = rawKeyboard.Flags;
+			auto key = rawKeyboard.VKey;
+
+			if (flag == RI_KEY_MAKE)
+			{
+				keyboard->m_keys[key] = 1;
+				keyEvents->push_back(KeyEvent(key, KeyEvent::Pressed));
+			}
+			// key up
+			else if (flag == RI_KEY_BREAK)
+			{
+				keyboard->m_keys[key] = 0;
+				keyEvents->push_back(KeyEvent(key, KeyEvent::Released));
+			}
+		}
+
+		static void handleMouse(const RAWMOUSE &rawMouse, Mouse* mouse)
+		{
+			if (rawMouse.usFlags == MOUSE_MOVE_RELATIVE)
+			{
+				mouse->m_relative.x = rawMouse.lLastX;
+				mouse->m_relative.y = rawMouse.lLastY;
+
+				mouse->m_position.x += rawMouse.lLastX;
+				mouse->m_position.y += rawMouse.lLastY;
+			}
+		}
+	};
 
 	RawInput::RawInput()
 	{
@@ -17,7 +51,7 @@ namespace vx
 		s_keyEvents.clear();
 	}
 
-	bool RawInput::initialize(HWND window)
+	bool RawInput::initialize(void* window)
 	{
 		RAWINPUTDEVICE rid[2];
 
@@ -25,13 +59,13 @@ namespace vx
 		rid[0].usUsagePage = 0x01;
 		rid[0].usUsage = 0x06;
 		rid[0].dwFlags = 0;
-		rid[0].hwndTarget = window;
+		rid[0].hwndTarget = (HWND)window;
 
 		// mouse
 		rid[1].usUsagePage = 0x01;
 		rid[1].usUsage = 0x02;
 		rid[1].dwFlags = RIDEV_NOLEGACY;
-		rid[1].hwndTarget = window;
+		rid[1].hwndTarget = (HWND)window;
 
 		if (RegisterRawInputDevices(rid, 2, sizeof(rid[0])) == FALSE)
 		{
@@ -52,37 +86,6 @@ namespace vx
 	void RawInput::shutdown()
 	{
 		s_keyEvents.clear();
-	}
-
-	void RawInput::handleKeyboard(const RAWKEYBOARD &keyboard)
-	{
-		auto flag = keyboard.Flags;
-		auto key = keyboard.VKey;
-
-		if (flag == RI_KEY_MAKE)
-		{
-			s_keyboard.m_keys[key] = 1;
-
-			s_keyEvents.push_back(KeyEvent(key, KeyEvent::Pressed));
-		}
-		// key up
-		else if (flag == RI_KEY_BREAK)
-		{
-			s_keyboard.m_keys[key] = 0;
-			s_keyEvents.push_back(KeyEvent(key, KeyEvent::Released));
-		}
-	}
-
-	void RawInput::handleMouse(const RAWMOUSE &mouse)
-	{
-		if (mouse.usFlags == MOUSE_MOVE_RELATIVE)
-		{
-			s_mouse.m_relative.x = mouse.lLastX;
-			s_mouse.m_relative.y = mouse.lLastY;
-
-			s_mouse.m_position.x += mouse.lLastX;
-			s_mouse.m_position.y += mouse.lLastY;
-		}
 	}
 
 	void RawInput::update(LPARAM lparam)
@@ -108,12 +111,12 @@ namespace vx
 
 		if (raw->header.dwType == RIM_TYPEKEYBOARD)
 		{
-			handleKeyboard(raw->data.keyboard);
+			InputHandler::handleKeyboard(raw->data.keyboard, &s_keyboard, &s_keyEvents);
 		}
 		else if (raw->header.dwType == RIM_TYPEMOUSE)
 		{
 			// handle mouse input
-			handleMouse(raw->data.mouse);
+			InputHandler::handleMouse(raw->data.mouse, &s_mouse);
 		}
 	}
 

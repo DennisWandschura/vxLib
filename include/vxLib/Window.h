@@ -10,9 +10,6 @@ namespace vx
 	class Window
 	{
 	public:
-		//typedef Functor<LRESULT, HWND, UINT, WPARAM, LPARAM> InputCallback;
-
-		typedef LRESULT(*InputCallback)(HWND, UINT, WPARAM, LPARAM);
 		typedef void(*WindowCloseCallback)();
 
 	private:
