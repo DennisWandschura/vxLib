@@ -1034,7 +1034,7 @@ namespace vx
 		return result;
 	}
 
-	inline float4a VX_CALLCONV abs(float4a v)
+	inline float4a VX_CALLCONV abs(const float4a &v)
 	{
 		return detail::abs(v);
 	}
@@ -1081,7 +1081,7 @@ namespace vx
 		return detail::dot(v1, v2);
 	}
 
-	inline F32 VX_CALLCONV dot(float4a v1, float4a v2)
+	inline F32 VX_CALLCONV dot(const float4a &v1, const float4a & v2)
 	{
 		return detail::dot(v1, v2);
 	}
@@ -1125,7 +1125,7 @@ namespace vx
 		return detail::distance2(v1, v2);
 	}
 
-	inline F32 VX_CALLCONV distance2(float4a v1, float4a v2)
+	inline F32 distance2(const float4a &v1, const float4a &v2)
 	{
 		return detail::distance2(v1.v, v2.v);
 	}
@@ -1169,7 +1169,7 @@ namespace vx
 		return detail::distance(v1, v2);
 	}
 
-	inline F32 VX_CALLCONV distance(float4a v1, float4a v2)
+	inline F32 distance(const float4a &v1, const float4a &v2)
 	{
 		return detail::distance(v1, v2);
 	}
@@ -1210,9 +1210,9 @@ namespace vx
 		return detail::length(v);
 	}
 
-	inline F32 length(float4a v)
+	inline F32 length(const float4a &v)
 	{
-		return distance(v.v, v.v);
+		return distance(v, v);
 	}
 
 	inline float2 normalize(const float2 &v1)
@@ -1502,7 +1502,7 @@ inline vx::float4 VX_CALLCONV operator + (const vx::float4 &lhs, const vx::float
 	return vx::detail::addFloat4(lhs, rhs);
 }
 
-inline vx::float4a VX_CALLCONV operator + (vx::float4a lhs, vx::float4a rhs)
+inline vx::float4a VX_CALLCONV operator + (const vx::float4a &lhs, const vx::float4a &rhs)
 {
 	return _mm_add_ps(lhs.v, rhs.v);
 }
@@ -1523,7 +1523,7 @@ inline vx::float4 VX_CALLCONV operator - (const vx::float4 &lhs, const vx::float
 	return vx::detail::subFloat4(lhs, rhs);
 }
 
-inline vx::float4a VX_CALLCONV operator - (vx::float4a lhs, vx::float4a rhs)
+inline vx::float4a VX_CALLCONV operator - (const vx::float4a &lhs, const vx::float4a &rhs)
 {
 	return _mm_sub_ps(lhs.v, rhs.v);
 }
@@ -1544,7 +1544,7 @@ inline vx::float4 VX_CALLCONV operator*(const vx::float4 &lhs, const vx::float4 
 	return vx::detail::mulFloat4(lhs, rhs);
 }
 
-inline vx::float4a VX_CALLCONV operator*(vx::float4a lhs, vx::float4a rhs)
+inline vx::float4a VX_CALLCONV operator*(const vx::float4a &lhs, const vx::float4a &rhs)
 {
 	return _mm_mul_ps(lhs.v, rhs.v);
 }
@@ -1565,7 +1565,7 @@ inline vx::float4 VX_CALLCONV operator / (const vx::float4 &lhs, const vx::float
 	return vx::detail::divFloat4(lhs, rhs);
 }
 
-inline vx::float4a VX_CALLCONV operator / (vx::float4a lhs, vx::float4a rhs)
+inline vx::float4a VX_CALLCONV operator / (const vx::float4a &lhs, const vx::float4a &rhs)
 {
 	return _mm_div_ps(lhs.v, rhs.v);
 }
