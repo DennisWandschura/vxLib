@@ -24,6 +24,7 @@ namespace vx
 
 		Variant(){}
 		Variant(const vx::StringID64 &sid_) :sid(sid_){}
+		Variant(U32 u) :u32(u){}
 		Variant(F32 f) :f32(f){}
 		Variant(void* p) :ptr(p){}
 	};

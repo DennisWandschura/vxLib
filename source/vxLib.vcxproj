@@ -144,7 +144,7 @@
     <ClInclude Include="..\include\vxLib\gl\Base.h" />
     <ClInclude Include="..\include\vxLib\gl\Buffer.h" />
     <ClInclude Include="..\include\vxLib\gl\Debug.h" />
-    <ClInclude Include="..\include\vxLib\gl\flextGL_45.h" />
+    <ClInclude Include="..\include\vxLib\gl\flextGL.h" />
     <ClInclude Include="..\include\vxLib\gl\Framebuffer.h" />
     <ClInclude Include="..\include\vxLib\gl\gl.h" />
     <ClInclude Include="..\include\vxLib\gl\ProgramPipeline.h" />
@@ -186,7 +186,7 @@
     <ClCompile Include="gl\Base.cpp" />
     <ClCompile Include="gl\Buffer.cpp" />
     <ClCompile Include="gl\Debug.cpp" />
-    <ClCompile Include="gl\flextGL_45.c" />
+    <ClCompile Include="gl\flextGL.c" />
     <ClCompile Include="gl\Framebuffer.cpp" />
     <ClCompile Include="gl\gl_core.cpp" />
     <ClCompile Include="gl\ProgramPipeline.cpp" />

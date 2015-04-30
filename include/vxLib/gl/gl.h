@@ -2,7 +2,7 @@
 #define __VX_GL_GL_H
 #pragma once
 
-#include <vxLib/gl/flextGL_45.h>
+#include <vxLib/gl/flextGL.h>
 #include <vxLib/gl/wgl_core.h>
 
 namespace vx

@@ -147,9 +147,6 @@
     <ClInclude Include="..\include\vxLib\gl\Buffer.h">
       <Filter>Header Files\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vxLib\gl\flextGL_45.h">
-      <Filter>Header Files\gl</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\vxLib\gl\gl.h">
       <Filter>Header Files\gl</Filter>
     </ClInclude>
@@ -176,6 +173,9 @@
     </ClInclude>
     <ClInclude Include="..\include\vxLib\Keyboard.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\gl\flextGL.h">
+      <Filter>Header Files\gl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -239,9 +239,6 @@
     <ClCompile Include="gl\SharedObject.cpp">
       <Filter>Source Files\gl</Filter>
     </ClCompile>
-    <ClCompile Include="gl\flextGL_45.c">
-      <Filter>Source Files\gl</Filter>
-    </ClCompile>
     <ClCompile Include="gl\VertexArray.cpp">
       <Filter>Source Files\gl</Filter>
     </ClCompile>
@@ -256,6 +253,9 @@
     </ClCompile>
     <ClCompile Include="Keyboard.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gl\flextGL.c">
+      <Filter>Source Files\gl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
