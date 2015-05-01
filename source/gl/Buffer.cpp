@@ -7,7 +7,7 @@ namespace vx
 	{
 		namespace detail
 		{
-			const U32 g_bufferTypes[14] = 
+			const U32 g_bufferTypes[15] = 
 			{
 				GL_ARRAY_BUFFER,
 				GL_ATOMIC_COUNTER_BUFFER,
@@ -22,7 +22,8 @@ namespace vx
 				GL_SHADER_STORAGE_BUFFER,
 				GL_TEXTURE_BUFFER,
 				GL_TRANSFORM_FEEDBACK_BUFFER,
-				GL_UNIFORM_BUFFER
+				GL_UNIFORM_BUFFER,
+				GL_PARAMETER_BUFFER_ARB
 			};
 
 			inline U32 getBufferType(BufferType type)
@@ -160,12 +161,14 @@ namespace vx
 
 		void* Buffer::map(Map access)
 		{
+			VX_ASSERT(getType() != BufferType::Parameter_Buffer);
 			auto ptr = detail::BufferInterface::map(m_id, access);
 			return ptr;
 		}
 
 		void* Buffer::mapRange(U32 offsetBytes, U32 sizeBytes, MapRange::Access access)
 		{
+			VX_ASSERT(getType() != BufferType::Parameter_Buffer);
 			auto ptr = detail::BufferInterface::mapRange(m_id, offsetBytes, sizeBytes, access);
 			return ptr;
 		}

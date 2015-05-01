@@ -24,7 +24,8 @@ namespace vx
 			Shader_Storage_Buffer,
 			Texture_Buffer,
 			Transform_Feedback_Buffer,
-			Uniform_Buffer
+			Uniform_Buffer,
+			Parameter_Buffer
 		};
 
 		enum class Map
