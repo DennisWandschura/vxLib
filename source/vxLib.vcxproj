@@ -151,7 +151,6 @@
     <ClInclude Include="..\include\vxLib\gl\RenderContext.h" />
     <ClInclude Include="..\include\vxLib\gl\ShaderManager.h" />
     <ClInclude Include="..\include\vxLib\gl\ShaderProgram.h" />
-    <ClInclude Include="..\include\vxLib\gl\SharedObject.h" />
     <ClInclude Include="..\include\vxLib\gl\StateManager.h" />
     <ClInclude Include="..\include\vxLib\gl\Texture.h" />
     <ClInclude Include="..\include\vxLib\gl\VertexArray.h" />
@@ -193,7 +192,6 @@
     <ClCompile Include="gl\RenderContext.cpp" />
     <ClCompile Include="gl\ShaderManager.cpp" />
     <ClCompile Include="gl\ShaderProgram.cpp" />
-    <ClCompile Include="gl\SharedObject.cpp" />
     <ClCompile Include="gl\StateManager.cpp" />
     <ClCompile Include="gl\Texture.cpp" />
     <ClCompile Include="gl\VertexArray.cpp" />

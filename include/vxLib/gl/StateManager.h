@@ -3,8 +3,8 @@
 #pragma once
 
 #include <vxLib/math/Vector.h>
-#include <vxLib\Container\bitset.h>
-#include <vxLib\gl\Base.h>
+#include <vxLib/Container/bitset.h>
+#include <vxLib/gl/Buffer.h>
 
 namespace vx
 {
@@ -16,7 +16,7 @@ namespace vx
 
 		class StateManager
 		{
-			static const U32 s_bufferTypeCount = 14;
+			static const U32 s_bufferTypeCount = 15;
 
 			static U32 s_currentFrameBuffer;
 			static U32 s_currentPipeline;
@@ -37,7 +37,7 @@ namespace vx
 			static void bindFrameBuffer(const Framebuffer &fbo);
 			static void bindVertexArray(U32 id);
 			static void bindVertexArray(const VertexArray &vao);
-			static void bindBuffer(U32 target, U32 id);
+			static void bindBuffer(BufferType target, U32 id);
 			static void bindPipeline(U32 pipeline);
 			static void bindPipeline(const ProgramPipeline &pipe);
 		};

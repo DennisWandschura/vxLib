@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vxLib/gl/SharedObject.h>
+#include <vxLib/gl/Base.h>
 #include <memory>
 
 namespace vx
@@ -255,59 +255,5 @@ namespace vx
 				return m_ptr != nullptr;
 			}
 		};
-
-		template<BufferType Type>
-		class Buffer_T : public SharedObject<Buffer_T<Type>>
-		{
-			using MyBase = SharedObject < Buffer_T<Type> > ;
-
-		public:
-			Buffer_T()
-				:MyBase()
-			{
-			}
-
-			bool create(const BufferDescription &desc)
-			{
-				U32 id = 0;
-				bool result =  detail::BufferInterface::create(desc, id);
-				if (result)
-				{
-					MyBase::create(id);
-				}
-
-				return result;
-			}
-
-			void destroy()
-			{
-				auto id = MyBase::destroy();
-				detail::BufferInterface::destroy(id);
-			}
-
-			void bind()
-			{
-				detail::BufferInterface::bind(MyBase::getId(), Type);
-			}
-
-			void* map(Map access)
-			{
-				return detail::BufferInterface::map(MyBase::getId(), access);
-			}
-
-			void unmap()
-			{
-				detail::BufferInterface::unmap(MyBase::getId());
-			}
-
-			U32 getTarget() const noexcept
-			{
-				return detail::BufferInterface::getTarget(Type);
-			}
-		};
-		
-		using VertexBuffer = Buffer_T < vx::gl::BufferType::Array_Buffer > ;
-		using IndexBuffer = Buffer_T < vx::gl::BufferType::Element_Array_Buffer >;
-		using DrawIndirectBuffer = Buffer_T < vx::gl::BufferType::Draw_Indirect_Buffer >;
 	}
 }
