@@ -56,7 +56,7 @@ namespace
 		return newProgram;
 	}
 
-	bool getAndAppendInclude(std::unique_ptr<char[]>* programBuffer, U32* programSize, const std::string &includeDir, vx::sorted_vector<vx::StringID64, std::string>* includeFiles)
+	bool getAndAppendInclude(std::unique_ptr<char[]>* programBuffer, U32* programSize, const std::string &includeDir, vx::sorted_vector<vx::StringID, std::string>* includeFiles)
 	{
 		std::unique_ptr<char[]> includeBuffer;
 		U32 includeSize = 0;
@@ -96,7 +96,7 @@ namespace
 		return false;
 	}
 
-	bool loadShaderProgram(const char* programFile, const std::string &includeDir, vx::gl::ShaderProgram* program, vx::sorted_vector<vx::StringID64, std::string>* includeFiles)
+	bool loadShaderProgram(const char* programFile, const std::string &includeDir, vx::gl::ShaderProgram* program, vx::sorted_vector<vx::StringID, std::string>* includeFiles)
 	{
 		std::unique_ptr<char[]> programBuffer;
 		U32 programSize;
@@ -304,7 +304,7 @@ namespace vx
 			return getPipeline(sid);
 		}
 
-		const vx::gl::ProgramPipeline* ShaderManager::getPipeline(const vx::StringID64 &sid) const
+		const vx::gl::ProgramPipeline* ShaderManager::getPipeline(const vx::StringID &sid) const
 		{
 			auto it = m_programPipelines.find(sid);
 			if (it == m_programPipelines.end())

@@ -13,9 +13,9 @@ namespace vx
 
 		class ShaderManager
 		{
-			vx::sorted_vector<vx::StringID64, ProgramPipeline> m_programPipelines;
-			vx::sorted_vector<vx::StringID64, ShaderProgram> m_shaderPrograms;
-			vx::sorted_vector<vx::StringID64, std::string> m_includeFiles;
+			vx::sorted_vector<vx::StringID, ProgramPipeline> m_programPipelines;
+			vx::sorted_vector<vx::StringID, ShaderProgram> m_shaderPrograms;
+			vx::sorted_vector<vx::StringID, std::string> m_includeFiles;
 			std::string m_dataDir;
 
 			bool loadProgram(const char *file, vx::gl::ShaderProgramType type, const std::string &includeDir);
@@ -36,7 +36,7 @@ namespace vx
 			bool loadPipeline(const char *fileName);
 
 			const vx::gl::ProgramPipeline* getPipeline(const char *id) const;
-			const vx::gl::ProgramPipeline* getPipeline(const vx::StringID64 &sid) const;
+			const vx::gl::ProgramPipeline* getPipeline(const vx::StringID &sid) const;
 		};
 	}
 }

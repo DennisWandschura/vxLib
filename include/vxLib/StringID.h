@@ -2,103 +2,29 @@
 #define __STRINGID_H
 #pragma once
 
-#include <vxLib\types.h>
-#include <vxLib\util\CityHash.h>
-#include <ostream>
+#include <vxLib/types.h>
+#include <vxLib/util/CityHash.h>
 
 namespace vx
 {
-	struct StringID64
+	using StringID = U64;
+
+	inline StringID make_sid(const char *str)
 	{
-		U64 m_value;
-
-		friend bool operator==(const StringID64 &lhs, const StringID64 &rhs)
-		{
-			return lhs.m_value == rhs.m_value;
-		}
-
-		friend bool operator!=(const StringID64 &lhs, const StringID64 &rhs)
-		{
-			return lhs.m_value != rhs.m_value;
-		}
-
-		friend bool operator<(const StringID64 &lhs, const StringID64 &rhs)
-		{
-			return lhs.m_value < rhs.m_value;
-		}
-
-		friend bool operator<=(const StringID64 &lhs, const StringID64 &rhs)
-		{
-			return lhs.m_value <= rhs.m_value;
-		}
-
-		friend bool operator>(const StringID64 &lhs, const StringID64 &rhs)
-		{
-			return lhs.m_value > rhs.m_value;
-		}
-
-		friend bool operator>=(const StringID64 &lhs, const StringID64 &rhs)
-		{
-			return lhs.m_value >= rhs.m_value;
-		}
-
-		friend bool operator==(const StringID64 &lhs, const U64 rhs)
-		{
-			return lhs.m_value == rhs;
-		}
-
-		friend bool operator!=(const StringID64 &lhs, const U64 rhs)
-		{
-			return lhs.m_value != rhs;
-		}
-
-		friend bool operator<(const StringID64 &lhs, const U64 rhs)
-		{
-			return lhs.m_value < rhs;
-		}
-
-		friend bool operator<=(const StringID64 &lhs, const U64 rhs)
-		{
-			return lhs.m_value <= rhs;
-		}
-
-		friend bool operator>(const StringID64 &lhs, const U64 rhs)
-		{
-			return lhs.m_value > rhs;
-		}
-
-		friend bool operator>=(const StringID64 &lhs, const U64 rhs)
-		{
-			return lhs.m_value >= rhs;
-		}
-	};
-
-	inline StringID64 make_sid(const U64 v)
-	{
-		StringID64 sid;
-		sid.m_value = v;
-		return sid;
-	}
-
-	inline StringID64 make_sid(const char *str)
-	{
-		StringID64 sid;
-		sid.m_value = CITYHASH64(str);
+		StringID sid = CITYHASH64(str);
 		return sid;
 	}
 
 	template<size_t SIZE>
-	inline StringID64 make_sid(const char(&str)[SIZE])
+	inline StringID make_sid(const char(&str)[SIZE])
 	{
-		StringID64 sid;
-		sid.m_value = CityHash64((char*)str, SIZE);
+		StringID sid = CityHash64((char*)str, SIZE);
 		return sid;
 	}
 
-	inline StringID64 make_sid(const wchar_t *str)
+	inline StringID make_sid(const wchar_t *str)
 	{
-		StringID64 sid;
-		sid.m_value = CityHash64((char*)str, sizeof(wchar_t) * std::char_traits<wchar_t>::length(str));
+		StringID sid = CityHash64((char*)str, sizeof(wchar_t) * std::char_traits<wchar_t>::length(str));
 		return sid;
 	}
 }
