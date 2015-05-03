@@ -173,14 +173,17 @@ namespace vx
 			return true;
 		}
 
-		bool ShaderManager::initialize(const std::string &dataDir)
+		bool ShaderManager::initialize(const std::string &dataDir, bool loadAllPipelinesFromDir)
 		{
 			m_dataDir = dataDir;
 
-			if (!loadPipelines())
+			if (loadAllPipelinesFromDir)
 			{
-				printf("error loading shader pipelines\n");
-				return false;
+				if (!loadPipelines())
+				{
+					printf("error loading shader pipelines\n");
+					return false;
+				}
 			}
 
 			return true;

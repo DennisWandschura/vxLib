@@ -21,7 +21,7 @@ namespace vx
 
 		void set(size_t i)
 		{
-			VX_ASSERT(i < N, "Index out of bounds !");
+			VX_ASSERT(i < N);
 			const auto index = i / 8;
 
 			const auto bit = i - index * 8;
@@ -42,7 +42,7 @@ namespace vx
 
 		void clear(size_t i)
 		{
-			VX_ASSERT(i < N, "Index out of bounds !");
+			VX_ASSERT(i < N);
 			const auto index = i / 8;
 
 			const auto bit = i - index * 8;
@@ -68,7 +68,7 @@ namespace vx
 
 		bool get(size_t i) const
 		{
-			VX_ASSERT(i < N, "Index out of bounds !");
+			VX_ASSERT(i < N);
 			const auto index = i / 8;
 
 			const auto bit = i - index * 8;
@@ -89,7 +89,7 @@ namespace vx
 
 		bool operator[](size_t i) const
 		{
-			VX_ASSERT(i < N, "Index out of bounds !");
+			VX_ASSERT(i < N);
 			const auto index = i / 8;
 
 			const auto bit = i - index * 8;

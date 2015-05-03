@@ -278,9 +278,14 @@ namespace vx
 		iterator erase(const_iterator pos)
 		{
 			auto p = pos.m_pObject;
+			auto index = p - m_pValues;
+			auto pKey = m_pKeys + index;
+
 			Deleter<std::is_destructible<value_type>::value>::destroy(p);
+			Deleter<std::is_destructible<key_type>::value>::destroy(pKey);
 
 			std::move(p + 1, m_pValues + size(), p);
+			std::move(pKey + 1, m_pKeys + size(), pKey);
 
 			--m_size;
 			return iterator(p, this);

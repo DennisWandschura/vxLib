@@ -31,7 +31,7 @@ namespace vx
 			ShaderManager();
 			~ShaderManager();
 
-			bool initialize(const std::string &dataDir);
+			bool initialize(const std::string &dataDir, bool loadAllPipelinesFromDir);
 
 			bool loadPipeline(const char *fileName);
 

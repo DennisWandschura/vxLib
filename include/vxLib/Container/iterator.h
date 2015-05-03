@@ -30,7 +30,7 @@ namespace vx
 
 		inline void _compat(const array_const_iterator &other) const
 		{
-			VX_ASSERT(this->m_pCon == other.m_pCon, "Different containers");
+			VX_ASSERT(this->m_pCon == other.m_pCon);
 		}
 
 		inline void checkPtr() const
@@ -38,8 +38,7 @@ namespace vx
 			// lower bound
 			VX_ASSERT(m_pCon->data() <= m_pObject &&
 				// upper bound
-				m_pObject < m_pCon->data() + SIZE,
-				"Iterator out of bounds");
+				m_pObject < m_pCon->data() + SIZE);
 		}
 
 	public:
@@ -86,7 +85,7 @@ namespace vx
 
 		array_const_iterator& operator++()
 		{
-			VX_ASSERT(m_pObject < (m_pCon->data() + SIZE), "Iterator out of bounds");
+			VX_ASSERT(m_pObject < (m_pCon->data() + SIZE));
 
 			++this->m_pObject;
 			return (*this);
@@ -101,7 +100,7 @@ namespace vx
 
 		array_const_iterator& operator--()
 		{
-			VX_ASSERT(m_pObject > m_pCon->data(), "Iterator out of bounds");
+			VX_ASSERT(m_pObject > m_pCon->data());
 
 			--this->m_pObject;
 			return (*this);
@@ -117,7 +116,7 @@ namespace vx
 		array_const_iterator& operator+=(difference_type _Off)
 		{
 			auto p = m_pObject + _Off;
-			VX_ASSERT(p < (m_pCon->data() + SIZE), "Iterator out of bounds");
+			VX_ASSERT(p < (m_pCon->data() + SIZE));
 
 			m_pObject = p;
 			return (*this);
@@ -126,7 +125,7 @@ namespace vx
 		array_const_iterator& operator-=(difference_type _Off)
 		{
 			auto p = m_pObject - _Off;
-			VX_ASSERT(p >= m_pCon->data(), "Iterator out of bounds");
+			VX_ASSERT(p >= m_pCon->data());
 
 			m_pObject = p;
 			return (*this);
@@ -318,12 +317,12 @@ namespace vx
 
 		inline void _compat(const _MyIter &other) const
 		{
-			VX_ASSERT(this->m_pCon == other.m_pCon, "Different containers");
+			VX_ASSERT(this->m_pCon == other.m_pCon);
 		}
 
 		inline void validate() const
 		{
-			VX_ASSERT((this->m_pCon->begin() <= *this) && (*this < this->m_pCon->end()), "Iterator invalid");
+			VX_ASSERT((this->m_pCon->begin() <= *this) && (*this < this->m_pCon->end()));
 		}
 
 	public:
@@ -354,7 +353,7 @@ namespace vx
 
 		pointer operator->() const
 		{
-			VX_ASSERT(m_pObject, "No object");
+			VX_ASSERT(m_pObject);
 			validate();
 
 			return m_pObject;
@@ -362,7 +361,7 @@ namespace vx
 
 		reference operator*() const
 		{
-			VX_ASSERT(m_pObject, "No object");
+			VX_ASSERT(m_pObject);
 			validate();
 
 			return *m_pObject;
