@@ -1,0 +1,121 @@
+.IntelPath = 'C:\Program Files (x86)\Intel\Composer XE 2015\bin\intel64'
+.VS12Path = 'C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin'
+
+// Architecture
+.IntelX64 =
+[
+	.Compiler = '$IntelPath$/icl.exe'
+	.Linker = '$IntelPath$/icl.exe'
+]
+
+.DefaultCompilerSettings =
+[
+	.CompilerSettingsDefault = '/fp:fast /Qstd=c++11 /W4 /Qrestrict /GS /Zc:wchar_t /GR-'
+]
+
+.InPath = 'source/'
+.OutPath = 'lib'
+.OutPathObj = 'tmp'
+.ProjectName = 'vxLib'
+
+.DefinesC   = '/D "_UNICODE" /D "UNICODE" /D "_VX_ASSERT" /D "_VX_WINDOWS" /D "NOMINMAX"'	
+.Includes = '/Iinclude\'
+.IncludesASM = '/Isource\'
+
+// Build type
+.BuildDebug =
+[
+	.OutputPathB = '$OutPathObj$\Debug\'
+	.CompilerSettingsB = '/Fd$OutputPathB$ /Fp$OutputPathB$ /Od /Ob1 /Zi /debug'
+	.FileExtension = '_d'
+]
+
+.BuildRelease =
+[
+	.OutputPathB = '$OutPathObj$\Release\'
+	.CompilerSettingsB = '/O2 /Oi /Gy /nologo'
+	.FileExtension = ''
+]
+
+.Target_Debug_x64 =
+[
+	Using(.IntelX64)
+	Using(.DefaultCompilerSettings)
+	Using(.BuildDebug)
+	
+	.CompilerSettingsT = '$CompilerSettingsB$ /MDd'
+	.FileName = '$ProjectName$_d'
+]
+
+.Target_Release_x64 =
+[
+	Using(.IntelX64)
+	Using(.DefaultCompilerSettings)
+	Using(.BuildRelease)
+	
+	.CompilerSettingsT = '$CompilerSettingsB$ /MD'
+	.FileName = '$ProjectName$'
+]
+
+.Targets = { .Target_Debug_x64, .Target_Release_x64 }
+
+ForEach( .Target in .Targets )
+{
+	Using( .Target )
+	
+	.TargetName = '$FileName$'
+	.OutputPathF = '$OutputPathB$\$FileName$\'
+	
+	Unity("Unity_$TargetName$")
+	{
+		.UnityInputPath = '$InPath$'
+		.UnityOutputPattern = 'Unity_$TargetName$*.cpp'
+		.UnityOutputPath = '$OutputPathF$\unity\'
+	}
+	
+	Unity("Unity_C_$TargetName$")
+	{
+		.UnityInputPattern = '*.c'
+		.UnityInputPath = '$InPath$'
+		.UnityOutputPattern = 'Unity_C_$TargetName$*.cpp'
+		.UnityOutputPath = '$OutputPathF$\unity_c\'
+	}
+	
+	ObjectList("Obj_C_$TargetName$")
+	{
+		.CompilerInputUnity = 'Unity_C_$TargetName$'
+		.CompilerOptions = '"%1" /c /Fo"%2" $CompilerSettingsDefault$ $CompilerSettingsT$ $Includes$ $DefinesC$'
+		.CompilerOutputPath = '$OutputPathF$\C\'
+	}
+	
+	ObjectList("Obj_$TargetName$")
+	{
+		.CompilerInputUnity = 'Unity_$TargetName$'
+		.CompilerOptions = '"%1" /c /Fo"%2" $CompilerSettingsDefault$ $CompilerSettingsT$ $Includes$ $DefinesC$'
+		.CompilerOutputPath = '$OutputPathF$\CPP\'
+	}
+	
+	ObjectList("Obj_ASM_$TargetName$")
+	{
+		.CompilerInputPath = '$InPath$'
+		.CompilerOptions = '"%1" /c /Fo"%2" $CompilerSettingsDefault$ $CompilerSettingsT$ $IncludesASM$'
+		.CompilerOutputPath = '$OutputPathF$\ASM\'
+		.CompilerInputPattern = '*.asm'
+	}
+	 
+	Library("Lib_$TargetName$")
+	{
+		.CompilerOptions = '"%1"'
+		.CompilerOutputPath = '$OutputPathF$\'
+		
+		.Librarian = '$IntelPath$\xilib.exe'
+		.LibrarianOptions = '/OUT:"%2" "%1" /MACHINE:X64 /NOLOGO '
+		.LibrarianOutput = '$OutPath$\$TargetName$.lib'
+		.LibrarianAdditionalInputs = {'Obj_C_$TargetName$', 'Obj_$TargetName$', 'Obj_ASM_$TargetName$'}
+	}
+}
+
+Alias('all')
+{
+	.Targets = { 'Lib_vxLib_d' 'Lib_vxLib' }
+}

@@ -1,3 +1,27 @@
+/*
+The MIT License(MIT)
+
+Copyright(c) 2015 Dennis Wandschura
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files(the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and / or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions :
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 #include <vxLib/gl/ShaderManager.h>
 #include <vxLib/gl/ProgramPipeline.h>
 #include <vxLib/gl/ShaderProgram.h>
@@ -126,6 +150,15 @@ namespace vx
 {
 	namespace gl
 	{
+		struct ShaderManager::LoadUseProgramDescription
+		{
+			vx::gl::ProgramPipeline &pipe;
+			const char* id;
+			ShaderProgramType type;
+			const std::string* programDir;
+			const std::string* includeDir;
+		};
+
 		ShaderManager::ShaderManager()
 			:m_programPipelines(),
 			m_shaderPrograms(),
@@ -219,17 +252,18 @@ namespace vx
 			return true;
 		}
 
-		bool ShaderManager::loadUseProgram(vx::gl::ProgramPipeline &pipe, const char *id, vx::gl::ShaderProgramType type, const std::string &programDir, const std::string &includeDir)
+		bool ShaderManager::loadUseProgram(const LoadUseProgramDescription &desc)
 		{
 			// check for not used shader stage
-			if (strcmp(id, "''") == 0)
+			if (strcmp(desc.id, "''") == 0)
 			{
 				return true;
 			}
 
-			if (!loadProgram((programDir + id).c_str(), type, includeDir))
+			auto programFile = *desc.programDir + desc.id;
+			if (!loadProgram(programFile.c_str(), desc.type, *desc.includeDir))
 				return false;
-			if (!useProgram(pipe, id))
+			if (!useProgram(desc.pipe, desc.id))
 				return false;
 
 			return true;
@@ -261,16 +295,29 @@ namespace vx
 			vx::gl::ProgramPipeline pipe;
 			pipe.create();
 
-			if (!loadUseProgram(pipe, shaders[0].c_str(), vx::gl::ShaderProgramType::VERTEX, programDir, includeDir))
+			LoadUseProgramDescription desc;
+			desc.includeDir = &includeDir;
+			desc.pipe = pipe;
+			desc.programDir = &programDir;
+
+			desc.id = shaders[0].c_str();
+			desc.type = vx::gl::ShaderProgramType::VERTEX;
+			if (!loadUseProgram(desc))
 				return false;
 
-			if (!loadUseProgram(pipe, shaders[1].c_str(), vx::gl::ShaderProgramType::GEOMETRY, programDir, includeDir))
+			desc.id = shaders[1].c_str();
+			desc.type = vx::gl::ShaderProgramType::GEOMETRY;
+			if (!loadUseProgram(desc))
 				return false;
 
-			if (!loadUseProgram(pipe, shaders[2].c_str(), vx::gl::ShaderProgramType::FRAGMENT, programDir, includeDir))
+			desc.id = shaders[2].c_str();
+			desc.type = vx::gl::ShaderProgramType::FRAGMENT;
+			if (!loadUseProgram(desc))
 				return false;
 
-			if (!loadUseProgram(pipe, shaders[3].c_str(), vx::gl::ShaderProgramType::COMPUTE, programDir, includeDir))
+			desc.id = shaders[3].c_str();
+			desc.type = vx::gl::ShaderProgramType::COMPUTE;
+			if (!loadUseProgram(desc))
 				return false;
 
 			auto sid = vx::make_sid(PathFindFileNameA(file));
