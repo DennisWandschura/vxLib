@@ -82,6 +82,10 @@ namespace vx
 			SRGBA_DXT1,
 			SRGBA_DXT3,
 			SRGBA_DXT5,
+			RGB_BC6UF,
+			RGB_BC6F,
+			RGBA_BC7,
+			SRGBA_BC7,
 			R16F,
 			RG16F,
 			RGB16F,
@@ -135,9 +139,6 @@ namespace vx
 			U8 sparse; // if sparse textures are supported
 
 			TextureDescription() :size(), miplevels(0), type((gl::TextureType)0), format((gl::TextureFormat)0), fixedsamplelocations(0), sparse(0){}
-
-			static TextureDescription create(TextureType type, TextureFormat format, const vx::ushort3 &size, U16 miplevels, U8 sparse);
-			static TextureDescription createMultisampled(TextureType type, TextureFormat format, const vx::ushort3 &size, U16 samples, U8 fixedsamplelocations, U8 sparse);
 		};
 
 		struct TextureCommitDescription

@@ -222,6 +222,13 @@ namespace vx
 			return true;
 		}
 
+		void ShaderManager::clear()
+		{
+			m_programPipelines.clear();
+			m_shaderPrograms.clear();
+			m_includeFiles.clear();
+		}
+
 		bool ShaderManager::loadProgram(const char *file, vx::gl::ShaderProgramType type, const std::string &includeDir)
 		{
 			std::string fileName = PathFindFileNameA(file);

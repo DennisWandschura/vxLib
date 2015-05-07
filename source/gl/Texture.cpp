@@ -29,31 +29,6 @@ namespace vx
 {
 	namespace gl
 	{
-		TextureDescription TextureDescription::create(TextureType type, TextureFormat format, const vx::ushort3 &size, U16 miplevels, U8 sparse)
-		{
-			TextureDescription desc;
-			desc.type = type;
-			desc.format = format;
-			desc.size = size;
-			desc.miplevels = miplevels;
-			desc.sparse = sparse;
-
-			return desc;
-		}
-
-		TextureDescription TextureDescription::createMultisampled(TextureType type, TextureFormat format, const vx::ushort3 &size, U16 samples, U8 fixedsamplelocations, U8 sparse)
-		{
-			TextureDescription desc;
-			desc.type = type;
-			desc.format = format;
-			desc.size = size;
-			desc.samples = samples;
-			desc.fixedsamplelocations = fixedsamplelocations;
-			desc.sparse = sparse;
-
-			return desc;
-		}
-
 		void getTextureFormat(TextureFormat textureFormat, U32 &format, U32 &internalFormat, bool* compressed)
 		{
 			format = 0;
@@ -238,6 +213,30 @@ namespace vx
 			{
 				format = GL_RGBA;
 				internalFormat = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+				*compressed = true;
+			}break;
+			case TextureFormat::RGB_BC6UF:
+			{
+				format = GL_RGB;
+				internalFormat = GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT;
+				*compressed = true;
+			}break;
+			case TextureFormat::RGB_BC6F:
+			{
+				format = GL_RGB;
+				internalFormat = GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT;
+				*compressed = true;
+			}break;
+			case TextureFormat::RGBA_BC7:
+			{
+				format = GL_RGBA;
+				internalFormat = GL_COMPRESSED_RGBA_BPTC_UNORM;
+				*compressed = true;
+			}break;
+			case TextureFormat::SRGBA_BC7:
+			{
+				format = GL_RGBA;
+				internalFormat = GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM;
 				*compressed = true;
 			}break;
 			case TextureFormat::R16F:

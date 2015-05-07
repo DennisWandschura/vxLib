@@ -166,11 +166,14 @@ namespace vx
 			return *this;
 		}
 
-		bool Buffer::create(const BufferDescription &desc)
+		void Buffer::create(const BufferDescription &desc)
 		{
-			auto target = ::vx::gl::detail::getBufferType(desc.bufferType);
-			m_target = target | ((U8)desc.bufferType >> 24);
-			return detail::BufferInterface::create(desc, m_id);
+			if (m_id == 0)
+			{
+				auto target = ::vx::gl::detail::getBufferType(desc.bufferType);
+				m_target = target | ((U8)desc.bufferType >> 24);
+				detail::BufferInterface::create(desc, m_id);
+			}
 		}
 
 		void Buffer::destroy()

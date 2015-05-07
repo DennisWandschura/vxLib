@@ -316,12 +316,9 @@ namespace vx
 
 		void clear()
 		{
-			//m_pKeys = m_pKeys;
 			rangeDestroy(m_pKeys, m_size);
 			rangeDestroy(m_pValues, m_size);
-			//m_pValues;
 			m_size = 0;
-			//m_capacity;
 		}
 
 			reference operator[](size_type i)

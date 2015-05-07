@@ -166,7 +166,7 @@ namespace vx
 			Buffer& operator=(const Buffer&) = delete;
 			Buffer& operator=(Buffer &&rhs);
 
-			bool create(const BufferDescription &desc);
+			void create(const BufferDescription &desc);
 			void destroy();
 
 			void bind() const;

@@ -173,7 +173,7 @@ namespace vx
 
 			inline U32 getId() const noexcept 
 			{
-				return m_id; 
+				return m_id;
 			}
 		};
 	}
