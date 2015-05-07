@@ -117,10 +117,10 @@ namespace vx
 		// destroys all values and sets everything to zero
 		void cleanup()
 		{
+			clear();
+
 			if (m_pValues && m_pAllocator)
 			{
-				MyAllocator::rangeDestroy(m_pKeys, m_pKeys + m_size);
-				MyAllocator::rangeDestroy(m_pValues, m_pValues + m_size);
 				m_size = 0;
 				m_capacity = 0;
 				m_pValues = nullptr;
@@ -220,9 +220,12 @@ namespace vx
 
 		void clear()
 		{
-			MyAllocator::rangeDestroy(m_pKeys, m_pKeys + m_size);
-			MyAllocator::rangeDestroy(m_pValues, m_pValues + m_size);
-			m_size = 0;
+			if (m_size != 0)
+			{
+				MyAllocator::rangeDestroy(m_pKeys, m_pKeys + m_size);
+				MyAllocator::rangeDestroy(m_pValues, m_pValues + m_size);
+				m_size = 0;
+			}
 		}
 
 		pointer data()

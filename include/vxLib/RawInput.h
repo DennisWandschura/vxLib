@@ -46,7 +46,7 @@ namespace vx
 		Event evt;
 
 		KeyEvent(){}
-		KeyEvent(U16 _key, Event type) :evt(type), key(_key){}
+		KeyEvent(U16 _key, Event type) :key(_key), evt(type) {}
 	};
 
 	namespace Input

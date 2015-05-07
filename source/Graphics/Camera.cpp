@@ -72,7 +72,7 @@ namespace vx
 
 		//auto q = DirectX::XMQuaternionRotationRollPitchYawFromVector(m_rotation);
 
-		auto offset = Vector3Rotate(direction, m_qRotation);
+		auto offset = quaternionRotation(direction, m_qRotation);
 		m_position = _mm_fmadd_ps(offset, vSpeed, m_position);
 
 		//offset = _mm_mul_ps(offset, vSpeed);
@@ -101,8 +101,8 @@ namespace vx
 
 		//m_direction = DirectX::XMVector3Transform(lookAt, rotationMatrix);
 		//up = DirectX::XMVector3Transform(up, rotationMatrix);
-		auto viewDir = Vector3Rotate(lookAt, m_qRotation);
-		auto upDir = Vector3Rotate(up, m_qRotation);
+		auto viewDir = quaternionRotation(lookAt, m_qRotation);
+		auto upDir = quaternionRotation(up, m_qRotation);
 
 		viewMatrix = vx::MatrixLookToRH(m_position, viewDir, upDir);
 	}

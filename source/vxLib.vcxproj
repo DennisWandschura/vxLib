@@ -178,6 +178,7 @@
   <ItemGroup>
     <None Include="..\include\vxLib\math\matrix.inl" />
     <None Include="..\include\vxLib\math\Vector.inl" />
+    <None Include="asm_include.inc" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CityHash.cpp" />
@@ -207,12 +208,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="asm_include.inc">
-      <FileType>Document</FileType>
-    </None>
     <MASM Include="math.asm" />
-    <MASM Include="Vector_dot.asm" />
-    <MASM Include="Vector_Basic.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

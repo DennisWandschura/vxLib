@@ -41,14 +41,9 @@ namespace vx
 			I64 i64;
 			F32 f32;
 			F64 f64;
-			vx::StringID sid;
 			void* ptr;
 		};
 
-		Variant(){}
-		Variant(vx::StringID sid_) :sid(sid_){}
-		Variant(U32 u) :u32(u){}
-		Variant(F32 f) :f32(f){}
-		Variant(void* p) :ptr(p){}
+		Variant() :ptr(nullptr){}
 	};
 }

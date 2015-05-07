@@ -152,7 +152,7 @@ namespace vx
 	{
 		struct ShaderManager::LoadUseProgramDescription
 		{
-			vx::gl::ProgramPipeline &pipe;
+			vx::gl::ProgramPipeline* pipe;
 			const char* id;
 			ShaderProgramType type;
 			const std::string* programDir;
@@ -263,7 +263,7 @@ namespace vx
 			auto programFile = *desc.programDir + desc.id;
 			if (!loadProgram(programFile.c_str(), desc.type, *desc.includeDir))
 				return false;
-			if (!useProgram(desc.pipe, desc.id))
+			if (!useProgram(*desc.pipe, desc.id))
 				return false;
 
 			return true;
@@ -297,7 +297,7 @@ namespace vx
 
 			LoadUseProgramDescription desc;
 			desc.includeDir = &includeDir;
-			desc.pipe = pipe;
+			desc.pipe = &pipe;
 			desc.programDir = &programDir;
 
 			desc.id = shaders[0].c_str();

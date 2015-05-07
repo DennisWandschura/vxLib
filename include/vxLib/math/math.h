@@ -58,8 +58,6 @@ namespace vx
 		return n;
 	}
 
-	extern F32 VX_CALLCONV abs(F32 a);
-
 	inline F32 clampZeroOne(const F32 value)
 	{
 		detail::FloatInt tmp;
@@ -75,16 +73,18 @@ namespace vx
 		return tmp.f + 1.0f;
 	}
 
+	extern F32 VX_CALLCONV abs(F32 a);
+
 	extern F32 VX_CALLCONV min(F32 a, F32 b);
 	extern F32 VX_CALLCONV max(F32 a, F32 b);
+
+	extern F32 VX_CALLCONV invsqrt(F32 number);
 
 	template<typename T>
 	inline const T& clamp(const T &value, const T &min, const T &max)
 	{
 		return ::std::min(::std::max(value, min), max);
 	}
-
-	extern F32 invsqrt(F32 number);
 
 	inline bool scalarNearEqual
 		(
@@ -162,7 +162,8 @@ namespace vx
 		// Restore the number to the range of -XM_PI to XM_PI-epsilon
 		fTemp = fTemp - VX_PI;
 		// If the modulo'd value was negative, restore negation
-		if (Angle<0.0f) {
+		if (Angle<0.0f) 
+		{
 			fTemp = -fTemp;
 		}
 		return fTemp;

@@ -253,7 +253,7 @@ namespace vx
 		C4 = VX_PERMUTE_PS(C4, _MM_SHUFFLE(3, 1, 2, 0));
 		C6 = VX_PERMUTE_PS(C6, _MM_SHUFFLE(3, 1, 2, 0));
 		// Get the determinate
-		__m128 vTemp = Vector4Dot(C0, MT.c[0]);
+		__m128 vTemp = dot4(C0, MT.c[0]);
 
 		//if (pDeterminant != nullptr)
 		//	*pDeterminant = vTemp;
@@ -574,7 +574,7 @@ namespace vx
 		const __m128 &angles
 		)
 	{
-		auto q = QuaternionRotationRollPitchYawFromVector(angles);
+		auto q = quaternionRotationRollPitchYawFromVector(angles);
 		return MatrixRotationQuaternion(q);
 	}
 
@@ -587,7 +587,7 @@ namespace vx
 		assert(!Vector3Equal(Axis, g_VXZero));
 		assert(!Vector3IsInfinite(Axis));
 
-		__m128 Normal = Vector3Normalize(Axis);
+		__m128 Normal = normalize3(Axis);
 		return MatrixRotationNormal(Normal, Angle);
 	}
 
@@ -767,18 +767,18 @@ namespace vx
 		assert(!Vector3Equal(UpDirection, g_VXZero));
 		assert(!Vector3IsInfinite(UpDirection));
 
-		__m128 R2 = Vector3Normalize(EyeDirection);
+		__m128 R2 = normalize3(EyeDirection);
 
-		__m128 R0 = Vector3Cross(UpDirection, R2);
-		R0 = Vector3Normalize(R0);
+		__m128 R0 = cross3(UpDirection, R2);
+		R0 = normalize3(R0);
 
-		__m128 R1 = Vector3Cross(R2, R0);
+		__m128 R1 = cross3(R2, R0);
 
 		__m128 NegEyePosition = VectorNegate(EyePosition);
 
-		__m128 D0 = Vector3Dot(R0, NegEyePosition);
-		__m128 D1 = Vector3Dot(R1, NegEyePosition);
-		__m128 D2 = Vector3Dot(R2, NegEyePosition);
+		__m128 D0 = dot3(R0, NegEyePosition);
+		__m128 D1 = dot3(R1, NegEyePosition);
+		__m128 D2 = dot3(R2, NegEyePosition);
 
 		mat4 M;
 

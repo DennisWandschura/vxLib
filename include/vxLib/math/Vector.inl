@@ -25,6 +25,41 @@ SOFTWARE.
 
 namespace vx
 {
+	inline __m128 VX_CALLCONV fma(const __m128 a, const __m128 b, const __m128 c)
+	{
+		return _mm_fmadd_ps(a, b, c);
+	}
+
+	inline __m128 VX_CALLCONV dot2(const __m128 v1, const __m128 v2)
+	{
+		return _mm_dp_ps(v1, v2, _VX_DOT(1, 1, 1, 1, 1, 1, 0, 0));
+	}
+
+	inline __m128 VX_CALLCONV dot3(const __m128 v1, const __m128 v2)
+	{
+		return _mm_dp_ps(v1, v2, _VX_DOT(1, 1, 1, 1, 1, 1, 1, 0));
+	}
+
+	inline __m128 VX_CALLCONV dot4(const __m128 v1, const __m128 v2)
+	{
+		return _mm_dp_ps(v1, v2, 255);
+	}
+
+	inline __m128 VX_CALLCONV min(const __m128 a, const __m128 b)
+	{
+		return _mm_min_ps(a, b);
+	}
+
+	inline __m128 VX_CALLCONV max(const __m128 a, const __m128 b)
+	{
+		return _mm_max_ps(a, b);
+	}
+
+	inline __m128 VX_CALLCONV abs(const __m128 v)
+	{
+		return _mm_andnot_ps(g_VXAbsMask, v);
+	}
+
 	inline __m128 VX_CALLCONV normalize(__m128 V)
 	{
 		auto vLengthSq = _mm_dp_ps(V, V, 255);
@@ -80,7 +115,7 @@ namespace vx
 		return _mm_sub_ps(zero, V);
 	}
 
-	inline __m128 VX_CALLCONV Vector3Cross(__m128 v1, __m128 v2)
+	inline __m128 VX_CALLCONV cross3(__m128 v1, __m128 v2)
 	{
 		auto tmp = _mm_shuffle_ps(v1, v1, _MM_SHUFFLE(3, 0, 2, 1));
 		auto c1 = _mm_shuffle_ps(v2, v2, _MM_SHUFFLE(3, 1, 0, 2));
@@ -93,25 +128,7 @@ namespace vx
 		return _mm_sub_ps(c1, c2);
 	}
 
-	inline __m128 VX_CALLCONV Vector3Dot
-		(
-		__m128 V1,
-		__m128 V2
-		)
-	{
-		return _mm_dp_ps(V1, V2, _VX_DOT(1, 1, 1, 1, 1, 1, 1, 0));
-	}
-
-	inline __m128 VX_CALLCONV Vector4Dot
-		(
-		__m128 V1,
-		__m128 V2
-		)
-	{
-		return _mm_dp_ps(V1, V2, 255);
-	}
-
-	inline __m128 VX_CALLCONV Vector3Normalize
+	inline __m128 VX_CALLCONV normalize3
 		(
 		__m128 V
 		)
@@ -139,19 +156,19 @@ namespace vx
 		return vResult;
 	}
 
-	inline __m128 VX_CALLCONV Vector3Rotate
+	inline __m128 VX_CALLCONV quaternionRotation
 		(
 		__m128 V,
 		__m128 RotationQuaternion
 		)
 	{
 		__m128 A = VectorSelect(g_VXSelect1110.v, V, g_VXSelect1110.v);
-		__m128 Q = QuaternionConjugate(RotationQuaternion);
-		__m128 Result = QuaternionMultiply(Q, A);
-		return QuaternionMultiply(Result, RotationQuaternion);
+		__m128 Q = quaternionConjugate(RotationQuaternion);
+		__m128 Result = quaternionMultiply(Q, A);
+		return quaternionMultiply(Result, RotationQuaternion);
 	}
 
-	inline __m128 VX_CALLCONV QuaternionMultiply(__m128 Q1, __m128 Q2)
+	inline __m128 VX_CALLCONV quaternionMultiply(__m128 Q1, __m128 Q2)
 	{
 		static const __m128 ControlWZYX = { 1.0f, -1.0f, 1.0f, -1.0f };
 		static const __m128 ControlZWXY = { 1.0f, 1.0f, -1.0f, -1.0f };
@@ -191,13 +208,13 @@ namespace vx
 		return vResult;
 	}
 
-	inline __m128 VX_CALLCONV QuaternionConjugate(__m128 Q)
+	inline __m128 VX_CALLCONV quaternionConjugate(__m128 Q)
 	{
 		static const __m128 NegativeOne3 = { -1.0f, -1.0f, -1.0f, 1.0f };
 		return _mm_mul_ps(Q, NegativeOne3);
 	}
 
-	inline __m128 VX_CALLCONV QuaternionRotationRollPitchYawFromVector(__m128 Angles)
+	inline __m128 VX_CALLCONV quaternionRotationRollPitchYawFromVector(__m128 Angles)
 	{
 		static const __m128  Sign = { 1.0f, -1.0f, -1.0f, 1.0f };
 

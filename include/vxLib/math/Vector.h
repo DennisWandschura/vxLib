@@ -787,8 +787,6 @@ namespace vx
 		return _mm_unpacklo_ps(x, y);
 	}
 
-	extern __m128 VX_CALLCONV loadFloat(const detail::vec2a<F32> &v);
-
 	inline __m128 VX_CALLCONV loadFloat(const detail::vec3<F32> &source)
 	{
 		__m128 x = _mm_load_ss(&source.x);
@@ -809,8 +807,6 @@ namespace vx
 		_mm_store_ss(&pDestination->x, V);
 		_mm_store_ss(&pDestination->y, T);
 	}
-
-	extern void VX_CALLCONV storeFloat(detail::vec2a<F32>* dst, const __m128 V);
 
 	inline void VX_CALLCONV storeFloat(detail::vec3<F32>* pDestination, const __m128 &V)
 	{
@@ -833,61 +829,6 @@ namespace vx
 	////////////////////////
 	// SSE INTEGER
 	////////////////////////
-
-	extern __m128i VX_CALLCONV loadInt(const I32* src);
-	extern __m128i VX_CALLCONV loadInt(const U32* src);
-
-	extern __m128i VX_CALLCONV loadInt(const vx::detail::vec2a<I32> &src);
-	extern __m128i VX_CALLCONV loadInt(const vx::detail::vec2a<U32> &src);
-
-	inline __m128i VX_CALLCONV loadInt(const detail::vec3<I32> *pSource)
-	{
-		__m128i x = loadInt(&pSource->x);
-		__m128i y = loadInt(&pSource->y);
-		__m128i z = loadInt(&pSource->z);
-		__m128i xy = _mm_unpacklo_epi32(x, z);
-		return _mm_unpacklo_epi32(xy, y);
-	}
-
-	inline __m128i VX_CALLCONV loadInt(const detail::vec3<U32> *pSource)
-	{
-		__m128i x = loadInt(&pSource->x);
-		__m128i y = loadInt(&pSource->y);
-		__m128i z = loadInt(&pSource->z);
-		__m128i xy = _mm_unpacklo_epi32(x, z);
-		return _mm_unpacklo_epi32(xy, y);
-	}
-
-	extern void VX_CALLCONV storeInt(I32* dest, __m128i V);
-	extern void VX_CALLCONV storeInt(U32* dest, __m128i V);
-
-	inline void VX_CALLCONV storeInt(detail::vec3<I32>* pDestination, const __m128i &V)
-	{
-		auto T1 = _mm_shuffle_epi32(V, _MM_SHUFFLE(1, 1, 1, 1));
-		auto T2 = _mm_shuffle_epi32(V, _MM_SHUFFLE(2, 2, 2, 2));
-		storeInt(&pDestination->x, V);
-		storeInt(&pDestination->y, T1);
-		storeInt(&pDestination->z, T2);
-	}
-
-	inline void VX_CALLCONV storeInt(detail::vec3<U32>* pDestination, const __m128i &V)
-	{
-		auto T1 = _mm_shuffle_epi32(V, _MM_SHUFFLE(1, 1, 1, 1));
-		auto T2 = _mm_shuffle_epi32(V, _MM_SHUFFLE(2, 2, 2, 2));
-		storeInt(&pDestination->x, V);
-		storeInt(&pDestination->y, T1);
-		storeInt(&pDestination->z, T2);
-	}
-
-	inline void VX_CALLCONV storeInt(detail::vec4<I32>* pDestination, const __m128i &V)
-	{
-		_mm_storeu_si128((__m128i*)pDestination, V);
-	}
-
-	inline void VX_CALLCONV storeInt(detail::vec4<U32>* pDestination, const __m128i &V)
-	{
-		_mm_storeu_si128((__m128i*)pDestination, V);
-	}
 
 	////////////////////////
 	
@@ -986,411 +927,6 @@ namespace vx
 	VX_GLOBALCONST ivec4 g_VXNegate3 = { 0x80000000, 0x80000000, 0x80000000, 0x00000000 };
 	VX_GLOBALCONST ivec4 g_VXMask3 = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x00000000 };
 
-	namespace detail
-	{
-		extern int2 addInt2(const int2 &a, const int2 &b);
-		extern uint2 addUint2(const uint2 &a, const uint2 &b);
-		extern float4 addFloat4(const float4 &a, const float4 &b);
-		extern float4 subFloat4(const float4 &a, const float4 &b);
-		extern float4 mulFloat4(const float4 &a, const float4 &b);
-		extern float4 divFloat4(const float4 &a, const float4 &b);
-
-		extern vx::float2 min(const vx::float2 &a, const vx::float2 &b);
-		extern vx::float2 max(const vx::float2 &a, const vx::float2 &b);
-		extern vx::float3 min(const vx::float3 &a, const vx::float3 &b);
-		extern vx::float3 max(const vx::float3 &a, const vx::float3 &b);
-		extern vx::float4 min(const vx::float4 &a, const vx::float4 &b);
-		extern vx::float4 max(const vx::float4 &a, const vx::float4 &b);
-
-		extern vx::uint4 min(const vx::uint4 &a, const vx::uint4 &b);
-		extern vx::uint4 max(const vx::uint4 &a, const vx::uint4 &b);
-
-		extern vx::int4 min(const vx::int4 &a, const vx::int4 &b);
-		extern vx::int4 max(const vx::int4 &a, const vx::int4 &b);
-
-		extern vx::float4 abs(const vx::float4 &v);
-		extern __m128 VX_CALLCONV abs(__m128 v);
-
-		extern F32 dot(const vx::float2 &v1, const vx::float2 &v2);
-		extern F32 dot(const vx::float3 &v1, const vx::float3 &v2);
-		// unaligned float4
-		extern F32 VX_CALLCONV dot(const vx::float4 &v1, const vx::float4 &v2);
-		// aligned float4
-		extern F32 VX_CALLCONV dot(__m128 v1, __m128 v2);
-
-		extern F32 distance2(const vx::float2 &a, const vx::float2 &b);
-		extern F32 distance2(const vx::float3 &a, const vx::float3 &b);
-		extern F32 distance2(const vx::float4 &a, const vx::float4 &b);
-		extern F32 VX_CALLCONV distance2(const __m128 a, const __m128 b);
-
-		extern F32 distance(const vx::float2 &a, const vx::float2 &b);
-		extern F32 distance(const vx::float3 &a, const vx::float3 &b);
-		extern F32 distance(const vx::float4 &a, const vx::float4 &b);
-		extern F32 VX_CALLCONV distance(__m128 a, __m128 b);
-
-		extern F32 length(const vx::float2 &v);
-		extern F32 length(const vx::float3 &v);
-		extern F32 length(const vx::float4 &v);
-	}
-
-	inline float3 fma(const float3 &a, const float3 &b, const float3 &c)
-	{
-		return float3
-			(
-			::fmaf(a.x, b.x, c.x),
-			::fmaf(a.y, b.y, c.y),
-			::fmaf(a.z, b.z, c.z)
-			);
-	}
-
-	inline float4 fma(const float4 &a, const float4 &b, const float4 &c)
-	{
-		auto VA = _mm_loadu_ps(a);
-		auto VB = _mm_loadu_ps(b);
-		auto VC = _mm_loadu_ps(c);
-
-		auto R = _mm_fmadd_ps(VA, VB, VC);
-
-		float4 result;
-		_mm_storeu_ps(result, R);
-
-		return result;
-	}
-
-	inline float4a VX_CALLCONV abs(const float4a &v)
-	{
-		return detail::abs(v);
-	}
-
-	template<class T>
-	F32 dot(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
-	{
-		return v1.x*v2.x + v1.y*v2.y;
-	}
-
-	template<>
-	F32 dot(const float2 &v1, const float2 &v2)
-	{
-		return detail::dot(v1, v2);
-	}
-
-	template<class T>
-	F32 dot(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
-	{
-		return v1.x*v2.x + v1.y*v2.y;
-	}
-
-	template<class T>
-	F32 dot(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
-	{
-		return v1.x*v2.x + v1.y*v2.y + v1.z * v2.z;
-	}
-
-	template<>
-	F32 dot(const float3 &v1, const float3 &v2)
-	{
-		return detail::dot(v1, v2);
-	}
-
-	template<class T>
-	F32 dot(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
-	{
-		return v1.x*v2.x + v1.y*v2.y + v1.z * v2.z + v1.w * v2.w;
-	}
-
-	template<>
-	F32 dot<F32>(const float4 &v1, const float4 &v2)
-	{
-		return detail::dot(v1, v2);
-	}
-
-	inline F32 VX_CALLCONV dot(const float4a &v1, const float4a & v2)
-	{
-		return detail::dot(v1, v2);
-	}
-
-	template<class T>
-	F32 distance2(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
-	{
-		auto tmp = v2 - v1;
-		return dot(tmp, tmp);
-	}
-
-	template<>
-	F32 distance2(const float2 &v1, const float2 &v2)
-	{
-		return detail::distance2(v1, v2);
-	}
-
-	template<class T>
-	F32 distance2(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
-	{
-		auto tmp = v2 - v1;
-		return dot(tmp, tmp);
-	}
-
-	template<>
-	F32 distance2(const float3 &v1, const float3 &v2)
-	{
-		return detail::distance2(v1, v2);
-	}
-
-	template<class T>
-	F32 distance2(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
-	{
-		auto tmp = v2 - v1;
-		return dot(tmp, tmp);
-	}
-
-	template<>
-	F32 distance2(const float4 &v1, const float4 &v2)
-	{
-		return detail::distance2(v1, v2);
-	}
-
-	inline F32 distance2(const float4a &v1, const float4a &v2)
-	{
-		return detail::distance2(v1.v, v2.v);
-	}
-
-	template<class T>
-	F32 distance(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
-	{
-		auto tmp = v2 - v1;
-		return ::sqrtf(dot(tmp, tmp));
-	}
-
-	template<>
-	F32 distance(const float2 &v1, const float2 &v2)
-	{
-		return detail::distance(v1, v2);
-	}
-
-	template<class T>
-	F32 distance(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
-	{
-		auto tmp = v2 - v1;
-		return ::sqrtf(dot(tmp, tmp));
-	}
-
-	template<>
-	F32 distance(const float3 &v1, const float3 &v2)
-	{
-		return detail::distance(v1, v2);
-	}
-
-	template<class T>
-	F32 distance(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
-	{
-		auto tmp = v2 - v1;
-		return ::sqrtf(dot(tmp, tmp));
-	}
-
-	template<>
-	F32 distance(const float4 &v1, const float4 &v2)
-	{
-		return detail::distance(v1, v2);
-	}
-
-	inline F32 distance(const float4a &v1, const float4a &v2)
-	{
-		return detail::distance(v1, v2);
-	}
-
-	template<class T>
-	F32 length(const detail::vec2<T> &v)
-	{
-		return distance(v, v);
-	}
-
-	template<>
-	F32 length(const float2 &v)
-	{
-		return detail::length(v);
-	}
-
-	template<class T>
-	F32 length(const detail::vec3<T> &v)
-	{
-		return distance(v, v);
-	}
-
-	template<>
-	F32 length(const float3 &v)
-	{
-		return detail::length(v);
-	}
-
-	template<class T>
-	F32 length(const detail::vec4<T> &v)
-	{
-		return distance(v, v);
-	}
-
-	template<>
-	F32 length(const float4 &v)
-	{
-		return detail::length(v);
-	}
-
-	inline F32 length(const float4a &v)
-	{
-		return distance(v, v);
-	}
-
-	inline float2 normalize(const float2 &v1)
-	{
-		auto l = sqrt(dot(v1, v1));
-		float2 result(v1);
-		if (l > 0.0f)
-		{
-			result.x /= l;
-			result.y /= l;
-		}
-
-		return result;
-	}
-
-	inline float2a normalize(const float2a &v1)
-	{
-		auto l = sqrt(dot(v1, v1));
-		float2a result(v1);
-		if (l > 0.0f)
-		{
-			result.x /= l;
-			result.y /= l;
-		}
-
-		return result;
-	}
-
-	inline float3 normalize(const float3 &v1)
-	{
-		auto l = sqrt(vx::dot(v1, v1));
-
-		float3 result(v1);
-		if (l > 0.0f)
-		{
-			result.x /= l;
-			result.y /= l;
-			result.z /= l;
-		}
-
-		return result;
-	}
-
-	template<typename T>
-	detail::vec2<T> max(const detail::vec2<T> &a, const detail::vec2<T> &b)
-	{
-		return detail::vec2<T>(::std::max(a.x, b.x), ::std::max(a.y, b.y));
-	}
-
-	template<>
-	float2 max(const float2 &a, const float2 &b)
-	{
-		return detail::max(a, b);
-	}
-
-	template<typename T>
-	detail::vec3<T> max(const detail::vec3<T> &a, const detail::vec3<T> &b)
-	{
-		return detail::vec3<T>(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z));
-	}
-
-	template<>
-	float3 max(const float3 &a, const float3 &b)
-	{
-		return detail::max(a, b);
-	}
-
-	template<typename T>
-	detail::vec4<T> max(const detail::vec4<T> &a, const detail::vec4<T> &b)
-	{
-		return detail::vec4<T>(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z), std::max(a.w, b.w));
-	}
-
-	template<>
-	uint4 max(const uint4 &a, const uint4 &b)
-	{
-		return detail::max(a, b);
-	}
-
-	template<>
-	int4 max(const int4 &a, const int4 &b)
-	{
-		return detail::max(a, b);
-	}
-
-	template<>
-	float4 max(const float4 &a, const float4 &b)
-	{
-		return detail::max(a, b);
-	}
-
-	template<typename T>
-	detail::vec2<T> min(const detail::vec2<T> &a, const detail::vec2<T> &b)
-	{
-		return detail::vec2<T>(std::min(a.x, b.x), std::min(a.y, b.y));
-	}
-
-	template<>
-	float2 min(const float2 &a, const float2 &b)
-	{
-		return detail::min(a, b);
-	}
-
-	template<typename T>
-	detail::vec3<T> min(const detail::vec3<T> &a, const detail::vec3<T> &b)
-	{
-		return detail::vec3<T>(std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z));
-	}
-
-	template<>
-	float3 min(const float3 &a, const float3 &b)
-	{
-		return detail::min(a, b);
-	}
-
-	template<typename T>
-	detail::vec4<T> min(const detail::vec4<T> &a, const detail::vec4<T> &b)
-	{
-		return detail::vec4<T>(std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z), std::min(a.w, b.w));
-	}
-
-	template<>
-	uint4 min(const uint4 &a, const uint4 &b)
-	{
-		return detail::min(a, b);
-	}
-
-	template<>
-	int4 min(const int4 &a, const int4 &b)
-	{
-		return detail::min(a, b);
-	}
-
-	template<>
-	float4 min(const float4 &a, const float4 &b)
-	{
-		return detail::min(a, b);
-	}
-
-
-	inline vx::float3 degToRad(const vx::float3 &degAngle)
-	{
-		return  vx::float3(degAngle.x * VX_DEGTORAD, degAngle.y * VX_DEGTORAD, degAngle.z * VX_DEGTORAD);
-	}
-
-	inline __m128 degToRad(__m128 deg)
-	{
-		return _mm_mul_ps(deg, g_VXDegToRad);
-	}
-
-	inline __m128 radToDeg(__m128 rad)
-	{
-		return _mm_mul_ps(rad, g_VXRadToDeg);
-	}
-
 	// PermuteHelper internal template (SSE only)
 	namespace Internal
 	{
@@ -1468,29 +1004,237 @@ namespace vx
 	template<> inline __m128      VX_CALLCONV     VectorPermute<0, 1, 2, 3>(__m128 V1, __m128 V2) { (V2); return V1; }
 	template<> inline __m128      VX_CALLCONV     VectorPermute<4, 5, 6, 7>(__m128 V1, __m128 V2) { (V1); return V2; }
 
+	inline __m128 VX_CALLCONV fma(const __m128 a, const __m128 b, const __m128 c);
+	inline __m128 VX_CALLCONV dot2(const __m128 v1, const __m128 v2);
+	inline __m128 VX_CALLCONV dot3(const __m128 v1, const __m128 v2);
+	inline __m128 VX_CALLCONV dot4(const __m128 v1, const __m128 v2);
+
+	inline __m128 VX_CALLCONV min(const __m128 a, const __m128 b);
+	inline __m128 VX_CALLCONV max(const __m128 a, const __m128 b);
+
+	inline __m128 VX_CALLCONV abs(const __m128 v);
+
 	inline bool VX_CALLCONV Vector3IsInfinite(__m128 V);
 	inline bool VX_CALLCONV Vector3Equal(__m128 V1, __m128 V2);
 
 	inline __m128 VX_CALLCONV VectorSelect(__m128 V1, __m128 V2, __m128 Control);
-	inline __m128 VX_CALLCONV VectorNegate(__m128 V);
+	inline __m128 VX_CALLCONV negate(__m128 V);
 
-	inline __m128 VX_CALLCONV Vector3Cross(__m128 v1, __m128 v2);
+	inline __m128 VX_CALLCONV cross3(__m128 v1, __m128 v2);
 
-	inline __m128 VX_CALLCONV Vector3Dot(__m128 V1, __m128 V2);
-	inline __m128 VX_CALLCONV Vector4Dot(__m128 V1, __m128 V2);
+	inline __m128 VX_CALLCONV normalize3(__m128 V);
 
-	inline __m128 VX_CALLCONV Vector3Normalize(__m128 V);
+	inline __m128 VX_CALLCONV quaternionRotation(__m128 V, __m128 RotationQuaternion);
 
-	inline __m128 VX_CALLCONV Vector3Rotate(__m128 V, __m128 RotationQuaternion);
-
-	inline __m128 VX_CALLCONV QuaternionMultiply(__m128 Q1, __m128 Q2);
-	inline __m128 VX_CALLCONV QuaternionConjugate(__m128 Q);
-	inline __m128 VX_CALLCONV QuaternionRotationRollPitchYawFromVector(__m128 vector);
+	inline __m128 VX_CALLCONV quaternionMultiply(__m128 Q1, __m128 Q2);
+	inline __m128 VX_CALLCONV quaternionConjugate(__m128 Q);
+	inline __m128 VX_CALLCONV quaternionRotationRollPitchYawFromVector(__m128 vector);
 
 	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, __m128 V);
 	inline __m128 VX_CALLCONV VectorModAngles(__m128 Angles);
 
 	//////////////////////// inline functions
+
+	template<class T>
+	detail::vec2<T> min(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
+	{
+		detail::vec2<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
+	}
+
+	template<class T>
+	detail::vec2a<T> min(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
+	{
+		detail::vec2a<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
+	}
+
+	template<class T>
+	detail::vec3<T> min(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
+	{
+		detail::vec3<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z));
+	}
+
+	template<class T>
+	detail::vec4<T> min(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
+	{
+		detail::vec4<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z), std::min(v1.w, v2.w));
+	}
+
+	template<class T>
+	detail::vec2<T> max(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
+	{
+		detail::vec2<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
+	}
+
+	template<class T>
+	detail::vec2a<T> max(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
+	{
+		detail::vec2a<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
+	}
+
+	template<class T>
+	detail::vec3<T> max(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
+	{
+		detail::vec3<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z));
+	}
+
+	template<class T>
+	detail::vec4<T> max(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
+	{
+		detail::vec4<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z), std::max(v1.w, v2.w));
+	}
+
+	template<class T>
+	F32 dot(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
+	{
+		return v1.x * v2.x + v1.y * v2.y;
+	}
+
+	template<class T>
+	F32 dot(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
+	{
+		return v1.x*v2.x + v1.y*v2.y;
+	}
+
+	template<class T>
+	F32 dot(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
+	{
+		return v1.x*v2.x + v1.y*v2.y + v1.z * v2.z;
+	}
+
+	template<class T>
+	F32 dot(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
+	{
+		return v1.x*v2.x + v1.y*v2.y + v1.z * v2.z + v1.w * v2.w;
+	}
+
+	template<>
+	F32 dot<F32>(const float4 &v1, const float4 &v2)
+	{
+		auto a = _mm_loadu_ps(v1);
+		auto b = _mm_loadu_ps(v2);
+		return dot4(a, b).m128_f32[0];
+	}
+
+	inline F32 VX_CALLCONV dot(const float4a &v1, const float4a & v2)
+	{
+		return dot4(v1, v2).m128_f32[0];
+	}
+
+	template<class T>
+	F32 distance2(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
+	{
+		auto tmp = v2 - v1;
+		return dot(tmp, tmp);
+	}
+
+	template<class T>
+	F32 distance2(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
+	{
+		auto tmp = v2 - v1;
+		return dot(tmp, tmp);
+	}
+
+	template<class T>
+	F32 distance2(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
+	{
+		auto tmp = v2 - v1;
+		return dot(tmp, tmp);
+	}
+
+	template<class T>
+	F32 distance(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
+	{
+		auto tmp = v2 - v1;
+		return ::sqrtf(dot(tmp, tmp));
+	}
+
+	template<class T>
+	F32 distance(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
+	{
+		auto tmp = v2 - v1;
+		return ::sqrtf(dot(tmp, tmp));
+	}
+
+	template<class T>
+	F32 distance(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
+	{
+		auto tmp = v2 - v1;
+		return ::sqrtf(dot(tmp, tmp));
+	}
+
+	template<class T>
+	F32 length(const detail::vec2<T> &v)
+	{
+		return distance(v, v);
+	}
+
+	template<class T>
+	F32 length(const detail::vec3<T> &v)
+	{
+		return distance(v, v);
+	}
+
+	template<class T>
+	F32 length(const detail::vec4<T> &v)
+	{
+		return distance(v, v);
+	}
+
+	inline float2 normalize(const float2 &v1)
+	{
+		auto l = sqrt(dot(v1, v1));
+		float2 result(v1);
+		if (l > 0.0f)
+		{
+			result.x /= l;
+			result.y /= l;
+		}
+
+		return result;
+	}
+
+	inline float2a normalize(const float2a &v1)
+	{
+		auto l = sqrt(dot(v1, v1));
+		float2a result(v1);
+		if (l > 0.0f)
+		{
+			result.x /= l;
+			result.y /= l;
+		}
+
+		return result;
+	}
+
+	inline float3 normalize(const float3 &v1)
+	{
+		auto l = sqrt(vx::dot(v1, v1));
+
+		float3 result(v1);
+		if (l > 0.0f)
+		{
+			result.x /= l;
+			result.y /= l;
+			result.z /= l;
+		}
+
+		return result;
+	}
+
+	inline vx::float3 degToRad(const vx::float3 &degAngle)
+	{
+		return vx::float3(degAngle.x * VX_DEGTORAD, degAngle.y * VX_DEGTORAD, degAngle.z * VX_DEGTORAD);
+	}
+
+	inline __m128 degToRad(__m128 deg)
+	{
+		return _mm_mul_ps(deg, g_VXDegToRad);
+	}
+
+	inline __m128 radToDeg(__m128 rad)
+	{
+		return _mm_mul_ps(rad, g_VXRadToDeg);
+	}
 }
 
 //////////////////////// operator+
@@ -1501,28 +1245,10 @@ vx::detail::vec2<T> operator+(const vx::detail::vec2<T> &lhs, const vx::detail::
 	return vx::detail::vec2<T>(lhs.x + rhs.x, lhs.y + rhs.y);
 }
 
-template<>
-inline vx::int2 operator+(const vx::int2 &lhs, const vx::int2 &rhs)
-{
-	return vx::detail::addInt2(lhs, rhs);
-}
-
-template<>
-inline vx::uint2 operator+(const vx::uint2 &lhs, const vx::uint2 &rhs)
-{
-	return vx::detail::addUint2(lhs, rhs);
-}
-
 template<typename T>
 vx::detail::vec4<T> VX_CALLCONV operator + (const vx::detail::vec4<T> &lhs, const vx::detail::vec4<T> &rhs)
 {
 	return vx::detail::vec4<T>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w);
-}
-
-template<>
-inline vx::float4 VX_CALLCONV operator + (const vx::float4 &lhs, const vx::float4 &rhs)
-{
-	return vx::detail::addFloat4(lhs, rhs);
 }
 
 inline vx::float4a VX_CALLCONV operator + (const vx::float4a &lhs, const vx::float4a &rhs)
@@ -1540,12 +1266,6 @@ vx::detail::vec4<T> VX_CALLCONV operator - (const vx::detail::vec4<T> &lhs, cons
 	return vx::detail::vec4<T>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w);
 }
 
-template<>
-inline vx::float4 VX_CALLCONV operator - (const vx::float4 &lhs, const vx::float4 &rhs)
-{
-	return vx::detail::subFloat4(lhs, rhs);
-}
-
 inline vx::float4a VX_CALLCONV operator - (const vx::float4a &lhs, const vx::float4a &rhs)
 {
 	return _mm_sub_ps(lhs.v, rhs.v);
@@ -1561,12 +1281,6 @@ vx::detail::vec4<T> VX_CALLCONV operator*(const vx::detail::vec4<T> &lhs, const 
 	return vx::detail::vec4<T>(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w);
 }
 
-template<>
-inline vx::float4 VX_CALLCONV operator*(const vx::float4 &lhs, const vx::float4 &rhs)
-{
-	return vx::detail::mulFloat4(lhs, rhs);
-}
-
 inline vx::float4a VX_CALLCONV operator*(const vx::float4a &lhs, const vx::float4a &rhs)
 {
 	return _mm_mul_ps(lhs.v, rhs.v);
@@ -1580,12 +1294,6 @@ template<typename T>
 vx::detail::vec4<T> VX_CALLCONV operator / (const vx::detail::vec4<T> &lhs, const vx::detail::vec4<T> &rhs)
 {
 	return vx::detail::vec4<T>(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w);
-}
-
-template<>
-inline vx::float4 VX_CALLCONV operator / (const vx::float4 &lhs, const vx::float4 &rhs)
-{
-	return vx::detail::divFloat4(lhs, rhs);
 }
 
 inline vx::float4a VX_CALLCONV operator / (const vx::float4a &lhs, const vx::float4a &rhs)
