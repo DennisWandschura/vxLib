@@ -38,7 +38,7 @@ namespace vx
 	}
 
 	template<class T>
-	bool write(std::ostream &out, const T *ptr, U32 count)
+	bool write(std::ostream &out, const T *ptr, u32 count)
 	{
 		out.write((char*)ptr, sizeof(T) * count);
 
@@ -54,7 +54,7 @@ namespace vx
 	}
 
 	template<class T>
-	bool read(std::istream &is, T *ptr, U32 count)
+	bool read(std::istream &is, T *ptr, u32 count)
 	{
 		is.read((char*)ptr, sizeof(T)*count);
 

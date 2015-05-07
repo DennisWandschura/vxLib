@@ -34,7 +34,7 @@ namespace vx
 	{
 		namespace detail
 		{
-			inline U32 getStageBit(ShaderProgramType type)
+			inline u32 getStageBit(ShaderProgramType type)
 			{
 				switch (type)
 				{
@@ -63,7 +63,7 @@ namespace vx
 				return nullptr;
 
 			inFile.seekg(0, inFile.end);
-			U32 length = inFile.tellg();
+			u32 length = inFile.tellg();
 			inFile.seekg(0, inFile.beg);
 
 			auto ptr = std::make_unique<char[]>(length + 1);
@@ -128,7 +128,7 @@ namespace vx
 			auto type = program.getType();
 			glUseProgramStages(m_id, ::vx::gl::detail::getStageBit(type), programId);
 
-			m_programIds[static_cast<U32>(type)] = programId;
+			m_programIds[static_cast<u32>(type)] = programId;
 		}
 
 		void ProgramPipeline::validatePipeline() const
@@ -146,34 +146,34 @@ namespace vx
 			glBindProgramPipeline(0);
 		}
 
-		U32 ProgramPipeline::getVertexShader() const noexcept
+		u32 ProgramPipeline::getVertexShader() const noexcept
 		{
-			return m_programIds[static_cast<U32>(ShaderProgramType::VERTEX)];
+			return m_programIds[static_cast<u32>(ShaderProgramType::VERTEX)];
 		}
 
-		U32 ProgramPipeline::getFragmentShader() const noexcept
+		u32 ProgramPipeline::getFragmentShader() const noexcept
 		{
-			return m_programIds[static_cast<U32>(ShaderProgramType::FRAGMENT)];
+			return m_programIds[static_cast<u32>(ShaderProgramType::FRAGMENT)];
 		}
 
-		U32 ProgramPipeline::getGeometryShader() const noexcept
+		u32 ProgramPipeline::getGeometryShader() const noexcept
 		{
-			return m_programIds[static_cast<U32>(ShaderProgramType::GEOMETRY)];
+			return m_programIds[static_cast<u32>(ShaderProgramType::GEOMETRY)];
 		}
 
-			U32 ProgramPipeline::getComputeShader() const noexcept
+			u32 ProgramPipeline::getComputeShader() const noexcept
 		{
-			return m_programIds[static_cast<U32>(ShaderProgramType::COMPUTE)];
+			return m_programIds[static_cast<u32>(ShaderProgramType::COMPUTE)];
 		}
 
-		U32 ProgramPipeline::getTessControlShader() const noexcept
+		u32 ProgramPipeline::getTessControlShader() const noexcept
 		{
-			return m_programIds[static_cast<U32>(ShaderProgramType::TESS_CONTROL)];
+			return m_programIds[static_cast<u32>(ShaderProgramType::TESS_CONTROL)];
 		}
 
-		U32 ProgramPipeline::getTessEvalShader() const noexcept
+		u32 ProgramPipeline::getTessEvalShader() const noexcept
 		{
-			return m_programIds[static_cast<U32>(ShaderProgramType::TESS_EVAL)];
+			return m_programIds[static_cast<u32>(ShaderProgramType::TESS_EVAL)];
 		}
 	}
 }

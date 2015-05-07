@@ -312,7 +312,7 @@ namespace vx
 		//SetCursorPos(pos.x, pos.y);
 	}
 
-	void Window::setCursorPos(I32 x, I32 y)
+	void Window::setCursorPos(s32 x, s32 y)
 	{
 		RECT windowRect;
 		GetWindowRect(m_hwnd, &windowRect);

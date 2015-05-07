@@ -31,15 +31,15 @@ namespace vx
 {
 	class PoolAllocator : public AllocatorBase
 	{
-		U8 *m_pMemory;
-		U32 m_firstFreeEntry;
-		U32 m_freeEntries;
-		U32 m_poolSize;
-		U32 m_size;
+		u8 *m_pMemory;
+		u32 m_firstFreeEntry;
+		u32 m_freeEntries;
+		u32 m_poolSize;
+		u32 m_size;
 
 	public:
 		PoolAllocator() noexcept;
-		PoolAllocator(U8 *ptr, U32 size, U32 poolSize, U8 alignment) noexcept;
+		PoolAllocator(u8 *ptr, u32 size, u32 poolSize, u8 alignment) noexcept;
 		PoolAllocator(const PoolAllocator&) = delete;
 		PoolAllocator(PoolAllocator &&rhs);
 		~PoolAllocator();
@@ -48,9 +48,9 @@ namespace vx
 		PoolAllocator& operator=(PoolAllocator &&rhs);
 
 		// ignores size parameter
-		void* allocate(U32 size) noexcept;
+		void* allocate(u32 size) noexcept;
 		// ignores size and alginment parameter
-		void* allocate(U32 size, U8 alignment) noexcept;
+		void* allocate(u32 size, u8 alignment) noexcept;
 
 		void deallocate(void *ptr);
 

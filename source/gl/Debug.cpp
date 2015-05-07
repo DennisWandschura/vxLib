@@ -154,11 +154,11 @@ namespace vx
 
 		void Debug::errorCallback
 			(
-			U32 source, 
-			U32 type, 
-			U32 id, 
-			U32 severity,
-			I32 length, 
+			u32 source, 
+			u32 type, 
+			u32 id, 
+			u32 severity,
+			s32 length, 
 			const char *message, 
 			const void *userParam
 			)
@@ -246,7 +246,7 @@ namespace vx
 			void *stack[100];
 			auto frames = CaptureStackBackTrace(0, 200, stack, NULL);
 
-			U8 symbolBuffer[sizeof(SYMBOL_INFO) + 256 * sizeof(char)];
+			u8 symbolBuffer[sizeof(SYMBOL_INFO) + 256 * sizeof(char)];
 			auto symbol = (SYMBOL_INFO*)symbolBuffer;//(SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
 			symbol->MaxNameLen = 255;
 			symbol->SizeOfStruct = sizeof(SYMBOL_INFO);

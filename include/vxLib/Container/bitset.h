@@ -34,7 +34,7 @@ namespace vx
 	{
 		enum { SIZE = (N / 8) + ((N % 8) != 0) };
 
-		U8 m_bits[SIZE];
+		u8 m_bits[SIZE];
 
 	public:
 		bitset()

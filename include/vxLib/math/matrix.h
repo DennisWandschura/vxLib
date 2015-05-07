@@ -38,10 +38,10 @@ namespace vx
 
 		mat4x4():c() {}
 
-		mat4x4(F32 _11, F32 _12, F32 _13, F32 _14,
-			F32 _21, F32 _22, F32 _23, F32 _24,
-			F32 _31, F32 _32, F32 _33, F32 _34,
-			F32 _41, F32 _42, F32 _43, F32 _44)
+		mat4x4(f32 _11, f32 _12, f32 _13, f32 _14,
+			f32 _21, f32 _22, f32 _23, f32 _24,
+			f32 _31, f32 _32, f32 _33, f32 _34,
+			f32 _41, f32 _42, f32 _43, f32 _44)
 		{
 			c[0] = _mm_set_ps(_41, _31, _21, _11);
 			c[1] = _mm_set_ps(_42, _32, _22, _12);
@@ -99,17 +99,17 @@ namespace vx
 	inline mat4 VX_CALLCONV MatrixIdentity();
 	inline mat4 VX_CALLCONV MatrixTranspose(const mat4 &M);
 	inline mat4 VX_CALLCONV MatrixInverse(const mat4 &M);
-	inline mat4 VX_CALLCONV MatrixPerspectiveFovRH(F32 fovAngleY, F32 aspectHByW, F32 nearZ, F32 farZ);
+	inline mat4 VX_CALLCONV MatrixPerspectiveFovRH(f32 fovAngleY, f32 aspectHByW, f32 nearZ, f32 farZ);
 	inline mat4 VX_CALLCONV MatrixOrthographicRH(float ViewWidth, float ViewHeight, float NearZ, float FarZ);
 	inline mat4 VX_CALLCONV MatrixOrthographicOffCenterRH(float ViewLeft, float ViewRight, float ViewBottom, float ViewTop, float NearZ, float FarZ);
-	inline mat4 VX_CALLCONV MatrixTranslation(const F32 x, const F32 y, const F32 z);
+	inline mat4 VX_CALLCONV MatrixTranslation(const f32 x, const f32 y, const f32 z);
 	inline mat4 VX_CALLCONV MatrixTranslation(const __m128 &v);
-	inline mat4 VX_CALLCONV MatrixRotationX(const F32 rad);
-	inline mat4 VX_CALLCONV MatrixRotationY(const F32 rad);
-	inline mat4 VX_CALLCONV MatrixRotationZ(const F32 rad);
-	inline mat4 VX_CALLCONV MatrixScaling(const F32 x, const F32 y, const F32 z);
+	inline mat4 VX_CALLCONV MatrixRotationX(const f32 rad);
+	inline mat4 VX_CALLCONV MatrixRotationY(const f32 rad);
+	inline mat4 VX_CALLCONV MatrixRotationZ(const f32 rad);
+	inline mat4 VX_CALLCONV MatrixScaling(const f32 x, const f32 y, const f32 z);
 	inline mat4 VX_CALLCONV MatrixScaling(const __m128 &v);
-	inline mat4 VX_CALLCONV MatrixRotationRollPitchYaw(const F32 roll, const F32 pitch, const F32 yaw);
+	inline mat4 VX_CALLCONV MatrixRotationRollPitchYaw(const f32 roll, const f32 pitch, const f32 yaw);
 	inline mat4 VX_CALLCONV MatrixRotationRollPitchYaw(const __m128 &angles);
 	inline mat4 VX_CALLCONV MatrixRotationAxis(const __m128 &Axis, float Angle);
 	inline mat4 VX_CALLCONV MatrixRotationNormal(const __m128 &NormalAxis, float Angle);

@@ -28,7 +28,7 @@ SOFTWARE.
 
 namespace vx
 {
-	Mesh::Mesh(U8 *pMemory, U32 vertexCount, U32 indexCount)
+	Mesh::Mesh(u8 *pMemory, u32 vertexCount, u32 indexCount)
 		:m_vertexCount(vertexCount),
 		m_indexCount(indexCount)
 	{
@@ -65,41 +65,41 @@ namespace vx
 		std::swap(m_indexCount, rhs.m_indexCount);
 	}
 
-	void Mesh::setPointers(U8* p)
+	void Mesh::setPointers(u8* p)
 	{
 		auto sizeF3 = sizeof(MeshVertex) * m_vertexCount;
 		m_pVertices = (MeshVertex*)p;
 
 		p += sizeF3;
 
-		m_pIndices = (U32*)p;
+		m_pIndices = (u32*)p;
 	}
 
-	void Mesh::load(const U8 *src, U8* pMemory)
+	void Mesh::load(const u8 *src, u8* pMemory)
 	{
-		m_vertexCount = *reinterpret_cast<const U32*>(src);
-		src += sizeof(U32);
+		m_vertexCount = *reinterpret_cast<const u32*>(src);
+		src += sizeof(u32);
 
-		m_indexCount = *reinterpret_cast<const U32*>(src);
-		src += sizeof(U32);
+		m_indexCount = *reinterpret_cast<const u32*>(src);
+		src += sizeof(u32);
 
-		auto totalSize = sizeof(MeshVertex) * m_vertexCount + sizeof(U32) * m_indexCount;
+		auto totalSize = sizeof(MeshVertex) * m_vertexCount + sizeof(u32) * m_indexCount;
 		memcpy(pMemory, src, totalSize);
 
 		setPointers(pMemory);
 	}
 
-	void Mesh::save(U8 **pPtr) const
+	void Mesh::save(u8 **pPtr) const
 	{
-		U8 *ptr = *pPtr;
+		u8 *ptr = *pPtr;
 
-		*reinterpret_cast<U32*>(ptr) = m_vertexCount;
-		ptr += sizeof(U32);
+		*reinterpret_cast<u32*>(ptr) = m_vertexCount;
+		ptr += sizeof(u32);
 
-		*reinterpret_cast<U32*>(ptr) = m_indexCount;
-		ptr += sizeof(U32);
+		*reinterpret_cast<u32*>(ptr) = m_indexCount;
+		ptr += sizeof(u32);
 
-		auto totalSize = sizeof(MeshVertex) * m_vertexCount + sizeof(U32) * m_indexCount;
+		auto totalSize = sizeof(MeshVertex) * m_vertexCount + sizeof(u32) * m_indexCount;
 		memcpy(ptr, m_pVertices, totalSize);
 
 		*pPtr = (ptr + totalSize);

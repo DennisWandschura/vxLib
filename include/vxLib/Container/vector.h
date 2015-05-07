@@ -44,8 +44,8 @@ namespace vx
 		using pointer = value_type*;
 		using const_pointer = const pointer;
 
-		using size_type = U32;
-		using difference_type = U64;
+		using size_type = u32;
+		using difference_type = u64;
 
 	protected:
 		void rangeDestroy(pointer start, pointer end) noexcept
@@ -57,7 +57,7 @@ namespace vx
 		}
 	};
 
-	template<class T, U32 N, class Allocator = StlAllocator<T, HeapAllocator>, typename = typename std::enable_if_t<std::is_object<T>::value>>
+	template<class T, u32 N, class Allocator = StlAllocator<T, HeapAllocator>, typename = typename std::enable_if_t<std::is_object<T>::value>>
 	class hybrid_vector : public vector_base<T, Allocator>
 	{
 	public:
@@ -321,8 +321,8 @@ namespace vx
 		using pointer = value_type*;
 		using const_pointer = const pointer;
 
-		using size_type = U32;
-		using difference_type = U64;
+		using size_type = u32;
+		using difference_type = u64;
 
 		using _MyVector = vector<T, Allocator>;
 		using const_iterator = vector_const_iterator<_MyVector>;
@@ -330,8 +330,8 @@ namespace vx
 
 	private:
 		pointer m_pData;
-		U32 m_size;
-		U32 m_capacity;
+		u32 m_size;
+		u32 m_capacity;
 
 		// destroys all current objects and deallocates used memory
 		void cleanUp() noexcept

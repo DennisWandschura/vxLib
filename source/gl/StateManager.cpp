@@ -32,12 +32,12 @@ namespace vx
 {
 	namespace gl
 	{
-		U32 StateManager::s_currentFrameBuffer{0};
-		U32 StateManager::s_currentPipeline{0};
-		U32 StateManager::s_currentVao{0};
+		u32 StateManager::s_currentFrameBuffer{0};
+		u32 StateManager::s_currentPipeline{0};
+		u32 StateManager::s_currentVao{0};
 		vx::ushort4 StateManager::s_viewPort{ 0, 0, 0, 0 };
 		vx::bitset<32> StateManager::s_currentCapabilities{};
-		U32 StateManager::s_bindBuffer[s_bufferTypeCount]{};
+		u32 StateManager::s_bindBuffer[s_bufferTypeCount]{};
 		vx::float4 StateManager::s_clearColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 
 		StateManager::StateManager()
@@ -46,25 +46,25 @@ namespace vx
 
 		void StateManager::enable(Capabilities cap)
 		{
-			if (!s_currentCapabilities.get((U32)cap))
+			if (!s_currentCapabilities.get((u32)cap))
 			{
 				auto glCap = detail::getCapability(cap);
 				glEnable(glCap);
-				s_currentCapabilities.set((U32)cap);
+				s_currentCapabilities.set((u32)cap);
 			}
 		}
 
 		void StateManager::disable(Capabilities cap)
 		{
-			if (s_currentCapabilities.get((U32)cap))
+			if (s_currentCapabilities.get((u32)cap))
 			{
 				auto glCap = detail::getCapability(cap);
 				glDisable(glCap);
-				s_currentCapabilities.clear((U32)cap);
+				s_currentCapabilities.clear((u32)cap);
 			}
 		}
 
-		void StateManager::setClearColor(F32 r, F32 g, F32 b, F32 a)
+		void StateManager::setClearColor(f32 r, f32 g, f32 b, f32 a)
 		{
 			if (s_clearColor.x != r || s_clearColor.y != g || s_clearColor.z != b || s_clearColor.w != a)
 			{
@@ -77,7 +77,7 @@ namespace vx
 			}
 		}
 
-		void StateManager::setViewport(U32 x, U32 y, U32 width, U32 height)
+		void StateManager::setViewport(u32 x, u32 y, u32 width, u32 height)
 		{
 			if (s_viewPort.z != width || s_viewPort.w != height || s_viewPort.x != x || s_viewPort.y != y)
 			{
@@ -88,7 +88,7 @@ namespace vx
 				s_viewPort.w = height;
 			}
 		}
-		void StateManager::bindFrameBuffer(U32 id)
+		void StateManager::bindFrameBuffer(u32 id)
 		{
 			if (s_currentFrameBuffer != id)
 			{
@@ -102,7 +102,7 @@ namespace vx
 			bindFrameBuffer(fbo.getId());
 		}
 
-		void StateManager::bindVertexArray(U32 id)
+		void StateManager::bindVertexArray(u32 id)
 		{
 			if (s_currentVao != id)
 			{
@@ -116,9 +116,9 @@ namespace vx
 			bindVertexArray(vao.getId());
 		}
 
-		void StateManager::bindBuffer(BufferType target, U32 id)
+		void StateManager::bindBuffer(BufferType target, u32 id)
 		{
-			U32 index = (U32)target;
+			u32 index = (u32)target;
 			auto glTarget = detail::BufferInterface::getTarget(target);
 
 			if (s_bindBuffer[index] != id)
@@ -128,7 +128,7 @@ namespace vx
 			}
 		}
 
-		void StateManager::bindPipeline(U32 pipeline)
+		void StateManager::bindPipeline(u32 pipeline)
 		{
 			if (s_currentPipeline != pipeline)
 			{

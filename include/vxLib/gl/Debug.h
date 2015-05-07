@@ -36,7 +36,7 @@ namespace vx
 
 		class Debug
 		{
-			static void errorCallback(U32 source, U32 type, U32 id, U32 severity, I32 length, const char *message, const void *userParam);
+			static void errorCallback(u32 source, u32 type, u32 id, u32 severity, s32 length, const char *message, const void *userParam);
 
 			static void printStack();
 

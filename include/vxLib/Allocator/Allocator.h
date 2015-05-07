@@ -75,9 +75,9 @@ namespace vx
 			}
 		}
 
-		static U8 getAdjustment(void *ptr, U8 alignment) noexcept
+		static u8 getAdjustment(void *ptr, u8 alignment) noexcept
 		{
-			U8 adjustment = alignment - ((uintptr_t)ptr & (alignment - 1));
+			u8 adjustment = alignment - ((uintptr_t)ptr & (alignment - 1));
 
 			if (adjustment == alignment)
 				return 0; //already aligned
@@ -88,7 +88,7 @@ namespace vx
 
 	struct HeapAllocator : public AllocatorBase
 	{
-		static void* allocate(U64 size)
+		static void* allocate(u64 size)
 		{
 			return ::operator new(size);
 		}
@@ -102,7 +102,7 @@ namespace vx
 	template<typename T>
 	struct AlignedHeapAllocator : public AllocatorBase
 	{
-		static void* allocate(U64 size)
+		static void* allocate(u64 size)
 		{
 			return _aligned_malloc(size, __alignof(T));
 		}
@@ -119,7 +119,7 @@ namespace vx
 		using value_type = T;
 		using pointer = value_type*;
 
-		static pointer allocate(U32 n)
+		static pointer allocate(u32 n)
 		{
 			return (pointer)AllocBase::allocate(sizeof(value_type) * n);
 		}

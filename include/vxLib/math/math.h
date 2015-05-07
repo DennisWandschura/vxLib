@@ -32,16 +32,16 @@ SOFTWARE.
 
 namespace vx
 {
-	const F32 VX_EPSILON = 1.192092896e-7f;
-	const F32 VX_PI = 3.141592654f;
-	const F32 VX_2PI = 6.283185307f;
-	const F32 VX_1DIVPI = 0.318309886f;
-	const F32 VX_1DIV2PI = 0.159154943f;
-	const F32 VX_PIDIV2 = 1.570796327f;
-	const F32 VX_PIDIV4 = 0.785398163f;
+	const f32 VX_EPSILON = 1.192092896e-7f;
+	const f32 VX_PI = 3.141592654f;
+	const f32 VX_2PI = 6.283185307f;
+	const f32 VX_1DIVPI = 0.318309886f;
+	const f32 VX_1DIV2PI = 0.159154943f;
+	const f32 VX_PIDIV2 = 1.570796327f;
+	const f32 VX_PIDIV4 = 0.785398163f;
 
-	const F32 VX_DEGTORAD = 0.0174532925f;
-	const F32 VX_RADTODEG = 57.2957795f;
+	const f32 VX_DEGTORAD = 0.0174532925f;
+	const f32 VX_RADTODEG = 57.2957795f;
 
 	namespace detail
 	{
@@ -58,7 +58,7 @@ namespace vx
 		return n;
 	}
 
-	inline F32 clampZeroOne(const F32 value)
+	inline f32 clampZeroOne(const f32 value)
 	{
 		detail::FloatInt tmp;
 
@@ -73,12 +73,12 @@ namespace vx
 		return tmp.f + 1.0f;
 	}
 
-	extern F32 VX_CALLCONV abs(F32 a);
+	extern f32 VX_CALLCONV abs(f32 a);
 
-	extern F32 VX_CALLCONV min(F32 a, F32 b);
-	extern F32 VX_CALLCONV max(F32 a, F32 b);
+	extern f32 VX_CALLCONV min(f32 a, f32 b);
+	extern f32 VX_CALLCONV max(f32 a, f32 b);
 
-	extern F32 VX_CALLCONV invsqrt(F32 number);
+	extern f32 VX_CALLCONV invsqrt(f32 number);
 
 	template<typename T>
 	inline const T& clamp(const T &value, const T &min, const T &max)
@@ -158,7 +158,7 @@ namespace vx
 		Angle = Angle + VX_PI;
 		// Perform the modulo, unsigned
 		float fTemp = abs(Angle);
-		fTemp = fTemp - (VX_2PI * (float)((I32)(fTemp / VX_2PI)));
+		fTemp = fTemp - (VX_2PI * (float)((s32)(fTemp / VX_2PI)));
 		// Restore the number to the range of -XM_PI to XM_PI-epsilon
 		fTemp = fTemp - VX_PI;
 		// If the modulo'd value was negative, restore negation
@@ -183,7 +183,7 @@ namespace vx
 		return radAngle * VX_RADTODEG;
 	}
 
-	inline U32 bsf32(const U32 x)
+	inline u32 bsf32(const u32 x)
 	{
 		unsigned long leading_zero = 0;
 
@@ -192,7 +192,7 @@ namespace vx
 		return leading_zero;
 	}
 
-	inline U32 bsr32(const U32 x)
+	inline u32 bsr32(const u32 x)
 	{
 		unsigned long leading_zero = 0;
 
@@ -201,7 +201,7 @@ namespace vx
 		return leading_zero;
 	}
 
-	inline U32 bsf64(const U64 x)
+	inline u32 bsf64(const u64 x)
 	{
 		unsigned long leading_zero = 0;
 
@@ -210,7 +210,7 @@ namespace vx
 		return leading_zero;
 	}
 
-	inline U32 bsr64(const U64 x)
+	inline u32 bsr64(const u64 x)
 	{
 		unsigned long leading_zero = 0;
 

@@ -35,7 +35,7 @@ namespace vx
 	{
 	}
 
-	PoolAllocator::PoolAllocator(U8 *ptr, U32 size, U32 poolSize, U8 alignment) noexcept
+	PoolAllocator::PoolAllocator(u8 *ptr, u32 size, u32 poolSize, u8 alignment) noexcept
 		:m_pMemory(ptr),
 		m_firstFreeEntry(0),
 		m_freeEntries(0),
@@ -45,13 +45,13 @@ namespace vx
 		auto adjustment = vx::AllocatorBase::getAdjustment(ptr, alignment);
 		m_firstFreeEntry = adjustment;
 
-		U8 *pCurrent = ptr + adjustment;
+		u8 *pCurrent = ptr + adjustment;
 		poolSize = poolSize + vx::AllocatorBase::getAdjustment(pCurrent + poolSize, alignment);
 
 		while (size >= poolSize)
 		{
 			auto pNext = pCurrent + poolSize;
-			*reinterpret_cast<U32*>(pCurrent) = (pNext - ptr);
+			*reinterpret_cast<u32*>(pCurrent) = (pNext - ptr);
 
 			pCurrent = pNext;
 
@@ -79,7 +79,7 @@ namespace vx
 		return *this;
 	}
 
-	void* PoolAllocator::allocate(U32 size) noexcept
+	void* PoolAllocator::allocate(u32 size) noexcept
 	{
 		VX_UNREFERENCED_PARAMETER(size);
 
@@ -87,13 +87,13 @@ namespace vx
 			return nullptr;
 
 		auto ptr = m_pMemory + m_firstFreeEntry;
-		m_firstFreeEntry = *((U32*)ptr);
+		m_firstFreeEntry = *((u32*)ptr);
 		--m_freeEntries;
 
 		return ptr;
 	}
 
-		void* PoolAllocator::allocate(U32 size, U8 alignment) noexcept
+		void* PoolAllocator::allocate(u32 size, u8 alignment) noexcept
 	{
 		VX_UNREFERENCED_PARAMETER(alignment);
 		return allocate(size);
@@ -106,8 +106,8 @@ namespace vx
 			m_pMemory + m_size <= ptr)
 			return;
 
-		U32 firstFreeEntry = ((U8*)ptr) - m_pMemory;
-		*reinterpret_cast<U32*>(ptr) = m_firstFreeEntry;
+		u32 firstFreeEntry = ((u8*)ptr) - m_pMemory;
+		*reinterpret_cast<u32*>(ptr) = m_firstFreeEntry;
 		m_firstFreeEntry = firstFreeEntry;
 		++m_freeEntries;
 	}

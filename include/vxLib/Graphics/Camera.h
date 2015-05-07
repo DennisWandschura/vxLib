@@ -37,14 +37,14 @@ namespace vx
 	public:
 		Camera();
 
-		void setPosition(F32 x, F32 y, F32 z);
+		void setPosition(f32 x, f32 y, f32 z);
 		void setPosition(const vx::float3 &position);
 		void VX_CALLCONV setPosition(const __m128 position);
 		void VX_CALLCONV setRotation(const __m128 qRotation);
 
 		void VX_CALLCONV rotate(const __m128 qRotation);
-		void VX_CALLCONV move(const __m128 direction, const F32 &speed);
-		void move(F32 x, F32 y, F32 z);
+		void VX_CALLCONV move(const __m128 direction, const f32 &speed);
+		void move(f32 x, f32 y, f32 z);
 
 		void getViewMatrix(vx::mat4 &viewMatrix) const;
 		const __m128 VX_CALLCONV getPosition() const { return m_position; }

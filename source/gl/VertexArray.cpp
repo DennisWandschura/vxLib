@@ -72,19 +72,19 @@ namespace vx
 			glBindVertexArray(0);
 		}
 
-		void VertexArray::enableArrayAttrib(U32 index)
+		void VertexArray::enableArrayAttrib(u32 index)
 		{
 			glEnableVertexArrayAttrib(getId(), index);
 		}
 
-		void VertexArray::arrayAttribBinding(U32 attribIndex, U32 bindingIndex)
+		void VertexArray::arrayAttribBinding(u32 attribIndex, u32 bindingIndex)
 		{
 			glVertexArrayAttribBinding(getId(), attribIndex, bindingIndex);
 		}
 
-		void VertexArray::arrayAttribFormatI(U32 attribIndex, U32 size, DataType type, U32 relativeOffset)
+		void VertexArray::arrayAttribFormatI(u32 attribIndex, u32 size, DataType type, u32 relativeOffset)
 		{
-			U32 dataType = 0;
+			u32 dataType = 0;
 			switch (type)
 			{
 			case vx::gl::DataType::Unsigned_Int:
@@ -114,22 +114,22 @@ namespace vx
 			glVertexArrayAttribIFormat(getId(), attribIndex, size, dataType, relativeOffset);
 		}
 
-		void VertexArray::arrayAttribFormatF(U32 attribIndex, U32 size, U8 normalized, U32 relativeOffset)
+		void VertexArray::arrayAttribFormatF(u32 attribIndex, u32 size, u8 normalized, u32 relativeOffset)
 		{
 			glVertexArrayAttribFormat(getId(), attribIndex, size, GL_FLOAT, normalized, relativeOffset);
 		}
 
-		void VertexArray::arrayBindingDivisor(U32 bindingIndex, U32 divisor)
+		void VertexArray::arrayBindingDivisor(u32 bindingIndex, u32 divisor)
 		{
 			glVertexArrayBindingDivisor(getId(), bindingIndex, divisor);
 		}
 
-		void VertexArray::bindIndexBuffer(U32 ibo)
+		void VertexArray::bindIndexBuffer(u32 ibo)
 		{
 			glVertexArrayElementBuffer(getId(), ibo);
 		}
 
-		void VertexArray::bindVertexBuffer(U32 vbo, U32 bindingIndex, size_t offset, size_t stride)
+		void VertexArray::bindVertexBuffer(u32 vbo, u32 bindingIndex, size_t offset, size_t stride)
 		{
 			glVertexArrayVertexBuffer(getId(), bindingIndex, vbo, offset, stride);
 		}

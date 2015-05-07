@@ -58,22 +58,22 @@ namespace vx
 		template<bool>
 		struct ConstructImpl
 		{
-			template<typename U, U32 S>
-			static void construct(U(*p)[S], U32 i, const U(&src)[S]);
+			template<typename U, u32 S>
+			static void construct(U(*p)[S], u32 i, const U(&src)[S]);
 
-			template<U32 S>
-			static void construct(char(*p)[S], U32 i, const char(&src)[S])
+			template<u32 S>
+			static void construct(char(*p)[S], u32 i, const char(&src)[S])
 			{
 				strcpy_s(p[i], src);
 			}
 
-			template<class U, U32 S>
-			static void moveDestroy(U *pDest, U *pSrc, U32 size);
+			template<class U, u32 S>
+			static void moveDestroy(U *pDest, U *pSrc, u32 size);
 
-			template<U32 S>
-			static void moveDestroy(char (*pDest)[S], char (*pSrc)[S], U32 size)
+			template<u32 S>
+			static void moveDestroy(char (*pDest)[S], char (*pSrc)[S], u32 size)
 			{
-				for (U32 i = 0; i < size; ++i)
+				for (u32 i = 0; i < size; ++i)
 				{
 					strcpy_s(pDest[i], pSrc[i]);
 					Deleter<std::is_destructible<char[S]>::value>::destroy<char[S]>(pSrc + i);
@@ -85,15 +85,15 @@ namespace vx
 		struct ConstructImpl<false>
 		{
 			template<typename U, class... _Valty>
-			static void construct(U* m_pValues, U32 i, _Valty&& ...args)
+			static void construct(U* m_pValues, u32 i, _Valty&& ...args)
 			{
 				new(m_pValues + i) U(std::forward<_Valty>(args)...);
 			}
 
 			template<class U>
-			static void moveDestroy(U *pDest, U *pSrc, U32 size)
+			static void moveDestroy(U *pDest, U *pSrc, u32 size)
 			{
-				for (U32 i = 0; i < size; ++i)
+				for (u32 i = 0; i < size; ++i)
 				{
 					new (pDest + i) U(std::move(*(pSrc + i)));
 					Deleter<std::is_destructible<U>::value>::destroy<U>(pSrc + i);
@@ -108,7 +108,7 @@ namespace vx
 		using const_reference = const reference;
 		using pointer = value_type*;
 		using const_pointer = const pointer;
-		using size_type = U32;
+		using size_type = u32;
 		using difference_type = size_t;
 
 		using const_iterator = vx::vector_const_iterator < sorted_vector<Key, Type> > ;
@@ -134,14 +134,14 @@ namespace vx
 			++m_size;
 		}
 
-		void moveDestroy(value_type *pDest, value_type *pSrc, U32 size)
+		void moveDestroy(value_type *pDest, value_type *pSrc, u32 size)
 		{
 			ConstructImpl<IsArray>::moveDestroy(pDest, pSrc, size);
 		}
 
-		void moveDestroy(key_type *pDest, key_type *pSrc, U32 size)
+		void moveDestroy(key_type *pDest, key_type *pSrc, u32 size)
 		{
-			for (U32 i = 0; i < size; ++i)
+			for (u32 i = 0; i < size; ++i)
 			{
 				new (pDest + i) key_type(std::move(*(pSrc + i)));
 				Deleter<std::is_destructible<key_type>::value>::destroy<key_type>(pSrc + i);
@@ -149,7 +149,7 @@ namespace vx
 		}
 
 		template<class U>
-		void rangeDestroy(U *ptr, U32 size)
+		void rangeDestroy(U *ptr, u32 size)
 		{
 			for (auto i = 0u; i < size; ++i)
 			{
@@ -199,11 +199,11 @@ namespace vx
 			return *this;
 		}
 
-		void reserve(U32 n)
+		void reserve(u32 n)
 		{
 			if (n > m_capacity)
 			{
-				U8 *pNewMemory = (U8*)::operator new((sizeof(key_type) + sizeof(value_type)) * n + __alignof(value_type));
+				u8 *pNewMemory = (u8*)::operator new((sizeof(key_type) + sizeof(value_type)) * n + __alignof(value_type));
 
 				key_type *pNewKeys = (key_type*)pNewMemory;
 				moveDestroy(pNewKeys, m_pKeys, m_size);
@@ -211,7 +211,7 @@ namespace vx
 
 				void *oldData = m_pKeys;
 
-				auto tmp = (U8*)(pNewMemory + (sizeof(key_type) * n));
+				auto tmp = (u8*)(pNewMemory + (sizeof(key_type) * n));
 				auto adjustment = AllocatorBase::getAdjustment(tmp, __alignof(value_type));
 				tmp += adjustment;
 

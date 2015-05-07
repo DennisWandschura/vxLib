@@ -31,7 +31,7 @@ namespace vx
 {
 	namespace gl
 	{
-		enum class Attachment : U8
+		enum class Attachment : u8
 		{
 			Color0,
 			Color1,
@@ -67,22 +67,22 @@ namespace vx
 			void create();
 			void destroy();
 
-			U32 checkStatus();
+			u32 checkStatus();
 
 			void bind();
 			void bindZero();
 
-			void attachTexture(Attachment attachment, U32 textureId, U32 level);
-			void attachTextureLayer(Attachment attachment, U32 textureId, U32 level, U32 layer);
+			void attachTexture(Attachment attachment, u32 textureId, u32 level);
+			void attachTextureLayer(Attachment attachment, u32 textureId, u32 level, u32 layer);
 
 			template<class Texture>
-			void attachTexture(Attachment attachment, const Texture &texture, U32 level)
+			void attachTexture(Attachment attachment, const Texture &texture, u32 level)
 			{
 				attachTexture(attachment, texture.getId(), level);
 			}
 
 			template<class Texture>
-			void attachTextureLayer(Attachment attachment, const Texture &texture, U32 level, U32 layer)
+			void attachTextureLayer(Attachment attachment, const Texture &texture, u32 level, u32 layer)
 			{
 				attachTextureLayer(attachment, texture.getId(), level, layer);
 			}

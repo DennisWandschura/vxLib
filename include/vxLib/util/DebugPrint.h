@@ -33,33 +33,33 @@ namespace vx
 {
 	namespace DebugPrint
 	{
-		extern U16 g_filter;
-		extern U32 g_verbosity;
+		extern u16 g_filter;
+		extern u32 g_verbosity;
 		extern HANDLE g_hConsole;
 	};
 
-	static void activateChannel(U8 channel)
+	static void activateChannel(u8 channel)
 	{
 		DebugPrint::g_filter |= channel;
 	}
 
-	static void deactivateChannel(U8 channel)
+	static void deactivateChannel(u8 channel)
 	{
 		DebugPrint::g_filter ^= channel;
 	}
 
-	static bool checkChannel(U8 channel)
+	static bool checkChannel(u8 channel)
 	{
 		return ((DebugPrint::g_filter & channel) != 0);
 	}
 
-	extern void setConsoleFormat(U8 channel);
+	extern void setConsoleFormat(u8 channel);
 	extern inline void debugPrintF(const char *format, va_list argList);
 	extern inline void debugFPrintF(FILE *stream, const char *format, va_list argList);
-	extern inline void verbosePrintF(U32 verbosity, const char *format, ...);
-	extern inline void verboseFPrintF(U32 verbosity, FILE *stream, const char *format, ...);
-	extern void verboseChannelPrintF(U32 verbosity, U8 channel, const char *format, ...);
-	extern void verboseChannelFPrintF(U32 verbosity, U8 channel, FILE *stream, const char *format, ...);
+	extern inline void verbosePrintF(u32 verbosity, const char *format, ...);
+	extern inline void verboseFPrintF(u32 verbosity, FILE *stream, const char *format, ...);
+	extern void verboseChannelPrintF(u32 verbosity, u8 channel, const char *format, ...);
+	extern void verboseChannelFPrintF(u32 verbosity, u8 channel, FILE *stream, const char *format, ...);
 
 #define CHANNEL_ONE 0x0001
 #define CHANNEL_TWO 0x0002

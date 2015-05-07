@@ -39,16 +39,16 @@ namespace vx
 		{
 			HWND hwnd;
 			vx::uint2 resolution;
-			F32 fovRad; 
-			F32 nearZ;
-			F32 farZ;
-			U8 majVersion;
-			U8 minVersion;
+			f32 fovRad; 
+			f32 nearZ;
+			f32 farZ;
+			u8 majVersion;
+			u8 minVersion;
 			bool bVsync;
 			bool bDebugMode;
 
-			static OpenGLDescription create(const Window &window, const vx::uint2 &resolution, F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode);
-			static OpenGLDescription create(HWND hwnd, const vx::uint2 &resolution, F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode);
+			static OpenGLDescription create(const Window &window, const vx::uint2 &resolution, f32 fovRad, f32 nearZ, f32 farZ, u8 majVersion, u8 minVersion, bool bVsync, bool bDebugMode);
+			static OpenGLDescription create(HWND hwnd, const vx::uint2 &resolution, f32 fovRad, f32 nearZ, f32 farZ, u8 majVersion, u8 minVersion, bool bVsync, bool bDebugMode);
 		};
 
 		struct ContextDescription
@@ -57,7 +57,7 @@ namespace vx
 			LPCWSTR windowClass;
 			OpenGLDescription glParams;
 
-			static ContextDescription create(const Window &window, const vx::uint2 &resolution, F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode);
+			static ContextDescription create(const Window &window, const vx::uint2 &resolution, f32 fovRad, f32 nearZ, f32 farZ, u8 majVersion, u8 minVersion, bool bVsync, bool bDebugMode);
 		};
 
 		class RenderContext
@@ -66,7 +66,7 @@ namespace vx
 			mat4 m_projectionMatrix;
 			HDC m_pDeviceContext;
 			HGLRC m_pRenderingContext;
-			std::unique_ptr<I32[]> m_pContextAttribs;
+			std::unique_ptr<s32[]> m_pContextAttribs;
 
 			bool initializeExtensionsWithTempWindow(HINSTANCE hInstance, LPCWSTR windowClass);
 			bool initializeOpenGl(const OpenGLDescription &params, const int *pContextAttribs);
@@ -109,7 +109,7 @@ namespace vx
 				return m_pRenderingContext;
 			}
 
-			const I32* getContextAttributes() const { return m_pContextAttribs.get(); }
+			const s32* getContextAttributes() const { return m_pContextAttribs.get(); }
 		};
 	}
 }

@@ -51,7 +51,7 @@ namespace vx
 			ShaderProgram& operator=(ShaderProgram &&rhs) noexcept;
 
 			// on failure returns error log and logLength including null terminator
-			std::unique_ptr<char[]> create(const char **program, I32 &logLength);
+			std::unique_ptr<char[]> create(const char **program, s32 &logLength);
 
 			void destroy();
 

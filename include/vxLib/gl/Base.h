@@ -32,7 +32,7 @@ namespace vx
 {
 	namespace gl
 	{
-		enum class DataType : U8
+		enum class DataType : u8
 		{
 			Unsigned_Byte,
 			Byte,
@@ -43,7 +43,7 @@ namespace vx
 			Float
 		};
 
-		enum class Capabilities : U8
+		enum class Capabilities : u8
 		{
 			Blend,
 			Color_Logic_Op,
@@ -74,9 +74,9 @@ namespace vx
 			Program_Point_Size
 		};
 
-		static const U32 g_maxCapabilityCount = 27u;
+		static const u32 g_maxCapabilityCount = 27u;
 
-		enum class ShaderProgramType : U8
+		enum class ShaderProgramType : u8
 		{
 			VERTEX,
 			GEOMETRY,
@@ -86,14 +86,14 @@ namespace vx
 			TESS_EVAL
 		};
 
-		enum class TextureFilter : U8
+		enum class TextureFilter : u8
 		{
 			NEAREST,
 			LINEAR,
 			LINEAR_MIPMAP_LINEAR
 		};
 
-		enum class TextureWrapMode : U8
+		enum class TextureWrapMode : u8
 		{
 			CLAMP_TO_EDGE,
 			CLAMP_TO_BORDER,
@@ -104,34 +104,34 @@ namespace vx
 
 		struct DrawElementsIndirectCommand
 		{
-			U32  count;
-			U32  instanceCount;
-			U32  firstIndex;
-			U32  baseVertex;
-			U32  baseInstance;
+			u32  count;
+			u32  instanceCount;
+			u32  firstIndex;
+			u32  baseVertex;
+			u32  baseInstance;
 		};
 
 		typedef  struct {
-			U32  count;
-			U32  instanceCount;
-			U32  first;
-			U32  baseInstance;
+			u32  count;
+			u32  instanceCount;
+			u32  first;
+			u32  baseInstance;
 		} DrawArraysIndirectCommand;
 
 		namespace detail
 		{
-			U32 getCapability(Capabilities cap);
-			U32 getDataType(DataType dataType);
-			U32 getShaderProgramType(ShaderProgramType type);
-			U32 getTextureFilter(TextureFilter filter);
-			U32 getTextureWrapMode(TextureWrapMode wrapMode);
+			u32 getCapability(Capabilities cap);
+			u32 getDataType(DataType dataType);
+			u32 getShaderProgramType(ShaderProgramType type);
+			u32 getTextureFilter(TextureFilter filter);
+			u32 getTextureWrapMode(TextureWrapMode wrapMode);
 		}
 
 		template<class T>
 		class Base
 		{
 		protected:
-			U32 m_id;
+			u32 m_id;
 
 			inline Base() noexcept :m_id(0){}
 
@@ -171,7 +171,7 @@ namespace vx
 				return m_id != 0;
 			}
 
-			inline U32 getId() const noexcept 
+			inline u32 getId() const noexcept 
 			{
 				return m_id;
 			}

@@ -40,25 +40,25 @@ namespace vx
 	template<>
 	struct AlignedType < 1 >
 	{
-		typedef U8 type;
+		typedef u8 type;
 	};
 
 	template<>
 	struct AlignedType < 2 >
 	{
-		typedef U16 type;
+		typedef u16 type;
 	};
 
 	template<>
 	struct AlignedType < 4 >
 	{
-		typedef U32 type;
+		typedef u32 type;
 	};
 
 	template<>
 	struct AlignedType < 8 >
 	{
-		typedef U64 type;
+		typedef u64 type;
 	};
 
 	template<>

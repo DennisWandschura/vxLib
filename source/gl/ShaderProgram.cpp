@@ -88,7 +88,7 @@ namespace vx
 			return log;
 		}
 
-		std::unique_ptr<char[]> ShaderProgram::create(const char **program, I32 &logLength)
+		std::unique_ptr<char[]> ShaderProgram::create(const char **program, s32 &logLength)
 		{
 			std::unique_ptr<char[]> log;
 

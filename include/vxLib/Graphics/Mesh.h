@@ -42,17 +42,17 @@ namespace vx
 	class Mesh
 	{
 		MeshVertex* m_pVertices{ nullptr };
-		U32* m_pIndices{ nullptr };
-		U32 m_vertexCount{ 0 };
-		U32 m_indexCount{ 0 };
+		u32* m_pIndices{ nullptr };
+		u32 m_vertexCount{ 0 };
+		u32 m_indexCount{ 0 };
 
 		//void allocateMemory();
-		void setPointers(U8* p);
+		void setPointers(u8* p);
 
 	public:
 		Mesh(){}
 		// takes a pointer to memory filled with vertices and indices
-		Mesh(U8 *pMemory, U32 vertexCount, U32 indexCount);
+		Mesh(u8 *pMemory, u32 vertexCount, u32 indexCount);
 		Mesh(const Mesh&) = delete;
 		Mesh(Mesh &&rhs) noexcept;
 		~Mesh();
@@ -67,15 +67,15 @@ namespace vx
 		/* 
 		takes a pointer to binary source data and a pointer to store the data
 		*/
-		void load(const U8 *src, U8* pMemory);
-		void save(U8 **ptr) const;
+		void load(const u8 *src, u8* pMemory);
+		void save(u8 **ptr) const;
 		//bool loadFromFile(const char *filename);
 		bool saveToFile(const char *filename) const;
 
 		const MeshVertex* getVertices() const { return m_pVertices; }
-		const U32* getIndices() const { return m_pIndices; }
-		U32 getVertexCount() const { return m_vertexCount; }
-		U32 getIndexCount() const { return m_indexCount; }
+		const u32* getIndices() const { return m_pIndices; }
+		u32 getVertexCount() const { return m_vertexCount; }
+		u32 getIndexCount() const { return m_indexCount; }
 	};
 }
 #endif

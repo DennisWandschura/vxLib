@@ -35,23 +35,23 @@ namespace vx
 	{
 		vx::int2 m_position;
 		vx::int2 m_relative;
-		U8 m_keys[4];
+		u8 m_keys[4];
 	};
 
 	struct KeyEvent
 	{
-		enum Event : U8 { Pressed, Released };
+		enum Event : u8 { Pressed, Released };
 
-		U16 key;
+		u16 key;
 		Event evt;
 
 		KeyEvent(){}
-		KeyEvent(U16 _key, Event type) :key(_key), evt(type) {}
+		KeyEvent(u16 _key, Event type) :key(_key), evt(type) {}
 	};
 
 	namespace Input
 	{
-		using KeyEventCallback = void(*)(U16 key);
+		using KeyEventCallback = void(*)(u16 key);
 	}
 
 	class RawInput
@@ -70,7 +70,7 @@ namespace vx
 		static bool initialize(void* window);
 		static void shutdown();
 
-		static void update(I64 lparam);
+		static void update(s64 lparam);
 		// call before updating input
 		static void beginFrame();
 		// call after gathering input events
@@ -80,7 +80,7 @@ namespace vx
 		static void setCallbackKeyPressed(Input::KeyEventCallback callback);
 		static void setCallbackKeyReleased(Input::KeyEventCallback callback);
 
-		static U8 isKeyPressed(U16 keyCode);
+		static u8 isKeyPressed(u16 keyCode);
 		static void getKeyboard(Keyboard &keyboard);
 		static Mouse getMouse();
 	};

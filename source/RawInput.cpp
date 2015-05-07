@@ -172,7 +172,7 @@ namespace vx
 		s_keyEvents.clear();
 	}
 
-	U8 RawInput::isKeyPressed(U16 keyCode)
+	u8 RawInput::isKeyPressed(u16 keyCode)
 	{
 		return s_keyboard.m_keys[keyCode];
 	}

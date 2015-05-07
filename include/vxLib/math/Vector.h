@@ -33,17 +33,17 @@ SOFTWARE.
 
 namespace vx
 {
-	const U32 g_SELECT_0 = 0x00000000;
-	const U32 g_SELECT_1 = 0xFFFFFFFF;
+	const u32 g_SELECT_0 = 0x00000000;
+	const u32 g_SELECT_1 = 0xFFFFFFFF;
 
-	const U32 VX_PERMUTE_0X = 0;
-	const U32 VX_PERMUTE_0Y = 1;
-	const U32 VX_PERMUTE_0Z = 2;
-	const U32 VX_PERMUTE_0W = 3;
-	const U32 VX_PERMUTE_1X = 4;
-	const U32 VX_PERMUTE_1Y = 5;
-	const U32 VX_PERMUTE_1Z = 6;
-	const U32 VX_PERMUTE_1W = 7;
+	const u32 VX_PERMUTE_0X = 0;
+	const u32 VX_PERMUTE_0Y = 1;
+	const u32 VX_PERMUTE_0Z = 2;
+	const u32 VX_PERMUTE_0W = 3;
+	const u32 VX_PERMUTE_1X = 4;
+	const u32 VX_PERMUTE_1Y = 5;
+	const u32 VX_PERMUTE_1Z = 6;
+	const u32 VX_PERMUTE_1W = 7;
 
 	namespace detail
 	{
@@ -82,12 +82,12 @@ namespace vx
 				return v;
 			}
 
-			value_type& operator[](U32 i)
+			value_type& operator[](u32 i)
 			{
 				return v[i];
 			}
 
-			const value_type& operator[](U32 i) const
+			const value_type& operator[](u32 i) const
 			{
 				return v[i];
 			}
@@ -245,12 +245,12 @@ namespace vx
 				return v;
 			}
 
-			value_type& operator[](U32 i)
+			value_type& operator[](u32 i)
 			{
 				return v[i];
 			}
 
-			const value_type& operator[](U32 i) const
+			const value_type& operator[](u32 i) const
 			{
 				return v[i];
 			}
@@ -414,12 +414,12 @@ namespace vx
 				return v;
 			}
 
-			value_type& operator[](U32 i)
+			value_type& operator[](u32 i)
 			{
 				return v[i];
 			}
 
-			const value_type& operator[](U32 i) const
+			const value_type& operator[](u32 i) const
 			{
 				return v[i];
 			}
@@ -592,12 +592,12 @@ namespace vx
 				return v;
 			}
 
-			value_type& operator[](U32 i)
+			value_type& operator[](u32 i)
 			{
 				return v[i];
 			}
 
-			const value_type& operator[](U32 i) const
+			const value_type& operator[](u32 i) const
 			{
 				return v[i];
 			}
@@ -644,33 +644,33 @@ namespace vx
 		};
 
 		template<>
-		struct XMM_TYPE<F32>
+		struct XMM_TYPE<f32>
 		{
 			typedef __m128 xmm_type;
 
-			static xmm_type load(const vec4<F32> &src)
+			static xmm_type load(const vec4<f32> &src)
 			{
 				return _mm_loadu_ps(src.v);
 			}
 		};
 
 		template<>
-		struct XMM_TYPE<I32>
+		struct XMM_TYPE<s32>
 		{
 			typedef __m128i xmm_type;
 
-			static xmm_type load(const vec4<I32> &src)
+			static xmm_type load(const vec4<s32> &src)
 			{
 				return _mm_loadu_si128((const xmm_type*)src.v);
 			}
 		};
 
 		template<>
-		struct XMM_TYPE<U32>
+		struct XMM_TYPE<u32>
 		{
 			typedef __m128i xmm_type;
 
-			static xmm_type load(const vec4<U32> &src)
+			static xmm_type load(const vec4<u32> &src)
 			{
 				return _mm_loadu_si128((const xmm_type*)src.v);
 			}
@@ -747,7 +747,7 @@ namespace vx
 	{
 		union
 		{
-			I32 i[4];
+			s32 i[4];
 			__m128 v;
 		};
 
@@ -760,7 +760,7 @@ namespace vx
 	{
 		union
 		{
-			U32 i[4];
+			u32 i[4];
 			__m128 v;
 		};
 
@@ -780,14 +780,14 @@ namespace vx
 			);
 	}
 
-	inline __m128 VX_CALLCONV loadFloat(const detail::vec2<F32> &source)
+	inline __m128 VX_CALLCONV loadFloat(const detail::vec2<f32> &source)
 	{
 		__m128 x = _mm_load_ss(&source.x);
 		__m128 y = _mm_load_ss(&source.y);
 		return _mm_unpacklo_ps(x, y);
 	}
 
-	inline __m128 VX_CALLCONV loadFloat(const detail::vec3<F32> &source)
+	inline __m128 VX_CALLCONV loadFloat(const detail::vec3<f32> &source)
 	{
 		__m128 x = _mm_load_ss(&source.x);
 		__m128 y = _mm_load_ss(&source.y);
@@ -796,19 +796,19 @@ namespace vx
 		return _mm_movelh_ps(xy, z);
 	}
 
-	inline __m128 VX_CALLCONV loadFloat(const detail::vec4<F32> &source)
+	inline __m128 VX_CALLCONV loadFloat(const detail::vec4<f32> &source)
 	{
 		return _mm_loadu_ps(&source.x);
 	}
 
-	inline void VX_CALLCONV storeFloat(detail::vec2<F32>* pDestination, const __m128 V)
+	inline void VX_CALLCONV storeFloat(detail::vec2<f32>* pDestination, const __m128 V)
 	{
 		auto T = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
 		_mm_store_ss(&pDestination->x, V);
 		_mm_store_ss(&pDestination->y, T);
 	}
 
-	inline void VX_CALLCONV storeFloat(detail::vec3<F32>* pDestination, const __m128 &V)
+	inline void VX_CALLCONV storeFloat(detail::vec3<f32>* pDestination, const __m128 &V)
 	{
 		auto T1 = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
 		auto T2 = _mm_shuffle_ps(V, V, _MM_SHUFFLE(2, 2, 2, 2));
@@ -817,7 +817,7 @@ namespace vx
 		_mm_store_ss(&pDestination->z, T2);
 	}
 
-	inline void VX_CALLCONV storeFloat(detail::vec4<F32> *pDestination, const __m128 V)
+	inline void VX_CALLCONV storeFloat(detail::vec4<f32> *pDestination, const __m128 V)
 	{
 		_mm_storeu_ps(&pDestination->x, V);
 	}
@@ -846,40 +846,40 @@ namespace vx
 
 	////////////////////////
 
-	using char2 = detail::vec2 < I8 > ;
-	using char3 = detail::vec3 < I8 > ;
-	using char4 = detail::vec4 < I8 > ;
+	using char2 = detail::vec2 < s8 > ;
+	using char3 = detail::vec3 < s8 > ;
+	using char4 = detail::vec4 < s8 > ;
 
-	using uchar2 = detail::vec2 < U8 > ;
-	using uchar3 = detail::vec3 < U8 > ;
-	using uchar4 = detail::vec4 < U8 > ;
+	using uchar2 = detail::vec2 < u8 > ;
+	using uchar3 = detail::vec3 < u8 > ;
+	using uchar4 = detail::vec4 < u8 > ;
 
-	using short2 = detail::vec2 < I16 > ;
-	using short3 = detail::vec3 < I16 > ;
-	using short4 = detail::vec4 < I16 > ;
+	using short2 = detail::vec2 < s16 > ;
+	using short3 = detail::vec3 < s16 > ;
+	using short4 = detail::vec4 < s16 > ;
 
-	using ushort2 = detail::vec2 < U16 > ;
-	using ushort3 = detail::vec3 < U16 > ;
-	using ushort4 = detail::vec4 < U16 > ;
+	using ushort2 = detail::vec2 < u16 > ;
+	using ushort3 = detail::vec3 < u16 > ;
+	using ushort4 = detail::vec4 < u16 > ;
 
-	using int2 = detail::vec2 < I32 > ;
-	using int2a = detail::vec2a < I32 >;
-	using int3 = detail::vec3 < I32 > ;
-	using int4 = detail::vec4 < I32 > ;
-	using int4a = detail::vec4a < I32 >;
+	using int2 = detail::vec2 < s32 > ;
+	using int2a = detail::vec2a < s32 >;
+	using int3 = detail::vec3 < s32 > ;
+	using int4 = detail::vec4 < s32 > ;
+	using int4a = detail::vec4a < s32 >;
 
-	using uint2 = detail::vec2 < U32 > ;
-	using uint2a = detail::vec2a < U32 >;
-	using uint3 = detail::vec3 < U32 > ;
-	using uint4 = detail::vec4 < U32 > ;
-	using uint4a = detail::vec4a < U32 >;
+	using uint2 = detail::vec2 < u32 > ;
+	using uint2a = detail::vec2a < u32 >;
+	using uint3 = detail::vec3 < u32 > ;
+	using uint4 = detail::vec4 < u32 > ;
+	using uint4a = detail::vec4a < u32 >;
 
-	using float2 = detail::vec2 < F32 > ;
-	using float2a = detail::vec2a < F32 >;
-	using float3 = detail::vec3 < F32 > ;
-	using float3a = detail::vec3a < F32 >;
-	using float4 = detail::vec4 < F32 > ;
-	using float4a = detail::vec4a < F32 > ;
+	using float2 = detail::vec2 < f32 > ;
+	using float2a = detail::vec2a < f32 >;
+	using float3 = detail::vec3 < f32 > ;
+	using float3a = detail::vec3a < f32 >;
+	using float4 = detail::vec4 < f32 > ;
+	using float4a = detail::vec4a < f32 > ;
 
 	VX_GLOBALCONST __m128 g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD };
 	VX_GLOBALCONST __m128 g_VXRadToDeg = { VX_RADTODEG, VX_RADTODEG, VX_RADTODEG, VX_RADTODEG };
@@ -931,7 +931,7 @@ namespace vx
 	namespace Internal
 	{
 		// Slow path fallback for permutes that do not map to a single SSE shuffle opcode.
-		template<U32 Shuffle, bool WhichX, bool WhichY, bool WhichZ, bool WhichW> struct PermuteHelper
+		template<u32 Shuffle, bool WhichX, bool WhichY, bool WhichZ, bool WhichW> struct PermuteHelper
 		{
 			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2)
 			{
@@ -954,35 +954,35 @@ namespace vx
 		};
 
 		// Fast path for permutes that only read from the first vector.
-		template<U32 Shuffle> 
+		template<u32 Shuffle> 
 		struct PermuteHelper<Shuffle, false, false, false, false>
 		{
 			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2) { (v2); return VX_PERMUTE_PS(v1, Shuffle); }
 		};
 
 		// Fast path for permutes that only read from the second vector.
-		template<U32 Shuffle> 
+		template<u32 Shuffle> 
 		struct PermuteHelper<Shuffle, true, true, true, true>
 		{
 			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2){ (v1); return VX_PERMUTE_PS(v2, Shuffle); }
 		};
 
 		// Fast path for permutes that read XY from the first vector, ZW from the second.
-		template<U32 Shuffle> 
+		template<u32 Shuffle> 
 		struct PermuteHelper<Shuffle, false, false, true, true>
 		{
 			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2) { return _mm_shuffle_ps(v1, v2, Shuffle); }
 		};
 
 		// Fast path for permutes that read XY from the second vector, ZW from the first.
-		template<U32 Shuffle> struct PermuteHelper<Shuffle, true, true, false, false>
+		template<u32 Shuffle> struct PermuteHelper<Shuffle, true, true, false, false>
 		{
 			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2) { return _mm_shuffle_ps(v2, v1, Shuffle); }
 		};
 	};
 
 	// General permute template
-	template<U32 PermuteX, U32 PermuteY, U32 PermuteZ, U32 PermuteW>
+	template<u32 PermuteX, u32 PermuteY, u32 PermuteZ, u32 PermuteW>
 	inline __m128 VX_CALLCONV VectorPermute(__m128 V1, __m128 V2)
 	{
 		static_assert(PermuteX <= 7, "PermuteX template parameter out of range");
@@ -990,7 +990,7 @@ namespace vx
 		static_assert(PermuteZ <= 7, "PermuteZ template parameter out of range");
 		static_assert(PermuteW <= 7, "PermuteW template parameter out of range");
 
-		const U32 Shuffle = _MM_SHUFFLE(PermuteW & 3, PermuteZ & 3, PermuteY & 3, PermuteX & 3);
+		const u32 Shuffle = _MM_SHUFFLE(PermuteW & 3, PermuteZ & 3, PermuteY & 3, PermuteX & 3);
 
 		const bool WhichX = PermuteX > 3;
 		const bool WhichY = PermuteY > 3;
@@ -1084,98 +1084,98 @@ namespace vx
 	}
 
 	template<class T>
-	F32 dot(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
+	f32 dot(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
 	{
 		return v1.x * v2.x + v1.y * v2.y;
 	}
 
 	template<class T>
-	F32 dot(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
+	f32 dot(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
 	{
 		return v1.x*v2.x + v1.y*v2.y;
 	}
 
 	template<class T>
-	F32 dot(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
+	f32 dot(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
 		return v1.x*v2.x + v1.y*v2.y + v1.z * v2.z;
 	}
 
 	template<class T>
-	F32 dot(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
+	f32 dot(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
 	{
 		return v1.x*v2.x + v1.y*v2.y + v1.z * v2.z + v1.w * v2.w;
 	}
 
 	template<>
-	F32 dot<F32>(const float4 &v1, const float4 &v2)
+	f32 dot<f32>(const float4 &v1, const float4 &v2)
 	{
 		auto a = _mm_loadu_ps(v1);
 		auto b = _mm_loadu_ps(v2);
 		return dot4(a, b).m128_f32[0];
 	}
 
-	inline F32 VX_CALLCONV dot(const float4a &v1, const float4a & v2)
+	inline f32 VX_CALLCONV dot(const float4a &v1, const float4a & v2)
 	{
 		return dot4(v1, v2).m128_f32[0];
 	}
 
 	template<class T>
-	F32 distance2(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
+	f32 distance2(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
 	{
 		auto tmp = v2 - v1;
 		return dot(tmp, tmp);
 	}
 
 	template<class T>
-	F32 distance2(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
+	f32 distance2(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
 		auto tmp = v2 - v1;
 		return dot(tmp, tmp);
 	}
 
 	template<class T>
-	F32 distance2(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
+	f32 distance2(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
 	{
 		auto tmp = v2 - v1;
 		return dot(tmp, tmp);
 	}
 
 	template<class T>
-	F32 distance(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
+	f32 distance(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
 	{
 		auto tmp = v2 - v1;
 		return ::sqrtf(dot(tmp, tmp));
 	}
 
 	template<class T>
-	F32 distance(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
+	f32 distance(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
 		auto tmp = v2 - v1;
 		return ::sqrtf(dot(tmp, tmp));
 	}
 
 	template<class T>
-	F32 distance(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
+	f32 distance(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
 	{
 		auto tmp = v2 - v1;
 		return ::sqrtf(dot(tmp, tmp));
 	}
 
 	template<class T>
-	F32 length(const detail::vec2<T> &v)
+	f32 length(const detail::vec2<T> &v)
 	{
 		return distance(v, v);
 	}
 
 	template<class T>
-	F32 length(const detail::vec3<T> &v)
+	f32 length(const detail::vec3<T> &v)
 	{
 		return distance(v, v);
 	}
 
 	template<class T>
-	F32 length(const detail::vec4<T> &v)
+	f32 length(const detail::vec4<T> &v)
 	{
 		return distance(v, v);
 	}

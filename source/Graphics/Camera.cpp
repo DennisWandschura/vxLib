@@ -32,7 +32,7 @@ namespace vx
 	{
 	}
 
-	void Camera::setPosition(F32 x, F32 y, F32 z)
+	void Camera::setPosition(f32 x, f32 y, f32 z)
 	{
 		auto vX = _mm_load_ss(&x);
 		auto vY = _mm_load_ss(&y);
@@ -65,7 +65,7 @@ namespace vx
 		m_qRotation = _mm_add_ps(m_qRotation, qRotation);
 	}
 
-	void VX_CALLCONV Camera::move(const __m128 direction, const F32 &speed)
+	void VX_CALLCONV Camera::move(const __m128 direction, const f32 &speed)
 	{
 		__m128 vSpeed = _mm_load_ss(&speed);
 		vSpeed = VX_PERMUTE_PS(vSpeed, _MM_SHUFFLE(3, 0, 0, 0));
@@ -79,7 +79,7 @@ namespace vx
 		//m_position = _mm_add_ps(m_position, offset);
 	}
 
-	void Camera::move(F32 x, F32 y, F32 z)
+	void Camera::move(f32 x, f32 y, f32 z)
 	{
 		__m128 offset = { x, y, z, 0.0f };
 		m_position = _mm_add_ps(m_position, offset);

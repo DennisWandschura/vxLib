@@ -32,12 +32,12 @@ namespace vx
 {
 	struct StringID
 	{
-		U64 value;
+		u64 value;
 
 		StringID() :value(0) {}
-		StringID(U64 u) :value(u){}
+		StringID(u64 u) :value(u){}
 
-		StringID& operator=(U64 u)
+		StringID& operator=(u64 u)
 		{
 			value = u;
 			return *this;
@@ -80,7 +80,7 @@ namespace vx
 		return sid;
 	}
 
-	template<U64 SIZE>
+	template<u64 SIZE>
 	inline StringID make_sid(const char(&str)[SIZE])
 	{
 		StringID sid = CityHash64((char*)str, SIZE);

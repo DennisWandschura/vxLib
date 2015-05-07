@@ -32,7 +32,7 @@ namespace vx
 	template<typename T>
 	class DoubleBuffer
 	{
-		typedef U32 size_type;
+		typedef u32 size_type;
 		typedef T value_type;
 		typedef value_type& reference;
 		typedef const reference const_reference;

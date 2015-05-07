@@ -29,7 +29,7 @@ namespace vx
 {
 	namespace gl
 	{
-		void getTextureFormat(TextureFormat textureFormat, U32 &format, U32 &internalFormat, bool* compressed)
+		void getTextureFormat(TextureFormat textureFormat, u32 &format, u32 &internalFormat, bool* compressed)
 		{
 			format = 0;
 			internalFormat = 0;
@@ -427,7 +427,7 @@ namespace vx
 
 		namespace detail
 		{
-			U32 getTarget(TextureType type)
+			u32 getTarget(TextureType type)
 			{
 				auto target = 0u;
 				switch (type)
@@ -469,13 +469,13 @@ namespace vx
 
 			void subImage2D
 				(
-				U32 id,
-				U32 level,
-				U32 xoffset,
-				U32 yoffset,
-				U32 width,
-				U32 height,
-				U32 format,
+				u32 id,
+				u32 level,
+				u32 xoffset,
+				u32 yoffset,
+				u32 width,
+				u32 height,
+				u32 format,
 				DataType dataType,
 				const void *p
 				)
@@ -486,14 +486,14 @@ namespace vx
 			}
 
 			void subImage2D(
-				U32 id,
+				u32 id,
 				GLenum target,
-				U32 level,
-				U32 xoffset,
-				U32 yoffset,
-				U32 width,
-				U32 height,
-				U32 format,
+				u32 level,
+				u32 xoffset,
+				u32 yoffset,
+				u32 width,
+				u32 height,
+				u32 format,
 				DataType dataType,
 				const void *p
 				)
@@ -507,14 +507,14 @@ namespace vx
 
 			void compressedSubImage2D
 				(
-				U32 id,
-				U32 level,
-				U32 xoffset,
-				U32 yoffset,
-				U32 width,
-				U32 height,
-				U32 format,
-				U32 dataSize,
+				u32 id,
+				u32 level,
+				u32 xoffset,
+				u32 yoffset,
+				u32 width,
+				u32 height,
+				u32 format,
+				u32 dataSize,
 				const void *p
 				)
 			{
@@ -523,15 +523,15 @@ namespace vx
 
 			void compressedSubImage2D
 				(
-				U32 id,
+				u32 id,
 				GLenum target,
-				U32 level,
-				U32 xoffset,
-				U32 yoffset,
-				U32 width,
-				U32 height,
-				U32 format,
-				U32 dataSize,
+				u32 level,
+				u32 xoffset,
+				u32 yoffset,
+				u32 width,
+				u32 height,
+				u32 format,
+				u32 dataSize,
 				const void *p
 				)
 			{
@@ -542,15 +542,15 @@ namespace vx
 
 			void subImage3D
 				(
-				U32 id,
-				U32 level,
-				U32 xoffset,
-				U32 yoffset,
-				U32 zoffset,
-				U32 width,
-				U32 height,
-				U32 depth,
-				U32 format,
+				u32 id,
+				u32 level,
+				u32 xoffset,
+				u32 yoffset,
+				u32 zoffset,
+				u32 width,
+				u32 height,
+				u32 depth,
+				u32 format,
 				DataType dataType,
 				const void *p
 				)
@@ -562,16 +562,16 @@ namespace vx
 
 			void compressedSubImage3D
 				(
-				U32 id,
-				U32 level,
-				U32 xoffset,
-				U32 yoffset,
-				U32 zoffset,
-				U32 width,
-				U32 height,
-				U32 depth,
-				U32 format,
-				U32 dataSize,
+				u32 id,
+				u32 level,
+				u32 xoffset,
+				u32 yoffset,
+				u32 zoffset,
+				u32 width,
+				u32 height,
+				u32 depth,
+				u32 format,
+				u32 dataSize,
 				const void *p
 				)
 			{
@@ -676,7 +676,7 @@ namespace vx
 				bool compressed;
 				getTextureFormat(desc.format, m_format, m_internalFormat, &compressed);
 
-				m_compressed = (U8)compressed;
+				m_compressed = (u8)compressed;
 
 				glCreateTextures(m_target, 1, &m_id);
 
@@ -852,22 +852,22 @@ namespace vx
 			glGenerateTextureMipmap(m_id);
 		}
 
-		void Texture::clearImage(U32 level, U32 format, U32 type, const void* data)
+		void Texture::clearImage(u32 level, u32 format, u32 type, const void* data)
 		{
 			glClearTexImage(m_id, level, format, type, data);
 		}
 
-		U32 Texture::getId() const
+		u32 Texture::getId() const
 		{
 			return m_id;
 		}
 
-		U64 Texture::getTextureHandle() const
+		u64 Texture::getTextureHandle() const
 		{
 			return glGetTextureHandleARB(m_id);
 		}
 
-		U64 Texture::getImageHandle(U32 level, U8 layered, U32 layer) const
+		u64 Texture::getImageHandle(u32 level, u8 layered, u32 layer) const
 		{
 			return glGetImageHandleARB(m_id, level, layered, layer, m_internalFormat);
 		}
@@ -877,7 +877,7 @@ namespace vx
 			return m_size;
 		}
 
-		U32 Texture::getTarget() const
+		u32 Texture::getTarget() const
 		{
 			return m_target;
 		}

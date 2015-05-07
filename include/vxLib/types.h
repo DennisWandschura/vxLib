@@ -28,29 +28,29 @@ SOFTWARE.
 #include <assert.h>
 #include <type_traits>
 
-using I8 = char;
-using I16 = short;
-using I32 = int;
-using I64 = long long;
+using s8 = char;
+using s16 = short;
+using s32 = int;
+using s64 = long long;
 
-using U8 = unsigned char;
-using U16 = unsigned short;
-using U32 = unsigned int;
-using U64 = unsigned long long;
+using u8 = unsigned char;
+using u16 = unsigned short;
+using u32 = unsigned int;
+using u64 = unsigned long long;
 
-using F32 = float;
-using F64 = double;
+using f32 = float;
+using f64 = double;
 
-static_assert(sizeof(I8) == 1, "Wrong type size");
-static_assert(sizeof(U8) == 1, "Wrong type size");
-static_assert(sizeof(I16) == 2, "Wrong type size");
-static_assert(sizeof(U16) == 2, "Wrong type size");
-static_assert(sizeof(I32) == 4, "Wrong type size");
-static_assert(sizeof(U32) == 4, "Wrong type size");
-static_assert(sizeof(I64) == 8, "Wrong type size");
-static_assert(sizeof(U64) == 8, "Wrong type size");
-static_assert(sizeof(F32) == 4, "Wrong type size");
-static_assert(sizeof(F64) == 8, "Wrong type size");
+static_assert(sizeof(s8) == 1, "Wrong type size");
+static_assert(sizeof(u8) == 1, "Wrong type size");
+static_assert(sizeof(s16) == 2, "Wrong type size");
+static_assert(sizeof(u16) == 2, "Wrong type size");
+static_assert(sizeof(s32) == 4, "Wrong type size");
+static_assert(sizeof(u32) == 4, "Wrong type size");
+static_assert(sizeof(s64) == 8, "Wrong type size");
+static_assert(sizeof(u64) == 8, "Wrong type size");
+static_assert(sizeof(f32) == 4, "Wrong type size");
+static_assert(sizeof(f64) == 8, "Wrong type size");
 
 #if defined(UNICODE) || defined(_UNICODE)
 using char_t = wchar_t;

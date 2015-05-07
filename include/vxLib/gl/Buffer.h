@@ -34,7 +34,7 @@ namespace vx
 	{
 		class Buffer;
 		 
-		enum class BufferType : U8
+		enum class BufferType : u8
 		{
 			Array_Buffer,
 			Atomic_Counter_Buffer,
@@ -62,12 +62,12 @@ namespace vx
 
 		struct MapRange
 		{
-			enum _Access : U32
+			enum _Access : u32
 			{
 				_Mask = 0
 			};
 
-			typedef U32 Access;
+			typedef u32 Access;
 
 			static const _Access Read = (_Access)0x0001;
 			static const _Access Write = (_Access)0x0002;
@@ -81,12 +81,12 @@ namespace vx
 
 		struct BufferStorageFlags
 		{
-			enum _Flags : U32
+			enum _Flags : u32
 			{
 				_Mask = 0xFFFF
 			};
 
-			typedef U32 Flags;
+			typedef u32 Flags;
 
 			static const _Flags None = (_Flags)0x0000;
 			static const _Flags Dynamic_Storage = (_Flags)0x0100;
@@ -97,7 +97,7 @@ namespace vx
 			static const _Flags Client_Storage = (_Flags)0x0200;
 		};
 
-		enum class BufferDataUsage : U32
+		enum class BufferDataUsage : u32
 		{
 			None = 0,
 			Stream_Draw = 0x88E0,
@@ -123,7 +123,7 @@ namespace vx
 				BufferDataUsage usage;
 			};
 			BufferType bufferType{};
-			U8 immutable{1};
+			u8 immutable{1};
 
 			BufferDescription() :flags(BufferStorageFlags::None) {}
 
@@ -136,14 +136,14 @@ namespace vx
 			class BufferInterface
 			{
 			public:
-				static bool create(const BufferDescription &desc, U32 &id);
-				static void destroy(U32 &id);
+				static bool create(const BufferDescription &desc, u32 &id);
+				static void destroy(u32 &id);
 
-				static void bind(U32 id, BufferType type);
-				static U32 getTarget(BufferType type);
-				static void* map(U32 id, Map access);
-				static void* mapRange(U32 id, U32 offsetBytes, U32 sizeBytes, MapRange::Access access);
-				static void unmap(U32 id);
+				static void bind(u32 id, BufferType type);
+				static u32 getTarget(BufferType type);
+				static void* map(u32 id, Map access);
+				static void* mapRange(u32 id, u32 offsetBytes, u32 sizeBytes, MapRange::Access access);
+				static void unmap(u32 id);
 			};
 		}
 
@@ -152,10 +152,10 @@ namespace vx
 			template<typename T>
 			friend class MappedBuffer;
 			// contains the opengl enum in first 24 bits, and BufferType enum in last 8 bits
-			U32 m_target;
+			u32 m_target;
 
 			void* map(Map access);
-			void* mapRange(U32 offsetBytes, U32 sizeBytes, MapRange::Access access);
+			void* mapRange(u32 offsetBytes, u32 sizeBytes, MapRange::Access access);
 			void unmap() const;
 
 		public:
@@ -179,15 +179,15 @@ namespace vx
 			}
 
 			template<typename T>
-			MappedBuffer<T> mapRange(U32 offsetBytes, U32 sizeBytes, MapRange::Access access)
+			MappedBuffer<T> mapRange(u32 offsetBytes, u32 sizeBytes, MapRange::Access access)
 			{
 				void* ptr = mapRange(offsetBytes, sizeBytes, access);
 				return MappedBuffer<T>(this, ptr);
 			}
 
-			void subData(I64 offset, I64 size, const void* data);
+			void subData(s64 offset, s64 size, const void* data);
 
-			U32 getTarget() const noexcept;
+			u32 getTarget() const noexcept;
 			BufferType getType() const noexcept;
 		};
 
@@ -255,12 +255,12 @@ namespace vx
 				return *m_ptr;
 			}
 
-			reference operator[](U32 i)
+			reference operator[](u32 i)
 			{
 				return m_ptr[i];
 			}
 
-			const reference operator[](U32 i) const
+			const reference operator[](u32 i) const
 			{
 				return m_ptr[i];
 			}

@@ -34,7 +34,7 @@ namespace vx
 	namespace gl
 	{
 		OpenGLDescription OpenGLDescription::create(const Window &window, const vx::uint2 &resolution, 
-			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+			f32 fovRad, f32 nearZ, f32 farZ, u8 majVersion, u8 minVersion, bool bVsync, bool bDebugMode)
 		{
 			OpenGLDescription params;
 			params.hwnd = window.getHwnd();
@@ -51,7 +51,7 @@ namespace vx
 		}
 
 		OpenGLDescription OpenGLDescription::create(HWND hwnd,const vx::uint2 &resolution, 
-			F32 fovRad, F32 nearZ, F32 farZ, U8 majVersion, U8 minVersion, bool bVsync, bool bDebugMode)
+			f32 fovRad, f32 nearZ, f32 farZ, u8 majVersion, u8 minVersion, bool bVsync, bool bDebugMode)
 		{
 			OpenGLDescription params;
 			params.hwnd = hwnd;
@@ -67,8 +67,8 @@ namespace vx
 			return params;
 		}
 
-		ContextDescription ContextDescription::create(const Window &window, const vx::uint2 &resolution, F32 fovRad, F32 nearZ, F32 farZ,
-			U8 majVersion, U8 minVersion,  bool bVsync, bool bDebugMode)
+		ContextDescription ContextDescription::create(const Window &window, const vx::uint2 &resolution, f32 fovRad, f32 nearZ, f32 farZ,
+			u8 majVersion, u8 minVersion,  bool bVsync, bool bDebugMode)
 		{
 			ContextDescription params;
 			params.hInstance = window.getHinstance();
@@ -356,9 +356,9 @@ namespace vx
 			printf("Renderer: %s\n", renderer);
 			printf("OpenGL version supported %s\n", version);
 
-			m_orthoMatrix = MatrixOrthographicRH(static_cast<F32>(params.resolution.x), static_cast<F32>(params.resolution.y), params.nearZ, params.farZ);
+			m_orthoMatrix = MatrixOrthographicRH(static_cast<f32>(params.resolution.x), static_cast<f32>(params.resolution.y), params.nearZ, params.farZ);
 
-			auto screenAspect = (F32)params.resolution.x / (F32)params.resolution.y;
+			auto screenAspect = (f32)params.resolution.x / (f32)params.resolution.y;
 			m_projectionMatrix = MatrixPerspectiveFovRH(params.fovRad, screenAspect, params.nearZ, params.farZ);
 
 			if (params.bVsync)

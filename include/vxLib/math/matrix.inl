@@ -267,7 +267,7 @@ namespace vx
 		return mResult;
 	}
 
-	inline mat4 VX_CALLCONV MatrixPerspectiveFovRH(F32 fovAngleY, F32 aspectHByW, F32 nearZ, F32 farZ)
+	inline mat4 VX_CALLCONV MatrixPerspectiveFovRH(f32 fovAngleY, f32 aspectHByW, f32 nearZ, f32 farZ)
 	{
 		assert(!scalarNearEqual(fovAngleY, 0.0f, 0.00001f * 2.0f));
 		assert(!scalarNearEqual(aspectHByW, 0.0f, 0.00001f));
@@ -369,9 +369,9 @@ namespace vx
 
 		mat4 M;
 
-		F32 rl = 1.0f / (ViewRight - ViewLeft);
-		F32 tb = 1.0f / (ViewTop - ViewBottom);
-		F32 fn = -1.0f / (FarZ - NearZ);
+		f32 rl = 1.0f / (ViewRight - ViewLeft);
+		f32 tb = 1.0f / (ViewTop - ViewBottom);
+		f32 fn = -1.0f / (FarZ - NearZ);
 
 		__m128 rMem =
 		{
@@ -415,9 +415,9 @@ namespace vx
 
 	inline mat4 VX_CALLCONV MatrixTranslation
 		(
-		const F32 x,
-		const F32 y,
-		const F32 z
+		const f32 x,
+		const f32 y,
+		const f32 z
 		)
 	{
 		mat4 mResult;
@@ -447,7 +447,7 @@ namespace vx
 
 	inline mat4 VX_CALLCONV MatrixRotationX
 		(
-		const F32 Angle
+		const f32 Angle
 		)
 	{
 		float    SinAngle;
@@ -472,10 +472,10 @@ namespace vx
 
 	inline mat4 VX_CALLCONV MatrixRotationY
 		(
-		const F32 rad
+		const f32 rad
 		)
 	{
-		F32 sin, cos;
+		f32 sin, cos;
 		scalarSinCos(&sin, &cos, rad);
 
 		__m128 vSin = _mm_load_ss(&sin);
@@ -502,10 +502,10 @@ namespace vx
 
 	inline mat4 VX_CALLCONV MatrixRotationZ
 		(
-		const F32 rad
+		const f32 rad
 		)
 	{
-		F32 sin, cos;
+		f32 sin, cos;
 		scalarSinCos(&sin, &cos, rad);
 
 		__m128 vSin = _mm_load_ss(&sin);
@@ -530,9 +530,9 @@ namespace vx
 
 	inline mat4 VX_CALLCONV MatrixScaling
 		(
-		const F32 x,
-		const F32 y,
-		const F32 z
+		const f32 x,
+		const f32 y,
+		const f32 z
 		)
 	{
 		mat4 mResult;
@@ -562,7 +562,7 @@ namespace vx
 
 	inline mat4 VX_CALLCONV MatrixRotationRollPitchYaw
 		(
-		const F32 roll, const F32 pitch, const F32 yaw
+		const f32 roll, const f32 pitch, const f32 yaw
 		)
 	{
 		__m128 angles = _mm_set_ps(0.0f, yaw, pitch, roll);

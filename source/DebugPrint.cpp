@@ -25,13 +25,13 @@ SOFTWARE.
 
 namespace vx
 {
-	U32 DebugPrint::g_verbosity = 0;
-	U16 DebugPrint::g_filter = 0;
+	u32 DebugPrint::g_verbosity = 0;
+	u16 DebugPrint::g_filter = 0;
 	HANDLE DebugPrint::g_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	inline void debugPrintF(const char *format, va_list argList)
 	{
-		const U32 max = 1023;
+		const u32 max = 1023;
 		static char sBuffer[max + 1];
 
 		vsnprintf_s(sBuffer, max, format, argList);
@@ -42,7 +42,7 @@ namespace vx
 
 	inline void debugFPrintF(FILE *stream, const char *format, va_list argList)
 	{
-		const U32 max = 1023;
+		const u32 max = 1023;
 		static char sBuffer[max + 2];
 
 		int size = vsnprintf_s(sBuffer, max, format, argList);
@@ -52,7 +52,7 @@ namespace vx
 		fputs(sBuffer, stream);
 	}
 
-	inline void verbosePrintF(U32 verbosity, const char *format, ...)
+	inline void verbosePrintF(u32 verbosity, const char *format, ...)
 	{
 		if (vx::DebugPrint::g_verbosity >= verbosity)
 		{
@@ -65,7 +65,7 @@ namespace vx
 		}
 	}
 
-	inline void verboseFPrintF(U32 verbosity, FILE *stream, const char *format, ...)
+	inline void verboseFPrintF(u32 verbosity, FILE *stream, const char *format, ...)
 	{
 		if (vx::DebugPrint::g_verbosity >= verbosity)
 		{
@@ -78,7 +78,7 @@ namespace vx
 		}
 	}
 
-	void setConsoleFormat(U8 channel)
+	void setConsoleFormat(u8 channel)
 	{
 		switch (channel)
 		{
@@ -109,7 +109,7 @@ namespace vx
 		}
 	}
 
-	void verboseChannelPrintF(U32 verbosity, U8 channel, const char *format, ...)
+	void verboseChannelPrintF(u32 verbosity, u8 channel, const char *format, ...)
 	{
 		if (vx::checkChannel(channel) && vx::DebugPrint::g_verbosity >= verbosity)
 		{
@@ -126,7 +126,7 @@ namespace vx
 		}
 	}
 
-	void verboseChannelFPrintF(U32 verbosity, U8 channel, FILE *stream, const char *format, ...)
+	void verboseChannelFPrintF(u32 verbosity, u8 channel, FILE *stream, const char *format, ...)
 	{
 		if (vx::checkChannel(channel) && vx::DebugPrint::g_verbosity >= verbosity)
 		{

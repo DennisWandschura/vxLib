@@ -47,7 +47,7 @@ namespace vx
 		using const_iterator = vx::vector_const_iterator<_MyContainer>;
 		using iterator = vx::vector_iterator<_MyContainer>;
 
-		using size_type = U32;
+		using size_type = u32;
 		using difference_type = size_t;
 
 	private:

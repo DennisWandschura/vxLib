@@ -35,7 +35,7 @@ namespace vx
 
 		class ProgramPipeline : public Base < ProgramPipeline >
 		{
-			U32 m_programIds[6];
+			u32 m_programIds[6];
 
 		public:
 			ProgramPipeline() noexcept;
@@ -54,12 +54,12 @@ namespace vx
 
 			void bindZero() const;
 
-			U32 getVertexShader() const noexcept;
-			U32 getFragmentShader() const noexcept;
-			U32 getGeometryShader() const noexcept;
-			U32 getComputeShader() const noexcept;
-			U32 getTessControlShader() const noexcept;
-			U32 getTessEvalShader() const noexcept;
+			u32 getVertexShader() const noexcept;
+			u32 getFragmentShader() const noexcept;
+			u32 getGeometryShader() const noexcept;
+			u32 getComputeShader() const noexcept;
+			u32 getTessControlShader() const noexcept;
+			u32 getTessEvalShader() const noexcept;
 		};
 	}
 }

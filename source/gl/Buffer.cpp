@@ -31,7 +31,7 @@ namespace vx
 	{
 		namespace detail
 		{
-			const U32 g_bufferTypes[15] = 
+			const u32 g_bufferTypes[15] = 
 			{
 				GL_ARRAY_BUFFER,
 				GL_ATOMIC_COUNTER_BUFFER,
@@ -50,12 +50,12 @@ namespace vx
 				GL_PARAMETER_BUFFER_ARB
 			};
 
-			inline U32 getBufferType(BufferType type)
+			inline u32 getBufferType(BufferType type)
 			{
-				return g_bufferTypes[(U32)type];
+				return g_bufferTypes[(u32)type];
 			}
 
-			bool BufferInterface::create(const BufferDescription &desc, U32 &id)
+			bool BufferInterface::create(const BufferDescription &desc, u32 &id)
 			{
 				if (id == 0)
 				{
@@ -65,11 +65,11 @@ namespace vx
 						return false;
 					if (desc.immutable == 0)
 					{
-						glNamedBufferData(id, desc.size, desc.pData, (U32)desc.usage);
+						glNamedBufferData(id, desc.size, desc.pData, (u32)desc.usage);
 					}
 					else
 					{
-						glNamedBufferStorage(id, desc.size, desc.pData, (U32)desc.flags);
+						glNamedBufferStorage(id, desc.size, desc.pData, (u32)desc.flags);
 					}
 
 					return true;
@@ -78,7 +78,7 @@ namespace vx
 				return false;
 			}
 
-			void BufferInterface::destroy(U32 &id)
+			void BufferInterface::destroy(u32 &id)
 			{
 				if (id != 0)
 				{
@@ -87,27 +87,27 @@ namespace vx
 				}
 			}
 
-			void BufferInterface::bind(U32 id, BufferType type)
+			void BufferInterface::bind(u32 id, BufferType type)
 			{
 				glBindBuffer(getBufferType(type), id);
 			}
 
-			U32 BufferInterface::getTarget(BufferType type)
+			u32 BufferInterface::getTarget(BufferType type)
 			{
 				return getBufferType(type);
 			}
 
-			void* BufferInterface::map(U32 id, Map access)
+			void* BufferInterface::map(u32 id, Map access)
 			{
-				return glMapNamedBuffer(id, (U32)access);
+				return glMapNamedBuffer(id, (u32)access);
 			}
 
-			void* BufferInterface::mapRange(U32 id, U32 offsetBytes, U32 sizeBytes, MapRange::Access access)
+			void* BufferInterface::mapRange(u32 id, u32 offsetBytes, u32 sizeBytes, MapRange::Access access)
 			{
-				return glMapNamedBufferRange(id, offsetBytes, sizeBytes, (U32)access);
+				return glMapNamedBufferRange(id, offsetBytes, sizeBytes, (u32)access);
 			}
 
-			void BufferInterface::unmap(U32 id)
+			void BufferInterface::unmap(u32 id)
 			{
 				glUnmapNamedBuffer(id);
 			}
@@ -171,7 +171,7 @@ namespace vx
 			if (m_id == 0)
 			{
 				auto target = ::vx::gl::detail::getBufferType(desc.bufferType);
-				m_target = target | ((U8)desc.bufferType >> 24);
+				m_target = target | ((u8)desc.bufferType >> 24);
 				detail::BufferInterface::create(desc, m_id);
 			}
 		}
@@ -193,7 +193,7 @@ namespace vx
 			return ptr;
 		}
 
-		void* Buffer::mapRange(U32 offsetBytes, U32 sizeBytes, MapRange::Access access)
+		void* Buffer::mapRange(u32 offsetBytes, u32 sizeBytes, MapRange::Access access)
 		{
 			VX_ASSERT(getType() != BufferType::Parameter_Buffer);
 			auto ptr = detail::BufferInterface::mapRange(m_id, offsetBytes, sizeBytes, access);
@@ -205,12 +205,12 @@ namespace vx
 			detail::BufferInterface::unmap(m_id);
 		}
 
-		void Buffer::subData(I64 offset, I64 size,const void* data)
+		void Buffer::subData(s64 offset, s64 size,const void* data)
 		{
 			glNamedBufferSubData(m_id, offset, size, data);
 		}
 
-		U32 Buffer::getTarget() const
+		u32 Buffer::getTarget() const
 		{
 			return (m_target & 0x00FFFFFF);
 		}

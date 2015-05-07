@@ -34,18 +34,18 @@ namespace vx
 	{
 		union
 		{
-			U8 m_buffer[sizeof(T)];
+			u8 m_buffer[sizeof(T)];
 			typename detail::SelectAlign<T>::type _aligner;
 		};
 
 	};
 
-	template<class T, U32 N>
+	template<class T, u32 N>
 	struct AlignedStorageN
 	{
 		union
 		{
-			U8 m_buffer[sizeof(T) * N];
+			u8 m_buffer[sizeof(T) * N];
 			typename detail::SelectAlign<T>::type _aligner;
 		};
 

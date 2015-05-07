@@ -32,7 +32,7 @@ SOFTWARE.
 
 namespace
 {
-	bool loadFile(const char* str, std::unique_ptr<char[]> &buffer, U32 &size)
+	bool loadFile(const char* str, std::unique_ptr<char[]> &buffer, u32 &size)
 	{
 		std::ifstream inFile(str);
 
@@ -52,11 +52,11 @@ namespace
 		return true;
 	}
 
-	std::unique_ptr<char[]> appendInclude(const std::unique_ptr<char[]>* programBuffer, U32* programSize, const std::string &include, const char* includeStart)
+	std::unique_ptr<char[]> appendInclude(const std::unique_ptr<char[]>* programBuffer, u32* programSize, const std::string &include, const char* includeStart)
 	{
 		auto includeSize = include.size();
 		auto newProgram = std::make_unique<char[]>(*programSize + includeSize);
-		U32 currentSize = 0;
+		u32 currentSize = 0;
 
 		auto size = includeStart - programBuffer->get();
 
@@ -80,10 +80,10 @@ namespace
 		return newProgram;
 	}
 
-	bool getAndAppendInclude(std::unique_ptr<char[]>* programBuffer, U32* programSize, const std::string &includeDir, vx::sorted_vector<vx::StringID, std::string>* includeFiles)
+	bool getAndAppendInclude(std::unique_ptr<char[]>* programBuffer, u32* programSize, const std::string &includeDir, vx::sorted_vector<vx::StringID, std::string>* includeFiles)
 	{
 		std::unique_ptr<char[]> includeBuffer;
-		U32 includeSize = 0;
+		u32 includeSize = 0;
 		auto includeStart = strstr(programBuffer->get(), "#include");
 		if (includeStart)
 		{
@@ -123,7 +123,7 @@ namespace
 	bool loadShaderProgram(const char* programFile, const std::string &includeDir, vx::gl::ShaderProgram* program, vx::sorted_vector<vx::StringID, std::string>* includeFiles)
 	{
 		std::unique_ptr<char[]> programBuffer;
-		U32 programSize;
+		u32 programSize;
 		if (!loadFile(programFile, programBuffer, programSize))
 			return false;
 
@@ -134,7 +134,7 @@ namespace
 
 		const char* ptr = programBuffer.get();
 
-		I32 logSize = 0;
+		s32 logSize = 0;
 		auto log = program->create(&ptr, logSize);
 		if (log)
 		{
@@ -286,7 +286,7 @@ namespace vx
 			}
 
 			std::string shaders[4];
-			U32 shaderIndex = 0;
+			u32 shaderIndex = 0;
 			char buffer[128];
 			while (!inFile.eof())
 			{

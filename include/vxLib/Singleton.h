@@ -72,13 +72,13 @@ namespace vx
 		{
 			union
 			{
-				U8 m_buffer[sizeof(T)];
+				u8 m_buffer[sizeof(T)];
 				typename detail::SelectAlign<T>::type _aligner;
 			};
 		};
 
 		static Data s_data;
-		static U8 s_constructed;
+		static u8 s_constructed;
 
 		GlobalSingleton(){}
 
@@ -140,7 +140,7 @@ namespace vx
 	GlobalSingleton<U, CheckingPolicy>::Data GlobalSingleton<U, CheckingPolicy>::s_data{};
 
 	template<class U, template <class> class CheckingPolicy>
-	U8 GlobalSingleton<U, CheckingPolicy>::s_constructed{ 0 };
+	u8 GlobalSingleton<U, CheckingPolicy>::s_constructed{ 0 };
 }
 
 #endif

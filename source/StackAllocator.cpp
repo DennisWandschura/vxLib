@@ -33,7 +33,7 @@ namespace vx
 
 	}
 
-	StackAllocator::StackAllocator(U8 *ptr, U32 size)
+	StackAllocator::StackAllocator(u8 *ptr, u32 size)
 		:m_pMemory(ptr),
 		m_head(0),
 		m_size(size)
@@ -60,9 +60,9 @@ namespace vx
 		return *this;
 	}
 
-	U8* StackAllocator::allocate(U32 size) noexcept
+	u8* StackAllocator::allocate(u32 size) noexcept
 	{
-		U8 *ptr = nullptr;
+		u8 *ptr = nullptr;
 
 		if (m_head + size <= m_size)
 		{
@@ -73,9 +73,9 @@ namespace vx
 		return ptr;
 	}
 
-		U8* StackAllocator::allocate(U32 size, U8 alignment) noexcept
+		u8* StackAllocator::allocate(u32 size, u8 alignment) noexcept
 	{
-		U8 *ptr = nullptr;
+		u8 *ptr = nullptr;
 
 		auto pHead = m_pMemory + m_head;
 		auto adjustment = vx::AllocatorBase::getAdjustment(pHead, alignment);

@@ -31,7 +31,7 @@ namespace vx
 	{
 		namespace detail
 		{
-			U32 g_attachments[19] =
+			u32 g_attachments[19] =
 			{
 				GL_COLOR_ATTACHMENT0,
 				GL_COLOR_ATTACHMENT1,
@@ -55,9 +55,9 @@ namespace vx
 			};
 		}
 
-		inline U32 getAttachment(Attachment at)
+		inline u32 getAttachment(Attachment at)
 		{
-			return detail::g_attachments[(U8)at];
+			return detail::g_attachments[(u8)at];
 		}
 
 		Framebuffer::Framebuffer()
@@ -93,7 +93,7 @@ namespace vx
 			}
 		}
 
-		U32 Framebuffer::checkStatus()
+		u32 Framebuffer::checkStatus()
 		{
 			return glCheckNamedFramebufferStatus(m_id, GL_FRAMEBUFFER);
 		}
@@ -108,12 +108,12 @@ namespace vx
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
-		void Framebuffer::attachTexture(Attachment attachment, U32 textureId, U32 level)
+		void Framebuffer::attachTexture(Attachment attachment, u32 textureId, u32 level)
 		{
 			glNamedFramebufferTexture(m_id, vx::gl::getAttachment(attachment), textureId, level);
 		}
 
-		void Framebuffer::attachTextureLayer(Attachment attachment, U32 textureId, U32 level, U32 layer)
+		void Framebuffer::attachTextureLayer(Attachment attachment, u32 textureId, u32 level, u32 layer)
 		{
 			glNamedFramebufferTextureLayer(m_id, vx::gl::getAttachment(attachment), textureId, level, layer);
 		}

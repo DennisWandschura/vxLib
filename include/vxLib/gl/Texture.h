@@ -33,7 +33,7 @@ namespace vx
 {
 	namespace gl
 	{
-		enum class TextureType : U8
+		enum class TextureType : u8
 		{
 			Texture_1D,
 			Texture_2D,
@@ -46,7 +46,7 @@ namespace vx
 			Texture_2D_MS_Array
 		};
 
-		enum class TextureFormat : U8
+		enum class TextureFormat : u8
 		{
 			R8,
 			R8S,
@@ -129,29 +129,29 @@ namespace vx
 			vx::ushort3 size;
 			union
 			{
-				U16 miplevels;
-				U16 samples; // only used by multisample
+				u16 miplevels;
+				u16 samples; // only used by multisample
 			};
 
 			TextureType type;
 			TextureFormat format;
-			U8 fixedsamplelocations; // only used by multisample
-			U8 sparse; // if sparse textures are supported
+			u8 fixedsamplelocations; // only used by multisample
+			u8 sparse; // if sparse textures are supported
 
 			TextureDescription() :size(), miplevels(0), type((gl::TextureType)0), format((gl::TextureFormat)0), fixedsamplelocations(0), sparse(0){}
 		};
 
 		struct TextureCommitDescription
 		{
-			U32 miplevel;
+			u32 miplevel;
 			vx::uint3 offset;
 			vx::uint3 size;
-			U8 commit;
+			u8 commit;
 		};
 
 		struct TextureSubImageDescription
 		{
-			U32 miplevel;
+			u32 miplevel;
 			vx::uint3 offset;
 			vx::uint3 size;
 			vx::gl::DataType dataType;
@@ -160,21 +160,21 @@ namespace vx
 
 		struct TextureCompressedSubImageDescription
 		{
-			U32 miplevel;
+			u32 miplevel;
 			vx::uint3 offset;
 			vx::uint3 size;
-			U32 dataSize;
+			u32 dataSize;
 			const void *p;
 		};
 
 		class Texture : public Base < Texture >
 		{
-			U32 m_target;
-			U32 m_format;
-			U32 m_internalFormat;
+			u32 m_target;
+			u32 m_format;
+			u32 m_internalFormat;
 			vx::ushort3 m_size;
 			vx::bitset<4> m_formatData; // 1. bit sparse, 2. bit 1d, 3. bit 2d, 4. bit 3d
-			U8 m_compressed;
+			u8 m_compressed;
 
 			void allocate1D(const TextureDescription &desc);
 			void allocate2D(const TextureDescription &desc);
@@ -210,13 +210,13 @@ namespace vx
 			void makeTextureResident();
 			void makeTextureNonResident();
 			void generateMipmaps();
-			void clearImage(U32 level, U32 format, U32 type, const void* data);
+			void clearImage(u32 level, u32 format, u32 type, const void* data);
 
-			U32 getId() const;
-			U64 getTextureHandle() const;
-			U64 getImageHandle(U32 level, U8 layered, U32 layer) const;
+			u32 getId() const;
+			u64 getTextureHandle() const;
+			u64 getImageHandle(u32 level, u8 layered, u32 layer) const;
 			const vx::ushort3& getSize() const;
-			U32 getTarget() const;
+			u32 getTarget() const;
 
 			bool isSparseTexture() const;
 			bool is1D() const;
