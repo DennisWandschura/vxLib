@@ -141,6 +141,7 @@
     <ClInclude Include="..\include\vxLib\Container\sorted_array.h" />
     <ClInclude Include="..\include\vxLib\Container\sorted_vector.h" />
     <ClInclude Include="..\include\vxLib\Container\vector.h" />
+    <ClInclude Include="..\include\vxLib\File.h" />
     <ClInclude Include="..\include\vxLib\gl\Base.h" />
     <ClInclude Include="..\include\vxLib\gl\Buffer.h" />
     <ClInclude Include="..\include\vxLib\gl\Debug.h" />
@@ -183,6 +184,7 @@
   <ItemGroup>
     <ClCompile Include="CityHash.cpp" />
     <ClCompile Include="DebugPrint.cpp" />
+    <ClCompile Include="File.cpp" />
     <ClCompile Include="gl\Base.cpp" />
     <ClCompile Include="gl\Buffer.cpp" />
     <ClCompile Include="gl\Debug.cpp" />

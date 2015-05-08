@@ -30,6 +30,8 @@ SOFTWARE.
 
 namespace vx
 {
+	class File;
+
 	struct MeshVertex
 	{
 		vx::float3 position;
@@ -62,15 +64,10 @@ namespace vx
 
 		void swap(Mesh &rhs) noexcept;
 
-		//bool load(std::istream &is);
-		bool save(std::ostream &os) const;
-		/* 
-		takes a pointer to binary source data and a pointer to store the data
-		*/
-		void load(const u8 *src, u8* pMemory);
-		void save(u8 **ptr) const;
-		//bool loadFromFile(const char *filename);
-		bool saveToFile(const char *filename) const;
+		void loadFromMemory(const u8 *src, u8* pMemory);
+		void saveToMemory(u8 **ptr) const;
+
+		bool saveToFile(File* file) const;
 
 		const MeshVertex* getVertices() const { return m_pVertices; }
 		const u32* getIndices() const { return m_pIndices; }

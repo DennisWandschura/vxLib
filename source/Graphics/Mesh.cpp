@@ -23,8 +23,7 @@ SOFTWARE.
 */
 
 #include <vxLib\Graphics\Mesh.h>
-#include <vxLib\util\streamHelper.h>
-#include <fstream>
+#include <vxLib/File.h>
 
 namespace vx
 {
@@ -67,15 +66,15 @@ namespace vx
 
 	void Mesh::setPointers(u8* p)
 	{
-		auto sizeF3 = sizeof(MeshVertex) * m_vertexCount;
+		auto verticesSizeInBytes = sizeof(MeshVertex) * m_vertexCount;
 		m_pVertices = (MeshVertex*)p;
 
-		p += sizeF3;
+		p += verticesSizeInBytes;
 
 		m_pIndices = (u32*)p;
 	}
 
-	void Mesh::load(const u8 *src, u8* pMemory)
+	void Mesh::loadFromMemory(const u8 *src, u8* pMemory)
 	{
 		m_vertexCount = *reinterpret_cast<const u32*>(src);
 		src += sizeof(u32);
@@ -89,7 +88,7 @@ namespace vx
 		setPointers(pMemory);
 	}
 
-	void Mesh::save(u8 **pPtr) const
+	void Mesh::saveToMemory(u8 **pPtr) const
 	{
 		u8 *ptr = *pPtr;
 
@@ -105,33 +104,16 @@ namespace vx
 		*pPtr = (ptr + totalSize);
 	}
 
-	bool Mesh::save(std::ostream &outStream) const
+	bool Mesh::saveToFile(File* file) const
 	{
-		outStream.flags(std::ofstream::binary);
-
-		if (!write(outStream, m_vertexCount))
-			return false;
-		if (!write(outStream, m_indexCount))
+		if (!file->write(m_vertexCount))
 			return false;
 
-		if (!write(outStream, m_pVertices, m_vertexCount))
-			return false;
-		if (!write(outStream, m_pIndices, m_indexCount))
+		if (!file->write(m_indexCount))
 			return false;
 
-		return true;
-	}
-
-	bool Mesh::saveToFile(const char *filename) const
-	{
-		std::ofstream outfile(filename, std::ofstream::out | std::ofstream::binary);
-
-		if (!outfile.is_open())
-		{
-			printf("Mesh::saveToFile: could not open file '%s' !\n", filename);
+		auto totalSize = sizeof(MeshVertex) * m_vertexCount + sizeof(u32) * m_indexCount;
+		if (!file->write(m_pVertices, totalSize))
 			return false;
-		}
-
-		return save(outfile);
 	}
 }

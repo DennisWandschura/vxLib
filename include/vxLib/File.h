@@ -1,3 +1,7 @@
+#ifndef __VX_FILE_H
+#define __VX_FILE_H
+#pragma once
+
 /*
 The MIT License (MIT)
 
@@ -21,29 +25,53 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
 
-#include <vxLib/StringID.h>
+#include <vxLib\types.h>
 
 namespace vx
 {
-	struct Variant
+	enum class FileAccess : u32
 	{
-		union
-		{
-			u8 u8;
-			s8 i8;
-			u16 u16;
-			s16 s16;
-			u32 u32;
-			s32 s32;
-			u64 u64;
-			s64 s64;
-			f32 f32;
-			f64 f64;
-			void* ptr;
-		};
+		Read = 0x80000000L,
+		Write = 0x40000000L,
+		Read_Write = Read | Write
+	};
 
-		Variant() :ptr(nullptr){}
+	class File
+	{
+		void *m_pFile;
+
+	public:
+		File();
+		~File();
+
+		bool create(const char* file, FileAccess access);
+		bool open(const char *file, FileAccess access);
+		bool close();
+
+		bool read(void *ptr, u32 size);
+
+		template<typename T>
+		bool read(T &value)
+		{
+			return read(&value, sizeof(T));
+		}
+
+		bool write(const void *ptr, u32 size, u32 *pWrittenBytes);
+
+		template<typename T>
+		bool write(const T &value)
+		{
+			return write(&value, sizeof(T), nullptr);
+		}
+
+		template<typename T>
+		bool write(const T *ptr, u32 count)
+		{
+			return write(ptr, sizeof(T) * count, nullptr);
+		}
+
+		u32 getSize() const;
 	};
 }
+#endif
