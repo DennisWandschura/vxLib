@@ -42,11 +42,11 @@ namespace vx
 		m_poolSize(poolSize),
 		m_size(size)
 	{
-		auto adjustment = vx::AllocatorBase::getAdjustment(ptr, alignment);
+		auto adjustment = vx::Allocator::getAdjustment(ptr, alignment);
 		m_firstFreeEntry = adjustment;
 
 		u8 *pCurrent = ptr + adjustment;
-		poolSize = poolSize + vx::AllocatorBase::getAdjustment(pCurrent + poolSize, alignment);
+		poolSize = poolSize + vx::Allocator::getAdjustment(pCurrent + poolSize, alignment);
 
 		while (size >= poolSize)
 		{
@@ -79,7 +79,7 @@ namespace vx
 		return *this;
 	}
 
-	void* PoolAllocator::allocate(u32 size) noexcept
+	u8* PoolAllocator::allocate(u64 size) noexcept
 	{
 		VX_UNREFERENCED_PARAMETER(size);
 
@@ -93,13 +93,13 @@ namespace vx
 		return ptr;
 	}
 
-		void* PoolAllocator::allocate(u32 size, u8 alignment) noexcept
+	u8* PoolAllocator::allocate(u64 size, u8 alignment) noexcept
 	{
 		VX_UNREFERENCED_PARAMETER(alignment);
 		return allocate(size);
 	}
 
-		void PoolAllocator::deallocate(void *ptr)
+		void PoolAllocator::deallocate(u8 *ptr)
 	{
 		if (ptr == nullptr ||
 			ptr < m_pMemory ||

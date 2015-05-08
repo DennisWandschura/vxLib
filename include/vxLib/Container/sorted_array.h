@@ -126,7 +126,7 @@ namespace vx
 				m_pValues = nullptr;
 
 				// this does nothing really
-				m_pAllocator->deallocate(m_pValues);
+				m_pAllocator->deallocate((u8*)m_pValues);
 				m_pAllocator = nullptr;
 			}
 		}

@@ -212,7 +212,7 @@ namespace vx
 				void *oldData = m_pKeys;
 
 				auto tmp = (u8*)(pNewMemory + (sizeof(key_type) * n));
-				auto adjustment = AllocatorBase::getAdjustment(tmp, __alignof(value_type));
+				auto adjustment = Allocator::getAdjustment(tmp, __alignof(value_type));
 				tmp += adjustment;
 
 				pointer pNewValues = (pointer)tmp;

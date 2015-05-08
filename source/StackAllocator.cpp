@@ -40,7 +40,7 @@ namespace vx
 	{
 		VX_ASSERT(ptr != nullptr);
 
-		auto adjustment = vx::AllocatorBase::getAdjustment(m_pMemory, 16);
+		auto adjustment = vx::Allocator::getAdjustment(m_pMemory, 16);
 		VX_ASSERT(adjustment == 0);
 	}
 
@@ -60,7 +60,7 @@ namespace vx
 		return *this;
 	}
 
-	u8* StackAllocator::allocate(u32 size) noexcept
+	u8* StackAllocator::allocate(u64 size) noexcept
 	{
 		u8 *ptr = nullptr;
 
@@ -73,12 +73,12 @@ namespace vx
 		return ptr;
 	}
 
-		u8* StackAllocator::allocate(u32 size, u8 alignment) noexcept
+		u8* StackAllocator::allocate(u64 size, u8 alignment) noexcept
 	{
 		u8 *ptr = nullptr;
 
 		auto pHead = m_pMemory + m_head;
-		auto adjustment = vx::AllocatorBase::getAdjustment(pHead, alignment);
+		auto adjustment = vx::Allocator::getAdjustment(pHead, alignment);
 		auto adjustedSize = size + adjustment;
 
 		if (m_head + adjustedSize <= m_size)
@@ -90,7 +90,7 @@ namespace vx
 		return ptr;
 	}
 
-		void StackAllocator::deallocate(void*) noexcept
+		void StackAllocator::deallocate(u8*) noexcept
 	{
 	}
 

@@ -59,7 +59,7 @@ namespace vx
 			auto p = m_pValues;
 			if (m_pValues)
 			{
-				AllocatorBase::rangeDestroy(m_pValues, m_pValues + m_size);
+				Allocator::rangeDestroy(m_pValues, m_pValues + m_size);
 				m_size = 0;
 				m_pValues = nullptr;
 				m_capacity = 0;
@@ -115,7 +115,7 @@ namespace vx
 		void push_back(const value_type &value)
 		{
 			VX_ASSERT(m_size < m_capacity);
-			AllocatorBase::construct(m_pValues + m_size, value);
+			Allocator::construct(m_pValues + m_size, value);
 			++m_size;
 		}
 
@@ -123,14 +123,14 @@ namespace vx
 		void push_back(value_type &&value)
 		{
 			VX_ASSERT(m_size < m_capacity);
-			AllocatorBase::construct(m_pValues + m_size, std::forward<value_type>(value));
+			Allocator::construct(m_pValues + m_size, std::forward<value_type>(value));
 			++m_size;
 		}
 
 		void pop_back()
 		{
 			VX_ASSERT(m_size > 0);
-			vx::AllocatorBase::destroy(&back());
+			vx::Allocator::destroy(&back());
 			--m_size;
 		}
 
@@ -138,13 +138,13 @@ namespace vx
 		void emplace_back(_Valty&&... _Val)
 		{
 			VX_ASSERT(m_size < m_capacity);
-			AllocatorBase::construct(m_pValues + m_size, std::forward<_Valty>(_Val)...);
+			Allocator::construct(m_pValues + m_size, std::forward<_Valty>(_Val)...);
 			++m_size;
 		}
 
 		void clear()
 		{
-			AllocatorBase::rangeDestroy(m_pValues, m_pValues + m_size);
+			Allocator::rangeDestroy(m_pValues, m_pValues + m_size);
 			m_size = 0;
 		}
 

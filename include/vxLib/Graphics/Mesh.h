@@ -31,6 +31,7 @@ SOFTWARE.
 namespace vx
 {
 	class File;
+	class Allocator;
 
 	struct MeshVertex
 	{
@@ -64,8 +65,8 @@ namespace vx
 
 		void swap(Mesh &rhs) noexcept;
 
-		void loadFromMemory(const u8 *src, u8* pMemory);
-		void saveToMemory(u8 **ptr) const;
+		const u8* loadFromMemory(const u8 *src, vx::Allocator* allocator);
+		u8* saveToMemory(u8 *ptr) const;
 
 		bool saveToFile(File* file) const;
 
@@ -73,6 +74,8 @@ namespace vx
 		const u32* getIndices() const { return m_pIndices; }
 		u32 getVertexCount() const { return m_vertexCount; }
 		u32 getIndexCount() const { return m_indexCount; }
+
+		static u64 getArraySize(u32 vertexCount, u32 indexCount);
 	};
 }
 #endif

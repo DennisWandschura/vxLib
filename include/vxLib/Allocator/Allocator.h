@@ -25,12 +25,18 @@ SOFTWARE.
 #define __VX_ALLOCATOR_H
 #pragma once
 
-#include <vxLib\types.h>
+#include <vxLib/types.h>
 
 namespace vx
 {
-	struct AllocatorBase
+	struct Allocator
 	{
+		virtual ~Allocator(){}
+
+		virtual u8* allocate(u64 size) = 0;
+		virtual u8* allocate(u64 size, u8 alignment) = 0;
+		virtual void deallocate(u8 *ptr) = 0;
+
 		template<class U>
 		static void construct(U *p)
 		{
@@ -86,7 +92,7 @@ namespace vx
 		}
 	};
 
-	struct HeapAllocator : public AllocatorBase
+	struct HeapAllocator : public Allocator
 	{
 		static void* allocate(u64 size)
 		{
@@ -100,7 +106,7 @@ namespace vx
 	};
 
 	template<typename T>
-	struct AlignedHeapAllocator : public AllocatorBase
+	struct AlignedHeapAllocator : public Allocator
 	{
 		static void* allocate(u64 size)
 		{

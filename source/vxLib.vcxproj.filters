@@ -37,6 +37,9 @@
     <Filter Include="Source Files\Graphics">
       <UniqueIdentifier>{eb912591-5e61-44da-8472-35c61d1f7709}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\File">
+      <UniqueIdentifier>{db4dda8f-be26-4d44-ba84-0e039e069193}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\vxLib\ScopeGuard.h">
@@ -171,8 +174,11 @@
     <ClInclude Include="..\include\vxLib\gl\flextGL.h">
       <Filter>Header Files\gl</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vxLib\File.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\include\vxLib\File\File.h">
+      <Filter>Header Files\File</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\File\FileHeader.h">
+      <Filter>Header Files\File</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

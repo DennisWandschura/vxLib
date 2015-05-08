@@ -29,7 +29,7 @@ SOFTWARE.
 
 namespace vx
 {
-	class PoolAllocator : public AllocatorBase
+	class PoolAllocator : public Allocator
 	{
 		u8 *m_pMemory;
 		u32 m_firstFreeEntry;
@@ -48,11 +48,11 @@ namespace vx
 		PoolAllocator& operator=(PoolAllocator &&rhs);
 
 		// ignores size parameter
-		void* allocate(u32 size) noexcept;
+		u8* allocate(u64 size) noexcept override;
 		// ignores size and alginment parameter
-		void* allocate(u32 size, u8 alignment) noexcept;
+		u8* allocate(u64 size, u8 alignment) noexcept override;
 
-		void deallocate(void *ptr);
+		void deallocate(u8 *ptr) override;
 
 		// returns pointer to memory and sets everything to zero
 		void* release() noexcept;

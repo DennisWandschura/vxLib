@@ -21,46 +21,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef __VX_STACKALLOCATOR_H
-#define __VX_STACKALLOCATOR_H
+#ifndef __VX_FILEHEADER_H
+#define __VX_FILEHEADER_H
 #pragma once
 
-#include <vxLib/Allocator/Allocator.h>
+#include <vxLib/types.h>
 
 namespace vx
 {
-	class StackAllocator : public Allocator
+	struct FileHeader
 	{
-		u8 *m_pMemory;
-		u32 m_head;
-		u32 m_size;
+		static const u32 s_magic = 0x1337b0b;
 
-	public:
-		typedef u32 Marker;
-
-		StackAllocator();
-		// passed in memory ptr must be aligned to 16 bytes
-		StackAllocator(u8 *ptr, u32 size);
-		StackAllocator(const StackAllocator&) = delete;
-		StackAllocator(StackAllocator &&rhs);
-		~StackAllocator();
-
-		StackAllocator& operator=(const StackAllocator&) = delete;
-		StackAllocator& operator=(StackAllocator &&rhs);
-
-		u8* allocate(u64 size) noexcept override;
-		u8* allocate(u64 size, u8 alignment) noexcept override;
-
-		void deallocate(u8 *ptr) noexcept override;
-
-		void clear() noexcept;
-		void clear(Marker marker) noexcept;
-
-		void* release() noexcept;
-
-		void swap(StackAllocator &rhs) noexcept;
-
-		Marker getMarker() const;
+		u32 magic;
+		u32 version;
+		u64 crc;
 	};
 }
 #endif

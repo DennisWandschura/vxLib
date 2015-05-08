@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib\Graphics\Mesh.h>
-#include <vxLib/File.h>
+#include <vxLib/Graphics/Mesh.h>
+#include <vxLib/File/File.h>
+#include <vxLib/Allocator/Allocator.h>
 
 namespace vx
 {
@@ -74,7 +75,7 @@ namespace vx
 		m_pIndices = (u32*)p;
 	}
 
-	void Mesh::loadFromMemory(const u8 *src, u8* pMemory)
+	const u8* Mesh::loadFromMemory(const u8 *src, vx::Allocator* allocator)
 	{
 		m_vertexCount = *reinterpret_cast<const u32*>(src);
 		src += sizeof(u32);
@@ -82,38 +83,59 @@ namespace vx
 		m_indexCount = *reinterpret_cast<const u32*>(src);
 		src += sizeof(u32);
 
-		auto totalSize = sizeof(MeshVertex) * m_vertexCount + sizeof(u32) * m_indexCount;
+		auto totalSize = Mesh::getArraySize(m_vertexCount, m_indexCount);
+		auto pMemory = allocator->allocate(totalSize, 4);
+		if (!pMemory)
+			return nullptr;
+
 		memcpy(pMemory, src, totalSize);
+		src += totalSize;
 
 		setPointers(pMemory);
+
+		return src;
 	}
 
-	void Mesh::saveToMemory(u8 **pPtr) const
+	u8* Mesh::saveToMemory(u8 *ptr) const
 	{
-		u8 *ptr = *pPtr;
-
 		*reinterpret_cast<u32*>(ptr) = m_vertexCount;
 		ptr += sizeof(u32);
 
 		*reinterpret_cast<u32*>(ptr) = m_indexCount;
 		ptr += sizeof(u32);
 
-		auto totalSize = sizeof(MeshVertex) * m_vertexCount + sizeof(u32) * m_indexCount;
-		memcpy(ptr, m_pVertices, totalSize);
+		auto totalSize = Mesh::getArraySize(m_vertexCount, m_indexCount);
+		memcpy(ptr, (u8*)m_pVertices, totalSize);
 
-		*pPtr = (ptr + totalSize);
+		return (ptr + totalSize);
 	}
 
 	bool Mesh::saveToFile(File* file) const
 	{
 		if (!file->write(m_vertexCount))
+		{
+			puts("Mesh::saveToFile(): Error writing to file");
 			return false;
+		}
 
 		if (!file->write(m_indexCount))
+		{
+			puts("Mesh::saveToFile(): Error writing to file");
 			return false;
+		}
 
 		auto totalSize = sizeof(MeshVertex) * m_vertexCount + sizeof(u32) * m_indexCount;
-		if (!file->write(m_pVertices, totalSize))
+		if (!file->write((u8*)m_pVertices, totalSize))
+		{
+			puts("Mesh::saveToFile(): Error writing to file");
 			return false;
+		}
+
+		return true;
+	}
+
+	u64 Mesh::getArraySize(u32 vertexCount, u32 indexCount)
+	{
+		return sizeof(MeshVertex) * vertexCount + sizeof(u32) * indexCount;
 	}
 }
