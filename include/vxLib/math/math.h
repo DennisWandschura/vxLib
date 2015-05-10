@@ -81,9 +81,9 @@ namespace vx
 	extern f32 VX_CALLCONV invsqrt(f32 number);
 
 	template<typename T>
-	inline const T& clamp(const T &value, const T &min, const T &max)
+	inline const T& clamp(const T &value, const T &vmin, const T &vmax)
 	{
-		return ::std::min(::std::max(value, min), max);
+		return min(max(value, vmin), vmax);
 	}
 
 	inline bool scalarNearEqual

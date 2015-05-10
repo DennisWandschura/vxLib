@@ -1038,49 +1038,49 @@ namespace vx
 	template<class T>
 	detail::vec2<T> min(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
 	{
-		detail::vec2<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
+		return detail::vec2<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
 	}
 
 	template<class T>
 	detail::vec2a<T> min(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
 	{
-		detail::vec2a<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
+		return detail::vec2a<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
 	}
 
 	template<class T>
 	detail::vec3<T> min(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
-		detail::vec3<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z));
+		return detail::vec3<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z));
 	}
 
 	template<class T>
 	detail::vec4<T> min(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
 	{
-		detail::vec4<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z), std::min(v1.w, v2.w));
+		return detail::vec4<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z), std::min(v1.w, v2.w));
 	}
 
 	template<class T>
 	detail::vec2<T> max(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
 	{
-		detail::vec2<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
+		return detail::vec2<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
 	}
 
 	template<class T>
 	detail::vec2a<T> max(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
 	{
-		detail::vec2a<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
+		return detail::vec2a<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
 	}
 
 	template<class T>
 	detail::vec3<T> max(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
-		detail::vec3<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z));
+		return detail::vec3<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z));
 	}
 
 	template<class T>
 	detail::vec4<T> max(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
 	{
-		detail::vec4<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z), std::max(v1.w, v2.w));
+		return detail::vec4<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z), std::max(v1.w, v2.w));
 	}
 
 	template<class T>
