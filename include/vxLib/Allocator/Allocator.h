@@ -94,12 +94,12 @@ namespace vx
 
 	struct HeapAllocator : public Allocator
 	{
-		static void* allocate(u64 size)
+		static u8* allocate(u64 size)
 		{
-			return ::operator new(size);
+			return (u8*)::operator new(size);
 		}
 
-		static void deallocate(void *p)
+		static void deallocate(u8 *p)
 		{
 			::operator delete(p);
 		}
@@ -108,12 +108,12 @@ namespace vx
 	template<typename T>
 	struct AlignedHeapAllocator : public Allocator
 	{
-		static void* allocate(u64 size)
+		static u8* allocate(u64 size)
 		{
 			return _aligned_malloc(size, __alignof(T));
 		}
 
-		static void deallocate(void *p)
+		static void deallocate(u8 *p)
 		{
 			_aligned_free(p);
 		}
@@ -132,7 +132,7 @@ namespace vx
 
 		static void deallocate(pointer p)
 		{
-			AllocBase::deallocate(p);
+			AllocBase::deallocate((u8*)p);
 		}
 
 		static void destroy(pointer p)

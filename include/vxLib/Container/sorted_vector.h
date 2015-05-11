@@ -33,7 +33,7 @@ SOFTWARE.
 
 namespace vx
 {
-	template<class Key, class Type>
+	template<class Key, class Type, class Cmp = std::less<>>
 	class sorted_vector
 	{
 		template<bool>
@@ -111,41 +111,38 @@ namespace vx
 		using size_type = u32;
 		using difference_type = size_t;
 
-		using const_iterator = vx::vector_const_iterator < sorted_vector<Key, Type> > ;
-		using iterator = vx::vector_iterator < sorted_vector<Key, Type> > ;
+		using _MyCon = sorted_vector < Key, Type, Cmp > ;
+		using const_iterator = vx::vector_const_iterator < _MyCon >;
+		using iterator = vx::vector_iterator < _MyCon >;
 
 	private:
-		enum{ IsArray = std::is_array<value_type>::value };
+		enum
+		{ 
+			IsValueTypeArray = std::is_array<value_type>::value,
+			IsKeyTypeArray = std::is_array<key_type>::value
+		};
 
 		key_type *m_pKeys;
 		value_type *m_pValues;
 		size_type m_size;
 		size_type m_capacity;
 
-		template<class... _Valty>
-		void emplace_back(key_type key, _Valty&& ...args)
+		template<typename U, class... _Valty>
+		void emplace_back(U &&key, _Valty&& ...args)
 		{
 			if (m_size >= m_capacity)
 				reserve((m_capacity + 1) * 1.3f);
 
 			new(m_pKeys + m_size) key_type(key);
-			ConstructImpl<IsArray>::construct(m_pValues, m_size, std::forward<_Valty>(args)...);
+			ConstructImpl<IsValueTypeArray>::construct(m_pValues, m_size, std::forward<_Valty>(args)...);
 
 			++m_size;
 		}
 
-		void moveDestroy(value_type *pDest, value_type *pSrc, u32 size)
+		template<typename U>
+		void moveDestroy(U *pDest, U *pSrc, u32 size)
 		{
-			ConstructImpl<IsArray>::moveDestroy(pDest, pSrc, size);
-		}
-
-		void moveDestroy(key_type *pDest, key_type *pSrc, u32 size)
-		{
-			for (u32 i = 0; i < size; ++i)
-			{
-				new (pDest + i) key_type(std::move(*(pSrc + i)));
-				Deleter<std::is_destructible<key_type>::value>::destroy<key_type>(pSrc + i);
-			}
+			ConstructImpl<IsValueTypeArray>::moveDestroy(pDest, pSrc, size);
 		}
 
 		template<class U>
@@ -206,8 +203,7 @@ namespace vx
 				u8 *pNewMemory = (u8*)::operator new((sizeof(key_type) + sizeof(value_type)) * n + __alignof(value_type));
 
 				key_type *pNewKeys = (key_type*)pNewMemory;
-				moveDestroy(pNewKeys, m_pKeys, m_size);
-				//std::copy(m_pKeys, m_pKeys + m_size, pNewKeys);
+				ConstructImpl<IsKeyTypeArray>::moveDestroy(pNewKeys, m_pKeys, m_size);
 
 				void *oldData = m_pKeys;
 
@@ -216,7 +212,7 @@ namespace vx
 				tmp += adjustment;
 
 				pointer pNewValues = (pointer)tmp;
-				moveDestroy(pNewValues, m_pValues, m_size);
+				ConstructImpl<IsValueTypeArray>::moveDestroy(pNewValues, m_pValues, m_size);
 
 				::operator delete(oldData);
 
@@ -227,19 +223,18 @@ namespace vx
 			}
 		}
 
-		iterator insert(key_type key, const value_type &value)
+		iterator insert(const key_type &key, const value_type &value)
 		{
 			auto endKeys = m_pKeys + m_size;
 
-			auto it = std::lower_bound(m_pKeys, endKeys, key);
+			auto it = std::lower_bound(m_pKeys, endKeys, key, Cmp());
 
 			auto index = it - m_pKeys;
-			if (it == endKeys || (key < *it))
+			if (it == endKeys || Cmp()(key < *it))
 			{
 				size_type _Off = it - m_pKeys;
 
 				emplace_back(key, value);
-				//emplace_back(std::forward<value_type>(value);
 
 				std::rotate(begin() + _Off, end() - 1, end());
 
@@ -250,18 +245,17 @@ namespace vx
 			return iterator(m_pValues + index, this);
 		}
 
-		iterator insert(key_type key, value_type &&value)
+		iterator insert(key_type &&key, value_type &&value)
 		{
 			auto curEnd = m_pKeys + m_size;
-			auto it = std::lower_bound(m_pKeys, curEnd, key);
+			auto it = std::lower_bound(m_pKeys, curEnd, key, Cmp());
 
 			auto index = it - m_pKeys;
-			if (it == curEnd || (key < *it))
+			if (it == curEnd || Cmp()(key < *it))
 			{
 				size_type _Off = it - m_pKeys;
 
-				emplace_back(key, std::forward<value_type>(value));
-				//emplace_back(std::forward<value_type>(value);
+				emplace_back(std::forward<key_type>(key), std::forward<value_type>(value));
 
 				std::rotate(begin() + _Off, end() - 1, end());
 
@@ -272,27 +266,27 @@ namespace vx
 			return iterator(m_pValues + index, this);
 		}
 
-		iterator find(key_type key) noexcept
+		iterator find(const key_type &key) noexcept
 		{
 			auto keyEnd = m_pKeys + m_size;
-			auto it = std::lower_bound(m_pKeys, keyEnd, key);
+			auto it = std::lower_bound(m_pKeys, keyEnd, key, Cmp());
 			auto index = it - m_pKeys;
 
 			auto result = iterator(m_pValues + index, this);
-			if (it != keyEnd && (key < *it))
+			if (it != keyEnd && Cmp()(key < *it))
 				result = end();
 
 			return result;
 		}
 
-			const_iterator find(key_type key) const noexcept
+			const_iterator find(const key_type &key) const noexcept
 		{
 			auto keyEnd = m_pKeys + m_size;
-			auto it = std::lower_bound(m_pKeys, keyEnd, key);
+			auto it = std::lower_bound(m_pKeys, keyEnd, key, Cmp());
 			auto index = it - m_pKeys;
 
 			auto result = const_iterator(m_pValues + index, this);
-			if (it != keyEnd && (key < *it))
+			if (it != keyEnd && Cmp()(key < *it))
 				result = end();
 
 			return result;

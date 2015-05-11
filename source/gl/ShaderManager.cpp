@@ -243,7 +243,7 @@ namespace vx
 					return false;
 				}
 
-				m_shaderPrograms.insert(sid, std::move(program));
+				m_shaderPrograms.insert(std::move(sid), std::move(program));
 			}
 
 			return true;
@@ -329,7 +329,7 @@ namespace vx
 
 			auto sid = vx::make_sid(PathFindFileNameA(file));
 
-			m_programPipelines.insert(sid, std::move(pipe));
+			m_programPipelines.insert(std::move(sid), std::move(pipe));
 
 			return true;
 		}
