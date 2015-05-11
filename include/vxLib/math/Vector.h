@@ -641,6 +641,26 @@ namespace vx
 
 				return *this;
 			}
+
+			inline friend vec4 operator + (const vec4 &lhs, const vec4 &rhs)
+			{
+				return vec4(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w);
+			}
+
+			inline friend vec4 operator - (const vec4 &lhs, const vec4 &rhs)
+			{
+				return vec4(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w);
+			}
+
+			inline friend vec4 operator * (const vec4 &lhs, const vec4 &rhs)
+			{
+				return vec4(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w);
+			}
+
+			inline friend vec4 operator / (const vec4 &lhs, const vec4 &rhs)
+			{
+				return vec4(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w);
+			}
 		};
 
 		template<>
@@ -1236,72 +1256,6 @@ namespace vx
 		return _mm_mul_ps(rad, g_VXRadToDeg);
 	}
 }
-
-//////////////////////// operator+
-
-template<typename T>
-vx::detail::vec2<T> operator+(const vx::detail::vec2<T> &lhs, const vx::detail::vec2<T> &rhs)
-{
-	return vx::detail::vec2<T>(lhs.x + rhs.x, lhs.y + rhs.y);
-}
-
-template<typename T>
-vx::detail::vec4<T> VX_CALLCONV operator + (const vx::detail::vec4<T> &lhs, const vx::detail::vec4<T> &rhs)
-{
-	return vx::detail::vec4<T>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w);
-}
-
-inline vx::float4a VX_CALLCONV operator + (const vx::float4a &lhs, const vx::float4a &rhs)
-{
-	return _mm_add_ps(lhs.v, rhs.v);
-}
-
-//////////////////////// operator+
-
-//////////////////////// operator-
-
-template<typename T>
-vx::detail::vec4<T> VX_CALLCONV operator - (const vx::detail::vec4<T> &lhs, const vx::detail::vec4<T> &rhs)
-{
-	return vx::detail::vec4<T>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w);
-}
-
-inline vx::float4a VX_CALLCONV operator - (const vx::float4a &lhs, const vx::float4a &rhs)
-{
-	return _mm_sub_ps(lhs.v, rhs.v);
-}
-
-//////////////////////// operator-
-
-//////////////////////// operator*
-
-template<typename T>
-vx::detail::vec4<T> VX_CALLCONV operator*(const vx::detail::vec4<T> &lhs, const vx::detail::vec4<T> &rhs)
-{
-	return vx::detail::vec4<T>(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w);
-}
-
-inline vx::float4a VX_CALLCONV operator*(const vx::float4a &lhs, const vx::float4a &rhs)
-{
-	return _mm_mul_ps(lhs.v, rhs.v);
-}
-
-//////////////////////// operator*
-
-//////////////////////// operator/
-
-template<typename T>
-vx::detail::vec4<T> VX_CALLCONV operator / (const vx::detail::vec4<T> &lhs, const vx::detail::vec4<T> &rhs)
-{
-	return vx::detail::vec4<T>(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w);
-}
-
-inline vx::float4a VX_CALLCONV operator / (const vx::float4a &lhs, const vx::float4a &rhs)
-{
-	return _mm_div_ps(lhs.v, rhs.v);
-}
-
-//////////////////////// operator/
 
 #include "Vector.inl"
 #endif

@@ -31,11 +31,11 @@ SOFTWARE.
 
 namespace vx
 {
-	template<typename K, typename T>
+	template<typename K, typename T, typename Cmp = std::less<>>
 	class sorted_array
 	{
 	public:
-		using _MyContainer = sorted_array<K, T>;
+		using _MyContainer = sorted_array<K, T, Cmp>;
 		using value_type = T;
 		using key_type = K;
 		using reference = value_type&;
@@ -131,17 +131,17 @@ namespace vx
 			}
 		}
 
-		iterator insert(key_type key, const value_type &value)
+		iterator insert(const key_type &key, const value_type &value)
 		{
 			if (m_capacity <= m_size)
 				return end();
 
 			auto endKeys = m_pKeys + m_size;
 
-			auto it = std::lower_bound(m_pKeys, endKeys, key);
+			auto it = std::lower_bound(m_pKeys, endKeys, key, Cmp());
 
 			auto index = it - m_pKeys;
-			if (it == endKeys || (key < *it))
+			if (it == endKeys || Cmp()(key, *it))
 			{
 				size_type _Off = it - m_pKeys;
 
@@ -156,20 +156,20 @@ namespace vx
 			return iterator(m_pValues + index, this);
 		}
 
-		iterator insert(key_type key, value_type &&value)
+		iterator insert(key_type &&key, value_type &&value)
 		{
 			if (m_capacity <= m_size)
 				return end();
 
 			auto curEnd = m_pKeys + m_size;
-			auto it = std::lower_bound(m_pKeys, curEnd, key);
+			auto it = std::lower_bound(m_pKeys, curEnd, key, Cmp());
 
 			auto index = it - m_pKeys;
-			if (it == curEnd || (key < *it))
+			if (it == curEnd || Cmp()(key, *it))
 			{
 				size_type _Off = it - m_pKeys;
 
-				emplace_back(key, std::forward<value_type>(value));
+				emplace_back(std::forward<key_type>(key), std::forward<value_type>(value));
 
 				std::rotate(begin() + _Off, end() - 1, end());
 
@@ -192,27 +192,27 @@ namespace vx
 			return iterator(p, this);
 		}
 
-		iterator find(key_type key) noexcept
+		iterator find(const key_type &key) noexcept
 		{
 			auto keyEnd = m_pKeys + m_size;
-			auto it = std::lower_bound(m_pKeys, keyEnd, key);
+			auto it = std::lower_bound(m_pKeys, keyEnd, key, Cmp());
 			auto index = it - m_pKeys;
 
 			auto result = iterator(m_pValues + index, this);
-			if (it != keyEnd && (key < *it))
+			if (it != keyEnd && Cmp()(key, *it))
 				result = end();
 
 			return result;
 		}
 
-			const_iterator find(key_type key) const noexcept
+			const_iterator find(const key_type &key) const noexcept
 		{
 			auto keyEnd = m_pKeys + m_size;
-			auto it = std::lower_bound(m_pKeys, keyEnd, key);
+			auto it = std::lower_bound(m_pKeys, keyEnd, key, Cmp());
 			auto index = it - m_pKeys;
 
 			auto result = const_iterator(m_pValues + index, this);
-			if (it != keyEnd && (key < *it))
+			if (it != keyEnd && Cmp()(key, *it))
 				result = end();
 
 			return result;
