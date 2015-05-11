@@ -230,7 +230,7 @@ namespace vx
 			auto it = std::lower_bound(m_pKeys, endKeys, key, Cmp());
 
 			auto index = it - m_pKeys;
-			if (it == endKeys || Cmp()(key < *it))
+			if (it == endKeys || Cmp()(key, *it))
 			{
 				size_type _Off = it - m_pKeys;
 
@@ -251,7 +251,7 @@ namespace vx
 			auto it = std::lower_bound(m_pKeys, curEnd, key, Cmp());
 
 			auto index = it - m_pKeys;
-			if (it == curEnd || Cmp()(key < *it))
+			if (it == curEnd || Cmp()(key, *it))
 			{
 				size_type _Off = it - m_pKeys;
 
@@ -273,7 +273,7 @@ namespace vx
 			auto index = it - m_pKeys;
 
 			auto result = iterator(m_pValues + index, this);
-			if (it != keyEnd && Cmp()(key < *it))
+			if (it != keyEnd && Cmp()(key, *it))
 				result = end();
 
 			return result;
@@ -286,7 +286,7 @@ namespace vx
 			auto index = it - m_pKeys;
 
 			auto result = const_iterator(m_pValues + index, this);
-			if (it != keyEnd && Cmp()(key < *it))
+			if (it != keyEnd && Cmp()(key, *it))
 				result = end();
 
 			return result;
