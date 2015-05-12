@@ -30,7 +30,7 @@ SOFTWARE.
 
 namespace vx
 {
-	template<class Container>
+	template<typename Container>
 	class array_const_iterator
 	{
 	public:
@@ -213,7 +213,7 @@ namespace vx
 		}
 	};
 
-	template<class Container>
+	template<typename Container>
 	class array_iterator : public array_const_iterator < Container >
 	{
 		typedef array_const_iterator<Container>		_MyBase;
@@ -312,7 +312,7 @@ namespace vx
 		}
 	};
 
-	template<class Container>
+	template<typename Container>
 	class vector_const_iterator
 	{
 	public:
@@ -331,7 +331,7 @@ namespace vx
 		typedef vector_const_iterator<Container> _MyIter;
 
 	protected:
-		//friend Container;
+		friend Container;
 
 		tpointer m_pObject;
 		const Container *m_pCon;

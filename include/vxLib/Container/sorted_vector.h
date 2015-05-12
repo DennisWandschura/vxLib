@@ -53,16 +53,26 @@ namespace vx
 			}
 		};
 
+		template<typename T>
+		struct ConstructorArray;
+
+		template<>
+		struct ConstructorArray<char>
+		{
+			template<u32 S>
+			static void construct(char(*p)[S], u32 i, const char(&src)[S])
+			{
+				strcpy_s(p[i], src);
+			}
+		};
+
 		template<bool>
 		struct ConstructImpl
 		{
 			template<typename U, u32 S>
-			static void construct(U(*p)[S], u32 i, const U(&src)[S]);
-
-			template<u32 S>
-			static void construct(char(&p)[S], u32 i, const char(&src)[S])
+			static void construct(U(*p)[S], u32 i, const U(&src)[S])
 			{
-				strcpy_s(p[i], src);
+				ConstructorArray<U>::construct(p,i, src);
 			}
 
 			template<class U, u32 S>
@@ -74,7 +84,7 @@ namespace vx
 				for (u32 i = 0; i < size; ++i)
 				{
 					strcpy_s(pDest[i], pSrc[i]);
-					//Deleter<std::is_destructible<char[S]>::value>::destroy<char[S]>(pSrc + i);
+					//Deleter<std::is_destructible<char>::value>::destroy<char>(pSrc + i);
 				}
 			}
 		};
@@ -136,7 +146,8 @@ namespace vx
 			if (m_size >= m_capacity)
 				reserve((m_capacity + 1) * 1.3f);
 
-			new(m_pKeys + m_size) key_type(key);
+			new(m_pKeys + m_size) key_type(std::forward<U>(key));
+			//new(m_pValues + m_size) value_type(std::forward<_Valty>(args)...);
 			detail::ConstructImpl<IsValueTypeArray>::construct(m_pValues, m_size, std::forward<_Valty>(args)...);
 
 			++m_size;

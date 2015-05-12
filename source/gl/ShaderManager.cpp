@@ -46,8 +46,11 @@ namespace
 		size = inFile.tellg();
 		inFile.seekg(0, std::ios::beg);
 
-		//buffer = std::make_unique<char[]>(size);
-		buffer = std::unique_ptr<char[]>(new char[size]);
+#if _VX_GCC
+		buffer = std::unique_ptr<char[]>(new char[size]());
+#else
+		buffer = std::make_unique<char[]>(size);
+#endif
 		inFile.read(buffer.get(), size);
 
 		return true;
@@ -56,8 +59,13 @@ namespace
 	std::unique_ptr<char[]> appendInclude(const std::unique_ptr<char[]>* programBuffer, u32* programSize, const std::string &include, const char* includeStart)
 	{
 		auto includeSize = include.size();
-		///auto newProgram = std::make_unique<char[]>(*programSize + includeSize);
-		auto newProgram = std::unique_ptr<char[]>(new char[*programSize + includeSize]);
+
+#if _VX_GCC
+		auto newProgram = std::unique_ptr<char[]>(new char[*programSize + includeSize]());
+#else
+		auto newProgram = std::make_unique<char[]>(*programSize + includeSize);
+#endif
+		
 		u32 currentSize = 0;
 
 		auto size = includeStart - programBuffer->get();
@@ -141,6 +149,7 @@ namespace
 		if (log)
 		{
 			printf("Error '%s'\n%s\n", programFile, log.get());
+			printf("%s\n", ptr);
 			return false;
 		}
 

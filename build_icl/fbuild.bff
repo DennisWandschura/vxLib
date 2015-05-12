@@ -51,6 +51,16 @@
 	.FileName = '$ProjectName$_d'
 ]
 
+.Target_Debug_x64_Static =
+[
+	Using(.IntelX64)
+	Using(.DefaultCompilerSettings)
+	Using(.BuildDebug)
+	
+	.CompilerSettingsT = '$CompilerSettingsB$ /MTd'
+	.FileName = '$ProjectName$_sd'
+]
+
 .Target_Release_x64 =
 [
 	Using(.IntelX64)
@@ -61,7 +71,7 @@
 	.FileName = '$ProjectName$'
 ]
 
-.Targets = { .Target_Debug_x64, .Target_Release_x64 }
+.Targets = { .Target_Debug_x64_Static, .Target_Debug_x64, .Target_Release_x64 }
 
 ForEach( .Target in .Targets )
 {
@@ -117,9 +127,14 @@ ForEach( .Target in .Targets )
 		.LibrarianOutput = '$OutPath$\$TargetName$.lib'
 		.LibrarianAdditionalInputs = {'Obj_C_$TargetName$', 'Obj_$TargetName$', 'Obj_ASM_$TargetName$'}
 	}
+	
+	VCXProject( "Proj_$TargetName$" )
+	{
+		.ProjectOutput = 'P_$TargetName$.vcxproj'
+	}
 }
 
 Alias('all')
 {
-	.Targets = { 'Lib_vxLib_d' 'Lib_vxLib' }
+	.Targets = { 'Lib_vxLib_d' 'Lib_vxLib_sd' 'Lib_vxLib' }
 }
