@@ -28,13 +28,13 @@ namespace vx
 {
 	Keyboard RawInput::s_keyboard{};
 	Mouse RawInput::s_mouse{};
-	vx::hybrid_vector<KeyEvent, 10> RawInput::s_keyEvents{};
+	std::vector<KeyEvent> RawInput::s_keyEvents{};
 	Input::KeyEventCallback RawInput::s_keyEventPressedCallback{ nullptr };
 	Input::KeyEventCallback RawInput::s_keyEventReleasedCallback{ nullptr };
 
 	struct InputHandler
 	{
-		static void handleKeyboard(const RAWKEYBOARD &rawKeyboard, Keyboard* keyboard, vx::hybrid_vector<KeyEvent, 10>* keyEvents)
+		static void handleKeyboard(const RAWKEYBOARD &rawKeyboard, Keyboard* keyboard, std::vector<KeyEvent>* keyEvents)
 		{
 			auto flag = rawKeyboard.Flags;
 			auto key = rawKeyboard.VKey;

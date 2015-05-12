@@ -28,18 +28,18 @@ SOFTWARE.
 #include <assert.h>
 #include <type_traits>
 
-using s8 = char;
-using s16 = short;
-using s32 = int;
-using s64 = long long;
+typedef char s8;
+typedef short s16;
+typedef int s32;
+typedef long long int s64;
 
-using u8 = unsigned char;
-using u16 = unsigned short;
-using u32 = unsigned int;
-using u64 = unsigned long long;
+typedef unsigned char u8;
+typedef unsigned short u16;
+typedef unsigned int u32;
+typedef unsigned long long u64;
 
-using f32 = float;
-using f64 = double;
+typedef float f32;
+typedef double f64;
 
 static_assert(sizeof(s8) == 1, "Wrong type size");
 static_assert(sizeof(u8) == 1, "Wrong type size");
@@ -51,12 +51,6 @@ static_assert(sizeof(s64) == 8, "Wrong type size");
 static_assert(sizeof(u64) == 8, "Wrong type size");
 static_assert(sizeof(f32) == 4, "Wrong type size");
 static_assert(sizeof(f64) == 8, "Wrong type size");
-
-#if defined(UNICODE) || defined(_UNICODE)
-using char_t = wchar_t;
-#else
-using char_t = char;
-#endif
 
 #if _VX_ASSERT
 #ifdef  NDEBUG
@@ -75,17 +69,18 @@ extern "C" {
 #define VX_ASSERT(_Expression) ((void)0)
 #endif
 
-#if defined(_WIN32) || defined(_VX_WINDOWS) || defined(_VX_CUDA)
-#define VX_ALIGN(X) __declspec( align( X ) )
+#if defined(_VX_GCC) 
+#define VX_ALIGN(X) alignas(X)
 #else
-#define VX_ALIGN(X) __attribute__((aligned(64)));
+#define VX_ALIGN(X) __declspec( align( X ) )
 #endif
 
 #define VX_GLOBAL extern __declspec(selectany)
 #define VX_GLOBALCONST extern const __declspec(selectany)
 
-#ifdef _VX_CUDA
+#if defined(_VX_CUDA) || defined (_VX_GCC)
 #define VX_CALLCONV __fastcall
+#define _VX_CALLCONV_TYPE 0
 #else
 #define VX_CALLCONV __vectorcall
 #define _VX_CALLCONV_TYPE 1

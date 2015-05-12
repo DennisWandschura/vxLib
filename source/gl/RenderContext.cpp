@@ -128,7 +128,7 @@ namespace vx
 		{
 			if (params.bDebugMode)
 			{
-				m_pContextAttribs = std::make_unique<int[]>(7);
+				m_pContextAttribs = std::unique_ptr<int[]>(new int[7]);
 				m_pContextAttribs[0] = WGL_CONTEXT_MAJOR_VERSION_ARB;
 				m_pContextAttribs[1] = params.majVersion;
 				m_pContextAttribs[2] = WGL_CONTEXT_MINOR_VERSION_ARB;
@@ -139,7 +139,7 @@ namespace vx
 			}
 			else
 			{
-				m_pContextAttribs = std::make_unique<int[]>(7);
+				m_pContextAttribs = std::unique_ptr<int[]>(new int[5]);
 				m_pContextAttribs[0] = WGL_CONTEXT_MAJOR_VERSION_ARB;
 				m_pContextAttribs[1] = params.majVersion;
 				m_pContextAttribs[2] = WGL_CONTEXT_MINOR_VERSION_ARB;

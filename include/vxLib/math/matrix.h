@@ -91,7 +91,7 @@ namespace vx
 		}
 	};
 
-	using mat4 = mat4x4;
+	typedef mat4x4 mat4;
 
 	inline mat4 VX_CALLCONV add(const mat4 &M1, const mat4 &M2);
 	inline mat4 VX_CALLCONV subtract(const mat4 &M1, const mat4 &M2);

@@ -35,19 +35,19 @@ namespace vx
 	{
 	public:
 		enum { SIZE = Container::SIZE };
-		using iterator_category = std::random_access_iterator_tag;
+		typedef std::random_access_iterator_tag iterator_category;
 
-		using _MyContainer = Container;
+		typedef Container _MyContainer;
 
-		using value_type = typename _MyContainer::value_type;
-		using reference = typename _MyContainer::const_reference;
-		using difference_type = typename _MyContainer::difference_type;
-		using pointer = typename _MyContainer::const_pointer;
-		using tpointer = typename _MyContainer::pointer;
+		typedef typename _MyContainer::value_type value_type;
+		typedef typename _MyContainer::const_reference reference;
+		typedef typename _MyContainer::difference_type difference_type;
+		typedef typename _MyContainer::const_pointer pointer;
+		typedef typename _MyContainer::pointer tpointer;
 
-		using _Unchecked_type = pointer;
+		typedef pointer _Unchecked_type;
 
-	private:
+	protected:
 		tpointer m_pObject;
 		const Container *m_pCon;
 
@@ -76,8 +76,6 @@ namespace vx
 			m_pCon(pCon)
 		{
 		}
-
-		typedef pointer _Unchecked_type;
 
 		array_const_iterator& _Rechecked(_Unchecked_type _Right)
 		{	// reset from unchecked iterator
@@ -221,10 +219,10 @@ namespace vx
 		typedef array_const_iterator<Container>		_MyBase;
 
 	public:
-		typedef typename _MyContainer::value_type		value_type;
-		typedef typename _MyContainer::difference_type	difference_type;
-		typedef typename _MyContainer::reference		reference;
-		typedef typename _MyContainer::pointer			pointer;
+		typedef typename Container::value_type		value_type;
+		typedef typename Container::difference_type	difference_type;
+		typedef typename Container::reference		reference;
+		typedef typename Container::pointer			pointer;
 
 	private:
 		typedef array_iterator<Container>			_MyIter;
@@ -235,7 +233,7 @@ namespace vx
 		{
 		}
 
-		array_iterator(pointer obj, const _MyContainer *pPool)
+		array_iterator(pointer obj, const Container *pPool)
 			:_MyBase(obj, pPool)
 		{
 		}
@@ -255,7 +253,7 @@ namespace vx
 
 		pointer operator->() const
 		{
-			return (_STD pointer_traits<pointer>::pointer_to(**this));
+			return (pointer)this->m_pObject;
 		}
 
 		reference operator*() const
@@ -318,22 +316,22 @@ namespace vx
 	class vector_const_iterator
 	{
 	public:
-		using iterator_category = std::random_access_iterator_tag;
+		typedef std::random_access_iterator_tag iterator_category;
 
-		using _MyContainer = Container;
+		typedef Container _MyContainer;
 
-		using value_type = typename _MyContainer::value_type;
-		using reference = typename _MyContainer::const_reference;
-		using difference_type = typename _MyContainer::difference_type;
-		using pointer = typename _MyContainer::const_pointer;
-		using tpointer = typename _MyContainer::pointer;
+		typedef typename _MyContainer::value_type value_type;
+		typedef typename _MyContainer::const_reference reference;
+		typedef typename _MyContainer::difference_type difference_type;
+		typedef typename _MyContainer::const_pointer pointer;
+		typedef typename _MyContainer::pointer  tpointer;
 
-		using _Unchecked_type = pointer;
+		typedef  pointer _Unchecked_type;
 
-		using _MyIter = vector_const_iterator<Container>;
+		typedef vector_const_iterator<Container> _MyIter;
 
-	private:
-		friend _MyContainer;
+	protected:
+		//friend Container;
 
 		tpointer m_pObject;
 		const Container *m_pCon;
@@ -360,8 +358,6 @@ namespace vx
 			m_pCon(pCon)
 		{
 		}
-
-		typedef pointer _Unchecked_type;
 
 		_MyIter& _Rechecked(_Unchecked_type _Right)
 		{	// reset from unchecked iterator
@@ -497,6 +493,7 @@ namespace vx
 	class vector_iterator : public vector_const_iterator < Container >
 	{
 		typedef vector_const_iterator<Container>		_MyBase;
+		typedef typename _MyBase::_MyContainer _MyContainer;
 
 	public:
 		typedef typename _MyContainer::value_type		value_type;
@@ -533,7 +530,7 @@ namespace vx
 
 		pointer operator->() const
 		{
-			return (_STD pointer_traits<pointer>::pointer_to(**this));
+			return (this->m_pObject);
 		}
 
 		reference operator*() const

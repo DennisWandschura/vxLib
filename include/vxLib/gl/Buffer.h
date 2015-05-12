@@ -147,62 +147,19 @@ namespace vx
 			};
 		}
 
-		class Buffer : public Base<Buffer>
-		{
-			template<typename T>
-			friend class MappedBuffer;
-			// contains the opengl enum in first 24 bits, and BufferType enum in last 8 bits
-			u32 m_target;
-
-			void* map(Map access);
-			void* mapRange(u32 offsetBytes, u32 sizeBytes, MapRange::Access access);
-			void unmap() const;
-
-		public:
-			Buffer();
-			Buffer(const Buffer&) = delete;
-			Buffer(Buffer &&rhs);
-
-			Buffer& operator=(const Buffer&) = delete;
-			Buffer& operator=(Buffer &&rhs);
-
-			void create(const BufferDescription &desc);
-			void destroy();
-
-			void bind() const;
-
-			template<typename T>
-			MappedBuffer<T> map(Map access)
-			{
-				void* ptr = map(access);
-				return MappedBuffer<T>(this, ptr);
-			}
-
-			template<typename T>
-			MappedBuffer<T> mapRange(u32 offsetBytes, u32 sizeBytes, MapRange::Access access)
-			{
-				void* ptr = mapRange(offsetBytes, sizeBytes, access);
-				return MappedBuffer<T>(this, ptr);
-			}
-
-			void subData(s64 offset, s64 size, const void* data);
-
-			u32 getTarget() const noexcept;
-			BufferType getType() const noexcept;
-		};
-
-		template<typename T>
+		template<typename T, typename B>
 		class MappedBuffer
 		{
+			typedef B _MyBuffer;
 			typedef T value_type;
 			typedef value_type& reference;
 			typedef value_type* pointer;
 
 			pointer m_ptr;
-			const Buffer* m_buffer;
+			const _MyBuffer* m_buffer;
 
 		public:
-			MappedBuffer(const Buffer* buffer, void* ptr) :m_ptr(reinterpret_cast<pointer>(ptr)), m_buffer(buffer){}
+			MappedBuffer(const _MyBuffer* buffer, void* ptr) :m_ptr(reinterpret_cast<pointer>(ptr)), m_buffer(buffer){}
 			MappedBuffer(const MappedBuffer&) = delete;
 			MappedBuffer(MappedBuffer &&rhs)
 				:m_ptr(rhs.m_ptr),
@@ -279,6 +236,50 @@ namespace vx
 			{
 				return m_ptr != nullptr;
 			}
+		};
+
+		class Buffer : public Base<Buffer>
+		{
+			template<typename T, typename B>
+			friend class MappedBuffer;
+			// contains the opengl enum in first 24 bits, and BufferType enum in last 8 bits
+			u32 m_target;
+
+			void* map(Map access);
+			void* mapRange(u32 offsetBytes, u32 sizeBytes, MapRange::Access access);
+			void unmap() const;
+
+		public:
+			Buffer();
+			Buffer(const Buffer&) = delete;
+			Buffer(Buffer &&rhs);
+
+			Buffer& operator=(const Buffer&) = delete;
+			Buffer& operator=(Buffer &&rhs);
+
+			void create(const BufferDescription &desc);
+			void destroy();
+
+			void bind() const;
+
+			template<typename T>
+			MappedBuffer<T, Buffer> map(Map access)
+			{
+				void* ptr = map(access);
+				return MappedBuffer<T, Buffer>(this, ptr);
+			}
+
+			template<typename T>
+			MappedBuffer<T, Buffer> mapRange(u32 offsetBytes, u32 sizeBytes, MapRange::Access access)
+			{
+				void* ptr = mapRange(offsetBytes, sizeBytes, access);
+				return MappedBuffer<T, Buffer>(this, ptr);
+			}
+
+			void subData(s64 offset, s64 size, const void* data);
+
+			u32 getTarget() const noexcept;
+			BufferType getType() const noexcept;
 		};
 	}
 }

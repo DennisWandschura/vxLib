@@ -25,42 +25,42 @@ SOFTWARE.
 
 namespace vx
 {
-	inline __m128 VX_CALLCONV fma(const __m128 a, const __m128 b, const __m128 c)
+	inline __m128 VX_CALLCONV fma(CVEC4 a, CVEC4 b, CVEC4 c)
 	{
 		return _mm_fmadd_ps(a, b, c);
 	}
 
-	inline __m128 VX_CALLCONV dot2(const __m128 v1, const __m128 v2)
+	inline __m128 VX_CALLCONV dot2(CVEC4 v1, CVEC4 v2)
 	{
 		return _mm_dp_ps(v1, v2, _VX_DOT(1, 1, 1, 1, 1, 1, 0, 0));
 	}
 
-	inline __m128 VX_CALLCONV dot3(const __m128 v1, const __m128 v2)
+	inline __m128 VX_CALLCONV dot3(CVEC4 v1, CVEC4 v2)
 	{
 		return _mm_dp_ps(v1, v2, _VX_DOT(1, 1, 1, 1, 1, 1, 1, 0));
 	}
 
-	inline __m128 VX_CALLCONV dot4(const __m128 v1, const __m128 v2)
+	inline __m128 VX_CALLCONV dot4(CVEC4 v1, CVEC4 v2)
 	{
 		return _mm_dp_ps(v1, v2, 255);
 	}
 
-	inline __m128 VX_CALLCONV min(const __m128 a, const __m128 b)
+	inline __m128 VX_CALLCONV min(CVEC4 a, CVEC4 b)
 	{
 		return _mm_min_ps(a, b);
 	}
 
-	inline __m128 VX_CALLCONV max(const __m128 a, const __m128 b)
+	inline __m128 VX_CALLCONV max(CVEC4 a, CVEC4 b)
 	{
 		return _mm_max_ps(a, b);
 	}
 
-	inline __m128 VX_CALLCONV abs(const __m128 v)
+	inline __m128 VX_CALLCONV abs(CVEC4 v)
 	{
 		return _mm_andnot_ps(g_VXAbsMask, v);
 	}
 
-	inline __m128 VX_CALLCONV normalize(__m128 V)
+	inline __m128 VX_CALLCONV normalize(CVEC4 V)
 	{
 		auto vLengthSq = _mm_dp_ps(V, V, 255);
 
@@ -85,7 +85,7 @@ namespace vx
 		return vResult;
 	}
 
-	inline bool VX_CALLCONV Vector3IsInfinite(__m128 V)
+	inline bool VX_CALLCONV Vector3IsInfinite(CVEC4 V)
 	{
 		// Mask off the sign bit
 		__m128 vTemp = _mm_and_ps(V, g_VXAbsMask);
@@ -95,27 +95,27 @@ namespace vx
 		return ((_mm_movemask_ps(vTemp) & 7) != 0);
 	}
 
-	inline bool VX_CALLCONV Vector3Equal(__m128 V1, __m128 V2)
+	inline bool VX_CALLCONV Vector3Equal(CVEC4 V1, CVEC4 V2)
 	{
 		auto vTemp = _mm_cmpeq_ps(V1, V2);
 		return (((_mm_movemask_ps(vTemp) & 7) == 7) != 0);
 	}
 
-	inline __m128 VX_CALLCONV VectorSelect(__m128 V1, __m128 V2, __m128 Control)
+	inline __m128 VX_CALLCONV VectorSelect(CVEC4 V1, CVEC4 V2, CVEC4 Control)
 	{
 		auto vTemp1 = _mm_andnot_ps(Control, V1);
 		auto vTemp2 = _mm_and_ps(V2, Control);
 		return _mm_or_ps(vTemp1, vTemp2);
 	}
 
-	inline __m128 VX_CALLCONV VectorNegate(__m128 V)
+	inline __m128 VX_CALLCONV VectorNegate(CVEC4 V)
 	{
 		auto zero = _mm_setzero_ps();
 
 		return _mm_sub_ps(zero, V);
 	}
 
-	inline __m128 VX_CALLCONV cross3(__m128 v1, __m128 v2)
+	inline __m128 VX_CALLCONV cross3(CVEC4 v1, CVEC4 v2)
 	{
 		auto tmp = _mm_shuffle_ps(v1, v1, _MM_SHUFFLE(3, 0, 2, 1));
 		auto c1 = _mm_shuffle_ps(v2, v2, _MM_SHUFFLE(3, 1, 0, 2));
@@ -130,7 +130,7 @@ namespace vx
 
 	inline __m128 VX_CALLCONV normalize3
 		(
-		__m128 V
+		CVEC4 V
 		)
 	{
 		// Perform the dot product on x,y and z only
@@ -158,8 +158,8 @@ namespace vx
 
 	inline __m128 VX_CALLCONV quaternionRotation
 		(
-		__m128 V,
-		__m128 RotationQuaternion
+		CVEC4 V,
+		CVEC4 RotationQuaternion
 		)
 	{
 		__m128 A = VectorSelect(g_VXSelect1110.v, V, g_VXSelect1110.v);
@@ -168,7 +168,7 @@ namespace vx
 		return quaternionMultiply(Result, RotationQuaternion);
 	}
 
-	inline __m128 VX_CALLCONV quaternionMultiply(__m128 Q1, __m128 Q2)
+	inline __m128 VX_CALLCONV quaternionMultiply(CVEC4 Q1, CVEC4 Q2)
 	{
 		static const __m128 ControlWZYX = { 1.0f, -1.0f, 1.0f, -1.0f };
 		static const __m128 ControlZWXY = { 1.0f, 1.0f, -1.0f, -1.0f };
@@ -208,13 +208,13 @@ namespace vx
 		return vResult;
 	}
 
-	inline __m128 VX_CALLCONV quaternionConjugate(__m128 Q)
+	inline __m128 VX_CALLCONV quaternionConjugate(CVEC4 Q)
 	{
 		static const __m128 NegativeOne3 = { -1.0f, -1.0f, -1.0f, 1.0f };
 		return _mm_mul_ps(Q, NegativeOne3);
 	}
 
-	inline __m128 VX_CALLCONV quaternionRotationRollPitchYawFromVector(__m128 Angles)
+	inline __m128 VX_CALLCONV quaternionRotationRollPitchYawFromVector(CVEC4 Angles)
 	{
 		static const __m128  Sign = { 1.0f, -1.0f, -1.0f, 1.0f };
 
@@ -240,7 +240,7 @@ namespace vx
 		return Q;
 	}
 
-	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, __m128 V)
+	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, CVEC4 V)
 	{
 		// Force the value within the bounds of pi
 		__m128 x = VectorModAngles(V);
@@ -311,7 +311,7 @@ namespace vx
 		*pCos = Result;
 	}
 
-	inline __m128 VX_CALLCONV VectorModAngles(__m128 Angles)
+	inline __m128 VX_CALLCONV VectorModAngles(CVEC4 Angles)
 	{
 		// Modulo the range of the given angles such that -XM_PI <= Angles < XM_PI
 		auto vResult = _mm_mul_ps(Angles, g_VXReciprocalTwoPi);

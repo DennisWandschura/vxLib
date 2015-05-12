@@ -81,7 +81,7 @@ namespace vx
 
 			if (*pLength != 0)
 			{
-				log = std::make_unique<char[]>(*pLength);
+				log = std::unique_ptr<char[]>(new char[*pLength]);
 				glGetProgramInfoLog(m_id, (*pLength), 0, log.get());
 			}
 

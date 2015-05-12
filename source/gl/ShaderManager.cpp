@@ -46,7 +46,8 @@ namespace
 		size = inFile.tellg();
 		inFile.seekg(0, std::ios::beg);
 
-		buffer = std::make_unique<char[]>(size);
+		//buffer = std::make_unique<char[]>(size);
+		buffer = std::unique_ptr<char[]>(new char[size]);
 		inFile.read(buffer.get(), size);
 
 		return true;
@@ -55,7 +56,8 @@ namespace
 	std::unique_ptr<char[]> appendInclude(const std::unique_ptr<char[]>* programBuffer, u32* programSize, const std::string &include, const char* includeStart)
 	{
 		auto includeSize = include.size();
-		auto newProgram = std::make_unique<char[]>(*programSize + includeSize);
+		///auto newProgram = std::make_unique<char[]>(*programSize + includeSize);
+		auto newProgram = std::unique_ptr<char[]>(new char[*programSize + includeSize]);
 		u32 currentSize = 0;
 
 		auto size = includeStart - programBuffer->get();
@@ -109,7 +111,7 @@ namespace
 					std::string includeFile;
 					includeFile.assign(includeBuffer.get());
 
-					it = includeFiles->insert(sid, std::move(includeFile));
+					it = includeFiles->insert(std::move(sid), std::move(includeFile));
 				}
 
 				*programBuffer = appendInclude(programBuffer, programSize, *it, includeStart);

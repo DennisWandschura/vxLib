@@ -210,12 +210,12 @@ namespace vx
 			glNamedBufferSubData(m_id, offset, size, data);
 		}
 
-		u32 Buffer::getTarget() const
+		u32 Buffer::getTarget() const noexcept
 		{
 			return (m_target & 0x00FFFFFF);
 		}
 
-		BufferType Buffer::getType() const
+		BufferType Buffer::getType() const noexcept
 		{
 			return BufferType((m_target >> 24));
 		}

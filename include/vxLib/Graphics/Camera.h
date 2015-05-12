@@ -46,7 +46,7 @@ namespace vx
 		void VX_CALLCONV move(const __m128 direction, const f32 &speed);
 		void move(f32 x, f32 y, f32 z);
 
-		void getViewMatrix(vx::mat4 &viewMatrix) const;
+		void getViewMatrix(vx::mat4 *viewMatrix) const;
 		const __m128 VX_CALLCONV getPosition() const { return m_position; }
 		const __m128 VX_CALLCONV getRotation() const { return m_qRotation; }
 	};

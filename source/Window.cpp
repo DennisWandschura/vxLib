@@ -66,7 +66,7 @@ namespace vx
 		return *this;
 	}
 
-	void Window::registerWindow(const char_t *windowName, bool bFullscreen)
+	void Window::registerWindow(const char_type *windowName, bool bFullscreen)
 	{
 		// Give the application a name.
 		m_windowName = windowName;
@@ -165,7 +165,7 @@ namespace vx
 		return true;
 	}
 
-	bool Window::initialize(const char_t *windowName, const vx::uint2 &windowSize, bool bFullscreen)
+	bool Window::initialize(const char_type *windowName, const vx::uint2 &windowSize, bool bFullscreen)
 	{
 		ZeroMemory(&m_msg, sizeof(MSG));
 
@@ -336,11 +336,8 @@ namespace vx
 		SetFocus(m_hwnd);
 	}
 
-#include <DirectXMath.h>
-
 	LRESULT CALLBACK Window::messageHandler(HWND hwnd, UINT umsg, WPARAM wParam, LPARAM lParam)
 	{
-		DirectX::XMVector3Normalize;
 		switch (umsg)
 		{
 		case WM_INPUT:

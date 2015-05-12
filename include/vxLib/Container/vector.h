@@ -25,308 +25,28 @@ SOFTWARE.
 #define __VX_VECTOR_H
 #pragma once
 
-#include <vxLib/AlignedStorage.h>
 #include <vxLib\Container\iterator.h>
 #include <new>
 #include <vxLib\Allocator\Allocator.h>
 
-#include <vector>
-
 namespace vx
 {
-	template<class T,class Allocator>
-	class vector_base
-	{
-	public:
-		using value_type = T;
-		using reference = value_type&;
-		using const_reference = const reference;
-		using pointer = value_type*;
-		using const_pointer = const pointer;
-
-		using size_type = u32;
-		using difference_type = u64;
-
-	protected:
-		void rangeDestroy(pointer start, pointer end) noexcept
-		{
-			for (; start != end; ++start)
-			{
-				Allocator::destroy(start);
-			}
-		}
-	};
-
-	template<class T, u32 N, class Allocator = StlAllocator<T, HeapAllocator>, typename = typename std::enable_if_t<std::is_object<T>::value>>
-	class hybrid_vector : public vector_base<T, Allocator>
-	{
-	public:
-		enum { SIZE = N };
-
-		using MyBase = vector_base < T, Allocator>;
-
-		using value_type = typename MyBase::value_type;
-		using reference = typename MyBase::reference;
-		using const_reference = typename MyBase::const_reference;
-		using pointer = typename MyBase::pointer;
-		using const_pointer = typename MyBase::const_pointer;
-
-		using size_type = typename MyBase::size_type;
-		using difference_type = typename MyBase::difference_type;
-
-		using _MyVector = hybrid_vector<T, N, Allocator>;
-		using const_iterator = vector_const_iterator<_MyVector>;
-		using iterator = vector_iterator<_MyVector>;
-
-	private:
-		union
-		{
-			AlignedStorageN<T, N> m_data;
-			pointer m_pData;
-		};
-		size_type m_size;
-		size_type m_capacity;
-
-		pointer getPtr()
-		{
-			if (m_capacity == N)
-				return (pointer)m_data.m_buffer;
-			else
-				return m_pData;
-		}
-
-		const_pointer getPtr() const
-		{
-			if (m_capacity == N)
-				return (const_pointer)m_data.m_buffer;
-			else
-				return m_pData;
-		}
-
-		// destroys all current objects and deallocates used memory
-		void cleanUp() noexcept
-		{
-			auto p = getPtr();
-			rangeDestroy(p, p + size());
-
-			clearMemory();
-		}
-
-		// deallocates used memory if we are using heap memory
-		void clearMemory() noexcept
-		{
-			if (m_capacity > N)
-			{
-				Allocator::deallocate(m_pData);
-			}
-		}
-
-	public:
-		hybrid_vector() :m_size(0), m_capacity(N) {}
-
-		hybrid_vector(const hybrid_vector &rhs) = delete;
-
-		hybrid_vector(hybrid_vector &&rhs)
-			:m_size(rhs.m_size),
-			m_capacity(rhs.m_capacity)
-		{
-			if (m_capacity == N)
-			{
-				//rangeMove(rhs.m_data, rhs.m_data + m_size, m_data);
-				std::move(rhs.begin(), rhs.end(), begin());
-			}
-			else
-			{
-				m_pData = rhs.m_pData;
-			}
-
-			rhs.m_size = 0;
-			rhs.m_capacity = N;
-		}
-
-		~hybrid_vector()
-		{
-			cleanUp();
-		}
-
-		void swap(hybrid_vector &rhs)
-		{
-			std::swap(m_data, rhs.m_data);
-			std::swap(m_size, rhs.m_size);
-			std::swap(m_capacity, rhs.m_capacity);
-		}
-
-		void push_back(const value_type &v)
-		{
-			auto sz = size();
-			if (sz == m_capacity)
-			{
-				reserve(m_capacity * 1.3f + 1);
-			}
-
-			auto p = getPtr() + sz;
-
-			Allocator::construct(p, v);
-
-			++m_size;
-		}
-
-		void push_back(value_type &&v)
-		{
-			auto sz = size();
-			if (sz == m_capacity)
-			{
-				reserve(m_capacity * 1.3f + 1);
-			}
-
-			auto p = getPtr() + sz;
-
-			Allocator::construct(p, std::forward<value_type>(v));
-
-			++m_size;
-		}
-
-		void pop_back()
-		{
-			VX_ASSERT(!empty());
-			Allocator::destroy(getPtr() + m_size - 1);
-			--m_size;
-		}
-
-		void reserve(size_type n)
-		{
-			// if requested capacity is smaller/equal to current, do nothing
-			// the minimum capacity is N
-			if (n <= m_capacity)
-				return;
-
-			// the minimum capacity is N, so if we need more than that, we need to use the heap
-			auto p = Allocator::allocate(n);
-
-			// move old stuff into new array
-			std::move(begin(), end(), p);
-			//rangeMove(getPtr(), getPtr() + m_size, p);
-
-			// deallocate old data if we used heap previously
-			clearMemory();
-
-			// assign new values
-			m_pData = p;
-			m_capacity = n;
-		}
-
-		void clear()
-		{
-			auto p = getPtr();
-			rangeDestroy(p, p + size());
-			m_size = 0;
-		}
-
-		iterator erase(const_iterator pos)
-		{
-			auto p = pos.m_pObject;
-			Allocator::destroy(p);
-
-			//rangeMove(p + 1, getPtr() + size(), p);
-			std::move(pos + 1, end(), p);
-
-			return iterator(p, this);
-		}
-
-		bool empty() const
-		{
-			return m_size == 0;
-		}
-
-		size_type size() const
-		{
-			return m_size;
-		}
-
-		size_type capacity() const
-		{
-			return m_capacity;
-		}
-
-		reference operator[](size_type i)
-		{
-			VX_ASSERT(i < m_size);
-			return getPtr()[i];
-		}
-
-		const_reference operator[](size_type i) const
-		{
-			VX_ASSERT(i < m_size);
-			return getPtr()[i];
-		}
-
-		reference front()
-		{
-			return (*begin());
-		}
-
-		const_reference front() const
-		{
-			return (*begin());
-		}
-
-		reference back()
-		{
-			return (*(end() - 1));
-		}
-
-		const_reference back() const
-		{
-			return (*(end() - 1));
-		}
-
-		pointer data()
-		{
-			return getPtr();
-		}
-
-		const_pointer data() const
-		{
-			return getPtr();
-		}
-
-		iterator begin()
-		{
-			return iterator(getPtr(), this);
-		}
-
-		const_iterator begin() const
-		{
-			return const_iterator(getPtr(), this);
-		}
-
-		iterator end()
-		{
-			return iterator(getPtr() + size(), this);
-		}
-
-		const_iterator end() const
-		{
-			return const_iterator(getPtr() + size(), this);
-		}
-	};
-
-	template<class T, class Allocator = StlAllocator<T, HeapAllocator>, typename = typename std::enable_if_t<std::is_object<T>::value>>
+	template<class T, class Allocator = StlAllocator<T>, typename = typename std::enable_if<std::is_object<T>::value>::type>
 	class vector
 	{
 	public:
-		using value_type = T;
-		using reference = value_type&;
-		using const_reference = const reference;
-		using pointer = value_type*;
-		using const_pointer = const pointer;
+		typedef T value_type;
+		typedef value_type& reference;
+		typedef const reference const_reference;
+		typedef value_type* pointer;
+		typedef const pointer const_pointer;
 
-		using size_type = u32;
-		using difference_type = u64;
+		typedef u32 size_type;
+		typedef u64 difference_type;
 
-		using _MyVector = vector<T, Allocator>;
-		using const_iterator = vector_const_iterator<_MyVector>;
-		using iterator = vector_iterator<_MyVector>;
+		typedef vector<T, Allocator> _MyVector;
+		typedef vector_const_iterator<_MyVector> const_iterator;
+		typedef vector_iterator<_MyVector> iterator;
 
 	private:
 		pointer m_pData;
@@ -384,10 +104,31 @@ namespace vx
 			std::swap(m_capacity, rhs.m_capacity);
 		}
 
+		pointer data()
+		{
+			return m_pData;
+		}
+
+		const_pointer data() const
+		{
+			return m_pData;
+		}
+
+		size_type size() const noexcept
+		{
+			return m_size;
+		}
+
+		size_type capacity() const noexcept
+		{
+			return m_capacity;
+		}
+
 		void push_back(const value_type &v)
 		{
 			auto sz = size();
-			if (sz == (auto cap = capacity()))
+			auto cap = capacity();
+			if (sz >= cap)
 			{
 				reserve(cap * 1.3f + 1);
 			}
@@ -445,7 +186,6 @@ namespace vx
 
 		void clear()
 		{
-			auto p = getPtr();
 			Allocator::destroy(m_pData, m_pData + m_size);
 			m_size = 0;
 		}
@@ -471,26 +211,14 @@ namespace vx
 			return m_size == 0;
 		}
 
-			size_type size() const noexcept
-		{
-			return m_size;
-		}
-
-			size_type capacity() const noexcept
-		{
-			return m_capacity;
-		}
-
 		reference operator[](size_type i)
 		{
-			VX_ASSERT(i < m_size);
-			return getPtr()[i];
+			return m_pData[i];
 		}
 
 		const_reference operator[](size_type i) const
 		{
-			VX_ASSERT(i < m_size);
-			return getPtr()[i];
+			return m_pData[i];
 		}
 
 		reference front()
@@ -511,16 +239,6 @@ namespace vx
 		const_reference back() const
 		{
 			return (*(end() - 1));
-		}
-
-		pointer data()
-		{
-			return m_pData;
-		}
-
-		const_pointer data() const
-		{
-			return m_pData;
 		}
 
 		iterator begin()

@@ -10,25 +10,25 @@
 
 .DefaultCompilerSettings =
 [
-	.CompilerSettingsDefault = '/fp:fast /Qstd=c++11 /W4 /Qrestrict /GS /Zc:wchar_t /GR-'
+	.CompilerSettingsDefault = '/fp:fast /Qstd=c++11 /W4 /Qrestrict /GS /Zc:wchar_t /GR- /Gv'
 ]
 
-.InPath = 'source/'
-.OutPath = 'lib'
+.InPath = '../source/'
+.OutPath = '../lib'
 .OutPathObj = 'tmp'
 .ProjectName = 'vxLib'
 
 .DefinesCommon   = '/D "_UNICODE" /D "UNICODE" /D "_VX_WINDOWS" /D "NOMINMAX"'	
 .DefinesDebug = '/D "_DEBUG" /D "_VX_ASSERT"'
 .DefinesRelease = '/D "NDEBUG"'
-.Includes = '/Iinclude\'
-.IncludesASM = '/Isource\'
+.Includes = '/I..\include\'
+.IncludesASM = '/I..\source\'
 
 // Build type
 .BuildDebug =
 [
 	.OutputPathB = '$OutPathObj$\Debug\'
-	.CompilerSettingsB = '/Fd$OutputPathB$ /Fp$OutputPathB$ /Od /Ob1 /Zi /debug'
+	.CompilerSettingsB = '/Fd$OutputPathB$ /Fp$OutputPathB$ /Od /Ob1 /Zi /debug /nologo'
 	.FileExtension = '_d'
 	.DefinesBuild = '$DefinesDebug$'
 ]
@@ -36,7 +36,7 @@
 .BuildRelease =
 [
 	.OutputPathB = '$OutPathObj$\Release\'
-	.CompilerSettingsB = '/O2 /Oi /Gy /nologo'
+	.CompilerSettingsB = '/GS /O3 /Oi /nologo'
 	.FileExtension = ''
 	.DefinesBuild = '$DefinesRelease$'
 ]

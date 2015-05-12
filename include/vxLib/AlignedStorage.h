@@ -25,7 +25,7 @@ SOFTWARE.
 #define __VX_ALIGNEDSTORAGE_H
 #pragma once
 
-#include <vxLib\type_traits.h>
+#include <vxLib/type_traits.h>
 
 namespace vx
 {
@@ -35,7 +35,7 @@ namespace vx
 		union
 		{
 			u8 m_buffer[sizeof(T)];
-			typename detail::SelectAlign<T>::type _aligner;
+			typename typename detail::SelectAlign<T>::type _aligner;
 		};
 
 	};
@@ -46,7 +46,7 @@ namespace vx
 		union
 		{
 			u8 m_buffer[sizeof(T) * N];
-			typename detail::SelectAlign<T>::type _aligner;
+			typename typename detail::SelectAlign<T>::type _aligner;
 		};
 
 		T& operator[](size_t i)

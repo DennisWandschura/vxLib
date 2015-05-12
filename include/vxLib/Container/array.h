@@ -34,18 +34,18 @@ namespace vx
 	class array
 	{
 	public:
-		using _MyContainer = array<T>;
-		using value_type = T;
-		using reference = value_type&;
-		using const_reference = const reference;
-		using pointer = value_type*;
-		using const_pointer = const pointer;
+		typedef array<T> _MyContainer;
+		typedef T value_type;
+		typedef value_type& reference;
+		typedef const reference const_reference;
+		typedef value_type* pointer;
+		typedef const pointer const_pointer;
 
-		using const_iterator = vx::vector_const_iterator<_MyContainer>;
-		using iterator = vx::vector_iterator<_MyContainer>;
+		typedef vx::vector_const_iterator<_MyContainer> const_iterator;
+		typedef vx::vector_iterator<_MyContainer> iterator;
 
-		using size_type = u32;
-		using difference_type = size_t;
+		typedef u32 size_type;
+		typedef s64 difference_type;
 
 	private:
 		pointer m_pValues{ nullptr };
@@ -211,6 +211,11 @@ namespace vx
 		size_type size() const
 		{
 			return m_size;
+		}
+
+		size_type capacity() const
+		{
+			return m_capacity;
 		}
 	};
 }

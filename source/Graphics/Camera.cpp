@@ -70,13 +70,10 @@ namespace vx
 		__m128 vSpeed = _mm_load_ss(&speed);
 		vSpeed = VX_PERMUTE_PS(vSpeed, _MM_SHUFFLE(3, 0, 0, 0));
 
-		//auto q = DirectX::XMQuaternionRotationRollPitchYawFromVector(m_rotation);
-
 		auto offset = quaternionRotation(direction, m_qRotation);
-		m_position = _mm_fmadd_ps(offset, vSpeed, m_position);
 
-		//offset = _mm_mul_ps(offset, vSpeed);
-		//m_position = _mm_add_ps(m_position, offset);
+		m_position = _mm_add_ps(_mm_mul_ps(offset, vSpeed), m_position);
+		//m_position = _mm_fmadd_ps(offset, vSpeed, m_position);
 	}
 
 	void Camera::move(f32 x, f32 y, f32 z)
@@ -85,7 +82,7 @@ namespace vx
 		m_position = _mm_add_ps(m_position, offset);
 	}
 
-	void Camera::getViewMatrix(vx::mat4 &viewMatrix) const
+	void Camera::getViewMatrix(vx::mat4 *viewMatrix) const
 	{
 		const __m128 lookAt = { 0, 0, -1, 0 };
 		const __m128 up = { 0, 1, 0, 0 };
@@ -104,6 +101,6 @@ namespace vx
 		auto viewDir = quaternionRotation(lookAt, m_qRotation);
 		auto upDir = quaternionRotation(up, m_qRotation);
 
-		viewMatrix = vx::MatrixLookToRH(m_position, viewDir, upDir);
+		*viewMatrix = vx::MatrixLookToRH(m_position, viewDir, upDir);
 	}
 }

@@ -37,6 +37,15 @@ namespace vx
 		void* Debug::s_pUserData = nullptr;
 		DebugHighSeverityCallback Debug::s_highSeverityCallback = nullptr;
 
+		template<size_t DestSize, size_t SourceSize>
+		void bufferCopy(char(&dst)[DestSize], const char(&src)[SourceSize])
+		{
+			static_assert(SourceSize < DestSize, "Destination size too small");
+
+			memcpy(dst, src, SourceSize);
+			dst[SourceSize] = '\0';
+		}
+
 		template<size_t size>
 		void getStringForType(GLenum type, char(&buffer)[size])
 		{
@@ -141,15 +150,6 @@ namespace vx
 				buffer[0] = '\0';
 				break;
 			}
-		}
-
-		template<size_t DestSize, size_t SourceSize>
-		void bufferCopy(char(&dst)[DestSize], const char(&src)[SourceSize])
-		{
-			static_assert(SourceSize < DestSize, "Destination size too small");
-
-			memcpy(dst, src, SourceSize);
-			dst[SourceSize] = '\0';
 		}
 
 		void Debug::errorCallback

@@ -58,7 +58,7 @@ namespace vx
 		template<class U>
 		static void rangeConstruct(U *start, U *end) noexcept
 		{
-			VX_ASSERT(start <= end, "");
+			VX_ASSERT(start <= end);
 			for (; start != end; ++start)
 			{
 				construct(start);
@@ -74,7 +74,7 @@ namespace vx
 		template<class U>
 		static void rangeDestroy(U *start, U *end) noexcept
 		{
-			VX_ASSERT(start <= end, "");
+			VX_ASSERT(start <= end);
 			for (; start != end; ++start)
 			{
 				destroy(start);
@@ -92,54 +92,27 @@ namespace vx
 		}
 	};
 
-	struct HeapAllocator : public Allocator
+	template<class T>
+	struct StlAllocator : public Allocator
 	{
-		static u8* allocate(u64 size)
-		{
-			return (u8*)::operator new(size);
-		}
-
-		static void deallocate(u8 *p)
-		{
-			::operator delete(p);
-		}
-	};
-
-	template<typename T>
-	struct AlignedHeapAllocator : public Allocator
-	{
-		static u8* allocate(u64 size)
-		{
-			return _aligned_malloc(size, __alignof(T));
-		}
-
-		static void deallocate(u8 *p)
-		{
-			_aligned_free(p);
-		}
-	};
-
-	template<class T, class AllocBase>
-	struct StlAllocator : public AllocBase
-	{
-		using value_type = T;
-		using pointer = value_type*;
+		typedef T value_type;
+		typedef value_type* pointer;
 
 		static pointer allocate(u32 n)
 		{
-			return (pointer)AllocBase::allocate(sizeof(value_type) * n);
+			return (pointer) ::operator new(sizeof(value_type) * n);
 		}
 
 		static void deallocate(pointer p)
 		{
-			AllocBase::deallocate((u8*)p);
+			::operator delete(p);
 		}
 
 		static void destroy(pointer p)
 		{
 			if (p != nullptr)
 			{
-				AllocBase::destroy(p);
+				Allocator::destroy(p);
 			}
 		}
 	};

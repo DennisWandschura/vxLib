@@ -28,6 +28,7 @@ SOFTWARE.
 #include <vxLib/gl/Base.h>
 #include <vxLib/Container/sorted_vector.h>
 #include <vxLib/StringID.h>
+#include <string>
 
 namespace vx
 {

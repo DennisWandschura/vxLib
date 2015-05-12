@@ -180,7 +180,7 @@
   <ItemGroup>
     <None Include="..\include\vxLib\math\matrix.inl" />
     <None Include="..\include\vxLib\math\Vector.inl" />
-    <None Include="asm_include.inc" />
+    <None Include="math\asm_include.inc" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CityHash.cpp" />
@@ -211,7 +211,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="math.asm" />
+    <MASM Include="math\math.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

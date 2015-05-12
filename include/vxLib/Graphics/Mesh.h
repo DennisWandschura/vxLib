@@ -26,7 +26,6 @@ SOFTWARE.
 #pragma once
 
 #include <vxLib/math/Vector.h>
-#include <ostream>
 
 namespace vx
 {
@@ -44,16 +43,16 @@ namespace vx
 
 	class Mesh
 	{
-		MeshVertex* m_pVertices{ nullptr };
-		u32* m_pIndices{ nullptr };
-		u32 m_vertexCount{ 0 };
-		u32 m_indexCount{ 0 };
+		MeshVertex* m_pVertices;
+		u32* m_pIndices;
+		u32 m_vertexCount;
+		u32 m_indexCount;
 
 		//void allocateMemory();
 		void setPointers(u8* p);
 
 	public:
-		Mesh(){}
+		Mesh();
 		// takes a pointer to memory filled with vertices and indices
 		Mesh(u8 *pMemory, u32 vertexCount, u32 indexCount);
 		Mesh(const Mesh&) = delete;

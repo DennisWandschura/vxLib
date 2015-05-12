@@ -34,7 +34,7 @@ namespace vx
 	{
 		class ShaderProgram : public Base < ShaderProgram >
 		{
-			using MyBase = Base < ShaderProgram >;
+			typedef Base < ShaderProgram > MyBase;
 
 			ShaderProgramType m_type;
 

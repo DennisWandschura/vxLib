@@ -50,7 +50,7 @@ namespace vx
 		vx::uint2 m_windowSize{0, 0};
 		bool m_bFullscreen;
 
-		void registerWindow(const char_t* windowName, bool bFullscreen);
+		void registerWindow(const char_type* windowName, bool bFullscreen);
 		bool createWindow(const vx::uint2 &windowSize);
 
 		void close();
@@ -66,7 +66,7 @@ namespace vx
 		Window& operator=(const Window&) = delete;
 		Window& operator=(Window &&rhs);
 
-		bool initialize(const char_t *windowName, const vx::uint2 &windowSize, bool bFullscreen);
+		bool initialize(const char_type *windowName, const vx::uint2 &windowSize, bool bFullscreen);
 
 		void shutdown();
 

@@ -28,6 +28,7 @@ SOFTWARE.
 #include <vxLib/math/Vector.h>
 #include <vxLib/Container/vector.h>
 #include <vxLib/Keyboard.h>
+#include <vector>
 
 namespace vx
 {
@@ -60,7 +61,7 @@ namespace vx
 
 		static Keyboard s_keyboard;
 		static Mouse s_mouse;
-		static vx::hybrid_vector<KeyEvent, 10> s_keyEvents;
+		static std::vector<KeyEvent> s_keyEvents;
 		static Input::KeyEventCallback s_keyEventPressedCallback;
 		static Input::KeyEventCallback s_keyEventReleasedCallback;
 

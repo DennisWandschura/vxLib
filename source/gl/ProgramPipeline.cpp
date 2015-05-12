@@ -66,7 +66,7 @@ namespace vx
 			u32 length = inFile.tellg();
 			inFile.seekg(0, inFile.beg);
 
-			auto ptr = std::make_unique<char[]>(length + 1);
+			auto ptr = std::unique_ptr<char[]>(new char[length + 1]);
 
 			inFile.read(ptr.get(), length);
 

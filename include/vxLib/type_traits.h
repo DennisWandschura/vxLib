@@ -29,9 +29,9 @@ SOFTWARE.
 
 namespace vx
 {
-	VX_ALIGN(16) struct Aligned16{};
-	VX_ALIGN(32) struct Aligned32{};
-	VX_ALIGN(64) struct Aligned64{};
+	struct VX_ALIGN(16) Aligned16{};
+	struct VX_ALIGN(32) Aligned32{};
+	struct VX_ALIGN(64) Aligned64{};
 	typedef Aligned64 max_align_t;
 
 	template<size_t Align>
@@ -84,7 +84,7 @@ namespace vx
 		template<class T, size_t ALIGN>
 		struct SelectAlignImpl
 		{
-			typedef typename std::conditional<std::alignment_of<T>::value <= ALIGN, AlignedType<ALIGN>::type, SelectAlignImpl<T, ALIGN + ALIGN>::type>::type type;
+			typedef typename std::conditional<std::alignment_of<T>::value <= ALIGN, typename AlignedType<ALIGN>::type, typename SelectAlignImpl<T, ALIGN + ALIGN>::type>::type type;
 		};
 
 		// MAX ALIGNMENT

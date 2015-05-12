@@ -26,15 +26,13 @@ SOFTWARE.
 #pragma once
 
 #include <vxLib/types.h>
-#include <vxLib/Container\iterator.h>
+#include <vxLib/Container/iterator.h>
 #include <algorithm>
-#include <vxLib/AlignedStorage.h>
 #include <vxLib/Allocator/Allocator.h>
 
 namespace vx
 {
-	template<class Key, class Type, class Cmp = std::less<>>
-	class sorted_vector
+	namespace detail
 	{
 		template<bool>
 		struct Deleter
@@ -62,7 +60,7 @@ namespace vx
 			static void construct(U(*p)[S], u32 i, const U(&src)[S]);
 
 			template<u32 S>
-			static void construct(char(*p)[S], u32 i, const char(&src)[S])
+			static void construct(char(&p)[S], u32 i, const char(&src)[S])
 			{
 				strcpy_s(p[i], src);
 			}
@@ -71,12 +69,12 @@ namespace vx
 			static void moveDestroy(U *pDest, U *pSrc, u32 size);
 
 			template<u32 S>
-			static void moveDestroy(char (*pDest)[S], char (*pSrc)[S], u32 size)
+			static void moveDestroy(char(*pDest)[S], char(*pSrc)[S], u32 size)
 			{
 				for (u32 i = 0; i < size; ++i)
 				{
 					strcpy_s(pDest[i], pSrc[i]);
-					Deleter<std::is_destructible<char[S]>::value>::destroy<char[S]>(pSrc + i);
+					//Deleter<std::is_destructible<char[S]>::value>::destroy<char[S]>(pSrc + i);
 				}
 			}
 		};
@@ -90,30 +88,35 @@ namespace vx
 				new(m_pValues + i) U(std::forward<_Valty>(args)...);
 			}
 
-			template<class U>
+			template<typename U>
 			static void moveDestroy(U *pDest, U *pSrc, u32 size)
 			{
 				for (u32 i = 0; i < size; ++i)
 				{
 					new (pDest + i) U(std::move(*(pSrc + i)));
-					Deleter<std::is_destructible<U>::value>::destroy<U>(pSrc + i);
+					Deleter<std::is_destructible<U>::value>::destroy(pSrc + i);
 				}
 			}
 		};
+	}
 
+	template<typename Key, typename Type, typename Cmp = std::less<Key>>
+	class sorted_vector
+	{
 	public:
-		using key_type = Key;
-		using value_type = Type;
-		using reference = value_type&;
-		using const_reference = const reference;
-		using pointer = value_type*;
-		using const_pointer = const pointer;
-		using size_type = u32;
-		using difference_type = size_t;
+		typedef Key key_type;
+		typedef Type value_type;
+		typedef value_type& reference;
+		typedef const reference const_reference;
+		typedef value_type* pointer;
+		typedef  const pointer const_pointer;
 
-		using _MyCon = sorted_vector < Key, Type, Cmp > ;
-		using const_iterator = vx::vector_const_iterator < _MyCon >;
-		using iterator = vx::vector_iterator < _MyCon >;
+		typedef u32 size_type;
+		typedef s64 difference_type;
+
+		typedef sorted_vector < Key, Type, Cmp > _MyCon;
+		typedef vx::vector_const_iterator < _MyCon > const_iterator;
+		typedef vx::vector_iterator < _MyCon > iterator;
 
 	private:
 		enum
@@ -134,7 +137,7 @@ namespace vx
 				reserve((m_capacity + 1) * 1.3f);
 
 			new(m_pKeys + m_size) key_type(key);
-			ConstructImpl<IsValueTypeArray>::construct(m_pValues, m_size, std::forward<_Valty>(args)...);
+			detail::ConstructImpl<IsValueTypeArray>::construct(m_pValues, m_size, std::forward<_Valty>(args)...);
 
 			++m_size;
 		}
@@ -142,7 +145,7 @@ namespace vx
 		template<typename U>
 		void moveDestroy(U *pDest, U *pSrc, u32 size)
 		{
-			ConstructImpl<IsValueTypeArray>::moveDestroy(pDest, pSrc, size);
+			detail::ConstructImpl<IsValueTypeArray>::moveDestroy(pDest, pSrc, size);
 		}
 
 		template<class U>
@@ -150,7 +153,7 @@ namespace vx
 		{
 			for (auto i = 0u; i < size; ++i)
 			{
-				Deleter<std::is_destructible<U>::value>::destroy<U>(ptr + i);
+				detail::Deleter<std::is_destructible<U>::value>::destroy(ptr + i);
 			}
 		}
 
@@ -203,7 +206,7 @@ namespace vx
 				u8 *pNewMemory = (u8*)::operator new((sizeof(key_type) + sizeof(value_type)) * n + __alignof(value_type));
 
 				key_type *pNewKeys = (key_type*)pNewMemory;
-				ConstructImpl<IsKeyTypeArray>::moveDestroy(pNewKeys, m_pKeys, m_size);
+				detail::ConstructImpl<IsKeyTypeArray>::moveDestroy(pNewKeys, m_pKeys, m_size);
 
 				void *oldData = m_pKeys;
 
@@ -212,7 +215,7 @@ namespace vx
 				tmp += adjustment;
 
 				pointer pNewValues = (pointer)tmp;
-				ConstructImpl<IsValueTypeArray>::moveDestroy(pNewValues, m_pValues, m_size);
+				detail::ConstructImpl<IsValueTypeArray>::moveDestroy(pNewValues, m_pValues, m_size);
 
 				::operator delete(oldData);
 
@@ -298,8 +301,8 @@ namespace vx
 			auto index = p - m_pValues;
 			auto pKey = m_pKeys + index;
 
-			Deleter<std::is_destructible<value_type>::value>::destroy(p);
-			Deleter<std::is_destructible<key_type>::value>::destroy(pKey);
+			detail::Deleter<std::is_destructible<value_type>::value>::destroy(p);
+			detail::Deleter<std::is_destructible<key_type>::value>::destroy(pKey);
 
 			std::move(p + 1, m_pValues + size(), p);
 			std::move(pKey + 1, m_pKeys + size(), pKey);

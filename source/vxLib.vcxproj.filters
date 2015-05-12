@@ -40,6 +40,9 @@
     <Filter Include="Header Files\File">
       <UniqueIdentifier>{db4dda8f-be26-4d44-ba84-0e039e069193}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\math">
+      <UniqueIdentifier>{8cb24193-f227-4c36-a982-57d9b6976966}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\vxLib\ScopeGuard.h">
@@ -268,13 +271,13 @@
     <None Include="..\include\vxLib\math\Vector.inl">
       <Filter>Header Files\math</Filter>
     </None>
-    <None Include="asm_include.inc">
-      <Filter>Source Files</Filter>
+    <None Include="math\asm_include.inc">
+      <Filter>Source Files\math</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="math.asm">
-      <Filter>Source Files</Filter>
+    <MASM Include="math\math.asm">
+      <Filter>Source Files\math</Filter>
     </MASM>
   </ItemGroup>
 </Project>

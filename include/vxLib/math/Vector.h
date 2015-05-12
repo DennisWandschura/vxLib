@@ -33,6 +33,14 @@ SOFTWARE.
 
 namespace vx
 {
+#if _VX_CALLCONV_TYPE
+	typedef const __m128 CVEC4;
+	typedef const __m128i CIVEC4;
+#else
+	typedef const __m128& CVEC4;
+	typedef const __m128i& CIVEC4;
+#endif
+
 	const u32 g_SELECT_0 = 0x00000000;
 	const u32 g_SELECT_1 = 0xFFFFFFFF;
 
@@ -53,7 +61,7 @@ namespace vx
 		template<class T>
 		struct vec2
 		{
-			using value_type = T;
+			typedef T value_type;
 
 			union
 			{
@@ -215,7 +223,7 @@ namespace vx
 		template<class T>
 		struct VX_ALIGN(8) vec2a
 		{
-			using value_type = T;
+			typedef T value_type;
 
 			union
 			{
@@ -383,7 +391,7 @@ namespace vx
 		template<class T>
 		struct vec3
 		{
-			using value_type = T;
+			typedef T value_type;
 
 			union
 			{
@@ -560,7 +568,7 @@ namespace vx
 		template<class T>
 		struct vec4
 		{
-			using value_type = T;
+			typedef T value_type;
 
 			union
 			{
@@ -699,8 +707,8 @@ namespace vx
 		template<typename T>
 		struct VX_ALIGN(16) vec3a
 		{
-			using value_type = T;
-			using xmm_type = XMM_TYPE<value_type>::xmm_type;
+			typedef T value_type;
+			typedef typename XMM_TYPE<value_type>::xmm_type xmm_type;
 
 			union
 			{
@@ -728,8 +736,8 @@ namespace vx
 		template<typename T>
 		struct VX_ALIGN(16) vec4a
 		{
-			using value_type = T;
-			using xmm_type = XMM_TYPE<value_type>::xmm_type;
+			typedef T value_type;
+			typedef typename XMM_TYPE<value_type>::xmm_type xmm_type;
 
 			union
 			{
@@ -821,14 +829,14 @@ namespace vx
 		return _mm_loadu_ps(&source.x);
 	}
 
-	inline void VX_CALLCONV storeFloat(detail::vec2<f32>* pDestination, const __m128 V)
+	inline void VX_CALLCONV storeFloat(detail::vec2<f32>* pDestination, CVEC4 V)
 	{
 		auto T = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
 		_mm_store_ss(&pDestination->x, V);
 		_mm_store_ss(&pDestination->y, T);
 	}
 
-	inline void VX_CALLCONV storeFloat(detail::vec3<f32>* pDestination, const __m128 &V)
+	inline void VX_CALLCONV storeFloat(detail::vec3<f32>* pDestination, CVEC4 V)
 	{
 		auto T1 = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
 		auto T2 = _mm_shuffle_ps(V, V, _MM_SHUFFLE(2, 2, 2, 2));
@@ -837,7 +845,7 @@ namespace vx
 		_mm_store_ss(&pDestination->z, T2);
 	}
 
-	inline void VX_CALLCONV storeFloat(detail::vec4<f32> *pDestination, const __m128 V)
+	inline void VX_CALLCONV storeFloat(detail::vec4<f32> *pDestination, CVEC4 V)
 	{
 		_mm_storeu_ps(&pDestination->x, V);
 	}
@@ -854,52 +862,52 @@ namespace vx
 	
 	////////////////////////
 
-	inline __m128 VX_CALLCONV intToFloat(const __m128i V)
+	inline __m128 VX_CALLCONV intToFloat(CIVEC4 V)
 	{
 		return _mm_castsi128_ps(V);
 	}
 
-	inline __m128i VX_CALLCONV floatToInt(const __m128 V)
+	inline __m128i VX_CALLCONV floatToInt(CVEC4 V)
 	{
 		return _mm_castps_si128(V);
 	}
 
 	////////////////////////
 
-	using char2 = detail::vec2 < s8 > ;
-	using char3 = detail::vec3 < s8 > ;
-	using char4 = detail::vec4 < s8 > ;
+	typedef detail::vec2 < s8 > char2;
+	typedef detail::vec3 < s8 > char3;
+	typedef detail::vec4 < s8 > char4;
 
-	using uchar2 = detail::vec2 < u8 > ;
-	using uchar3 = detail::vec3 < u8 > ;
-	using uchar4 = detail::vec4 < u8 > ;
+	typedef detail::vec2 < u8 > uchar2;
+	typedef detail::vec3 < u8 > uchar3;
+	typedef detail::vec4 < u8 > uchar4;
 
-	using short2 = detail::vec2 < s16 > ;
-	using short3 = detail::vec3 < s16 > ;
-	using short4 = detail::vec4 < s16 > ;
+	typedef detail::vec2 < s16 > short2;
+	typedef detail::vec3 < s16 > short3;
+	typedef detail::vec4 < s16 > short4;
 
-	using ushort2 = detail::vec2 < u16 > ;
-	using ushort3 = detail::vec3 < u16 > ;
-	using ushort4 = detail::vec4 < u16 > ;
+	typedef detail::vec2 < u16 > ushort2;
+	typedef detail::vec3 < u16 > ushort3;
+	typedef detail::vec4 < u16 > ushort4;
 
-	using int2 = detail::vec2 < s32 > ;
-	using int2a = detail::vec2a < s32 >;
-	using int3 = detail::vec3 < s32 > ;
-	using int4 = detail::vec4 < s32 > ;
-	using int4a = detail::vec4a < s32 >;
+	typedef detail::vec2 < s32 > int2;
+	typedef detail::vec2a < s32 > int2a;
+	typedef detail::vec3 < s32 > int3;
+	typedef detail::vec4 < s32 > int4;
+	typedef detail::vec4a < s32 >  int4a;
 
-	using uint2 = detail::vec2 < u32 > ;
-	using uint2a = detail::vec2a < u32 >;
-	using uint3 = detail::vec3 < u32 > ;
-	using uint4 = detail::vec4 < u32 > ;
-	using uint4a = detail::vec4a < u32 >;
+	typedef detail::vec2 < u32 > uint2;
+	typedef detail::vec2a < u32 > uint2a;
+	typedef detail::vec3 < u32 > uint3;
+	typedef detail::vec4 < u32 > uint4;
+	typedef detail::vec4a < u32 > uint4a;
 
-	using float2 = detail::vec2 < f32 > ;
-	using float2a = detail::vec2a < f32 >;
-	using float3 = detail::vec3 < f32 > ;
-	using float3a = detail::vec3a < f32 >;
-	using float4 = detail::vec4 < f32 > ;
-	using float4a = detail::vec4a < f32 > ;
+	typedef detail::vec2 < f32 > float2;
+	typedef detail::vec2a < f32 > float2a;
+	typedef detail::vec3 < f32 > float3;
+	typedef detail::vec3a < f32 > float3a;
+	typedef detail::vec4 < f32 > float4;
+	typedef detail::vec4a < f32 > float4a;
 
 	VX_GLOBALCONST __m128 g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD };
 	VX_GLOBALCONST __m128 g_VXRadToDeg = { VX_RADTODEG, VX_RADTODEG, VX_RADTODEG, VX_RADTODEG };
@@ -953,7 +961,7 @@ namespace vx
 		// Slow path fallback for permutes that do not map to a single SSE shuffle opcode.
 		template<u32 Shuffle, bool WhichX, bool WhichY, bool WhichZ, bool WhichW> struct PermuteHelper
 		{
-			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2)
+			static __m128     VX_CALLCONV     Permute(CVEC4 v1, CVEC4 v2)
 			{
 				static const uvec4 selectMask =
 				{
@@ -977,33 +985,33 @@ namespace vx
 		template<u32 Shuffle> 
 		struct PermuteHelper<Shuffle, false, false, false, false>
 		{
-			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2) { (v2); return VX_PERMUTE_PS(v1, Shuffle); }
+			static __m128     VX_CALLCONV     Permute(CVEC4 v1, CVEC4 v2) { (v2); return VX_PERMUTE_PS(v1, Shuffle); }
 		};
 
 		// Fast path for permutes that only read from the second vector.
 		template<u32 Shuffle> 
 		struct PermuteHelper<Shuffle, true, true, true, true>
 		{
-			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2){ (v1); return VX_PERMUTE_PS(v2, Shuffle); }
+			static __m128     VX_CALLCONV     Permute(CVEC4 v1, CVEC4 v2){ (v1); return VX_PERMUTE_PS(v2, Shuffle); }
 		};
 
 		// Fast path for permutes that read XY from the first vector, ZW from the second.
 		template<u32 Shuffle> 
 		struct PermuteHelper<Shuffle, false, false, true, true>
 		{
-			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2) { return _mm_shuffle_ps(v1, v2, Shuffle); }
+			static __m128     VX_CALLCONV     Permute(CVEC4 v1, CVEC4 v2) { return _mm_shuffle_ps(v1, v2, Shuffle); }
 		};
 
 		// Fast path for permutes that read XY from the second vector, ZW from the first.
 		template<u32 Shuffle> struct PermuteHelper<Shuffle, true, true, false, false>
 		{
-			static __m128     VX_CALLCONV     Permute(__m128 v1, __m128 v2) { return _mm_shuffle_ps(v2, v1, Shuffle); }
+			static __m128     VX_CALLCONV     Permute(CVEC4 v1, CVEC4 v2) { return _mm_shuffle_ps(v2, v1, Shuffle); }
 		};
 	};
 
 	// General permute template
 	template<u32 PermuteX, u32 PermuteY, u32 PermuteZ, u32 PermuteW>
-	inline __m128 VX_CALLCONV VectorPermute(__m128 V1, __m128 V2)
+	inline __m128 VX_CALLCONV VectorPermute(CVEC4 V1, CVEC4 V2)
 	{
 		static_assert(PermuteX <= 7, "PermuteX template parameter out of range");
 		static_assert(PermuteY <= 7, "PermuteY template parameter out of range");
@@ -1021,37 +1029,37 @@ namespace vx
 	}
 
 	// Special-case permute templates
-	template<> inline __m128      VX_CALLCONV     VectorPermute<0, 1, 2, 3>(__m128 V1, __m128 V2) { (V2); return V1; }
-	template<> inline __m128      VX_CALLCONV     VectorPermute<4, 5, 6, 7>(__m128 V1, __m128 V2) { (V1); return V2; }
+	template<> inline __m128      VX_CALLCONV     VectorPermute<0, 1, 2, 3>(CVEC4 V1, CVEC4 V2) { (V2); return V1; }
+	template<> inline __m128      VX_CALLCONV     VectorPermute<4, 5, 6, 7>(CVEC4 V1, CVEC4 V2) { (V1); return V2; }
 
-	inline __m128 VX_CALLCONV fma(const __m128 a, const __m128 b, const __m128 c);
-	inline __m128 VX_CALLCONV dot2(const __m128 v1, const __m128 v2);
-	inline __m128 VX_CALLCONV dot3(const __m128 v1, const __m128 v2);
-	inline __m128 VX_CALLCONV dot4(const __m128 v1, const __m128 v2);
+	inline __m128 VX_CALLCONV fma(CVEC4 a, CVEC4 b, CVEC4 c);
+	inline __m128 VX_CALLCONV dot2(CVEC4 v1, CVEC4 v2);
+	inline __m128 VX_CALLCONV dot3(CVEC4 v1, CVEC4 v2);
+	inline __m128 VX_CALLCONV dot4(CVEC4 v1, CVEC4 v2);
 
-	inline __m128 VX_CALLCONV min(const __m128 a, const __m128 b);
-	inline __m128 VX_CALLCONV max(const __m128 a, const __m128 b);
+	inline __m128 VX_CALLCONV min(CVEC4 a, CVEC4 b);
+	inline __m128 VX_CALLCONV max(CVEC4 a, CVEC4 b);
 
-	inline __m128 VX_CALLCONV abs(const __m128 v);
+	inline __m128 VX_CALLCONV abs(CVEC4 v);
 
-	inline bool VX_CALLCONV Vector3IsInfinite(__m128 V);
-	inline bool VX_CALLCONV Vector3Equal(__m128 V1, __m128 V2);
+	inline bool VX_CALLCONV Vector3IsInfinite(CVEC4 V);
+	inline bool VX_CALLCONV Vector3Equal(CVEC4 V1, CVEC4 V2);
 
-	inline __m128 VX_CALLCONV VectorSelect(__m128 V1, __m128 V2, __m128 Control);
-	inline __m128 VX_CALLCONV negate(__m128 V);
+	inline __m128 VX_CALLCONV VectorSelect(CVEC4 V1, CVEC4 V2, CVEC4 Control);
+	inline __m128 VX_CALLCONV negate(CVEC4 V);
 
-	inline __m128 VX_CALLCONV cross3(__m128 v1, __m128 v2);
+	inline __m128 VX_CALLCONV cross3(CVEC4 v1, CVEC4 v2);
 
-	inline __m128 VX_CALLCONV normalize3(__m128 V);
+	inline __m128 VX_CALLCONV normalize3(CVEC4 V);
 
-	inline __m128 VX_CALLCONV quaternionRotation(__m128 V, __m128 RotationQuaternion);
+	inline __m128 VX_CALLCONV quaternionRotation(CVEC4 V, CVEC4 RotationQuaternion);
 
-	inline __m128 VX_CALLCONV quaternionMultiply(__m128 Q1, __m128 Q2);
-	inline __m128 VX_CALLCONV quaternionConjugate(__m128 Q);
-	inline __m128 VX_CALLCONV quaternionRotationRollPitchYawFromVector(__m128 vector);
+	inline __m128 VX_CALLCONV quaternionMultiply(CVEC4 Q1, CVEC4 Q2);
+	inline __m128 VX_CALLCONV quaternionConjugate(CVEC4 Q);
+	inline __m128 VX_CALLCONV quaternionRotationRollPitchYawFromVector(CVEC4 vector);
 
-	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, __m128 V);
-	inline __m128 VX_CALLCONV VectorModAngles(__m128 Angles);
+	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, CVEC4 V);
+	inline __m128 VX_CALLCONV VectorModAngles(CVEC4 Angles);
 
 	//////////////////////// inline functions
 
@@ -1132,12 +1140,21 @@ namespace vx
 	{
 		auto a = _mm_loadu_ps(v1);
 		auto b = _mm_loadu_ps(v2);
-		return dot4(a, b).m128_f32[0];
+
+		auto tmp = dot4(a, b);
+
+		f32 result;
+		_mm_store_ss(&result, tmp);
+		return result;
 	}
 
-	inline f32 VX_CALLCONV dot(const float4a &v1, const float4a & v2)
+	inline f32 VX_CALLCONV dot(const float4a &v1, const float4a &v2)
 	{
-		return dot4(v1, v2).m128_f32[0];
+		auto tmp = dot4(v1.v, v2.v);
+
+		f32 result;
+		_mm_store_ss(&result, tmp);
+		return result;
 	}
 
 	template<class T>

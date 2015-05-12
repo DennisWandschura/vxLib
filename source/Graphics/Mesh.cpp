@@ -25,17 +25,28 @@ SOFTWARE.
 #include <vxLib/Graphics/Mesh.h>
 #include <vxLib/File/File.h>
 #include <vxLib/Allocator/Allocator.h>
+#include <algorithm>
 
 namespace vx
 {
+	Mesh::Mesh()
+		:m_pVertices(nullptr),
+		m_pIndices(nullptr),
+		m_vertexCount(0),
+		m_indexCount(0)
+	{
+	}
+
 	Mesh::Mesh(u8 *pMemory, u32 vertexCount, u32 indexCount)
-		:m_vertexCount(vertexCount),
+		:m_pVertices(nullptr),
+		m_pIndices(nullptr), 
+		m_vertexCount(vertexCount),
 		m_indexCount(indexCount)
 	{
 		setPointers(pMemory);
 	}
 
-	Mesh::Mesh(Mesh &&rhs)
+	Mesh::Mesh(Mesh &&rhs) noexcept
 		:m_pVertices(rhs.m_pVertices),
 		m_pIndices(rhs.m_pIndices),
 		m_vertexCount(rhs.m_vertexCount),
@@ -47,7 +58,7 @@ namespace vx
 	{
 	}
 
-	Mesh& Mesh::operator = (Mesh &&rhs)
+	Mesh& Mesh::operator = (Mesh &&rhs) noexcept
 	{
 		if (this != &rhs)
 		{	
@@ -57,7 +68,7 @@ namespace vx
 		return *this;
 	}
 
-	void Mesh::swap(Mesh &rhs)
+	void Mesh::swap(Mesh &rhs) noexcept
 	{
 		std::swap(m_pVertices, rhs.m_pVertices);
 		std::swap(m_pIndices, rhs.m_pIndices);
