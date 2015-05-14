@@ -153,6 +153,7 @@ namespace vx
 			typedef B _MyBuffer;
 			typedef T value_type;
 			typedef value_type& reference;
+			typedef const value_type& const_reference;
 			typedef value_type* pointer;
 
 			pointer m_ptr;
@@ -207,7 +208,7 @@ namespace vx
 				return *m_ptr;
 			}
 
-			const reference operator*() const
+			const_reference operator*() const
 			{
 				return *m_ptr;
 			}
@@ -217,7 +218,7 @@ namespace vx
 				return m_ptr[i];
 			}
 
-			const reference operator[](u32 i) const
+			const_reference operator[](u32 i) const
 			{
 				return m_ptr[i];
 			}
@@ -245,8 +246,8 @@ namespace vx
 			// contains the opengl enum in first 24 bits, and BufferType enum in last 8 bits
 			u32 m_target;
 
-			void* map(Map access);
-			void* mapRange(u32 offsetBytes, u32 sizeBytes, MapRange::Access access);
+			void* map(Map access) const;
+			void* mapRange(u32 offsetBytes, u32 sizeBytes, MapRange::Access access) const;
 			void unmap() const;
 
 		public:
@@ -263,20 +264,20 @@ namespace vx
 			void bind() const;
 
 			template<typename T>
-			MappedBuffer<T, Buffer> map(Map access)
+			MappedBuffer<T, Buffer> map(Map access) const
 			{
 				void* ptr = map(access);
 				return MappedBuffer<T, Buffer>(this, ptr);
 			}
 
 			template<typename T>
-			MappedBuffer<T, Buffer> mapRange(u32 offsetBytes, u32 sizeBytes, MapRange::Access access)
+			MappedBuffer<T, Buffer> mapRange(u32 offsetBytes, u32 sizeBytes, MapRange::Access access) const
 			{
 				void* ptr = mapRange(offsetBytes, sizeBytes, access);
 				return MappedBuffer<T, Buffer>(this, ptr);
 			}
 
-			void subData(s64 offset, s64 size, const void* data);
+			void subData(s64 offset, s64 size, const void* data) const;
 
 			u32 getTarget() const noexcept;
 			BufferType getType() const noexcept;

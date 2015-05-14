@@ -47,31 +47,31 @@ namespace vx
 
 			void destroy();
 
-			void bind();
+			void bind() const;
 
-			void bindZero();
+			void bindZero() const;
 
-			void enableArrayAttrib(u32 index);
-			void arrayAttribBinding(u32 attribIndex, u32 bindingIndex);
-			void arrayAttribFormatI(u32 attribIndex, u32 size, DataType type, u32 relativeOffset);
-			void arrayAttribFormatF(u32 attribIndex, u32 size, u8 normalized, u32 relativeOffset);
-			void arrayBindingDivisor(u32 bindingIndex, u32 divisor);
+			void enableArrayAttrib(u32 index) const;
+			void arrayAttribBinding(u32 attribIndex, u32 bindingIndex) const;
+			void arrayAttribFormatI(u32 attribIndex, u32 size, DataType type, u32 relativeOffset) const;
+			void arrayAttribFormatF(u32 attribIndex, u32 size, u8 normalized, u32 relativeOffset) const;
+			void arrayBindingDivisor(u32 bindingIndex, u32 divisor) const;
 
 			template<typename IBO>
-			void bindIndexBuffer(const IBO &ibo)
+			void bindIndexBuffer(const IBO &ibo) const
 			{
 				bindIndexBuffer(ibo.getId());
 			}
 
-			void bindIndexBuffer(u32 ibo);
+			void bindIndexBuffer(u32 ibo) const;
 
 			template<typename VBO>
-			void bindVertexBuffer(const VBO &vbo, u32 bindingIndex, size_t offset, size_t stride)
+			void bindVertexBuffer(const VBO &vbo, u32 bindingIndex, size_t offset, size_t stride) const
 			{
 				bindVertexBuffer(vbo.getId(), bindingIndex, offset, stride);
 			}
 
-			void bindVertexBuffer(u32 vbo, u32 bindingIndex, size_t offset, size_t stride);
+			void bindVertexBuffer(u32 vbo, u32 bindingIndex, size_t offset, size_t stride) const;
 		};
 	}
 }

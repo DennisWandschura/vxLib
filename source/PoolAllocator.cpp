@@ -79,10 +79,8 @@ namespace vx
 		return *this;
 	}
 
-	u8* PoolAllocator::allocate(u64 size) noexcept
+	u8* PoolAllocator::allocate(u64) noexcept
 	{
-		VX_UNREFERENCED_PARAMETER(size);
-
 		if (m_freeEntries == 0)
 			return nullptr;
 
@@ -93,9 +91,8 @@ namespace vx
 		return ptr;
 	}
 
-	u8* PoolAllocator::allocate(u64 size, u8 alignment) noexcept
+	u8* PoolAllocator::allocate(u64 size, u8) noexcept
 	{
-		VX_UNREFERENCED_PARAMETER(alignment);
 		return allocate(size);
 	}
 

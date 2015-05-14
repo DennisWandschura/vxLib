@@ -120,7 +120,7 @@ namespace vx
 			return ((m_bits[index] & (1 << bit)) == (1 << bit));
 		}
 
-		constexpr size_t size() noexcept
+		constexpr size_t size() const noexcept
 		{
 			return N;
 		}

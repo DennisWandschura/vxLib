@@ -29,6 +29,7 @@ SOFTWARE.
 #include <fstream>
 #include <Shlwapi.h>
 #include <vxLib\gl\gl.h>
+#include <vxLib/memory.h>
 
 namespace
 {
@@ -46,11 +47,8 @@ namespace
 		size = inFile.tellg();
 		inFile.seekg(0, std::ios::beg);
 
-#if _VX_GCC
-		buffer = std::unique_ptr<char[]>(new char[size]());
-#else
-		buffer = std::make_unique<char[]>(size);
-#endif
+		buffer = vx::make_unique<char[]>(size);
+
 		inFile.read(buffer.get(), size);
 
 		return true;
@@ -60,11 +58,7 @@ namespace
 	{
 		auto includeSize = include.size();
 
-#if _VX_GCC
-		auto newProgram = std::unique_ptr<char[]>(new char[*programSize + includeSize]());
-#else
-		auto newProgram = std::make_unique<char[]>(*programSize + includeSize);
-#endif
+		auto newProgram = vx::make_unique<char[]>(*programSize + includeSize);
 		
 		u32 currentSize = 0;
 

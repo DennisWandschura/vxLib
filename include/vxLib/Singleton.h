@@ -31,7 +31,7 @@ SOFTWARE.
 
 namespace vx
 {
-	template<class T>
+	template<typename T>
 	struct NoCheck
 	{
 		static void check(bool b)
@@ -39,19 +39,19 @@ namespace vx
 		}
 	};
 
-	template<class T>
+	template<typename T>
 	struct AssertCheck
 	{
 		static void check(bool b)
 		{
 			if (!b)
 			{
-				VX_ASSERT(false, "");
+				VX_ASSERT(false);
 			}
 		}
 	};
 
-	template<class T>
+	template<typename T>
 	struct CallbackCheck
 	{
 		static void check(bool b)
@@ -63,7 +63,7 @@ namespace vx
 		}
 	};
 
-	template<class T, template <class> class CheckingPolicy = NoCheck>
+	template<typename T, template <class> class CheckingPolicy = NoCheck>
 	class GlobalSingleton : public CheckingPolicy<GlobalSingleton<T, CheckingPolicy>>
 	{
 		using MyCheck = CheckingPolicy<GlobalSingleton<T, CheckingPolicy>>;
@@ -137,7 +137,7 @@ namespace vx
 	};
 
 	template<class U, template <class> class CheckingPolicy>
-	GlobalSingleton<U, CheckingPolicy>::Data GlobalSingleton<U, CheckingPolicy>::s_data{};
+	typename GlobalSingleton<U, CheckingPolicy>::Data GlobalSingleton<U, CheckingPolicy>::s_data{};
 
 	template<class U, template <class> class CheckingPolicy>
 	u8 GlobalSingleton<U, CheckingPolicy>::s_constructed{ 0 };

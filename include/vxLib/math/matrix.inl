@@ -830,9 +830,9 @@ namespace vx
 		__m128 Y = VX_PERMUTE_PS(V, _MM_SHUFFLE(1, 1, 1, 1));
 		__m128 X = VX_PERMUTE_PS(V, _MM_SHUFFLE(0, 0, 0, 0));
 
-		__m128 Result = _mm_fmadd_ps(Z, M.c[2], M.c[3]);
-		Result = _mm_fmadd_ps(Y, M.c[1], Result);
-		Result = _mm_fmadd_ps(X, M.c[0], Result);
+		__m128 Result = fma(Z, M.c[2], M.c[3]);
+		Result = fma(Y, M.c[1], Result);
+		Result = fma(X, M.c[0], Result);
 
 		__m128 W = VX_PERMUTE_PS(Result, _MM_SHUFFLE(3, 3, 3, 3));
 		return _mm_div_ps(Result, W);

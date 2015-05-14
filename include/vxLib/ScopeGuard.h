@@ -54,6 +54,7 @@ namespace vx
 		{
 			if (_active)
 			{
+#if _VX_EXCEPTIONS
 				try
 				{
 					_f();
@@ -62,6 +63,9 @@ namespace vx
 				{
 
 				}
+#else
+				_f();
+#endif
 			}
 		}
 

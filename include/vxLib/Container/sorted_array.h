@@ -31,7 +31,7 @@ SOFTWARE.
 
 namespace vx
 {
-	template<typename K, typename T, typename Cmp = std::less<>>
+	template<typename K, typename T, typename Cmp = std::less<K>>
 	class sorted_array
 	{
 	public:
@@ -39,7 +39,7 @@ namespace vx
 		typedef T value_type;
 		typedef K key_type;
 		typedef value_type& reference;
-		typedef const reference const_reference;
+		typedef const value_type& const_reference;
 		typedef value_type* pointer;
 		typedef const pointer const_pointer;
 		typedef StackAllocator MyAllocator;

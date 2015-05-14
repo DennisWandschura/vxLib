@@ -29,8 +29,9 @@ SOFTWARE.
 
 namespace vx
 {
-	struct Allocator
+	class Allocator
 	{
+	public:
 		virtual ~Allocator(){}
 
 		virtual u8* allocate(u64 size) = 0;

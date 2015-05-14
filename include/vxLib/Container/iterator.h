@@ -383,7 +383,7 @@ namespace vx
 			VX_ASSERT(m_pObject);
 			validate();
 
-			return *m_pObject;
+			return (*this->m_pObject);
 		}
 
 		vector_const_iterator& operator++()
@@ -535,12 +535,12 @@ namespace vx
 
 		reference operator*() const
 		{
-			return _MyBase::operator*();
+			return *(this->m_pObject);
 		}
 
 		_MyIter& operator++()
 		{
-			++*(_MyBase *)this;
+			++(*(_MyBase*)this);
 			return (*this);
 		}
 

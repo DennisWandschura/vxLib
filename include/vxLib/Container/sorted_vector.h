@@ -42,6 +42,11 @@ namespace vx
 			{
 				p->~U();
 			}
+
+			template<u64 SIZE>
+			static void destroy(char (*p)[SIZE])
+			{
+			}
 		};
 
 		template<>
@@ -117,9 +122,9 @@ namespace vx
 		typedef Key key_type;
 		typedef Type value_type;
 		typedef value_type& reference;
-		typedef const reference const_reference;
+		typedef const value_type& const_reference;
 		typedef value_type* pointer;
-		typedef  const pointer const_pointer;
+		typedef const pointer const_pointer;
 
 		typedef u32 size_type;
 		typedef s64 difference_type;
@@ -156,7 +161,7 @@ namespace vx
 		template<typename U>
 		void moveDestroy(U *pDest, U *pSrc, u32 size)
 		{
-			detail::ConstructImpl<IsValueTypeArray>::moveDestroy(pDest, pSrc, size);
+			detail::ConstructImpl<std::is_array<U>::value>::moveDestroy(pDest, pSrc, size);
 		}
 
 		template<class U>
@@ -293,7 +298,7 @@ namespace vx
 			return result;
 		}
 
-			const_iterator find(const key_type &key) const noexcept
+		const_iterator find(const key_type &key) const noexcept
 		{
 			auto keyEnd = m_pKeys + m_size;
 			auto it = std::lower_bound(m_pKeys, keyEnd, key, Cmp());

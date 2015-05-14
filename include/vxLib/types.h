@@ -69,14 +69,20 @@ extern "C" {
 #define VX_ASSERT(_Expression) ((void)0)
 #endif
 
-#if defined(_VX_GCC) 
+#if defined(_VX_GCC) || defined(_VX_CLANG)
 #define VX_ALIGN(X) alignas(X)
 #else
 #define VX_ALIGN(X) __declspec( align( X ) )
 #endif
 
 #define VX_GLOBAL extern __declspec(selectany)
+#if defined (_VX_GCC)
+#define VX_GLOBALCONST extern const __attribute__((selectany))
+#elif defined (_VX_CLANG)
+#define VX_GLOBALCONST static const
+#else
 #define VX_GLOBALCONST extern const __declspec(selectany)
+#endif
 
 #if defined(_VX_CUDA) || defined (_VX_GCC)
 #define VX_CALLCONV __fastcall

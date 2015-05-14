@@ -198,19 +198,19 @@ namespace vx
 			void bind() const;
 
 			// only used by sparse textures
-			void commit(const TextureCommitDescription &desc);
+			void commit(const TextureCommitDescription &desc) const;
 
-			void subImage(const TextureSubImageDescription &desc);
-			void subImageCompressed(const TextureCompressedSubImageDescription &desc);
+			void subImage(const TextureSubImageDescription &desc) const;
+			void subImageCompressed(const TextureCompressedSubImageDescription &desc) const;
 
-			void setWrapMode1D(TextureWrapMode wrap_s);
-			void setWrapMode2D(TextureWrapMode wrap_s, TextureWrapMode wrap_t);
-			void setWrapMode3D(TextureWrapMode wrap_s, TextureWrapMode wrap_t, TextureWrapMode wrap_r);
-			void setFilter(TextureFilter min, TextureFilter mag);
-			void makeTextureResident();
-			void makeTextureNonResident();
-			void generateMipmaps();
-			void clearImage(u32 level, u32 format, u32 type, const void* data);
+			void setWrapMode1D(TextureWrapMode wrap_s) const;
+			void setWrapMode2D(TextureWrapMode wrap_s, TextureWrapMode wrap_t) const;
+			void setWrapMode3D(TextureWrapMode wrap_s, TextureWrapMode wrap_t, TextureWrapMode wrap_r) const;
+			void setFilter(TextureFilter min, TextureFilter mag) const;
+			void makeTextureResident() const;
+			void makeTextureNonResident() const;
+			void generateMipmaps() const;
+			void clearImage(u32 level, u32 format, u32 type, const void* data) const;
 
 			u32 getId() const;
 			u64 getTextureHandle() const;

@@ -35,7 +35,7 @@ namespace vx
 		typedef u32 size_type;
 		typedef T value_type;
 		typedef value_type& reference;
-		typedef const reference const_reference;
+		typedef const value_type& const_reference;
 		typedef value_type* pointer;
 
 		pointer m_frontBuffer{ nullptr };

@@ -738,7 +738,7 @@ namespace vx
 			glBindTexture(m_target, m_id);
 		}
 
-		void Texture::subImage(const TextureSubImageDescription &desc)
+		void Texture::subImage(const TextureSubImageDescription &desc) const
 		{
 			bool compressed = isCompressed();
 			VX_ASSERT(!compressed);
@@ -767,7 +767,7 @@ namespace vx
 			}
 		}
 
-		void Texture::subImageCompressed(const TextureCompressedSubImageDescription &desc)
+		void Texture::subImageCompressed(const TextureCompressedSubImageDescription &desc) const
 		{
 			bool compressed = isCompressed();
 			VX_ASSERT(compressed);
@@ -797,20 +797,20 @@ namespace vx
 
 		}
 
-		void Texture::commit(const TextureCommitDescription &desc)
+		void Texture::commit(const TextureCommitDescription &desc) const
 		{
 			if (!isSparseTexture())
 				return;
 			glTexturePageCommitmentEXT(m_id, desc.miplevel, desc.offset.x, desc.offset.y, desc.offset.z, desc.size.x, desc.size.y, desc.size.z, desc.commit);
 		}
 
-		void Texture::setWrapMode1D(TextureWrapMode wrap_s)
+		void Texture::setWrapMode1D(TextureWrapMode wrap_s) const
 		{
 			auto s = detail::getTextureWrapMode(wrap_s);
 			glTextureParameteri(m_id, GL_TEXTURE_WRAP_S, s);
 		}
 
-		void Texture::setWrapMode2D(TextureWrapMode wrap_s, TextureWrapMode wrap_t)
+		void Texture::setWrapMode2D(TextureWrapMode wrap_s, TextureWrapMode wrap_t) const
 		{
 			setWrapMode1D(wrap_s);
 
@@ -818,7 +818,7 @@ namespace vx
 			glTextureParameteri(m_id, GL_TEXTURE_WRAP_T, t);
 		}
 
-		void Texture::setWrapMode3D(TextureWrapMode wrap_s, TextureWrapMode wrap_t, TextureWrapMode wrap_r)
+		void Texture::setWrapMode3D(TextureWrapMode wrap_s, TextureWrapMode wrap_t, TextureWrapMode wrap_r) const
 		{
 			setWrapMode2D(wrap_s, wrap_t);
 
@@ -826,7 +826,7 @@ namespace vx
 			glTextureParameteri(m_id, GL_TEXTURE_WRAP_R, r);
 		}
 
-		void Texture::setFilter(TextureFilter min, TextureFilter mag)
+		void Texture::setFilter(TextureFilter min, TextureFilter mag) const
 		{
 			auto minFilter = detail::getTextureFilter(min);
 			auto magFilter = detail::getTextureFilter(mag);
@@ -835,24 +835,24 @@ namespace vx
 			glTextureParameteri(m_id, GL_TEXTURE_MAG_FILTER, magFilter);
 		}
 
-		void Texture::makeTextureResident()
+		void Texture::makeTextureResident() const
 		{
 			auto handle = getTextureHandle();
 			glMakeTextureHandleResidentARB(handle);
 		}
 
-		void Texture::makeTextureNonResident()
+		void Texture::makeTextureNonResident() const
 		{
 			auto handle = getTextureHandle();
 			glMakeTextureHandleNonResidentARB(handle);
 		}
 
-		void Texture::generateMipmaps()
+		void Texture::generateMipmaps() const
 		{
 			glGenerateTextureMipmap(m_id);
 		}
 
-		void Texture::clearImage(u32 level, u32 format, u32 type, const void* data)
+		void Texture::clearImage(u32 level, u32 format, u32 type, const void* data) const
 		{
 			glClearTexImage(m_id, level, format, type, data);
 		}

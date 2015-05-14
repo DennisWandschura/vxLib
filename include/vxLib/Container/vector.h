@@ -37,7 +37,7 @@ namespace vx
 	public:
 		typedef T value_type;
 		typedef value_type& reference;
-		typedef const reference const_reference;
+		typedef const value_type& const_reference;
 		typedef value_type* pointer;
 		typedef const pointer const_pointer;
 

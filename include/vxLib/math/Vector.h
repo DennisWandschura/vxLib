@@ -26,7 +26,7 @@ SOFTWARE.
 #pragma once
 
 #include <vxLib/math/math.h>
-#include <smmintrin.h>
+#include <algorithm>
 
 #define VX_PERMUTE_PS(V, U) _mm_shuffle_ps(V, V, U)
 #define _VX_DOT(M0, M1, M2, M3, X, Y, Z, W) M0 << 0 | M1 << 1 | M2 << 2 | M3 << 3 | X << 4 | Y << 5 | Z << 6 | W << 7
@@ -41,8 +41,8 @@ namespace vx
 	typedef const __m128i& CIVEC4;
 #endif
 
-	const u32 g_SELECT_0 = 0x00000000;
-	const u32 g_SELECT_1 = 0xFFFFFFFF;
+	const s32 g_SELECT_0 = 0x00000000;
+	const s32 g_SELECT_1 = 0xFFFFFFFF;
 
 	const u32 VX_PERMUTE_0X = 0;
 	const u32 VX_PERMUTE_0Y = 1;
@@ -947,13 +947,13 @@ namespace vx
 	VX_GLOBALCONST ivec4 g_VXSelect1100 = { g_SELECT_1, g_SELECT_1, g_SELECT_0, g_SELECT_0 };
 	VX_GLOBALCONST ivec4 g_VXSelect1110 = { g_SELECT_1, g_SELECT_1, g_SELECT_1, g_SELECT_0 };
 	VX_GLOBALCONST ivec4 g_VXSelect1011 = { g_SELECT_1, g_SELECT_0, g_SELECT_1, g_SELECT_1 };
-	VX_GLOBALCONST ivec4 g_VXMaskX = { 0xFFFFFFFF, 0x00000000, 0x00000000, 0x00000000 };
-	VX_GLOBALCONST ivec4 g_VXMaskY = { 0x00000000, 0xFFFFFFFF, 0x00000000, 0x00000000 };
-	VX_GLOBALCONST ivec4 g_VXMaskZ = { 0x00000000, 0x00000000, 0xFFFFFFFF, 0x00000000 };
-	VX_GLOBALCONST ivec4 g_vMaskW = { 0x00000000, 0x00000000, 0x00000000, 0xFFFFFFFF };
-	VX_GLOBALCONST ivec4 g_VXNegativeZero = { 0x80000000, 0x80000000, 0x80000000, 0x80000000 };
-	VX_GLOBALCONST ivec4 g_VXNegate3 = { 0x80000000, 0x80000000, 0x80000000, 0x00000000 };
-	VX_GLOBALCONST ivec4 g_VXMask3 = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x00000000 };
+	VX_GLOBALCONST ivec4 g_VXMaskX = { (s32)0xFFFFFFFF, 0x00000000, 0x00000000, 0x00000000 };
+	VX_GLOBALCONST ivec4 g_VXMaskY = { 0x00000000, (s32)0xFFFFFFFF, 0x00000000, 0x00000000 };
+	VX_GLOBALCONST ivec4 g_VXMaskZ = { 0x00000000, 0x00000000, (s32)0xFFFFFFFF, 0x00000000 };
+	VX_GLOBALCONST ivec4 g_vMaskW = { 0x00000000, 0x00000000, 0x00000000, (s32)0xFFFFFFFF };
+	VX_GLOBALCONST ivec4 g_VXNegativeZero = { (s32)0x80000000, (s32)0x80000000, (s32)0x80000000, (s32)0x80000000 };
+	VX_GLOBALCONST ivec4 g_VXNegate3 = { (s32)0x80000000, (s32)0x80000000, (s32)0x80000000, 0x00000000 };
+	VX_GLOBALCONST ivec4 g_VXMask3 = { (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, 0x00000000 };
 
 	// PermuteHelper internal template (SSE only)
 	namespace Internal
@@ -1029,8 +1029,8 @@ namespace vx
 	}
 
 	// Special-case permute templates
-	template<> inline __m128      VX_CALLCONV     VectorPermute<0, 1, 2, 3>(CVEC4 V1, CVEC4 V2) { (V2); return V1; }
-	template<> inline __m128      VX_CALLCONV     VectorPermute<4, 5, 6, 7>(CVEC4 V1, CVEC4 V2) { (V1); return V2; }
+	template<> inline __m128      VX_CALLCONV     VectorPermute<0, 1, 2, 3>(CVEC4 V1, CVEC4 V2) { return V1; }
+	template<> inline __m128      VX_CALLCONV     VectorPermute<4, 5, 6, 7>(CVEC4 V1, CVEC4 V2) { return V2; }
 
 	inline __m128 VX_CALLCONV fma(CVEC4 a, CVEC4 b, CVEC4 c);
 	inline __m128 VX_CALLCONV dot2(CVEC4 v1, CVEC4 v2);
@@ -1112,31 +1112,31 @@ namespace vx
 	}
 
 	template<class T>
-	f32 dot(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
+	inline f32 dot(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
 	{
 		return v1.x * v2.x + v1.y * v2.y;
 	}
 
 	template<class T>
-	f32 dot(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
+	inline f32 dot(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
 	{
 		return v1.x*v2.x + v1.y*v2.y;
 	}
 
 	template<class T>
-	f32 dot(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
+	inline f32 dot(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
 		return v1.x*v2.x + v1.y*v2.y + v1.z * v2.z;
 	}
 
 	template<class T>
-	f32 dot(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
+	inline f32 dot(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
 	{
 		return v1.x*v2.x + v1.y*v2.y + v1.z * v2.z + v1.w * v2.w;
 	}
 
 	template<>
-	f32 dot<f32>(const float4 &v1, const float4 &v2)
+	inline f32 dot<f32>(const float4 &v1, const float4 &v2)
 	{
 		auto a = _mm_loadu_ps(v1);
 		auto b = _mm_loadu_ps(v2);
@@ -1202,19 +1202,19 @@ namespace vx
 	template<class T>
 	f32 length(const detail::vec2<T> &v)
 	{
-		return distance(v, v);
+		return sqrt(dot(v, v));
 	}
 
 	template<class T>
 	f32 length(const detail::vec3<T> &v)
 	{
-		return distance(v, v);
+		return sqrt(dot(v, v));
 	}
 
 	template<class T>
 	f32 length(const detail::vec4<T> &v)
 	{
-		return distance(v, v);
+		return sqrt(dot(v, v));
 	}
 
 	inline float2 normalize(const float2 &v1)
@@ -1271,6 +1271,30 @@ namespace vx
 	inline __m128 radToDeg(__m128 rad)
 	{
 		return _mm_mul_ps(rad, g_VXRadToDeg);
+	}
+
+	template<typename T>
+	inline vx::detail::vec2<T> clamp(const vx::detail::vec2<T> &value, const vx::detail::vec2<T> &vmin, const vx::detail::vec2<T> &vmax)
+	{
+		return min(max(value, vmin), vmax);
+	}
+
+	template<typename T>
+	inline vx::detail::vec2a<T> clamp(const vx::detail::vec2a<T> &value, const vx::detail::vec2a<T> &vmin, const vx::detail::vec2a<T> &vmax)
+	{
+		return min(max(value, vmin), vmax);
+	}
+
+	template<typename T>
+	inline vx::detail::vec3<T> clamp(const vx::detail::vec3<T> &value, const vx::detail::vec3<T> &vmin, const vx::detail::vec3<T> &vmax)
+	{
+		return min(max(value, vmin), vmax);
+	}
+
+	template<typename T>
+	inline vx::detail::vec4<T> clamp(const vx::detail::vec4<T> &value, const vx::detail::vec4<T> &vmin, const vx::detail::vec4<T> &vmax)
+	{
+		return min(max(value, vmin), vmax);
 	}
 }
 

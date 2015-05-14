@@ -62,27 +62,27 @@ namespace vx
 			}
 		}
 
-		void VertexArray::bind()
+		void VertexArray::bind() const
 		{
 			glBindVertexArray(getId());
 		}
 
-		void VertexArray::bindZero()
+		void VertexArray::bindZero() const
 		{
 			glBindVertexArray(0);
 		}
 
-		void VertexArray::enableArrayAttrib(u32 index)
+		void VertexArray::enableArrayAttrib(u32 index) const
 		{
 			glEnableVertexArrayAttrib(getId(), index);
 		}
 
-		void VertexArray::arrayAttribBinding(u32 attribIndex, u32 bindingIndex)
+		void VertexArray::arrayAttribBinding(u32 attribIndex, u32 bindingIndex) const
 		{
 			glVertexArrayAttribBinding(getId(), attribIndex, bindingIndex);
 		}
 
-		void VertexArray::arrayAttribFormatI(u32 attribIndex, u32 size, DataType type, u32 relativeOffset)
+		void VertexArray::arrayAttribFormatI(u32 attribIndex, u32 size, DataType type, u32 relativeOffset) const
 		{
 			u32 dataType = 0;
 			switch (type)
@@ -114,22 +114,22 @@ namespace vx
 			glVertexArrayAttribIFormat(getId(), attribIndex, size, dataType, relativeOffset);
 		}
 
-		void VertexArray::arrayAttribFormatF(u32 attribIndex, u32 size, u8 normalized, u32 relativeOffset)
+		void VertexArray::arrayAttribFormatF(u32 attribIndex, u32 size, u8 normalized, u32 relativeOffset) const
 		{
 			glVertexArrayAttribFormat(getId(), attribIndex, size, GL_FLOAT, normalized, relativeOffset);
 		}
 
-		void VertexArray::arrayBindingDivisor(u32 bindingIndex, u32 divisor)
+		void VertexArray::arrayBindingDivisor(u32 bindingIndex, u32 divisor) const
 		{
 			glVertexArrayBindingDivisor(getId(), bindingIndex, divisor);
 		}
 
-		void VertexArray::bindIndexBuffer(u32 ibo)
+		void VertexArray::bindIndexBuffer(u32 ibo) const
 		{
 			glVertexArrayElementBuffer(getId(), ibo);
 		}
 
-		void VertexArray::bindVertexBuffer(u32 vbo, u32 bindingIndex, size_t offset, size_t stride)
+		void VertexArray::bindVertexBuffer(u32 vbo, u32 bindingIndex, size_t offset, size_t stride) const
 		{
 			glVertexArrayVertexBuffer(getId(), bindingIndex, vbo, offset, stride);
 		}

@@ -27,7 +27,9 @@ namespace vx
 {
 	inline __m128 VX_CALLCONV fma(CVEC4 a, CVEC4 b, CVEC4 c)
 	{
-		return _mm_fmadd_ps(a, b, c);
+		//return _mm_fmadd_ps(a, b, c);
+		auto tmp = _mm_mul_ps(a, b);
+		return _mm_add_ps(tmp, c);
 	}
 
 	inline __m128 VX_CALLCONV dot2(CVEC4 v1, CVEC4 v2)
@@ -62,7 +64,7 @@ namespace vx
 
 	inline __m128 VX_CALLCONV normalize(CVEC4 V)
 	{
-		auto vLengthSq = _mm_dp_ps(V, V, 255);
+		auto vLengthSq = dot4(V, V);
 
 		// Prepare for the division
 		auto vResult = _mm_sqrt_ps(vLengthSq);
@@ -134,7 +136,7 @@ namespace vx
 		)
 	{
 		// Perform the dot product on x,y and z only
-		auto vLengthSq = _mm_dp_ps(V, V, _VX_DOT(1, 1, 1, 1, 1, 1, 1, 0));
+		auto vLengthSq = dot3(V, V);
 
 		// Prepare for the division
 		auto vResult = _mm_sqrt_ps(vLengthSq);
@@ -235,7 +237,7 @@ namespace vx
 		Q1 = _mm_mul_ps(Q1, Y1);
 		Q0 = _mm_mul_ps(Q0, R0);
 
-		auto Q = _mm_fmadd_ps(Q1, R1, Q0);
+		auto Q = fma(Q1, R1, Q0);
 
 		return Q;
 	}

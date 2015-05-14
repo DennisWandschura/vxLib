@@ -10,7 +10,7 @@
 
 .DefaultCompilerSettings =
 [
-	.CompilerSettingsDefault = '/fp:fast /Qstd=c++11 /W4 /Qrestrict /GS /Zc:wchar_t /GR- /Gv'
+	.CompilerSettingsDefault = '/fp:fast /Qstd=c++11 /W4 /Qrestrict /GS /Zc:wchar_t /GR- /Gv /arch:AVX'
 ]
 
 .InPath = '../source/'
@@ -71,7 +71,17 @@
 	.FileName = '$ProjectName$'
 ]
 
-.Targets = { .Target_Debug_x64_Static, .Target_Debug_x64, .Target_Release_x64 }
+.Target_Release_Static_x64 =
+[
+	Using(.IntelX64)
+	Using(.DefaultCompilerSettings)
+	Using(.BuildRelease)
+	
+	.CompilerSettingsT = '$CompilerSettingsB$ /MT'
+	.FileName = '$ProjectName$_s'
+]
+
+.Targets = { .Target_Debug_x64_Static, .Target_Debug_x64, .Target_Release_x64, .Target_Release_Static_x64 }
 
 ForEach( .Target in .Targets )
 {
@@ -136,5 +146,5 @@ ForEach( .Target in .Targets )
 
 Alias('all')
 {
-	.Targets = { 'Lib_vxLib_d' 'Lib_vxLib_sd' 'Lib_vxLib' }
+	.Targets = { 'Lib_vxLib_d', 'Lib_vxLib_sd', 'Lib_vxLib', 'Lib_vxLib_s' }
 }
