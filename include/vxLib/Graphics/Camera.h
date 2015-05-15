@@ -1,3 +1,4 @@
+#pragma once
 /*
 The MIT License (MIT)
 
@@ -21,9 +22,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef __VX_CAMERA_H
-#define __VX_CAMERA_H
-#pragma once
 
 #include <vxLib/math/matrix.h>
 
@@ -51,4 +49,3 @@ namespace vx
 		const __m128 VX_CALLCONV getRotation() const { return m_qRotation; }
 	};
 }
-#endif

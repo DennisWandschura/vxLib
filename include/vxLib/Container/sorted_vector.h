@@ -1,3 +1,4 @@
+#pragma once
 /*
 The MIT License (MIT)
 
@@ -21,9 +22,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef __VX_SORTED_VECTOR_H
-#define __VX_SORTED_VECTOR_H
-#pragma once
 
 #include <vxLib/types.h>
 #include <vxLib/Container/iterator.h>
@@ -387,4 +385,3 @@ namespace vx
 		}
 	};
 }
-#endif

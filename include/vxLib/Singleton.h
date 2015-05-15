@@ -1,3 +1,4 @@
+#pragma once
 /*
 The MIT License (MIT)
 
@@ -21,9 +22,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef __VX_SINGLETON_H
-#define __VX_SINGLETON_H
-#pragma once
 
 #include <vxLib/types.h>
 #include <vxLib\type_traits.h>
@@ -64,9 +62,9 @@ namespace vx
 	};
 
 	template<typename T, template <class> class CheckingPolicy = NoCheck>
-	class GlobalSingleton : public CheckingPolicy<GlobalSingleton<T, CheckingPolicy>>
+	class GlobalSingleton : public CheckingPolicy < GlobalSingleton<T, CheckingPolicy> >
 	{
-		using MyCheck = CheckingPolicy<GlobalSingleton<T, CheckingPolicy>>;
+		using MyCheck = CheckingPolicy < GlobalSingleton<T, CheckingPolicy> > ;
 
 		struct Data
 		{
@@ -142,5 +140,3 @@ namespace vx
 	template<class U, template <class> class CheckingPolicy>
 	u8 GlobalSingleton<U, CheckingPolicy>::s_constructed{ 0 };
 }
-
-#endif

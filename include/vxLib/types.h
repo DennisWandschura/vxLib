@@ -1,3 +1,4 @@
+#pragma once
 /*
 The MIT License (MIT)
 
@@ -21,9 +22,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef __VX_TYPES
-#define __VX_TYPES
-#pragma once
 
 #include <assert.h>
 #include <type_traits>
@@ -107,5 +105,3 @@ extern "C" {
 
 #define KBYTE *1024
 #define MBYTE KBYTE *1024
-
-#endif

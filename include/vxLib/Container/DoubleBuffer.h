@@ -1,3 +1,4 @@
+#pragma once
 /*
 The MIT License (MIT)
 
@@ -21,9 +22,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef __VX_DOUBLEBUFFER_H
-#define __VX_DOUBLEBUFFER_H
-#pragma once
 
 #include <vxLib/types.h>
 
@@ -193,4 +191,3 @@ namespace vx
 		}
 	};
 }
-#endif

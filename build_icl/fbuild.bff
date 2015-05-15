@@ -36,7 +36,7 @@
 .BuildRelease =
 [
 	.OutputPathB = '$OutPathObj$\Release\'
-	.CompilerSettingsB = '/GS /O3 /Oi /nologo'
+	.CompilerSettingsB = '/GS /O3 /Oi /nologo /Ob2'
 	.FileExtension = ''
 	.DefinesBuild = '$DefinesRelease$'
 ]

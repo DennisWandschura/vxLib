@@ -1,5 +1,3 @@
-#ifndef __VX_MEMORY_H
-#define __VX_MEMORY_H
 #pragma once
 /*
 The MIT License (MIT)
@@ -49,5 +47,3 @@ namespace vx
 		typename std::enable_if<std::extent<_Ty>::value != 0,
 		void>::type make_unique(_Types&&...) = delete;
 }
-
-#endif

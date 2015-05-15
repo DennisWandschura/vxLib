@@ -1,3 +1,4 @@
+#pragma once
 /*
 The MIT License (MIT)
 
@@ -21,9 +22,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef __STRINGID_H
-#define __STRINGID_H
-#pragma once
 
 #include <vxLib/types.h>
 #include <vxLib/util/CityHash.h>
@@ -93,5 +91,3 @@ namespace vx
 		return sid;
 	}
 }
-
-#endif

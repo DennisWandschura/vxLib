@@ -1,5 +1,3 @@
-#ifndef __VX_FILE_H
-#define __VX_FILE_H
 #pragma once
 
 /*
@@ -74,4 +72,3 @@ namespace vx
 		u32 getSize() const;
 	};
 }
-#endif

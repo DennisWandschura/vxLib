@@ -1,3 +1,4 @@
+#pragma once
 /*
 The MIT License (MIT)
 
@@ -21,9 +22,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#ifndef __VX_ALIGNEDSTORAGE_H
-#define __VX_ALIGNEDSTORAGE_H
-#pragma once
 
 #include <vxLib/type_traits.h>
 
@@ -63,4 +61,3 @@ namespace vx
 		const T* data() const { return (const T*)m_buffer; }
 	};
 }
-#endif
