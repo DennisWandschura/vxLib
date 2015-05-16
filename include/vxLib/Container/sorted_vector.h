@@ -325,6 +325,13 @@ namespace vx
 			return iterator(p, this);
 		}
 
+		void pop_back()
+		{
+			detail::Deleter<std::is_destructible<value_type>::value>::destroy(m_pValues + m_size - 1);
+			detail::Deleter<std::is_destructible<key_type>::value>::destroy(m_pKeys + m_size - 1);
+			--m_size;
+		}
+
 		void clear()
 		{
 			rangeDestroy(m_pKeys, m_size);
@@ -340,6 +347,16 @@ namespace vx
 		const_reference operator[](size_type i) const
 		{
 			return m_pValues[i];
+		}
+
+		reference back()
+		{
+			return *(end() - 1);
+		}
+
+		const_reference back() const
+		{
+			return *(end() - 1);
 		}
 
 		const key_type* keys() const { return m_pKeys; } const

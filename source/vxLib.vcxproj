@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\vxLib\algorithm.h" />
     <ClInclude Include="..\include\vxLib\AlignedStorage.h" />
     <ClInclude Include="..\include\vxLib\Allocator\Allocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\PoolAllocator.h" />
