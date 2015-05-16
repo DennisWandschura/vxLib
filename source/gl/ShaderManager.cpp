@@ -245,6 +245,7 @@ namespace vx
 				vx::gl::ShaderProgram program(type);
 				if (!loadShaderProgram(programFile.c_str(), includeDir, &program, &m_includeFiles))
 				{
+					printf("Error ShaderManager::loadProgram\n");
 					return false;
 				}
 
@@ -254,11 +255,14 @@ namespace vx
 			return true;
 		}
 
-		bool ShaderManager::useProgram(vx::gl::ProgramPipeline &pipe, const char *id)
+		bool ShaderManager::useProgram(vx::gl::ProgramPipeline &pipe, const FileHandle &handle)
 		{
-			auto pProgram = getProgram(id);
+			auto pProgram = getProgram(handle.m_sid);
 			if (!pProgram)
+			{
+				printf("Error ShaderManager::useProgram '%s'\n", handle.m_string);
 				return false;
+			}
 
 			pipe.useProgram(*pProgram);
 			return true;
@@ -272,9 +276,10 @@ namespace vx
 				return true;
 			}
 
-			if (!loadProgram(FileHandle(desc.id), desc.type, *desc.programDir, *desc.includeDir))
+			auto fileHandle = FileHandle(desc.id);
+			if (!loadProgram(fileHandle, desc.type, *desc.programDir, *desc.includeDir))
 				return false;
-			if (!useProgram(*desc.pipe, desc.id))
+			if (!useProgram(*desc.pipe, fileHandle))
 				return false;
 
 			return true;
@@ -284,10 +289,11 @@ namespace vx
 		{
 			auto pipelineFileWithPath = pipelineDir + fileHandle.m_string;
 
-			std::ifstream inFile(pipelineFileWithPath);
+			std::ifstream inFile(pipelineFileWithPath.c_str());
 			if (!inFile.is_open())
 			{
-				printf("could not open file '%s'\n", pipelineFileWithPath.c_str());
+				printf("could not open pipeline file '%s'\n", pipelineFileWithPath.c_str());
+				printf("'%s'\n", fileHandle.m_string);
 				return false;
 			}
 
@@ -349,14 +355,18 @@ namespace vx
 			return loadPipeline(fileHandle, pipelineDir, programDir, includeDir);
 		}
 
-		const vx::gl::ShaderProgram* ShaderManager::getProgram(const char *id) const
+		const vx::gl::ShaderProgram* ShaderManager::getProgram(const vx::StringID &sid) const
 		{
-			auto sid = vx::make_sid(id);
 			auto it = m_shaderPrograms.find(sid);
 			if (it == m_shaderPrograms.end())
 				return nullptr;
 
 			return &*it;
+		}
+
+		const vx::gl::ProgramPipeline* ShaderManager::getPipeline(const char* id) const
+		{
+			return getPipeline(FileHandle(id));
 		}
 
 		const vx::gl::ProgramPipeline* ShaderManager::getPipeline(const FileHandle &fileHandle) const

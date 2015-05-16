@@ -47,10 +47,10 @@ namespace vx
 			std::string m_dataDir;
 
 			bool loadProgram(const FileHandle &programHandle, vx::gl::ShaderProgramType type, const std::string &programDir, const std::string &includeDir);
-			bool useProgram(vx::gl::ProgramPipeline &pipe, const char* id);
+			bool useProgram(vx::gl::ProgramPipeline &pipe, const FileHandle &handle);
 			bool loadUseProgram(const LoadUseProgramDescription &desc);
 
-			const vx::gl::ShaderProgram* getProgram(const char* id) const;
+			const vx::gl::ShaderProgram* getProgram(const vx::StringID &sid) const;
 
 			bool loadPipelines();
 			bool loadPipeline(const FileHandle &fileHandle, const std::string &pipelineDir, const std::string &programDir, const std::string &includeDir);
@@ -64,6 +64,7 @@ namespace vx
 
 			bool loadPipeline(const FileHandle &filehandle);
 
+			const vx::gl::ProgramPipeline* getPipeline(const char* id) const;
 			const vx::gl::ProgramPipeline* getPipeline(const FileHandle &fileHandle) const;
 			const vx::gl::ProgramPipeline* getPipeline(const vx::StringID &sid) const;
 		};

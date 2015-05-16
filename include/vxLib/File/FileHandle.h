@@ -32,7 +32,7 @@ namespace vx
 	struct FileHandle
 	{
 		StringID m_sid;
-		char m_string[32];
+		char m_string[64];
 
 		FileHandle()
 			:m_sid(),
@@ -44,7 +44,25 @@ namespace vx
 		explicit FileHandle(const char* str)
 			:m_sid()
 		{
-			strncpy(m_string, str, 32);
+			VX_ASSERT(strlen(str) <= sizeof(m_string));
+			strncpy(m_string, str, sizeof(m_string));
+
+			u32 i = 0;
+			while (m_string[i])
+			{
+				m_string[i] = tolower(m_string[i]);
+				++i;
+			}
+
+			m_sid = vx::make_sid(m_string);
+		}
+
+		template<u64 SIZE>
+		explicit FileHandle(const char(&str)[SIZE])
+			:m_sid()
+		{
+			static_assert(SIZE <= sizeof(m_string), "");
+			strncpy(m_string, str, sizeof(m_string));
 
 			u32 i = 0;
 			while (m_string[i])
