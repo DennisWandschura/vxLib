@@ -168,9 +168,6 @@
     <ClInclude Include="..\include\vxLib\Container\DoubleBuffer.h">
       <Filter>Header Files\Container</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vxLib\util\memcpy.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\vxLib\Keyboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>

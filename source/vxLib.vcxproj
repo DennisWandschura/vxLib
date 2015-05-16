@@ -176,7 +176,6 @@
     <ClInclude Include="..\include\vxLib\type_traits.h" />
     <ClInclude Include="..\include\vxLib\util\CityHash.h" />
     <ClInclude Include="..\include\vxLib\util\DebugPrint.h" />
-    <ClInclude Include="..\include\vxLib\util\memcpy.h" />
     <ClInclude Include="..\include\vxLib\util\streamHelper.h" />
     <ClInclude Include="..\include\vxLib\Window.h" />
   </ItemGroup>
