@@ -25,11 +25,11 @@ SOFTWARE.
 #include <vxLib/gl/ShaderManager.h>
 #include <vxLib/gl/ProgramPipeline.h>
 #include <vxLib/gl/ShaderProgram.h>
-#include <vxLib/StringID.h>
 #include <fstream>
 #include <Shlwapi.h>
-#include <vxLib\gl\gl.h>
+#include <vxLib/gl/gl.h>
 #include <vxLib/memory.h>
+#include <vxLib/File/FileHandle.h>
 
 namespace
 {
@@ -178,7 +178,7 @@ namespace vx
 
 		bool ShaderManager::loadPipelines()
 		{
-			auto fullPath = m_dataDir + "shaders/";
+			auto pipelineDir = m_dataDir + "shaders/";
 			auto searchMask = m_dataDir + "shaders/*.pipe";
 
 			HANDLE fileHandle = nullptr;
@@ -198,8 +198,8 @@ namespace vx
 
 				if (!is_directory)
 				{
-					auto file = fullPath + fileData.cFileName;
-					if (!loadPipeline(file.c_str(), programDir, includeDir))
+					auto pipelineHandle = vx::FileHandle(fileData.cFileName);
+					if (!loadPipeline(pipelineHandle, pipelineDir, programDir, includeDir))
 					{
 						return false;
 					}
@@ -234,16 +234,16 @@ namespace vx
 			m_includeFiles.clear();
 		}
 
-		bool ShaderManager::loadProgram(const char *file, vx::gl::ShaderProgramType type, const std::string &includeDir)
+		bool ShaderManager::loadProgram(const FileHandle &programHandle, vx::gl::ShaderProgramType type, const std::string &programDir, const std::string &includeDir)
 		{
-			std::string fileName = PathFindFileNameA(file);
+			auto programFile = programDir + programHandle.m_string;
 
-			auto sid = vx::make_sid(fileName.c_str());
+			auto sid = programHandle.m_sid;
 			auto it = m_shaderPrograms.find(sid);
 			if (it == m_shaderPrograms.end())
 			{
 				vx::gl::ShaderProgram program(type);
-				if (!loadShaderProgram(file, includeDir, &program, &m_includeFiles))
+				if (!loadShaderProgram(programFile.c_str(), includeDir, &program, &m_includeFiles))
 				{
 					return false;
 				}
@@ -272,8 +272,7 @@ namespace vx
 				return true;
 			}
 
-			auto programFile = *desc.programDir + desc.id;
-			if (!loadProgram(programFile.c_str(), desc.type, *desc.includeDir))
+			if (!loadProgram(FileHandle(desc.id), desc.type, *desc.programDir, *desc.includeDir))
 				return false;
 			if (!useProgram(*desc.pipe, desc.id))
 				return false;
@@ -281,12 +280,14 @@ namespace vx
 			return true;
 		}
 
-		bool ShaderManager::loadPipeline(const char *file, const std::string &programDir, const std::string &includeDir)
+		bool ShaderManager::loadPipeline(const FileHandle &fileHandle, const std::string &pipelineDir, const std::string &programDir, const std::string &includeDir)
 		{
-			std::ifstream inFile(file);
+			auto pipelineFileWithPath = pipelineDir + fileHandle.m_string;
+
+			std::ifstream inFile(pipelineFileWithPath);
 			if (!inFile.is_open())
 			{
-				printf("could not open file '%s'\n", file);
+				printf("could not open file '%s'\n", pipelineFileWithPath.c_str());
 				return false;
 			}
 
@@ -332,22 +333,20 @@ namespace vx
 			if (!loadUseProgram(desc))
 				return false;
 
-			auto sid = vx::make_sid(PathFindFileNameA(file));
+			auto sid = fileHandle.m_sid;
 
 			m_programPipelines.insert(std::move(sid), std::move(pipe));
 
 			return true;
 		}
 
-		bool ShaderManager::loadPipeline(const char *fileName)
+		bool ShaderManager::loadPipeline(const FileHandle &fileHandle)
 		{
 			auto pipelineDir = m_dataDir + "shaders/";
 			const std::string programDir(m_dataDir + "shaders/programs/");
 			const std::string includeDir = m_dataDir + "shaders/include/";
 
-			auto file = pipelineDir + fileName;
-
-			return loadPipeline(file.c_str(), programDir, includeDir);
+			return loadPipeline(fileHandle, pipelineDir, programDir, includeDir);
 		}
 
 		const vx::gl::ShaderProgram* ShaderManager::getProgram(const char *id) const
@@ -360,10 +359,9 @@ namespace vx
 			return &*it;
 		}
 
-		const vx::gl::ProgramPipeline* ShaderManager::getPipeline(const char *id) const
+		const vx::gl::ProgramPipeline* ShaderManager::getPipeline(const FileHandle &fileHandle) const
 		{
-			auto sid = vx::make_sid(id);
-			return getPipeline(sid);
+			return getPipeline(fileHandle.m_sid);
 		}
 
 		const vx::gl::ProgramPipeline* ShaderManager::getPipeline(const vx::StringID &sid) const

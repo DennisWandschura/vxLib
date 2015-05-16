@@ -144,6 +144,7 @@
     <ClInclude Include="..\include\vxLib\Container\sorted_vector.h" />
     <ClInclude Include="..\include\vxLib\Container\vector.h" />
     <ClInclude Include="..\include\vxLib\File\File.h" />
+    <ClInclude Include="..\include\vxLib\File\FileHandle.h" />
     <ClInclude Include="..\include\vxLib\File\FileHeader.h" />
     <ClInclude Include="..\include\vxLib\gl\Base.h" />
     <ClInclude Include="..\include\vxLib\gl\Buffer.h" />

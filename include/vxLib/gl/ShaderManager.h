@@ -30,6 +30,8 @@ SOFTWARE.
 
 namespace vx
 {
+	struct FileHandle;
+
 	namespace gl
 	{
 		class ProgramPipeline;
@@ -44,14 +46,14 @@ namespace vx
 			vx::sorted_vector<vx::StringID, std::string> m_includeFiles;
 			std::string m_dataDir;
 
-			bool loadProgram(const char *file, vx::gl::ShaderProgramType type, const std::string &includeDir);
+			bool loadProgram(const FileHandle &programHandle, vx::gl::ShaderProgramType type, const std::string &programDir, const std::string &includeDir);
 			bool useProgram(vx::gl::ProgramPipeline &pipe, const char* id);
 			bool loadUseProgram(const LoadUseProgramDescription &desc);
 
 			const vx::gl::ShaderProgram* getProgram(const char* id) const;
 
 			bool loadPipelines();
-			bool loadPipeline(const char *file, const std::string &programDir, const std::string &includeDir);
+			bool loadPipeline(const FileHandle &fileHandle, const std::string &pipelineDir, const std::string &programDir, const std::string &includeDir);
 
 		public:
 			ShaderManager();
@@ -60,9 +62,9 @@ namespace vx
 			bool initialize(const std::string &dataDir, bool loadAllPipelinesFromDir);
 			void clear();
 
-			bool loadPipeline(const char *fileName);
+			bool loadPipeline(const FileHandle &filehandle);
 
-			const vx::gl::ProgramPipeline* getPipeline(const char *id) const;
+			const vx::gl::ProgramPipeline* getPipeline(const FileHandle &fileHandle) const;
 			const vx::gl::ProgramPipeline* getPipeline(const vx::StringID &sid) const;
 		};
 	}
