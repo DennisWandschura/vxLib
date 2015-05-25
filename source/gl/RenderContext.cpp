@@ -33,51 +33,6 @@ namespace vx
 {
 	namespace gl
 	{
-		OpenGLDescription OpenGLDescription::create(const Window &window, const vx::uint2 &resolution, 
-			f32 fovRad, f32 nearZ, f32 farZ, u8 majVersion, u8 minVersion, bool bVsync, bool bDebugMode)
-		{
-			OpenGLDescription params;
-			params.hwnd = window.getHwnd();
-			params.resolution = resolution;
-			params.fovRad = fovRad;
-			params.nearZ = nearZ;
-			params.farZ = farZ;
-			params.majVersion = majVersion;
-			params.minVersion = minVersion;
-			params.bVsync = bVsync;
-			params.bDebugMode = bDebugMode;
-
-			return params;
-		}
-
-		OpenGLDescription OpenGLDescription::create(HWND hwnd,const vx::uint2 &resolution, 
-			f32 fovRad, f32 nearZ, f32 farZ, u8 majVersion, u8 minVersion, bool bVsync, bool bDebugMode)
-		{
-			OpenGLDescription params;
-			params.hwnd = hwnd;
-			params.resolution = resolution;
-			params.fovRad = fovRad;
-			params.nearZ = nearZ;
-			params.farZ = farZ;
-			params.majVersion = majVersion;
-			params.minVersion = minVersion;
-			params.bVsync = bVsync;
-			params.bDebugMode = bDebugMode;
-
-			return params;
-		}
-
-		ContextDescription ContextDescription::create(const Window &window, const vx::uint2 &resolution, f32 fovRad, f32 nearZ, f32 farZ,
-			u8 majVersion, u8 minVersion,  bool bVsync, bool bDebugMode)
-		{
-			ContextDescription params;
-			params.hInstance = window.getHinstance();
-			params.windowClass = window.getClassName();
-			params.glParams = OpenGLDescription::create(window, resolution, fovRad, nearZ, farZ, majVersion,minVersion, bVsync, bDebugMode);
-
-			return params;
-		}
-
 		RenderContext::RenderContext()
 			:m_pDeviceContext(nullptr),
 			m_pRenderingContext(nullptr),

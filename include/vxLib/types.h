@@ -67,7 +67,7 @@ extern "C" {
 #define VX_ASSERT(_Expression) ((void)0)
 #endif
 
-#if defined(_VX_GCC) || defined(_VX_CLANG)
+#if defined(_VX_GCC) || defined(_VX_CLANG) || (_MSC_VER > 1800)
 #define VX_ALIGN(X) alignas(X)
 #else
 #define VX_ALIGN(X) __declspec( align( X ) )

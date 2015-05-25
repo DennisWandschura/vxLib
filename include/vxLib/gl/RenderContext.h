@@ -44,9 +44,6 @@ namespace vx
 			u8 minVersion;
 			bool bVsync;
 			bool bDebugMode;
-
-			static OpenGLDescription create(const Window &window, const vx::uint2 &resolution, f32 fovRad, f32 nearZ, f32 farZ, u8 majVersion, u8 minVersion, bool bVsync, bool bDebugMode);
-			static OpenGLDescription create(HWND hwnd, const vx::uint2 &resolution, f32 fovRad, f32 nearZ, f32 farZ, u8 majVersion, u8 minVersion, bool bVsync, bool bDebugMode);
 		};
 
 		struct ContextDescription
@@ -54,8 +51,6 @@ namespace vx
 			HINSTANCE hInstance;
 			LPCWSTR windowClass;
 			OpenGLDescription glParams;
-
-			static ContextDescription create(const Window &window, const vx::uint2 &resolution, f32 fovRad, f32 nearZ, f32 farZ, u8 majVersion, u8 minVersion, bool bVsync, bool bDebugMode);
 		};
 
 		class RenderContext

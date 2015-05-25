@@ -1190,11 +1190,34 @@ namespace vx
 		return ::sqrtf(dot(tmp, tmp));
 	}
 
+	template<>
+	inline f32 distance(const detail::vec3<f32> &v1, const detail::vec3<f32> &v2)
+	{
+		auto a = vx::loadFloat(v1);
+		auto b = vx::loadFloat(v2);
+		auto d = _mm_sub_ps(b, a);
+		d = _mm_dp_ps(d, d, 255);
+		d = _mm_sqrt_ps(d);
+
+		return d.m128_f32[0];
+	}
+
 	template<class T>
 	f32 distance(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
 	{
 		auto tmp = v2 - v1;
 		return ::sqrtf(dot(tmp, tmp));
+	}
+	template<>
+	inline f32 distance(const detail::vec4<f32> &v1, const detail::vec4<f32> &v2)
+	{
+		auto a = vx::loadFloat(v1);
+		auto b = vx::loadFloat(v2);
+		auto d = _mm_sub_ps(b, a);
+		d = _mm_dp_ps(d, d, 255);
+		d = _mm_sqrt_ps(d);
+
+		return d.m128_f32[0];
 	}
 
 	template<class T>
