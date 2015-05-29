@@ -52,6 +52,8 @@ namespace vx
 
 			void bindZero() const;
 
+			u32 operator[](ShaderProgramType type) const;
+
 			u32 getVertexShader() const noexcept;
 			u32 getFragmentShader() const noexcept;
 			u32 getGeometryShader() const noexcept;

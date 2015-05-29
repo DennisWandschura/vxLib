@@ -342,7 +342,6 @@ namespace vx
 		{
 		case WM_INPUT:
 		{
-			//m_inputCallback(msg.hwnd, msg.message, msg.wParam, msg.lParam);
 			handleInput(lParam);
 			return 0;
 		}
@@ -358,16 +357,6 @@ namespace vx
 				return 0;
 			}
 		}
-		/*case WM_ACTIVATEAPP:
-		{
-			if (wParam == 1)
-			{
-				puts("WM_ACTIVATEAPP");
-				SetCursorPos(0, 0);
-				focus();
-				return 0;
-			}
-		}*/
 		case WM_CLOSE:
 		{
 			if (m_windowCloseCallback)
@@ -377,7 +366,9 @@ namespace vx
 			}
 		}
 		default:
+		{
 			return DefWindowProc(hwnd, umsg, wParam, lParam);
+		}
 		}
 	}
 

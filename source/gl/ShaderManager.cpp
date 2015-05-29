@@ -142,8 +142,10 @@ namespace
 		auto log = program->create(&ptr, logSize);
 		if (log)
 		{
+
 			printf("Error '%s'\n%s\n", programFile, log.get());
-			printf("%s\n", ptr);
+			//printf("%s\n", ptr);
+
 			return false;
 		}
 

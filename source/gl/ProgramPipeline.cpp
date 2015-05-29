@@ -146,6 +146,11 @@ namespace vx
 			glBindProgramPipeline(0);
 		}
 
+		u32 ProgramPipeline::operator[](ShaderProgramType type) const
+		{
+			return m_programIds[static_cast<u32>(type)];
+		}
+
 		u32 ProgramPipeline::getVertexShader() const noexcept
 		{
 			return m_programIds[static_cast<u32>(ShaderProgramType::VERTEX)];
