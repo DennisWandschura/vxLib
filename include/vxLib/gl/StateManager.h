@@ -25,7 +25,7 @@ SOFTWARE.
 
 #include <vxLib/math/Vector.h>
 #include <vxLib/Container/bitset.h>
-#include <vxLib/gl/Buffer.h>
+#include <vxLib/gl/Base.h>
 
 namespace vx
 {
@@ -34,6 +34,7 @@ namespace vx
 		class VertexArray;
 		class ProgramPipeline;
 		class Framebuffer;
+		class Buffer;
 
 		class StateManager
 		{
@@ -59,6 +60,7 @@ namespace vx
 			static void bindVertexArray(u32 id);
 			static void bindVertexArray(const VertexArray &vao);
 			static void bindBuffer(BufferType target, u32 id);
+			static void bindBuffer(BufferType target, const Buffer &buffer);
 			static void bindPipeline(u32 pipeline);
 			static void bindPipeline(const ProgramPipeline &pipe);
 		};

@@ -30,27 +30,6 @@ namespace vx
 {
 	namespace gl
 	{
-		class Buffer;
-		 
-		enum class BufferType : u8
-		{
-			Array_Buffer,
-			Atomic_Counter_Buffer,
-			Copy_Read_Buffer,
-			Copy_Write_Buffer,
-			Draw_Indirect_Buffer,
-			Dispatch_Indirect_Buffer,
-			Element_Array_Buffer,
-			Pixel_Pack_Buffer,
-			Pixel_Unpack_Buffer,
-			Query_Buffer,
-			Shader_Storage_Buffer,
-			Texture_Buffer,
-			Transform_Feedback_Buffer,
-			Uniform_Buffer,
-			Parameter_Buffer
-		};
-
 		enum class Map
 		{
 			Read_Only = 0x88B8,
@@ -108,6 +87,8 @@ namespace vx
 			Dynamic_Read = 0x88E9,
 			Dynamic_Copy = 0x88EA
 		};
+
+		class Buffer;
 
 		struct BufferDescription
 		{

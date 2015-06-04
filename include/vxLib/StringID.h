@@ -33,7 +33,7 @@ namespace vx
 		u64 value;
 
 		StringID() :value(0) {}
-		StringID(u64 u) :value(u){}
+		explicit StringID(u64 u) :value(u){}
 
 		StringID& operator=(u64 u)
 		{
@@ -74,7 +74,7 @@ namespace vx
 
 	inline StringID make_sid(const char *str)
 	{
-		StringID sid = CITYHASH64(str);
+		StringID sid = StringID(CITYHASH64(str));
 		return sid;
 	}
 
@@ -87,7 +87,7 @@ namespace vx
 
 	inline StringID make_sid(const wchar_t *str)
 	{
-		StringID sid = CityHash64((char*)str, sizeof(wchar_t) * std::char_traits<wchar_t>::length(str));
+		StringID sid = StringID(CityHash64((char*)str, sizeof(wchar_t) * std::char_traits<wchar_t>::length(str)));
 		return sid;
 	}
 }

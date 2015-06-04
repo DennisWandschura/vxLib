@@ -36,6 +36,7 @@ namespace vx
 	{
 		class ProgramPipeline;
 		class ShaderProgram;
+		struct ShaderParameter;
 
 		class ShaderManager
 		{
@@ -44,6 +45,7 @@ namespace vx
 			vx::sorted_vector<vx::StringID, ProgramPipeline> m_programPipelines;
 			vx::sorted_vector<vx::StringID, ShaderProgram> m_shaderPrograms;
 			vx::sorted_vector<vx::StringID, std::string> m_includeFiles;
+			vx::sorted_vector<vx::StringID, ShaderParameter> m_parameters;
 			std::string m_dataDir;
 
 			bool loadProgram(const FileHandle &programHandle, vx::gl::ShaderProgramType type, const std::string &programDir, const std::string &includeDir);
@@ -55,6 +57,8 @@ namespace vx
 			bool loadPipelines();
 			bool loadPipeline(const FileHandle &fileHandle, const std::string &pipelineDir, const std::string &programDir, const std::string &includeDir);
 
+			void addParameter(const char* id, const ShaderParameter &param);
+
 		public:
 			ShaderManager();
 			~ShaderManager();
@@ -63,6 +67,10 @@ namespace vx
 			void clear();
 
 			bool loadPipeline(const FileHandle &filehandle);
+
+			void addParameter(const char* id, s32 value);
+			void addParameter(const char* id, u32 value);
+			void addParameter(const char* id, f32 value);
 
 			const vx::gl::ProgramPipeline* getPipeline(const char* id) const;
 			const vx::gl::ProgramPipeline* getPipeline(const FileHandle &fileHandle) const;

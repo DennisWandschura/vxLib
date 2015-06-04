@@ -84,6 +84,25 @@ namespace vx
 			TESS_EVAL
 		};
 
+		enum class BufferType : u8
+		{
+			Array_Buffer,
+			Atomic_Counter_Buffer,
+			Copy_Read_Buffer,
+			Copy_Write_Buffer,
+			Draw_Indirect_Buffer,
+			Dispatch_Indirect_Buffer,
+			Element_Array_Buffer,
+			Pixel_Pack_Buffer,
+			Pixel_Unpack_Buffer,
+			Query_Buffer,
+			Shader_Storage_Buffer,
+			Texture_Buffer,
+			Transform_Feedback_Buffer,
+			Uniform_Buffer,
+			Parameter_Buffer
+		};
+
 		enum class TextureFilter : u8
 		{
 			NEAREST,

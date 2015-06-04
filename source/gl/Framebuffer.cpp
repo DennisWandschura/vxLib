@@ -93,27 +93,27 @@ namespace vx
 			}
 		}
 
-		u32 Framebuffer::checkStatus()
+		u32 Framebuffer::checkStatus() const
 		{
 			return glCheckNamedFramebufferStatus(m_id, GL_FRAMEBUFFER);
 		}
 
-		void Framebuffer::bind()
+		void Framebuffer::bind() const
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, m_id);
 		}
 
-		void Framebuffer::bindZero()
+		void Framebuffer::bindZero() const
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
-		void Framebuffer::attachTexture(Attachment attachment, u32 textureId, u32 level)
+		void Framebuffer::attachTexture(Attachment attachment, u32 textureId, u32 level) const
 		{
 			glNamedFramebufferTexture(m_id, vx::gl::getAttachment(attachment), textureId, level);
 		}
 
-		void Framebuffer::attachTextureLayer(Attachment attachment, u32 textureId, u32 level, u32 layer)
+		void Framebuffer::attachTextureLayer(Attachment attachment, u32 textureId, u32 level, u32 layer) const
 		{
 			glNamedFramebufferTextureLayer(m_id, vx::gl::getAttachment(attachment), textureId, level, layer);
 		}

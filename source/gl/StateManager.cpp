@@ -21,12 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include <vxLib\gl\StateManager.h>
+#include <vxLib/gl/StateManager.h>
 #include <vxLib/gl/gl.h>
 #include <cstring>
 #include <vxLib/gl/VertexArray.h>
 #include <vxLib/gl/Framebuffer.h>
 #include <vxLib/gl/ProgramPipeline.h>
+#include <vxLib/gl/Buffer.h>
 
 namespace vx
 {
@@ -126,6 +127,11 @@ namespace vx
 				glBindBuffer(glTarget, id);
 				s_bindBuffer[index] = id;
 			}
+		}
+
+		void StateManager::bindBuffer(BufferType target, const Buffer &buffer)
+		{
+			bindBuffer(target, buffer.getId());
 		}
 
 		void StateManager::bindPipeline(u32 pipeline)

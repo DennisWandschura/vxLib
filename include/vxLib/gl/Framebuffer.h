@@ -65,22 +65,22 @@ namespace vx
 			void create();
 			void destroy();
 
-			u32 checkStatus();
+			u32 checkStatus() const;
 
-			void bind();
-			void bindZero();
+			void bind() const;
+			void bindZero() const;
 
-			void attachTexture(Attachment attachment, u32 textureId, u32 level);
-			void attachTextureLayer(Attachment attachment, u32 textureId, u32 level, u32 layer);
+			void attachTexture(Attachment attachment, u32 textureId, u32 level) const;
+			void attachTextureLayer(Attachment attachment, u32 textureId, u32 level, u32 layer) const;
 
 			template<class Texture>
-			void attachTexture(Attachment attachment, const Texture &texture, u32 level)
+			void attachTexture(Attachment attachment, const Texture &texture, u32 level) const
 			{
 				attachTexture(attachment, texture.getId(), level);
 			}
 
 			template<class Texture>
-			void attachTextureLayer(Attachment attachment, const Texture &texture, u32 level, u32 layer)
+			void attachTextureLayer(Attachment attachment, const Texture &texture, u32 level, u32 layer) const
 			{
 				attachTextureLayer(attachment, texture.getId(), level, layer);
 			}

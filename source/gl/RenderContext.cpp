@@ -46,37 +46,25 @@ namespace vx
 
 		bool RenderContext::initialize(const ContextDescription &params)
 		{
-			// Initialize a temporary OpenGL window and load the OpenGL extensions.
-			if (!initializeExtensionsWithTempWindow(params.hInstance, params.windowClass))
+			if (params.tmpHwnd != nullptr)
 			{
-				printf("Could not initialize the OpenGL extensions.\n");
-				return false;
-			}
-
-			return initializeOpenGl(params.glParams);
-
-			/*if (bDebugMode)
-			{
-				m_pContextAttribs = new int[7];
-				m_pContextAttribs[0] = WGL_CONTEXT_MAJOR_VERSION_ARB;
-				m_pContextAttribs[1] = majVersion;
-				m_pContextAttribs[2] = WGL_CONTEXT_MINOR_VERSION_ARB;
-				m_pContextAttribs[3] = minVersion;
-				m_pContextAttribs[4] = WGL_CONTEXT_FLAGS_ARB;
-				m_pContextAttribs[5] = WGL_CONTEXT_DEBUG_BIT_ARB;
-				m_pContextAttribs[6] = 0;
+				if (!initializeExtensions(params.tmpHwnd))
+				{
+					printf("tmp Could not initialize the OpenGL extensions.\n");
+					return false;
+				}
 			}
 			else
 			{
-				m_pContextAttribs = new int[5];
-				m_pContextAttribs[0] = WGL_CONTEXT_MAJOR_VERSION_ARB;
-				m_pContextAttribs[1] = majVersion;
-				m_pContextAttribs[2] = WGL_CONTEXT_MINOR_VERSION_ARB;
-				m_pContextAttribs[3] = minVersion;
-				m_pContextAttribs[4] = 0;
+				// Initialize a temporary OpenGL window and load the OpenGL extensions.
+				if (!initializeExtensionsWithTempWindow(params.hInstance, params.windowClass))
+				{
+					printf("Could not initialize the OpenGL extensions.\n");
+					return false;
+				}
 			}
 
-			return initializeOpenGl(hwnd, m_pContextAttribs, resolution, fovRad, nearZ, farZ, bVsync, pGlStateManager);*/
+			return initializeOpenGl(params.glParams);
 		}
 
 		bool RenderContext::initializeOpenGl(const OpenGLDescription &params)

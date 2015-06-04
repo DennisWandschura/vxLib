@@ -48,9 +48,18 @@ namespace vx
 
 		struct ContextDescription
 		{
+			HWND tmpHwnd;
 			HINSTANCE hInstance;
 			LPCWSTR windowClass;
 			OpenGLDescription glParams;
+
+			ContextDescription()
+				:tmpHwnd(),
+				hInstance(0),
+				windowClass(0),
+				glParams()
+			{
+			}
 		};
 
 		class RenderContext
@@ -61,6 +70,8 @@ namespace vx
 			HGLRC m_pRenderingContext;
 			std::unique_ptr<s32[]> m_pContextAttribs;
 
+			bool initializeExtensions(HWND hwnd);
+			bool initializeOpenGl(const OpenGLDescription &desc);
 			bool initializeExtensionsWithTempWindow(HINSTANCE hInstance, LPCWSTR windowClass);
 			bool initializeOpenGl(const OpenGLDescription &params, const int *pContextAttribs);
 
@@ -71,9 +82,6 @@ namespace vx
 			~RenderContext();
 
 			bool initialize(const ContextDescription &params);
-
-			bool initializeExtensions(HWND hwnd);
-			bool initializeOpenGl(const OpenGLDescription &desc);
 
 			void shutdown(HWND hwnd);
 			void shutdown(const Window &window);

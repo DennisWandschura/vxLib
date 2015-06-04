@@ -30,9 +30,107 @@ SOFTWARE.
 #include <vxLib/gl/gl.h>
 #include <vxLib/memory.h>
 #include <vxLib/File/FileHandle.h>
+#include <vxLib/Variant.h>
 
-namespace
+namespace vx
 {
+	namespace gl
+	{
+		enum ShaderParameterType{ Int, Uint, Float };
+
+		struct ShaderParameter
+		{
+			union
+			{
+				u32 u;
+				s32 s;
+				f32 f;
+			};
+
+			ShaderParameterType type;
+
+			explicit ShaderParameter(u32 v) :u(v), type(ShaderParameterType::Uint){}
+			explicit ShaderParameter(s32 v) :s(v), type(ShaderParameterType::Int){}
+			explicit ShaderParameter(f32 v) :f(v), type(ShaderParameterType::Float){}
+
+			int operator()(char(&paramBuffer)[32]) const
+			{
+				if (type == ShaderParameterType::Int)
+				{
+					return sprintf(paramBuffer, "%d", s);
+				}
+				else if (type == ShaderParameterType::Float)
+				{
+					return sprintf(paramBuffer, "%f", f);
+				}
+				else
+				{
+					return sprintf(paramBuffer, "%u", u);
+				}
+			}
+		};
+	}
+}
+
+namespace ShaderManagerCpp
+{
+	const char* findParameter(const char* str)
+	{
+		while (true)
+		{
+			if (str[0] == '\0' || str[0] == '$')
+				break;
+
+			++str;
+		}
+
+		return str;
+	}
+
+	bool insertParameter(std::unique_ptr<char[]>* str, const vx::sorted_vector<vx::StringID, vx::gl::ShaderParameter> &params)
+	{
+		auto paramBegin = findParameter(str->get());
+		auto sizeToParam = paramBegin - str->get();
+		if (paramBegin[0] == '\0')
+			return false;
+
+		++paramBegin;
+
+		auto paramEnd = findParameter(paramBegin);
+		if (paramEnd[0] == '\0')
+			return false;
+
+		auto paramNameSize = paramEnd - paramBegin;
+		char paramName[32] = {};
+		strncpy(paramName, paramBegin, paramNameSize);
+
+		auto it = params.find(vx::make_sid(paramName));
+		if (it == params.end())
+		{
+			printf("could not find value for parameter '%s'\n", paramName);
+			return false;
+		}
+
+		++paramEnd;
+
+		auto sizeToEnd = strlen(paramEnd);
+
+		char paramBuffer[32] = {};
+
+		auto valueSize = (*it)(paramBuffer);
+
+		auto bufferSize = sizeToParam + valueSize + sizeToEnd;
+
+		auto newText = std::make_unique<char[]>(bufferSize + 1);
+		strncpy(newText.get(), str->get(), sizeToParam);
+		strncpy(newText.get() + sizeToParam, paramBuffer, valueSize);
+		strncpy(newText.get() + sizeToParam + valueSize, paramEnd, sizeToEnd);
+
+		str->swap(newText);
+
+		return true;
+	}
+
 	bool loadFile(const char* str, std::unique_ptr<char[]> &buffer, u32 &size)
 	{
 		std::ifstream inFile(str);
@@ -124,7 +222,7 @@ namespace
 		return false;
 	}
 
-	bool loadShaderProgram(const char* programFile, const std::string &includeDir, vx::gl::ShaderProgram* program, vx::sorted_vector<vx::StringID, std::string>* includeFiles)
+	bool loadShaderProgram(const char* programFile, const std::string &includeDir, const vx::sorted_vector<vx::StringID, vx::gl::ShaderParameter> &params, vx::gl::ShaderProgram* program, vx::sorted_vector<vx::StringID, std::string>* includeFiles)
 	{
 		std::unique_ptr<char[]> programBuffer;
 		u32 programSize;
@@ -135,6 +233,9 @@ namespace
 		{
 
 		}
+
+		while (insertParameter(&programBuffer, params))
+			;
 
 		const char* ptr = programBuffer.get();
 
@@ -245,7 +346,7 @@ namespace vx
 			if (it == m_shaderPrograms.end())
 			{
 				vx::gl::ShaderProgram program(type);
-				if (!loadShaderProgram(programFile.c_str(), includeDir, &program, &m_includeFiles))
+				if (!ShaderManagerCpp::loadShaderProgram(programFile.c_str(), includeDir, m_parameters, &program, &m_includeFiles))
 				{
 					printf("Error ShaderManager::loadProgram\n");
 					return false;
@@ -355,6 +456,26 @@ namespace vx
 			const std::string includeDir = m_dataDir + "shaders/include/";
 
 			return loadPipeline(fileHandle, pipelineDir, programDir, includeDir);
+		}
+
+		void ShaderManager::addParameter(const char* id, const ShaderParameter &param)
+		{
+			m_parameters.insert(vx::make_sid(id), param);
+		}
+
+		void ShaderManager::addParameter(const char* id, s32 value)
+		{
+			addParameter(id, ShaderParameter(value));
+		}
+
+		void ShaderManager::addParameter(const char* id, u32 value)
+		{
+			addParameter(id, ShaderParameter(value));
+		}
+
+		void ShaderManager::addParameter(const char* id, f32 value)
+		{
+			addParameter(id, ShaderParameter(value));
 		}
 
 		const vx::gl::ShaderProgram* ShaderManager::getProgram(const vx::StringID &sid) const
