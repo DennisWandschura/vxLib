@@ -175,6 +175,19 @@ namespace vx
 		sorted_vector() noexcept
 			: m_pKeys(nullptr), m_pValues(nullptr), m_size(0), m_capacity(0){}
 
+		sorted_vector(const sorted_vector &rhs)
+			:sorted_vector()
+		{
+			reserve(rhs.m_capacity);
+			m_size = rhs.m_size;
+
+			for (u32 i = 0; i < m_size; ++i)
+			{
+				m_pKeys[i] = rhs.m_pKeys[i];
+				m_pValues[i] = rhs.m_pValues[i];
+			}
+		}
+
 		sorted_vector(sorted_vector &&rhs)
 			: m_pKeys(rhs.m_pKeys), m_pValues(rhs.m_pValues), m_size(rhs.m_size), m_capacity(rhs.m_capacity)
 		{
@@ -195,6 +208,8 @@ namespace vx
 			m_size = 0;
 			m_capacity = 0;
 		}
+
+		sorted_vector& operator=(const sorted_vector &rhs) = delete;
 
 		sorted_vector& operator=(sorted_vector &&rhs)
 		{
@@ -337,6 +352,14 @@ namespace vx
 			rangeDestroy(m_pKeys, m_size);
 			rangeDestroy(m_pValues, m_size);
 			m_size = 0;
+		}
+
+		void swap(sorted_vector &other) noexcept
+		{
+			std::swap(m_pKeys, other.m_pKeys);
+			std::swap(m_pValues, other.m_pValues);
+			std::swap(m_size, other.m_size);
+			std::swap(m_capacity, other.m_capacity);
 		}
 
 			reference operator[](size_type i)

@@ -50,21 +50,28 @@ namespace vx
 	};
 
 	template<typename T>
-	struct CallbackCheck
+	struct CreationExplicit
 	{
-		static void check(bool b)
+		static void create()
 		{
-			if (!b)
-			{
-				T::checkCallback();
-			}
+
 		}
 	};
 
-	template<typename T, template <class> class CheckingPolicy = NoCheck>
-	class GlobalSingleton : public CheckingPolicy < GlobalSingleton<T, CheckingPolicy> >
+	template<typename T>
+	struct CreationImplicit
 	{
-		using MyCheck = CheckingPolicy < GlobalSingleton<T, CheckingPolicy> > ;
+		static void create()
+		{
+			T::create();
+		}
+	};
+
+	template<typename T, template <class> class CheckingPolicy = NoCheck, template<class> class CreationPolicy = CreationExplicit>
+	class GlobalSingleton : public CheckingPolicy < GlobalSingleton<T, CheckingPolicy, CreationPolicy> >, public CreationPolicy< GlobalSingleton<T, CheckingPolicy, CreationPolicy> >
+	{
+		using MyCheck = CheckingPolicy < GlobalSingleton<T, CheckingPolicy, CreationPolicy> >;
+		typedef CreationPolicy< GlobalSingleton<T, CheckingPolicy, CreationPolicy> > MyCreate;
 
 		struct Data
 		{
@@ -99,7 +106,7 @@ namespace vx
 		GlobalSingleton& operator=(const GlobalSingleton&) = delete;
 		GlobalSingleton& operator=(GlobalSingleton&&) = delete;
 
-		static void construct()
+		static void create()
 		{
 			if (s_constructed == 0)
 			{
@@ -109,7 +116,7 @@ namespace vx
 		}
 
 		template<typename ...Args>
-		static void construct(Args&& ...args)
+		static void create(Args&& ...args)
 		{
 			if (s_constructed == 0)
 			{
@@ -129,14 +136,15 @@ namespace vx
 
 		static T& get()
 		{
+			MyCreate::create();
 			MyCheck::check(s_constructed != 0);
 			return *((T*)s_data.m_buffer);
 		}
 	};
 
-	template<class U, template <class> class CheckingPolicy>
-	typename GlobalSingleton<U, CheckingPolicy>::Data GlobalSingleton<U, CheckingPolicy>::s_data{};
+	template<class U, template <class> class CheckingPolicy, template<class> class CreationPolicy>
+	typename GlobalSingleton<U, CheckingPolicy, CreationPolicy>::Data GlobalSingleton<U, CheckingPolicy, CreationPolicy>::s_data{};
 
-	template<class U, template <class> class CheckingPolicy>
-	u8 GlobalSingleton<U, CheckingPolicy>::s_constructed{ 0 };
+	template<class U, template <class> class CheckingPolicy, template<class> class CreationPolicy>
+	u8 GlobalSingleton<U, CheckingPolicy, CreationPolicy>::s_constructed{ 0 };
 }

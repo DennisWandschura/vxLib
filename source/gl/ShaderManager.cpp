@@ -53,7 +53,7 @@ namespace vx
 			explicit ShaderParameter(s32 v) :s(v), type(ShaderParameterType::Int){}
 			explicit ShaderParameter(f32 v) :f(v), type(ShaderParameterType::Float){}
 
-			int operator()(char(&paramBuffer)[32]) const
+			int operator()(char(&paramBuffer)[64]) const
 			{
 				if (type == ShaderParameterType::Int)
 				{
@@ -101,7 +101,7 @@ namespace ShaderManagerCpp
 			return false;
 
 		auto paramNameSize = paramEnd - paramBegin;
-		char paramName[32] = {};
+		char paramName[64] = {};
 		strncpy(paramName, paramBegin, paramNameSize);
 
 		auto it = params.find(vx::make_sid(paramName));
@@ -115,7 +115,7 @@ namespace ShaderManagerCpp
 
 		auto sizeToEnd = strlen(paramEnd);
 
-		char paramBuffer[32] = {};
+		char paramBuffer[64] = {};
 
 		auto valueSize = (*it)(paramBuffer);
 

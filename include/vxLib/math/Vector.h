@@ -1294,6 +1294,11 @@ namespace vx
 		return _mm_mul_ps(rad, g_VXRadToDeg);
 	}
 
+	inline vx::float3 radToDeg(const vx::float3 &radAngle)
+	{
+		return vx::float3(radAngle.x * VX_RADTODEG, radAngle.y * VX_RADTODEG, radAngle.z * VX_RADTODEG);
+	}
+
 	template<typename T>
 	inline vx::detail::vec2<T> clamp(const vx::detail::vec2<T> &value, const vx::detail::vec2<T> &vmin, const vx::detail::vec2<T> &vmax)
 	{
