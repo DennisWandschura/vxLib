@@ -31,6 +31,7 @@ SOFTWARE.
 namespace vx
 {
 	struct FileHandle;
+	class StackAllocator;
 
 	namespace gl
 	{
@@ -48,14 +49,14 @@ namespace vx
 			vx::sorted_vector<vx::StringID, ShaderParameter> m_parameters;
 			std::string m_dataDir;
 
-			bool loadProgram(const FileHandle &programHandle, vx::gl::ShaderProgramType type, const std::string &programDir, const std::string &includeDir);
+			bool loadProgram(const FileHandle &programHandle, vx::gl::ShaderProgramType type, const std::string &programDir, const std::string &includeDir, vx::StackAllocator* scratchAllocator);
 			bool useProgram(vx::gl::ProgramPipeline &pipe, const FileHandle &handle);
-			bool loadUseProgram(const LoadUseProgramDescription &desc);
+			bool loadUseProgram(const LoadUseProgramDescription &desc, vx::StackAllocator* scratchAllocator);
 
 			const vx::gl::ShaderProgram* getProgram(const vx::StringID &sid) const;
 
-			bool loadPipelines();
-			bool loadPipeline(const FileHandle &fileHandle, const std::string &pipelineDir, const std::string &programDir, const std::string &includeDir);
+			bool loadPipelines(vx::StackAllocator* scratchAllocator);
+			bool loadPipeline(const FileHandle &fileHandle, const std::string &pipelineDir, const std::string &programDir, const std::string &includeDir, vx::StackAllocator* scratchAllocator);
 
 			void addParameter(const char* id, const ShaderParameter &param);
 
@@ -63,10 +64,10 @@ namespace vx
 			ShaderManager();
 			~ShaderManager();
 
-			bool initialize(const std::string &dataDir, bool loadAllPipelinesFromDir);
+			bool initialize(const std::string &dataDir, vx::StackAllocator* scratchAllocator, bool loadAllPipelinesFromDir);
 			void clear();
 
-			bool loadPipeline(const FileHandle &filehandle);
+			bool loadPipeline(const FileHandle &filehandle, vx::StackAllocator* scratchAllocator);
 
 			void addParameter(const char* id, s32 value);
 			void addParameter(const char* id, u32 value);

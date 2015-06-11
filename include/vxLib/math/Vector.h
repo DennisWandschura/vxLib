@@ -806,14 +806,14 @@ namespace vx
 			);
 	}
 
-	inline __m128 VX_CALLCONV loadFloat(const detail::vec2<f32> &source)
+	inline __m128 VX_CALLCONV loadFloat2(const detail::vec2<f32> &source)
 	{
 		__m128 x = _mm_load_ss(&source.x);
 		__m128 y = _mm_load_ss(&source.y);
 		return _mm_unpacklo_ps(x, y);
 	}
 
-	inline __m128 VX_CALLCONV loadFloat(const detail::vec3<f32> &source)
+	inline __m128 VX_CALLCONV loadFloat3(const detail::vec3<f32> &source)
 	{
 		__m128 x = _mm_load_ss(&source.x);
 		__m128 y = _mm_load_ss(&source.y);
@@ -822,19 +822,19 @@ namespace vx
 		return _mm_movelh_ps(xy, z);
 	}
 
-	inline __m128 VX_CALLCONV loadFloat(const detail::vec4<f32> &source)
+	inline __m128 VX_CALLCONV loadFloat4(const detail::vec4<f32> &source)
 	{
 		return _mm_loadu_ps(&source.x);
 	}
 
-	inline void VX_CALLCONV storeFloat(detail::vec2<f32>* pDestination, CVEC4 V)
+	inline void VX_CALLCONV storeFloat2(detail::vec2<f32>* pDestination, CVEC4 V)
 	{
 		auto T = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
 		_mm_store_ss(&pDestination->x, V);
 		_mm_store_ss(&pDestination->y, T);
 	}
 
-	inline void VX_CALLCONV storeFloat(detail::vec3<f32>* pDestination, CVEC4 V)
+	inline void VX_CALLCONV storeFloat3(detail::vec3<f32>* pDestination, CVEC4 V)
 	{
 		auto T1 = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
 		auto T2 = _mm_shuffle_ps(V, V, _MM_SHUFFLE(2, 2, 2, 2));
@@ -843,7 +843,7 @@ namespace vx
 		_mm_store_ss(&pDestination->z, T2);
 	}
 
-	inline void VX_CALLCONV storeFloat(detail::vec4<f32> *pDestination, CVEC4 V)
+	inline void VX_CALLCONV storeFloat4(detail::vec4<f32> *pDestination, CVEC4 V)
 	{
 		_mm_storeu_ps(&pDestination->x, V);
 	}
@@ -1193,8 +1193,8 @@ namespace vx
 	template<>
 	inline f32 distance(const detail::vec3<f32> &v1, const detail::vec3<f32> &v2)
 	{
-		auto a = vx::loadFloat(v1);
-		auto b = vx::loadFloat(v2);
+		auto a = vx::loadFloat3(v1);
+		auto b = vx::loadFloat3(v2);
 		auto d = _mm_sub_ps(b, a);
 		d = _mm_dp_ps(d, d, 255);
 		d = _mm_sqrt_ps(d);
@@ -1211,8 +1211,8 @@ namespace vx
 	template<>
 	inline f32 distance(const detail::vec4<f32> &v1, const detail::vec4<f32> &v2)
 	{
-		auto a = vx::loadFloat(v1);
-		auto b = vx::loadFloat(v2);
+		auto a = vx::loadFloat4(v1);
+		auto b = vx::loadFloat4(v2);
 		auto d = _mm_sub_ps(b, a);
 		d = _mm_dp_ps(d, d, 255);
 		d = _mm_sqrt_ps(d);
