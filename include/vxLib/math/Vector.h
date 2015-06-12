@@ -1055,9 +1055,12 @@ namespace vx
 	inline __m128 VX_CALLCONV quaternionMultiply(CVEC4 Q1, CVEC4 Q2);
 	inline __m128 VX_CALLCONV quaternionConjugate(CVEC4 Q);
 	inline __m128 VX_CALLCONV quaternionRotationRollPitchYawFromVector(CVEC4 vector);
+	inline void VX_CALLCONV quaternionToAxisAngle(CVEC4 Q, __m128* pAxis, f32* pAngle);
 
 	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, CVEC4 V);
 	inline __m128 VX_CALLCONV VectorModAngles(CVEC4 Angles);
+
+	inline f32 VX_CALLCONV VectorGetW(CVEC4 V);
 
 	//////////////////////// inline functions
 
@@ -1297,6 +1300,39 @@ namespace vx
 	inline vx::float3 radToDeg(const vx::float3 &radAngle)
 	{
 		return vx::float3(radAngle.x * VX_RADTODEG, radAngle.y * VX_RADTODEG, radAngle.z * VX_RADTODEG);
+	}
+
+	inline void angleAxisToEuler(const vx::float4a &normalizedAxis, f32 angle, vx::float3* rollPitchYaw)
+	{
+		f32 s = sin(angle);
+		f32 c = cos(angle);
+		f32 t = 1.0f - c;
+
+		f32 pitch = 0, yaw = 0, roll = 0;
+
+		f32 tmp = (normalizedAxis.x * normalizedAxis.y * t + normalizedAxis.z * s);
+		if (tmp > 0.998f)
+		{ // north pole singularity detected
+			pitch = 2.0f * atan2(normalizedAxis.x * sin(angle / 2.0f), cos(angle / 2.0f));
+			yaw = vx::VX_PI / 2.0f;
+			roll = 0.0f;
+		}
+		else if (tmp < -0.998f)
+		{ // south pole singularity detected
+			pitch = -2.0f * atan2(normalizedAxis.x * sin(angle / 2.0f), cos(angle / 2.0f));
+			yaw = -vx::VX_PI / 2.0f;
+			roll = 0.0f;
+		}
+		else
+		{
+			pitch = atan2(normalizedAxis.y * s - normalizedAxis.x * normalizedAxis.z * t, 1.0f - (normalizedAxis.y * normalizedAxis.y + normalizedAxis.z * normalizedAxis.z) * t);
+			yaw = asin(normalizedAxis.x * normalizedAxis.y * t + normalizedAxis.z * s);
+			roll = atan2(normalizedAxis.x * s - normalizedAxis.y * normalizedAxis.z * t, 1.0f - (normalizedAxis.x * normalizedAxis.x + normalizedAxis.z * normalizedAxis.z) * t);
+		}
+
+		rollPitchYaw->x = vx::radToDeg(roll);
+		rollPitchYaw->y = vx::radToDeg(pitch);
+		rollPitchYaw->z = vx::radToDeg(yaw);
 	}
 
 	template<typename T>

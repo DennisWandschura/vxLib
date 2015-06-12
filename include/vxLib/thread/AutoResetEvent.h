@@ -1,4 +1,5 @@
 #pragma once
+
 /*
 The MIT License (MIT)
 
@@ -23,28 +24,50 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/types.h>
+#include <atomic>
+#include <vxLib/thread/Semaphore.h>
 
 namespace vx
 {
-	struct FileHeader
+	class AutoResetEvent
 	{
-		static const u32 s_magic = 0x1337b0b;
+		// m_status == 1: Event object is signaled.
+		// m_status == 0: Event object is reset and no threads are waiting.
+		// m_status == -N: Event object is reset and N threads are waiting.
+		std::atomic<int> m_status;
+		Semaphore m_sema;
 
-		u32 magic;
-		u32 version;
-		u64 crc;
-
-		bool isValid() const
+	public:
+		AutoResetEvent()
+			:m_status(0),
+			m_sema()
 		{
-			return (magic == s_magic && crc != 0);
+
 		}
 
-		bool isEqual(const FileHeader &other) const
+		void wait()
 		{
-			return (this->magic == other.magic &&
-				this->version == other.version &&
-				this->crc == other.crc);
+			auto oldStatus = m_status.fetch_sub(1);
+			if (oldStatus < 1)
+			{
+				m_sema.wait();
+			}
+		}
+
+		void signal()
+		{
+			int oldStatus = m_status.load(std::memory_order_relaxed);
+			for (;;)    // Increment m_status atomically via CAS loop.
+			{
+				assert(oldStatus <= 1);
+				int newStatus = oldStatus < 1 ? oldStatus + 1 : 1;
+				if (m_status.compare_exchange_weak(oldStatus, newStatus, std::memory_order_release, std::memory_order_relaxed))
+					break;
+				// The compare-exchange failed, likely because another thread changed m_status.
+				// oldStatus has been updated. Retry the CAS loop.
+			}
+			if (oldStatus < 0)
+				m_sema.signal();    // Release one waiting thread.
 		}
 	};
 }

@@ -1,4 +1,5 @@
 #pragma once
+
 /*
 The MIT License (MIT)
 
@@ -23,28 +24,70 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/types.h>
+#include <thread>
 
 namespace vx
 {
-	struct FileHeader
+	class thread
 	{
-		static const u32 s_magic = 0x1337b0b;
+		std::thread m_thread;
 
-		u32 magic;
-		u32 version;
-		u64 crc;
-
-		bool isValid() const
+	public:
+		thread()
 		{
-			return (magic == s_magic && crc != 0);
+
 		}
 
-		bool isEqual(const FileHeader &other) const
+		template<class _Fn,
+		class... _Args>
+			explicit thread(_Fn&& _Fx, _Args&&... _Ax)
+			:m_thread(std::forward<_Fn>(_Fx), std::forward<_Args>(_Ax)...)
 		{
-			return (this->magic == other.magic &&
-				this->version == other.version &&
-				this->crc == other.crc);
+
+		}
+
+		thread(const thread&) = delete;
+
+		thread(thread &&rhs)
+			:m_thread(std::move(rhs.m_thread))
+		{
+
+		}
+
+		~thread()
+		{
+			if (m_thread.joinable())
+				m_thread.join();
+		}
+
+		thread& operator=(const thread&) = delete;
+
+		thread& operator=(thread &&rhs)
+		{
+			if (this != &rhs)
+			{
+				m_thread = std::move(rhs.m_thread);
+			}
+		}
+
+		void swap(thread &other)
+		{
+			m_thread.swap(other.m_thread);
+		}
+
+		void join()
+		{
+			m_thread.join();
+		}
+
+		bool isJoinable() const
+		{
+			return m_thread.joinable();
+		}
+
+		void detach()
+		{
+			m_thread.detach();
 		}
 	};
 }

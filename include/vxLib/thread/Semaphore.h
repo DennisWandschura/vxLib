@@ -1,4 +1,5 @@
 #pragma once
+
 /*
 The MIT License (MIT)
 
@@ -23,28 +24,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/types.h>
-
 namespace vx
 {
-	struct FileHeader
+	class Semaphore
 	{
-		static const u32 s_magic = 0x1337b0b;
+		void* m_handle;
 
-		u32 magic;
-		u32 version;
-		u64 crc;
+	public:
+		Semaphore();
 
-		bool isValid() const
-		{
-			return (magic == s_magic && crc != 0);
-		}
+		Semaphore(const Semaphore&) = delete;
 
-		bool isEqual(const FileHeader &other) const
-		{
-			return (this->magic == other.magic &&
-				this->version == other.version &&
-				this->crc == other.crc);
-		}
+		Semaphore(Semaphore &&rhs);
+
+		~Semaphore();
+
+		Semaphore& operator=(const Semaphore&) = delete;
+
+		Semaphore& operator=(Semaphore &&rhs);
+
+		void wait();
+
+		void signal();
 	};
 }

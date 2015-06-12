@@ -1,4 +1,7 @@
-#pragma once
+#include <vxLib/Semaphore.h>
+#include <Windows.h>
+#include <algorithm>
+
 /*
 The MIT License (MIT)
 
@@ -23,28 +26,41 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/types.h>
-
 namespace vx
 {
-	struct FileHeader
+	Semaphore::Semaphore()
+		:m_handle(CreateSemaphore(nullptr, 0, 1, nullptr))
 	{
-		static const u32 s_magic = 0x1337b0b;
+	}
 
-		u32 magic;
-		u32 version;
-		u64 crc;
+	Semaphore::Semaphore(Semaphore &&rhs)
+		:m_handle(rhs.m_handle)
+	{
+		rhs.m_handle = nullptr;
+	}
 
-		bool isValid() const
+	Semaphore::~Semaphore()
+	{
+		if (m_handle)
+			CloseHandle(m_handle);
+	}
+
+	Semaphore& Semaphore::operator=(Semaphore &&rhs)
+	{
+		if (this != &rhs)
 		{
-			return (magic == s_magic && crc != 0);
+			std::swap(m_handle, rhs.m_handle);
 		}
+		return *this;
+	}
 
-		bool isEqual(const FileHeader &other) const
-		{
-			return (this->magic == other.magic &&
-				this->version == other.version &&
-				this->crc == other.crc);
-		}
-	};
+	void Semaphore::wait()
+	{
+		WaitForSingleObject(m_handle, INFINITE);
+	}
+
+	void Semaphore::signal()
+	{
+		ReleaseSemaphore(m_handle, 1, nullptr);
+	}
 }

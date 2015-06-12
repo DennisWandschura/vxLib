@@ -101,7 +101,19 @@ namespace vx
 		return (WriteFile(m_pFile, ptr, size, (DWORD*)pWrittenBytes, nullptr) != 0);
 	}
 
-	u32 File::getSize() const
+	bool File::setEof()
+	{
+		return (SetEndOfFile(m_pFile) != 0);
+	}
+
+	bool File::seek(s64 offset)
+	{
+		LARGE_INTEGER tmp;
+		tmp.QuadPart = offset;
+		return (SetFilePointerEx(m_pFile, tmp, nullptr, FILE_CURRENT) != 0);
+	}
+
+	s64 File::getSize() const
 	{
 		LARGE_INTEGER fileSize;
 		if (GetFileSizeEx(m_pFile, &fileSize) == 0)

@@ -69,6 +69,10 @@ namespace vx
 			return write(ptr, sizeof(T) * count, nullptr);
 		}
 
-		u32 getSize() const;
+		bool setEof();
+
+		bool seek(s64 offset);
+
+		s64 getSize() const;
 	};
 }

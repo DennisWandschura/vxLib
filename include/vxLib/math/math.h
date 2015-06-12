@@ -144,6 +144,29 @@ namespace vx
 		*pCos = sign*p;
 	}
 
+	inline float scalarACos
+		(
+		float Value
+		)
+	{
+		// Clamp input to [-1,1].
+		bool nonnegative = (Value >= 0.0f);
+		float x = fabsf(Value);
+		float omx = 1.0f - x;
+		if (omx < 0.0f)
+		{
+			omx = 0.0f;
+		}
+		float root = sqrtf(omx);
+
+		// 7-degree minimax approximation
+		float result = ((((((-0.0012624911f * x + 0.0066700901f) * x - 0.0170881256f) * x + 0.0308918810f) * x - 0.0501743046f) * x + 0.0889789874f) * x - 0.2145988016f) * x + 1.5707963050f;
+		result *= root;
+
+		// acos(x) = pi - acos(-x) when x < 0
+		return (nonnegative ? result : VX_PI - result);
+	}
+
 	inline float scalarModAngle
 		(
 		float Angle

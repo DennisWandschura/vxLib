@@ -242,6 +242,16 @@ namespace vx
 		return Q;
 	}
 
+	inline void VX_CALLCONV quaternionToAxisAngle(CVEC4 Q, __m128* pAxis, f32* pAngle)
+	{
+		assert(pAxis);
+		assert(pAngle);
+
+		*pAxis = Q;
+
+		*pAngle = 2.0f * scalarACos(VectorGetW(Q));
+	}
+
 	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, CVEC4 V)
 	{
 		// Force the value within the bounds of pi
@@ -325,5 +335,11 @@ namespace vx
 		vResult = _mm_mul_ps(vResult, g_VXTwoPi);
 		vResult = _mm_sub_ps(Angles, vResult);
 		return vResult;
+	}
+
+	inline f32 VX_CALLCONV VectorGetW(CVEC4 V)
+	{
+		auto vTemp = VX_PERMUTE_PS(V, _MM_SHUFFLE(3, 3, 3, 3));
+		return _mm_cvtss_f32(vTemp);
 	}
 }

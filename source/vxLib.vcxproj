@@ -136,6 +136,7 @@
     <ClInclude Include="..\include\vxLib\Allocator\Allocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\PoolAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\StackAllocator.h" />
+    <ClInclude Include="..\include\vxLib\AutoResetEvent.h" />
     <ClInclude Include="..\include\vxLib\Container\array.h" />
     <ClInclude Include="..\include\vxLib\Container\bitset.h" />
     <ClInclude Include="..\include\vxLib\Container\DoubleBuffer.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="..\include\vxLib\memory.h" />
     <ClInclude Include="..\include\vxLib\RawInput.h" />
     <ClInclude Include="..\include\vxLib\ScopeGuard.h" />
+    <ClInclude Include="..\include\vxLib\Semaphore.h" />
     <ClInclude Include="..\include\vxLib\Singleton.h" />
     <ClInclude Include="..\include\vxLib\stb_image.h" />
     <ClInclude Include="..\include\vxLib\stb_image_write.h" />
@@ -208,6 +210,7 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="PoolAllocator.cpp" />
     <ClCompile Include="RawInput.cpp" />
+    <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="StackAllocator.cpp" />
     <ClCompile Include="stb_image.c" />
     <ClCompile Include="stb_image_write.c" />
