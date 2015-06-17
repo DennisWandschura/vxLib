@@ -228,6 +228,321 @@ namespace ShaderManagerCpp
 		return false;
 	}
 
+	const char* getInclude(const char* text)
+	{
+		while (true)
+		{
+			auto c = text[0];
+
+			if (c == '\0' || c == '"')
+				break;
+
+			++text;
+		}
+
+		return text;
+	}
+
+	const char* getPreprocessorCommandEnd(const char* text)
+	{
+		while (true)
+		{
+			auto c = text[0];
+
+			if (c == '\0' || c == ' ' || c == '\n')
+				break;
+
+			++text;
+		}
+
+		return text;
+	}
+
+	const char* getPreprocessorCommand(const char* text)
+	{
+		while (true)
+		{
+			auto c = text[0];
+
+			if (c == '\0' || c == '#')
+				break;
+
+			++text;
+		}
+
+		return text;
+	}
+
+	const char* getElseOrEndif(const char* text)
+	{
+		int layer = 0;
+		std::string buffer;
+		while (true)
+		{
+			auto command = getPreprocessorCommand(text);
+			if (command[0] == '\0')
+				break;
+
+			auto commandEnd = getPreprocessorCommandEnd(command);
+
+			buffer.clear();
+			buffer.assign(command, commandEnd);
+
+			text = commandEnd;
+			if (strcmp(buffer.c_str(), "#if") == 0)
+			{
+				++layer;
+			}
+			else if (strcmp(buffer.c_str(), "#ifdef") == 0)
+			{
+				++layer;
+			}
+			else if (strcmp(buffer.c_str(), "#ifndef") == 0)
+			{
+				++layer;
+			}
+			else if (strcmp(buffer.c_str(), "#else") == 0)
+			{
+				if (layer == 0)
+				{
+					break;
+				}
+			}
+			else if (strcmp(buffer.c_str(), "#endif") == 0)
+			{
+				if (layer == 0)
+				{
+					break;
+				}
+				--layer;
+			}
+		}
+
+		return text;
+	}
+
+	const char* getNextLine(const char* text)
+	{
+		while (true)
+		{
+			auto c = text[0];
+
+			if (c == '\0' || c == '\n')
+				break;
+
+			++text;
+		}
+
+		return text;
+	}
+
+	const char* getCommandValue(const char* ptr, std::string* commandValue)
+	{
+		auto valueStart = ptr + 1;
+		auto valueEnd = getPreprocessorCommandEnd(valueStart);
+
+		commandValue->clear();
+		commandValue->assign(valueStart, valueEnd);
+
+		return valueEnd;
+	}
+
+	const char* getEof(const char* ptr)
+	{
+		while (true)
+		{
+			if (ptr[0] == '\0')
+				break;
+
+			++ptr;
+		}
+
+		return ptr;
+	}
+
+	void handleIfndef(char* ptr, const char* end, std::string* commandValue, const vx::sorted_vector<vx::StringID, s32> &localDefines)
+	{
+		auto valueEnd = getCommandValue(end + 1, commandValue);
+		auto sid = vx::make_sid(commandValue->c_str());
+
+		bool found = false;
+		auto it = localDefines.find(sid);
+		if (it == localDefines.end())
+		{
+			found = true;
+		}
+
+		if (!found)
+		{
+			auto endifEnd = getElseOrEndif(valueEnd);
+			auto endifEndOther = getElseOrEndif(endifEnd + 1);
+
+			if (endifEnd != endifEndOther)
+			{
+				auto sizeToElse = endifEnd - ptr;
+				memset(ptr, ' ', sizeToElse);
+
+				auto endifStart = endifEndOther;
+				while (true)
+				{
+					if (endifStart[0] == '#')
+						break;
+
+					--endifStart;
+				}
+
+				endifEnd = endifStart;
+			}
+
+			auto size = endifEndOther - endifEnd;
+			auto offset = endifEnd - ptr;
+			memset(ptr + offset, ' ', size);
+		}
+	}
+
+	void processText(char** text, int bufferSize, const std::string &includeDir, 
+		vx::sorted_vector<vx::StringID, s32>* localDefines, vx::sorted_vector<vx::StringID, std::string>* includeFiles, vx::sorted_vector<vx::StringID, s32>* includedFiles, vx::StackAllocator* scratchAllocator)
+	{
+		const char* commandDefine = "#define";
+		const char* commandIfdef = "#ifdef";
+		const char* commandIfndef = "#ifndef";
+		const char* commandInclude = "#include";
+
+		std::string command;
+		std::string commandValue;
+
+		char* ptr = *text;
+		while (true)
+		{
+			auto c = ptr[0];
+			if (c == '\0')
+				break;
+
+			if (c == '#')
+			{
+				auto end = getPreprocessorCommandEnd(ptr);
+
+				command.clear();
+				command.assign(ptr, end);
+
+				if (strcmp(command.c_str(), commandDefine) == 0)
+				{
+					getCommandValue(end + 1, &commandValue);
+
+					auto sid = vx::make_sid(commandValue.c_str());
+					localDefines->insert(sid, 1);
+				}
+				else if (strcmp(command.c_str(), commandIfdef) == 0)
+				{
+					auto valueEnd = getCommandValue(end + 1, &commandValue);
+
+					auto sid = vx::make_sid(commandValue.c_str());
+
+					bool found = true;
+					auto it = localDefines->find(sid);
+					if (it == localDefines->end())
+					{
+						found = false;
+					}
+
+					if (!found)
+					{
+						auto endifEnd = getElseOrEndif(valueEnd);
+						auto endifEndOther = getElseOrEndif(endifEnd + 1);
+
+						if (endifEnd != endifEndOther)
+						{
+							auto sizeToElse = endifEnd - ptr;
+							memset(ptr, ' ', sizeToElse);
+
+							auto endifStart = endifEndOther;
+							while (true)
+							{
+								if (endifStart[0] == '#')
+									break;
+
+								--endifStart;
+							}
+
+							endifEnd = endifStart;
+						}
+
+						auto size = endifEndOther - endifEnd;
+						auto offset = endifEnd - ptr;
+						memset(ptr + offset, ' ', size);
+					}
+				}
+				else if (strcmp(command.c_str(), commandIfndef) == 0)
+				{
+					handleIfndef(ptr, end, &commandValue, *localDefines);
+				}
+				else if (strcmp(command.c_str(), commandInclude) == 0)
+				{
+					auto includeFileStart = getInclude(end + 1) + 1;
+					auto includeFileEnd = getInclude(includeFileStart + 1);
+
+					commandValue.clear();
+					commandValue.assign(includeFileStart, includeFileEnd);
+
+					auto sid = vx::make_sid(commandValue.c_str());
+
+					auto itIncluded = includedFiles->find(sid);
+					if (itIncluded == includedFiles->end())
+					{
+						auto it = includeFiles->find(sid);
+						if (it == includeFiles->end())
+						{
+							std::string file = includeDir + commandValue;
+							//file.pop_back();
+
+							char* includeBuffer = nullptr;
+							//printf("trying to open file %s\n", file.c_str());
+
+							u32 includeSize = 0;
+							if (loadFile(file.c_str(), &includeBuffer, includeSize, scratchAllocator))
+							{
+								std::string includeFile;
+								includeFile.assign(includeBuffer);
+
+								includedFiles->insert(sid, 1);
+								it = includeFiles->insert(std::move(sid), std::move(includeFile));
+							}
+						}
+
+						if (it != includeFiles->end())
+						{
+							auto includeSize = it->size();
+
+							auto eof = getEof(includeFileEnd);
+							auto sizeToEnd = eof - includeFileEnd;
+
+							bufferSize += includeSize;
+							auto newBuffer = (char*)scratchAllocator->allocate(bufferSize);
+
+							int copiedSize = 0;
+							auto sizeToInclude = ptr - *text;
+							memcpy(newBuffer, *text, sizeToInclude);
+							copiedSize += sizeToInclude;
+							memcpy(newBuffer + sizeToInclude, it->c_str(), includeSize);
+							copiedSize += includeSize;
+							memcpy(newBuffer + copiedSize, includeFileEnd + 1, sizeToEnd);
+
+							*text = newBuffer;
+
+							ptr = *text + sizeToInclude;
+						}
+					}
+				}
+				else
+				{
+					//	printf("Not supported: %s\n", command.c_str());
+				}
+			}
+
+			++ptr;
+		}
+	}
+
 	bool loadShaderProgram(const char* programFile, const std::string &includeDir, const vx::sorted_vector<vx::StringID, vx::gl::ShaderParameter> &params,
 		vx::gl::ShaderProgram* program, vx::sorted_vector<vx::StringID, std::string>* includeFiles, vx::StackAllocator* scratchAllocator)
 	{
@@ -242,10 +557,15 @@ namespace ShaderManagerCpp
 		if (!loadFile(programFile, &programBuffer, programSize, scratchAllocator))
 			return false;
 
-		while (getAndAppendInclude(&programBuffer, &programSize, includeDir, includeFiles, scratchAllocator))
+		vx::sorted_vector<vx::StringID, s32> localDefines;
+
+		vx::sorted_vector<vx::StringID, s32> included;
+		processText(&programBuffer, programSize, includeDir, &localDefines, includeFiles, &included, scratchAllocator);
+
+		/*while (getAndAppendInclude(&programBuffer, &programSize, includeDir, includeFiles, scratchAllocator))
 		{
 
-		}
+		}*/
 
 		while (insertParameter(&programBuffer, params, scratchAllocator))
 			;
@@ -257,6 +577,10 @@ namespace ShaderManagerCpp
 		if (log)
 		{
 			printf("Error '%s'\n%s\n", programFile, log.get());
+
+			std::string errorFile("error.txt");
+			std::ofstream outFile(errorFile);
+			outFile << ptr;
 			//printf("%s\n", ptr);
 
 			return false;
@@ -488,6 +812,28 @@ namespace vx
 		void ShaderManager::addParameter(const char* id, f32 value)
 		{
 			addParameter(id, ShaderParameter(value));
+		}
+
+		void ShaderManager::addIncludeFile(const char* file, const char* key)
+		{
+			std::ifstream inFile(file);
+			if (!inFile.is_open())
+				return;
+
+			inFile.seekg(0, std::ifstream::end);
+			auto size = inFile.tellg();
+			inFile.seekg(0, std::ifstream::beg);
+
+			auto buffer = std::make_unique<char[]>(size);
+			inFile.read(buffer.get(), size);
+
+			std::string data;
+			data.reserve(size);
+			data.assign(buffer.get(), buffer.get() + size);
+
+			auto sid = vx::make_sid(key);
+
+			m_includeFiles.insert(std::move(sid), std::move(data));
 		}
 
 		const vx::gl::ShaderProgram* ShaderManager::getProgram(const vx::StringID &sid) const

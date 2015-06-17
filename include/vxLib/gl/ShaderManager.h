@@ -73,6 +73,8 @@ namespace vx
 			void addParameter(const char* id, u32 value);
 			void addParameter(const char* id, f32 value);
 
+			void addIncludeFile(const char* file, const char* key);
+
 			const vx::gl::ProgramPipeline* getPipeline(const char* id) const;
 			const vx::gl::ProgramPipeline* getPipeline(const FileHandle &fileHandle) const;
 			const vx::gl::ProgramPipeline* getPipeline(const vx::StringID &sid) const;

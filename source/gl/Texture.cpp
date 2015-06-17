@@ -602,7 +602,8 @@ namespace vx
 			m_format(rhs.m_format),
 			m_internalFormat(rhs.m_internalFormat),
 			m_size(rhs.m_size),
-			m_formatData(std::move(rhs.m_formatData))
+			m_formatData(std::move(rhs.m_formatData)),
+			m_compressed(rhs.m_compressed)
 		{
 		}
 
@@ -621,6 +622,7 @@ namespace vx
 				m_internalFormat = rhs.m_internalFormat;
 				m_size = rhs.m_size;
 				m_formatData = rhs.m_formatData;
+				m_compressed = rhs.m_compressed;
 			}
 
 			return *this;

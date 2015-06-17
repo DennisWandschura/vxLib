@@ -136,7 +136,6 @@
     <ClInclude Include="..\include\vxLib\Allocator\Allocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\PoolAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\StackAllocator.h" />
-    <ClInclude Include="..\include\vxLib\AutoResetEvent.h" />
     <ClInclude Include="..\include\vxLib\Container\array.h" />
     <ClInclude Include="..\include\vxLib\Container\bitset.h" />
     <ClInclude Include="..\include\vxLib\Container\DoubleBuffer.h" />
@@ -170,17 +169,19 @@
     <ClInclude Include="..\include\vxLib\memory.h" />
     <ClInclude Include="..\include\vxLib\RawInput.h" />
     <ClInclude Include="..\include\vxLib\ScopeGuard.h" />
-    <ClInclude Include="..\include\vxLib\Semaphore.h" />
     <ClInclude Include="..\include\vxLib\Singleton.h" />
     <ClInclude Include="..\include\vxLib\stb_image.h" />
     <ClInclude Include="..\include\vxLib\stb_image_write.h" />
     <ClInclude Include="..\include\vxLib\StringID.h" />
+    <ClInclude Include="..\include\vxLib\thread\AutoResetEvent.h" />
+    <ClInclude Include="..\include\vxLib\thread\Semaphore.h" />
     <ClInclude Include="..\include\vxLib\types.h" />
     <ClInclude Include="..\include\vxLib\type_traits.h" />
     <ClInclude Include="..\include\vxLib\util\CityHash.h" />
     <ClInclude Include="..\include\vxLib\util\DebugPrint.h" />
     <ClInclude Include="..\include\vxLib\util\streamHelper.h" />
     <ClInclude Include="..\include\vxLib\Window.h" />
+    <ClInclude Include="thread.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\include\vxLib\math\matrix.inl" />

@@ -1,6 +1,4 @@
-#include <vxLib/thread/Semaphore.h>
-#include <Windows.h>
-#include <algorithm>
+#pragma once
 
 /*
 The MIT License (MIT)
@@ -26,41 +24,70 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include <thread>
+
 namespace vx
 {
-	Semaphore::Semaphore()
-		:m_handle(CreateSemaphore(nullptr, 0, 1, nullptr))
+	class thread
 	{
-	}
+		std::thread m_thread;
 
-	Semaphore::Semaphore(Semaphore &&rhs)
-		:m_handle(rhs.m_handle)
-	{
-		rhs.m_handle = nullptr;
-	}
-
-	Semaphore::~Semaphore()
-	{
-		if (m_handle)
-			CloseHandle(m_handle);
-	}
-
-	Semaphore& Semaphore::operator=(Semaphore &&rhs)
-	{
-		if (this != &rhs)
+	public:
+		thread()
 		{
-			std::swap(m_handle, rhs.m_handle);
+
 		}
-		return *this;
-	}
 
-	void Semaphore::wait()
-	{
-		WaitForSingleObject(m_handle, INFINITE);
-	}
+		template<class _Fn,
+		class... _Args>
+			explicit thread(_Fn&& _Fx, _Args&&... _Ax)
+			:m_thread(std::forward<_Fn>(_Fx), std::forward<_Args>(_Ax)...)
+		{
 
-	void Semaphore::signal()
-	{
-		ReleaseSemaphore(m_handle, 1, nullptr);
-	}
+		}
+
+		thread(const thread&) = delete;
+
+		thread(thread &&rhs)
+			:m_thread(std::move(rhs.m_thread))
+		{
+
+		}
+
+		~thread()
+		{
+			if (m_thread.joinable())
+				m_thread.join();
+		}
+
+		thread& operator=(const thread&) = delete;
+
+		thread& operator=(thread &&rhs)
+		{
+			if (this != &rhs)
+			{
+				m_thread = std::move(rhs.m_thread);
+			}
+		}
+
+		void swap(thread &other)
+		{
+			m_thread.swap(other.m_thread);
+		}
+
+		void join()
+		{
+			m_thread.join();
+		}
+
+		bool isJoinable() const
+		{
+			return m_thread.joinable();
+		}
+
+		void detach()
+		{
+			m_thread.detach();
+		}
+	};
 }
