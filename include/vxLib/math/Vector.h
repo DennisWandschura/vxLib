@@ -98,6 +98,11 @@ namespace vx
 				return v[i];
 			}
 
+			vec2 operator-() const
+			{
+				return vec2(-x, -y);
+			}
+
 			vec2& operator+=(const vec2 &rhs)
 			{
 				x += rhs.x;
@@ -261,6 +266,11 @@ namespace vx
 				return v[i];
 			}
 
+			vec2a operator-() const
+			{
+				return vec2a(-x, -y);
+			}
+
 			vec2a& operator+=(const vec2a &rhs)
 			{
 				x += rhs.x;
@@ -409,6 +419,11 @@ namespace vx
 
 			template<typename U>
 			vec3(const vec3<U> &v) : x(static_cast<U>(v.x)), y(static_cast<U>(v.y)), z(static_cast<U>(v.z)){}
+
+			vec3 operator-() const
+			{
+				return vec3(-x, -y, -z);
+			}
 
 			operator value_type*()
 			{
@@ -587,6 +602,11 @@ namespace vx
 
 			template<typename U>
 			vec4(const vec4<U> &v) : x(static_cast<U>(v.x)), y(static_cast<U>(v.y)), z(static_cast<U>(v.z)),w(static_cast<U>(v.w)){}
+
+			vec4 operator-() const
+			{
+				return vec4(-x, -y, -z, -w);
+			}
 
 			operator value_type*()
 			{
