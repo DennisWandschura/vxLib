@@ -157,77 +157,6 @@ namespace ShaderManagerCpp
 		return true;
 	}
 
-	char* appendInclude(const char* programBuffer, u32* programSize, const std::string &include, const char* includeStart, vx::StackAllocator* scratchAllocator)
-	{
-		auto includeSize = include.size();
-
-		char* newProgram = (char*)scratchAllocator->allocate(*programSize + includeSize);
-		memset(newProgram, 0, *programSize + includeSize);
-		
-		u32 currentSize = 0;
-
-		auto size = includeStart - programBuffer;
-
-		memcpy(newProgram, programBuffer, size);
-		currentSize += size;
-
-		auto includeBufferEnd = strchr(include.data(), '\0');
-		includeSize = includeBufferEnd - include.data();
-
-		memcpy(newProgram + currentSize, include.data(), includeSize);
-		currentSize += includeSize;
-
-		auto includeEnd = strchr(includeStart, '\n');
-
-		size = (programBuffer + *programSize) - includeEnd;
-		memcpy(newProgram + currentSize, includeEnd, size);
-		currentSize += size;
-
-		*programSize = currentSize;
-
-		return newProgram;
-	}
-
-	bool getAndAppendInclude(char** programBuffer, u32* programSize, const std::string &includeDir, vx::sorted_vector<vx::StringID, std::string>* includeFiles, vx::StackAllocator* scratchAllocator)
-	{
-		char* includeBuffer = nullptr;
-		u32 includeSize = 0;
-		auto includeStart = strstr(*programBuffer, "#include");
-		if (includeStart)
-		{
-			auto includeFile = strchr(includeStart, ' ');
-			if (includeFile)
-			{
-				char buffer[64];
-				auto strSize = sscanf(includeFile, "%s", buffer);
-
-				auto sid = vx::make_sid(buffer + 1);
-
-				auto it = includeFiles->find(sid);
-				if (it == includeFiles->end())
-				{
-					std::string file = includeDir + (buffer + 1);
-					file.pop_back();
-
-					if (!loadFile(file.c_str(), &includeBuffer, includeSize, scratchAllocator))
-					{
-						return false;
-					}
-
-					std::string includeFile;
-					includeFile.assign(includeBuffer);
-
-					it = includeFiles->insert(std::move(sid), std::move(includeFile));
-				}
-
-				*programBuffer = appendInclude(*programBuffer, programSize, *it, includeStart, scratchAllocator);
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	const char* getInclude(const char* text)
 	{
 		while (true)
@@ -360,17 +289,71 @@ namespace ShaderManagerCpp
 		return ptr;
 	}
 
-	void handleIfndef(char* ptr, const char* end, std::string* commandValue, const vx::sorted_vector<vx::StringID, s32> &localDefines)
+	bool hasDefine(const vx::StringID &sid, const vx::sorted_vector<vx::StringID, s32> &localDefines, const vx::sorted_vector<vx::StringID, s32> &globalDefines)
+	{
+		bool found = false;
+
+		auto it = localDefines.find(sid);
+		if (it != localDefines.end())
+		{
+			found = true;
+		}
+		else
+		{
+			auto itGlobal = globalDefines.find(sid);
+			if (itGlobal != globalDefines.end())
+			{
+				found = true;
+			}
+		}
+
+		return found;
+	}
+
+	void handleIfndef(char* ptr, const char* end, std::string* commandValue, 
+		const vx::sorted_vector<vx::StringID, s32> &localDefines, const vx::sorted_vector<vx::StringID, s32> &globalDefines)
 	{
 		auto valueEnd = getCommandValue(end + 1, commandValue);
 		auto sid = vx::make_sid(commandValue->c_str());
 
-		bool found = false;
-		auto it = localDefines.find(sid);
-		if (it == localDefines.end())
+		bool found = hasDefine(sid, localDefines, globalDefines);
+
+		if (!found)
 		{
-			found = true;
+			auto endifEnd = getElseOrEndif(valueEnd);
+			auto endifEndOther = getElseOrEndif(endifEnd + 1);
+
+			if (endifEnd != endifEndOther)
+			{
+				auto sizeToElse = endifEnd - ptr;
+				memset(ptr, ' ', sizeToElse);
+
+				auto endifStart = endifEndOther;
+				while (true)
+				{
+					if (endifStart[0] == '#')
+						break;
+
+					--endifStart;
+				}
+
+				endifEnd = endifStart;
+			}
+
+			auto size = endifEndOther - endifEnd;
+			auto offset = endifEnd - ptr;
+			memset(ptr + offset, ' ', size);
 		}
+	}
+
+	void handleIfDef(char* ptr, const char* end, std::string* commandValue,
+		const vx::sorted_vector<vx::StringID, s32> &localDefines, const vx::sorted_vector<vx::StringID, s32> &globalDefines)
+	{
+		auto valueEnd = getCommandValue(end + 1, commandValue);
+
+		auto sid = vx::make_sid(commandValue->c_str());
+
+		bool found = hasDefine(sid, localDefines, globalDefines);
 
 		if (!found)
 		{
@@ -401,7 +384,8 @@ namespace ShaderManagerCpp
 	}
 
 	void processText(char** text, int bufferSize, const std::string &includeDir, 
-		vx::sorted_vector<vx::StringID, s32>* localDefines, vx::sorted_vector<vx::StringID, std::string>* includeFiles, vx::sorted_vector<vx::StringID, s32>* includedFiles, vx::StackAllocator* scratchAllocator)
+		const vx::sorted_vector<vx::StringID, s32> &globalDefines, vx::sorted_vector<vx::StringID, s32>* localDefines,
+		vx::sorted_vector<vx::StringID, std::string>* includeFiles, vx::sorted_vector<vx::StringID, s32>* includedFiles, vx::StackAllocator* scratchAllocator)
 	{
 		const char* commandDefine = "#define";
 		const char* commandIfdef = "#ifdef";
@@ -434,47 +418,11 @@ namespace ShaderManagerCpp
 				}
 				else if (strcmp(command.c_str(), commandIfdef) == 0)
 				{
-					auto valueEnd = getCommandValue(end + 1, &commandValue);
-
-					auto sid = vx::make_sid(commandValue.c_str());
-
-					bool found = true;
-					auto it = localDefines->find(sid);
-					if (it == localDefines->end())
-					{
-						found = false;
-					}
-
-					if (!found)
-					{
-						auto endifEnd = getElseOrEndif(valueEnd);
-						auto endifEndOther = getElseOrEndif(endifEnd + 1);
-
-						if (endifEnd != endifEndOther)
-						{
-							auto sizeToElse = endifEnd - ptr;
-							memset(ptr, ' ', sizeToElse);
-
-							auto endifStart = endifEndOther;
-							while (true)
-							{
-								if (endifStart[0] == '#')
-									break;
-
-								--endifStart;
-							}
-
-							endifEnd = endifStart;
-						}
-
-						auto size = endifEndOther - endifEnd;
-						auto offset = endifEnd - ptr;
-						memset(ptr + offset, ' ', size);
-					}
+					handleIfDef(ptr, end, &commandValue, *localDefines, globalDefines);
 				}
 				else if (strcmp(command.c_str(), commandIfndef) == 0)
 				{
-					handleIfndef(ptr, end, &commandValue, *localDefines);
+					handleIfndef(ptr, end, &commandValue, *localDefines, globalDefines);
 				}
 				else if (strcmp(command.c_str(), commandInclude) == 0)
 				{
@@ -544,6 +492,7 @@ namespace ShaderManagerCpp
 	}
 
 	bool loadShaderProgram(const char* programFile, const std::string &includeDir, const vx::sorted_vector<vx::StringID, vx::gl::ShaderParameter> &params,
+		const vx::sorted_vector<vx::StringID, s32> &globalDefines,
 		vx::gl::ShaderProgram* program, vx::sorted_vector<vx::StringID, std::string>* includeFiles, vx::StackAllocator* scratchAllocator)
 	{
 		auto allocMarker = scratchAllocator->getMarker();
@@ -560,12 +509,7 @@ namespace ShaderManagerCpp
 		vx::sorted_vector<vx::StringID, s32> localDefines;
 
 		vx::sorted_vector<vx::StringID, s32> included;
-		processText(&programBuffer, programSize, includeDir, &localDefines, includeFiles, &included, scratchAllocator);
-
-		/*while (getAndAppendInclude(&programBuffer, &programSize, includeDir, includeFiles, scratchAllocator))
-		{
-
-		}*/
+		processText(&programBuffer, programSize, includeDir, globalDefines, &localDefines, includeFiles, &included, scratchAllocator);
 
 		while (insertParameter(&programBuffer, params, scratchAllocator))
 			;
@@ -682,7 +626,7 @@ namespace vx
 			if (it == m_shaderPrograms.end())
 			{
 				vx::gl::ShaderProgram program(type);
-				if (!ShaderManagerCpp::loadShaderProgram(programFile.c_str(), includeDir, m_parameters, &program, &m_includeFiles, scratchAllocator))
+				if (!ShaderManagerCpp::loadShaderProgram(programFile.c_str(), includeDir, m_parameters, m_defines, &program, &m_includeFiles, scratchAllocator))
 				{
 					printf("Error ShaderManager::loadProgram\n");
 					return false;
@@ -812,6 +756,20 @@ namespace vx
 		void ShaderManager::addParameter(const char* id, f32 value)
 		{
 			addParameter(id, ShaderParameter(value));
+		}
+
+		void ShaderManager::setDefine(const char* define)
+		{
+			auto sid = vx::make_sid(define);
+			m_defines.insert(sid, 1);
+		}
+
+		void ShaderManager::removeDefine(const char* define)
+		{
+			auto sid = vx::make_sid(define);
+			auto it = m_defines.find(sid);
+			if (it != m_defines.end())
+				m_defines.erase(it);
 		}
 
 		void ShaderManager::addIncludeFile(const char* file, const char* key)

@@ -47,6 +47,7 @@ namespace vx
 			vx::sorted_vector<vx::StringID, ShaderProgram> m_shaderPrograms;
 			vx::sorted_vector<vx::StringID, std::string> m_includeFiles;
 			vx::sorted_vector<vx::StringID, ShaderParameter> m_parameters;
+			vx::sorted_vector<vx::StringID, s32> m_defines;
 			std::string m_dataDir;
 
 			bool loadProgram(const FileHandle &programHandle, vx::gl::ShaderProgramType type, const std::string &programDir, const std::string &includeDir, vx::StackAllocator* scratchAllocator);
@@ -72,6 +73,9 @@ namespace vx
 			void addParameter(const char* id, s32 value);
 			void addParameter(const char* id, u32 value);
 			void addParameter(const char* id, f32 value);
+
+			void setDefine(const char* define);
+			void removeDefine(const char* define);
 
 			void addIncludeFile(const char* file, const char* key);
 
