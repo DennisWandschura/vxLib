@@ -353,6 +353,46 @@ namespace vx
 		return M;
 	}
 
+	inline mat4 VX_CALLCONV MatrixOrthographicRHDX
+		(
+		float ViewWidth,
+		float ViewHeight,
+		float NearZ,
+		float FarZ
+		)
+	{
+		float fRange = 1.0f / (NearZ - FarZ);
+		// Note: This is recorded on the stack
+		__m128 rMem = {
+			2.0f / ViewWidth,
+			2.0f / ViewHeight,
+			fRange,
+			fRange * NearZ
+		};
+		// Copy from memory to SSE register
+		auto vValues = rMem;
+		auto vTemp = _mm_setzero_ps();
+		// Copy x only
+		vTemp = _mm_move_ss(vTemp, vValues);
+		// 2.0f / ViewWidth,0,0,0
+		vx::mat4 M;
+		M.c[0] = vTemp;
+		// 0,2.0f / ViewHeight,0,0
+		vTemp = vValues;
+		vTemp = _mm_and_ps(vTemp, g_VXMaskY);
+		M.c[1] = vTemp;
+		// x=fRange,y=fRange * NearZ,0,1.0f
+		vTemp = _mm_setzero_ps();
+		vValues = _mm_shuffle_ps(vValues, g_VXIdentityR3, _MM_SHUFFLE(3, 2, 3, 2));
+		// 0,0,fRange,0.0f
+		vTemp = _mm_shuffle_ps(vTemp, vValues, _MM_SHUFFLE(2, 0, 0, 0));
+		M.c[2] = vTemp;
+		// 0,0,fRange * NearZ,1.0f
+		vTemp = _mm_shuffle_ps(vTemp, vValues, _MM_SHUFFLE(3, 1, 0, 0));
+		M.c[3] = vTemp;
+		return M;
+	}
+
 	inline mat4 VX_CALLCONV MatrixOrthographicOffCenterRH
 		(
 		float ViewLeft,

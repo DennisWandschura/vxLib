@@ -171,6 +171,19 @@ namespace vx
 			}
 		}
 
+		void copy(const sorted_vector &rhs)
+		{
+			auto otherSize = rhs.size();
+
+			this->clear();
+			this->reserve(otherSize);
+
+			std::copy(rhs.m_pKeys, rhs.m_pKeys + otherSize, this->m_pKeys);
+			std::copy(rhs.m_pValues, rhs.m_pValues + otherSize, this->m_pValues);
+
+			this->m_size = otherSize;
+		}
+
 	public:
 		sorted_vector() noexcept
 			: m_pKeys(nullptr), m_pValues(nullptr), m_size(0), m_capacity(0){}
@@ -178,14 +191,7 @@ namespace vx
 		sorted_vector(const sorted_vector &rhs)
 			:sorted_vector()
 		{
-			reserve(rhs.m_capacity);
-			m_size = rhs.m_size;
-
-			for (u32 i = 0; i < m_size; ++i)
-			{
-				m_pKeys[i] = rhs.m_pKeys[i];
-				m_pValues[i] = rhs.m_pValues[i];
-			}
+			copy(rhs);
 		}
 
 		sorted_vector(sorted_vector &&rhs)
@@ -209,7 +215,14 @@ namespace vx
 			m_capacity = 0;
 		}
 
-		sorted_vector& operator=(const sorted_vector &rhs) = delete;
+		sorted_vector& operator=(const sorted_vector &rhs)
+		{
+			if (this != &rhs)
+			{
+				copy(rhs);
+			}
+			return *this;
+		}
 
 		sorted_vector& operator=(sorted_vector &&rhs)
 		{

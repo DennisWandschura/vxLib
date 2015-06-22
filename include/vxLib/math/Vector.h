@@ -1068,6 +1068,8 @@ namespace vx
 
 	inline __m128 VX_CALLCONV cross3(CVEC4 v1, CVEC4 v2);
 
+	inline __m128 VX_CALLCONV length3(CVEC4 V);
+
 	inline __m128 VX_CALLCONV normalize3(CVEC4 V);
 
 	inline __m128 VX_CALLCONV quaternionRotation(CVEC4 V, CVEC4 RotationQuaternion);
@@ -1300,6 +1302,42 @@ namespace vx
 		}
 
 		return result;
+	}
+
+	template<class T>
+	detail::vec2<T> abs(const detail::vec2<T> &v)
+	{
+		return detail::vec2<T>(std::abs(v.x), std::abs(v.y));
+	}
+
+	template<>
+	float2 abs(const float2 &v)
+	{
+		return float2(fabs(v.x), fabs(v.y));
+	}
+
+	template<class T>
+	detail::vec3<T> abs(const detail::vec3<T> &v)
+	{
+		return detail::vec3<T>(std::abs(v.x), std::abs(v.y), std::abs(v.z));
+	}
+
+	template<>
+	float3 abs(const float3 &v)
+	{
+		return float3(fabs(v.x), fabs(v.y), fabs(v.z));
+	}
+
+	template<class T>
+	detail::vec4<T> abs(const detail::vec4<T> &v)
+	{
+		return detail::vec4<T>(std::abs(v.x), std::abs(v.y), std::abs(v.z), std::abs(v.w));
+	}
+
+	template<>
+	float4 abs(const float4 &v)
+	{
+		return float4(fabs(v.x), fabs(v.y), fabs(v.z), fabs(v.w));
 	}
 
 	inline vx::float3 degToRad(const vx::float3 &degAngle)

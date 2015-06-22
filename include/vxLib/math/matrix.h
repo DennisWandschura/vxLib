@@ -99,6 +99,7 @@ namespace vx
 	inline mat4 VX_CALLCONV MatrixInverse(const mat4 &M);
 	inline mat4 VX_CALLCONV MatrixPerspectiveFovRH(f32 fovAngleY, f32 aspectHByW, f32 nearZ, f32 farZ);
 	inline mat4 VX_CALLCONV MatrixOrthographicRH(float ViewWidth, float ViewHeight, float NearZ, float FarZ);
+	inline mat4 VX_CALLCONV MatrixOrthographicRHDX(float ViewWidth, float ViewHeight, float NearZ, float FarZ);
 	inline mat4 VX_CALLCONV MatrixOrthographicOffCenterRH(float ViewLeft, float ViewRight, float ViewBottom, float ViewTop, float NearZ, float FarZ);
 	inline mat4 VX_CALLCONV MatrixTranslation(const f32 x, const f32 y, const f32 z);
 	inline mat4 VX_CALLCONV MatrixTranslation(const __m128 &v);

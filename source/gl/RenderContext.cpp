@@ -238,7 +238,7 @@ namespace vx
 				WGL_STENCIL_BITS_ARB, 8,
 
 				// support for default srgb buffer
-				WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB, GL_TRUE,
+				//WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB, GL_TRUE,
 
 				// Null terminate the attribute list.
 				0

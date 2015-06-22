@@ -582,7 +582,7 @@ namespace vx
 				if (!is_directory)
 				{
 					auto pipelineHandle = vx::FileHandle(fileData.cFileName);
-					if (!loadPipeline(pipelineHandle, pipelineDir, programDir, includeDir, scratchAllocator))
+					if (!loadPipeline(pipelineHandle, pipelineHandle.m_string, pipelineDir, programDir, includeDir, scratchAllocator))
 					{
 						return false;
 					}
@@ -668,8 +668,16 @@ namespace vx
 			return true;
 		}
 
-		bool ShaderManager::loadPipeline(const FileHandle &fileHandle, const std::string &pipelineDir, const std::string &programDir, const std::string &includeDir, vx::StackAllocator* scratchAllocator)
+		bool ShaderManager::loadPipeline(const FileHandle &fileHandle, const char *id, const std::string &pipelineDir, const std::string &programDir, const std::string &includeDir, vx::StackAllocator* scratchAllocator)
 		{
+			auto sid = vx::make_sid(id);
+			auto it = m_programPipelines.find(sid);
+			if (it != m_programPipelines.end())
+			{
+				printf("Error, pipeline with id '%s' already exists !\n", id);
+				return false;
+			}
+
 			auto pipelineFileWithPath = pipelineDir + fileHandle.m_string;
 
 			std::ifstream inFile(pipelineFileWithPath.c_str());
@@ -722,20 +730,19 @@ namespace vx
 			if (!loadUseProgram(desc, scratchAllocator))
 				return false;
 
-			auto sid = fileHandle.m_sid;
-
+			printf("Added pipeline '%s'\n", id);
 			m_programPipelines.insert(std::move(sid), std::move(pipe));
 
 			return true;
 		}
 
-		bool ShaderManager::loadPipeline(const FileHandle &fileHandle, vx::StackAllocator* scratchAllocator)
+		bool ShaderManager::loadPipeline(const FileHandle &fileHandle, const char *id, vx::StackAllocator* scratchAllocator)
 		{
 			auto pipelineDir = m_dataDir + "shaders/";
 			const std::string programDir(m_dataDir + "shaders/programs/");
 			const std::string includeDir = m_dataDir + "shaders/include/";
 
-			return loadPipeline(fileHandle, pipelineDir, programDir, includeDir, scratchAllocator);
+			return loadPipeline(fileHandle, id, pipelineDir, programDir, includeDir, scratchAllocator);
 		}
 
 		void ShaderManager::addParameter(const char* id, const ShaderParameter &param)
@@ -805,12 +812,7 @@ namespace vx
 
 		const vx::gl::ProgramPipeline* ShaderManager::getPipeline(const char* id) const
 		{
-			return getPipeline(FileHandle(id));
-		}
-
-		const vx::gl::ProgramPipeline* ShaderManager::getPipeline(const FileHandle &fileHandle) const
-		{
-			return getPipeline(fileHandle.m_sid);
+			return getPipeline(vx::make_sid(id));
 		}
 
 		const vx::gl::ProgramPipeline* ShaderManager::getPipeline(const vx::StringID &sid) const

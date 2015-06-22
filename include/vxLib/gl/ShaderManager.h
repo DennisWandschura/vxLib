@@ -57,7 +57,7 @@ namespace vx
 			const vx::gl::ShaderProgram* getProgram(const vx::StringID &sid) const;
 
 			bool loadPipelines(vx::StackAllocator* scratchAllocator);
-			bool loadPipeline(const FileHandle &fileHandle, const std::string &pipelineDir, const std::string &programDir, const std::string &includeDir, vx::StackAllocator* scratchAllocator);
+			bool loadPipeline(const FileHandle &fileHandle, const char *id, const std::string &pipelineDir, const std::string &programDir, const std::string &includeDir, vx::StackAllocator* scratchAllocator);
 
 			void addParameter(const char* id, const ShaderParameter &param);
 
@@ -68,7 +68,7 @@ namespace vx
 			bool initialize(const std::string &dataDir, vx::StackAllocator* scratchAllocator, bool loadAllPipelinesFromDir);
 			void clear();
 
-			bool loadPipeline(const FileHandle &filehandle, vx::StackAllocator* scratchAllocator);
+			bool loadPipeline(const FileHandle &filehandle, const char *id, vx::StackAllocator* scratchAllocator);
 
 			void addParameter(const char* id, s32 value);
 			void addParameter(const char* id, u32 value);
@@ -80,7 +80,6 @@ namespace vx
 			void addIncludeFile(const char* file, const char* key);
 
 			const vx::gl::ProgramPipeline* getPipeline(const char* id) const;
-			const vx::gl::ProgramPipeline* getPipeline(const FileHandle &fileHandle) const;
 			const vx::gl::ProgramPipeline* getPipeline(const vx::StringID &sid) const;
 		};
 	}

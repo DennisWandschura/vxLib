@@ -130,10 +130,12 @@ namespace vx
 		return _mm_sub_ps(c1, c2);
 	}
 
-	inline __m128 VX_CALLCONV normalize3
-		(
-		CVEC4 V
-		)
+	inline __m128 VX_CALLCONV length3(CVEC4 V)
+	{
+		return _mm_sqrt_ps(dot3(V, V));
+	}
+
+	inline __m128 VX_CALLCONV normalize3(CVEC4 V)
 	{
 		// Perform the dot product on x,y and z only
 		auto vLengthSq = dot3(V, V);
