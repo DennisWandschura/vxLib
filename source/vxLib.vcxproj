@@ -54,7 +54,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>E:\dev\libraries\boost_1_55_0\include;d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include;$(IncludePath)</IncludePath>
+    <IncludePath>d:\Users\dennis\Documents\Visual Studio 2015\Projects\vxLib\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)\lib\</OutDir>
     <IntDir>$(SolutionDir)\tmp\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -146,20 +146,6 @@
     <ClInclude Include="..\include\vxLib\File\File.h" />
     <ClInclude Include="..\include\vxLib\File\FileHandle.h" />
     <ClInclude Include="..\include\vxLib\File\FileHeader.h" />
-    <ClInclude Include="..\include\vxLib\gl\Base.h" />
-    <ClInclude Include="..\include\vxLib\gl\Buffer.h" />
-    <ClInclude Include="..\include\vxLib\gl\Debug.h" />
-    <ClInclude Include="..\include\vxLib\gl\flextGL.h" />
-    <ClInclude Include="..\include\vxLib\gl\Framebuffer.h" />
-    <ClInclude Include="..\include\vxLib\gl\gl.h" />
-    <ClInclude Include="..\include\vxLib\gl\ProgramPipeline.h" />
-    <ClInclude Include="..\include\vxLib\gl\RenderContext.h" />
-    <ClInclude Include="..\include\vxLib\gl\ShaderManager.h" />
-    <ClInclude Include="..\include\vxLib\gl\ShaderProgram.h" />
-    <ClInclude Include="..\include\vxLib\gl\StateManager.h" />
-    <ClInclude Include="..\include\vxLib\gl\Texture.h" />
-    <ClInclude Include="..\include\vxLib\gl\VertexArray.h" />
-    <ClInclude Include="..\include\vxLib\gl\wgl_core.h" />
     <ClInclude Include="..\include\vxLib\Graphics\Camera.h" />
     <ClInclude Include="..\include\vxLib\Graphics\Mesh.h" />
     <ClInclude Include="..\include\vxLib\Keyboard.h" />
@@ -192,20 +178,6 @@
     <ClCompile Include="CityHash.cpp" />
     <ClCompile Include="DebugPrint.cpp" />
     <ClCompile Include="File.cpp" />
-    <ClCompile Include="gl\Base.cpp" />
-    <ClCompile Include="gl\Buffer.cpp" />
-    <ClCompile Include="gl\Debug.cpp" />
-    <ClCompile Include="gl\flextGL.c" />
-    <ClCompile Include="gl\Framebuffer.cpp" />
-    <ClCompile Include="gl\gl_core.cpp" />
-    <ClCompile Include="gl\ProgramPipeline.cpp" />
-    <ClCompile Include="gl\RenderContext.cpp" />
-    <ClCompile Include="gl\ShaderManager.cpp" />
-    <ClCompile Include="gl\ShaderProgram.cpp" />
-    <ClCompile Include="gl\StateManager.cpp" />
-    <ClCompile Include="gl\Texture.cpp" />
-    <ClCompile Include="gl\VertexArray.cpp" />
-    <ClCompile Include="gl\wgl_core.c" />
     <ClCompile Include="Graphics\Camera.cpp" />
     <ClCompile Include="Graphics\Mesh.cpp" />
     <ClCompile Include="Keyboard.cpp" />

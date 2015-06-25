@@ -137,11 +137,6 @@ ForEach( .Target in .Targets )
 		.LibrarianOutput = '$OutPath$\$TargetName$.lib'
 		.LibrarianAdditionalInputs = {'Obj_C_$TargetName$', 'Obj_$TargetName$', 'Obj_ASM_$TargetName$'}
 	}
-	
-	VCXProject( "Proj_$TargetName$" )
-	{
-		.ProjectOutput = 'P_$TargetName$.vcxproj'
-	}
 }
 
 Alias('all')
