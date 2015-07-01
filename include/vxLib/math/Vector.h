@@ -1092,6 +1092,12 @@ namespace vx
 		return detail::vec2<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
 	}
 
+	template<>
+	detail::vec2<f32> min(const detail::vec2<f32> &v1, const detail::vec2<f32> &v2)
+	{
+		return detail::vec2<f32>(fminf(v1.x, v2.x), fminf(v1.y, v2.y));
+	}
+
 	template<class T>
 	detail::vec2a<T> min(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
 	{
@@ -1102,6 +1108,12 @@ namespace vx
 	detail::vec3<T> min(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
 		return detail::vec3<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z));
+	}
+
+	template<>
+	detail::vec3<f32> min(const detail::vec3<f32> &v1, const detail::vec3<f32> &v2)
+	{
+		return detail::vec3<f32>(fminf(v1.x, v2.x), fminf(v1.y, v2.y), fminf(v1.z, v2.z));
 	}
 
 	template<class T>
@@ -1135,31 +1147,31 @@ namespace vx
 	}
 
 	template<class T>
-	inline f32 dot(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
+	inline f32 dot2(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
 	{
 		return v1.x * v2.x + v1.y * v2.y;
 	}
 
 	template<class T>
-	inline f32 dot(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
+	inline f32 dot2(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
 	{
 		return v1.x*v2.x + v1.y*v2.y;
 	}
 
 	template<class T>
-	inline f32 dot(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
+	inline f32 dot3(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
 		return v1.x*v2.x + v1.y*v2.y + v1.z * v2.z;
 	}
 
 	template<class T>
-	inline f32 dot(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
+	inline f32 dot4(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
 	{
 		return v1.x*v2.x + v1.y*v2.y + v1.z * v2.z + v1.w * v2.w;
 	}
 
 	template<>
-	inline f32 dot<f32>(const float4 &v1, const float4 &v2)
+	inline f32 dot4<f32>(const float4 &v1, const float4 &v2)
 	{
 		auto a = _mm_loadu_ps(v1);
 		auto b = _mm_loadu_ps(v2);
@@ -1171,7 +1183,7 @@ namespace vx
 		return result;
 	}
 
-	inline f32 VX_CALLCONV dot(const float4a &v1, const float4a &v2)
+	inline f32 VX_CALLCONV dot4(const float4a &v1, const float4a &v2)
 	{
 		auto tmp = dot4(v1.v, v2.v);
 
@@ -1184,39 +1196,18 @@ namespace vx
 	f32 distance2(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
 	{
 		auto tmp = v2 - v1;
-		return dot(tmp, tmp);
-	}
-
-	template<class T>
-	f32 distance2(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
-	{
-		auto tmp = v2 - v1;
-		return dot(tmp, tmp);
-	}
-
-	template<class T>
-	f32 distance2(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
-	{
-		auto tmp = v2 - v1;
-		return dot(tmp, tmp);
-	}
-
-	template<class T>
-	f32 distance(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
-	{
-		auto tmp = v2 - v1;
 		return ::sqrtf(dot(tmp, tmp));
 	}
 
 	template<class T>
-	f32 distance(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
+	f32 distance3(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
 		auto tmp = v2 - v1;
 		return ::sqrtf(dot(tmp, tmp));
 	}
 
 	template<>
-	inline f32 distance(const detail::vec3<f32> &v1, const detail::vec3<f32> &v2)
+	inline f32 distance3(const detail::vec3<f32> &v1, const detail::vec3<f32> &v2)
 	{
 		auto a = vx::loadFloat3(v1);
 		auto b = vx::loadFloat3(v2);
@@ -1228,13 +1219,13 @@ namespace vx
 	}
 
 	template<class T>
-	f32 distance(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
+	f32 distance4(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
 	{
 		auto tmp = v2 - v1;
 		return ::sqrtf(dot(tmp, tmp));
 	}
 	template<>
-	inline f32 distance(const detail::vec4<f32> &v1, const detail::vec4<f32> &v2)
+	inline f32 distance4(const detail::vec4<f32> &v1, const detail::vec4<f32> &v2)
 	{
 		auto a = vx::loadFloat4(v1);
 		auto b = vx::loadFloat4(v2);
@@ -1246,26 +1237,26 @@ namespace vx
 	}
 
 	template<class T>
-	f32 length(const detail::vec2<T> &v)
+	f32 length2(const detail::vec2<T> &v)
 	{
-		return sqrt(dot(v, v));
+		return sqrt(dot2(v, v));
 	}
 
 	template<class T>
-	f32 length(const detail::vec3<T> &v)
+	f32 length3(const detail::vec3<T> &v)
 	{
-		return sqrt(dot(v, v));
+		return sqrt(dot3(v, v));
 	}
 
 	template<class T>
-	f32 length(const detail::vec4<T> &v)
+	f32 length4(const detail::vec4<T> &v)
 	{
-		return sqrt(dot(v, v));
+		return sqrt(dot4(v, v));
 	}
 
-	inline float2 normalize(const float2 &v1)
+	inline float2 normalize2(const float2 &v1)
 	{
-		auto l = sqrt(dot(v1, v1));
+		auto l = sqrt(dot2(v1, v1));
 		float2 result(v1);
 		if (l > 0.0f)
 		{
@@ -1276,9 +1267,9 @@ namespace vx
 		return result;
 	}
 
-	inline float2a normalize(const float2a &v1)
+	inline float2a normalize2(const float2a &v1)
 	{
-		auto l = sqrt(dot(v1, v1));
+		auto l = sqrt(dot2(v1, v1));
 		float2a result(v1);
 		if (l > 0.0f)
 		{
@@ -1289,9 +1280,9 @@ namespace vx
 		return result;
 	}
 
-	inline float3 normalize(const float3 &v1)
+	inline float3 normalize3(const float3 &v1)
 	{
-		auto l = sqrt(vx::dot(v1, v1));
+		auto l = sqrt(vx::dot3(v1, v1));
 
 		float3 result(v1);
 		if (l > 0.0f)

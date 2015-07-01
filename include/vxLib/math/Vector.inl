@@ -110,7 +110,7 @@ namespace vx
 		return _mm_or_ps(vTemp1, vTemp2);
 	}
 
-	inline __m128 VX_CALLCONV VectorNegate(CVEC4 V)
+	inline __m128 VX_CALLCONV negate(CVEC4 V)
 	{
 		auto zero = _mm_setzero_ps();
 

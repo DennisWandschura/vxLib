@@ -852,7 +852,7 @@ namespace vx
 
 		__m128 R1 = cross3(R2, R0);
 
-		__m128 NegEyePosition = VectorNegate(EyePosition);
+		__m128 NegEyePosition = negate(EyePosition);
 
 		__m128 D0 = dot3(R0, NegEyePosition);
 		__m128 D1 = dot3(R1, NegEyePosition);
@@ -898,7 +898,7 @@ namespace vx
 		const __m128 &UpDirection
 		)
 	{
-		__m128 NegEyeDirection = VectorNegate(EyeDirection);
+		__m128 NegEyeDirection = negate(EyeDirection);
 		return MatrixLookToLH(EyePosition, NegEyeDirection, UpDirection);
 	}
 
