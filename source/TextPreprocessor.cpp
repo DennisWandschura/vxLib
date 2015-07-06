@@ -258,7 +258,7 @@ namespace TextPreprocessorCpp
 		value.assign(valueStart, valueEnd);
 		auto sid = vx::make_sid(value.c_str());
 
-		bool foundDefine = true;
+		bool foundDefine = b;
 
 		auto it = localDefines.find(sid);
 		if (it == localDefines.end())
@@ -266,15 +266,15 @@ namespace TextPreprocessorCpp
 			auto globalIter = globalDefines.find(sid);
 			if (globalIter == globalDefines.end())
 			{
-				foundDefine = false;
+				foundDefine = !foundDefine;
 			}
 		}
 
 		bool isEndif = true;
 		auto other = getEndifOrElse(valueEnd, &isEndif);
-		auto bb = foundDefine | (!b);
+		//auto bb = foundDefine;
 
-		if (bb)
+		if (foundDefine)
 		{
 			// zero #ifdef line
 			auto size = valueEnd - cmdStart;

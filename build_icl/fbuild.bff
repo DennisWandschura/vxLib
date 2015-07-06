@@ -14,7 +14,6 @@
 ]
 
 .InPath = '../source/'
-.OutPath = '../lib'
 .OutPathObj = 'tmp'
 .ProjectName = 'vxLib'
 
@@ -41,14 +40,16 @@
 	.DefinesBuild = '$DefinesRelease$'
 ]
 
-.Target_Debug_x64 =
+.Target_Debug_x64_Static_vs12 =
 [
 	Using(.IntelX64)
 	Using(.DefaultCompilerSettings)
 	Using(.BuildDebug)
 	
-	.CompilerSettingsT = '$CompilerSettingsB$ /MDd'
-	.FileName = '$ProjectName$_d'
+	.CompilerSettingsT = '$CompilerSettingsB$ /MTd'
+	.FileName = '$ProjectName$_sd'
+	.OutPath = '../lib/vs12'
+	.TargetName = '$FileName$_vs12'
 ]
 
 .Target_Debug_x64_Static =
@@ -59,16 +60,8 @@
 	
 	.CompilerSettingsT = '$CompilerSettingsB$ /MTd'
 	.FileName = '$ProjectName$_sd'
-]
-
-.Target_Release_x64 =
-[
-	Using(.IntelX64)
-	Using(.DefaultCompilerSettings)
-	Using(.BuildRelease)
-	
-	.CompilerSettingsT = '$CompilerSettingsB$ /MD'
-	.FileName = '$ProjectName$'
+	.OutPath = '../lib/vs14'
+	.TargetName = '$FileName$'
 ]
 
 .Target_Release_Static_x64 =
@@ -79,21 +72,34 @@
 	
 	.CompilerSettingsT = '$CompilerSettingsB$ /MT'
 	.FileName = '$ProjectName$_s'
+	.OutPath = '../lib/vs14'
+	.TargetName = '$FileName$'
 ]
 
-.Targets = { .Target_Debug_x64_Static, .Target_Debug_x64, .Target_Release_x64, .Target_Release_Static_x64 }
+.Target_Release_Static_x64_vs12 =
+[
+	Using(.IntelX64)
+	Using(.DefaultCompilerSettings)
+	Using(.BuildRelease)
+	
+	.CompilerSettingsT = '$CompilerSettingsB$ /MT'
+	.FileName = '$ProjectName$_s'
+	.OutPath = '../lib/vs12'
+	.TargetName = '$FileName$_vs12'
+]
+
+.Targets = { .Target_Debug_x64_Static_vs12, .Target_Debug_x64_Static, .Target_Release_Static_x64, .Target_Release_Static_x64_vs12 }
 
 ForEach( .Target in .Targets )
 {
 	Using( .Target )
 	
-	.TargetName = '$FileName$'
 	.OutputPathF = '$OutputPathB$\$FileName$\'
 	
 	Unity("Unity_$TargetName$")
 	{
 		.UnityInputPath = '$InPath$'
-		.UnityOutputPattern = 'Unity_$TargetName$*.cpp'
+		.UnityOutputPattern = 'Unity_$FileName$*.cpp'
 		.UnityOutputPath = '$OutputPathF$\unity\'
 	}
 	
@@ -101,7 +107,7 @@ ForEach( .Target in .Targets )
 	{
 		.UnityInputPattern = '*.c'
 		.UnityInputPath = '$InPath$'
-		.UnityOutputPattern = 'Unity_C_$TargetName$*.cpp'
+		.UnityOutputPattern = 'Unity_C_$FileName$*.cpp'
 		.UnityOutputPath = '$OutputPathF$\unity_c\'
 	}
 	
@@ -134,12 +140,17 @@ ForEach( .Target in .Targets )
 		
 		.Librarian = '$IntelPath$\xilib.exe'
 		.LibrarianOptions = '/OUT:"%2" "%1" /link /MACHINE:X64 /NOLOGO '
-		.LibrarianOutput = '$OutPath$\$TargetName$.lib'
+		.LibrarianOutput = '$OutPath$\$FileName$.lib'
 		.LibrarianAdditionalInputs = {'Obj_C_$TargetName$', 'Obj_$TargetName$', 'Obj_ASM_$TargetName$'}
 	}
 }
 
+Alias('vs12')
+{
+	.Targets = {'Lib_vxLib_sd_vs12', 'Lib_vxLib_s_vs12' }
+}
+
 Alias('all')
 {
-	.Targets = { 'Lib_vxLib_d', 'Lib_vxLib_sd', 'Lib_vxLib', 'Lib_vxLib_s' }
+	.Targets = {'Lib_vxLib_sd', 'Lib_vxLib_s' }
 }

@@ -771,6 +771,12 @@ namespace vx
 			vec4a(const vec4<T> &vu) :v(XMM_TYPE<value_type>::load(vu)){}
 			vec4a(const xmm_type &m) :v(m){}
 
+			vec4a& operator=(const vec4a &m)
+			{
+				v = m;
+				return *this;
+			}
+
 			vec4a& operator=(const xmm_type &m)
 			{
 				v = m;
