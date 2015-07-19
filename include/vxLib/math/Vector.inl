@@ -32,6 +32,12 @@ namespace vx
 		return _mm_add_ps(tmp, c);
 	}
 
+	inline __m128 VX_CALLCONV VectorNegativeMultiplySubtract(CVEC4 a, CVEC4 b, CVEC4 c)
+	{
+		auto R = _mm_mul_ps(a, b);
+		return _mm_sub_ps(c, R);
+	}
+
 	inline __m128 VX_CALLCONV dot2(CVEC4 v1, CVEC4 v2)
 	{
 		return _mm_dp_ps(v1, v2, _VX_DOT(1, 1, 1, 1, 1, 1, 0, 0));
@@ -103,6 +109,38 @@ namespace vx
 		return (((_mm_movemask_ps(vTemp) & 7) == 7) != 0);
 	}
 
+	inline __m128 VX_CALLCONV VectorInBounds(CVEC4 V, CVEC4 Bounds)
+	{
+		// Test if less than or equal
+		auto vTemp1 = _mm_cmple_ps(V, Bounds);
+		// Negate the bounds
+		auto vTemp2 = _mm_mul_ps(Bounds, vx::g_VXNegativeOne);
+		// Test if greater or equal (Reversed)
+		vTemp2 = _mm_cmple_ps(vTemp2, V);
+		// Blend answers
+		vTemp1 = _mm_and_ps(vTemp1, vTemp2);
+		return vTemp1;
+	}
+
+	inline __m128 VX_CALLCONV VectorAndInt
+		(
+			CVEC4 V1,
+			CVEC4 V2
+			)
+	{
+		return _mm_and_ps(V1, V2);
+	}
+
+	inline __m128 VX_CALLCONV VectorEqualInt
+		(
+			CVEC4 V1,
+			CVEC4 V2
+			)
+	{
+		__m128i V = _mm_cmpeq_epi32(_mm_castps_si128(V1), _mm_castps_si128(V2));
+		return _mm_castsi128_ps(V);
+	}
+
 	inline __m128 VX_CALLCONV VectorSelect(CVEC4 V1, CVEC4 V2, CVEC4 Control)
 	{
 		auto vTemp1 = _mm_andnot_ps(Control, V1);
@@ -115,6 +153,27 @@ namespace vx
 		auto zero = _mm_setzero_ps();
 
 		return _mm_sub_ps(zero, V);
+	}
+
+	inline __m128 VX_CALLCONV round
+		(
+			CVEC4 V
+			)
+	{
+		__m128 sign = _mm_and_ps(V, vx::g_VXNegativeZero);
+
+		__m128 sMagic = _mm_or_ps(vx::g_VXNoFraction, sign);
+
+		__m128 R1 = _mm_add_ps(V, sMagic);
+		R1 = _mm_sub_ps(R1, sMagic);
+
+		__m128 R2 = _mm_and_ps(V, vx::g_VXAbsMask);
+		__m128 mask = _mm_cmple_ps(R2, vx::g_VXNoFraction);
+		R2 = _mm_andnot_ps(mask, V);
+		R1 = _mm_and_ps(R1, mask);
+
+		__m128 vResult = _mm_xor_ps(R1, R2);
+		return vResult;
 	}
 
 	inline __m128 VX_CALLCONV cross3(CVEC4 v1, CVEC4 v2)
@@ -325,6 +384,72 @@ namespace vx
 		*pCos = Result;
 	}
 
+	inline __m128 VX_CALLCONV VectorTan(CVEC4 V)
+	{
+		static const __m128 TanCoefficients0 = { 1.0f, -4.667168334e-1f, 2.566383229e-2f, -3.118153191e-4f };
+		static const __m128 TanCoefficients1 = { 4.981943399e-7f, -1.333835001e-1f, 3.424887824e-3f, -1.786170734e-5f };
+		static const __m128 TanConstants = { 1.570796371f, 6.077100628e-11f, 0.000244140625f, 0.63661977228f /*2 / Pi*/ };
+		static const vx::uvec4 Mask = { 0x1, 0x1, 0x1, 0x1 };
+		__m128 TwoDivPi = VectorSplatW(TanConstants);
+
+		__m128 Zero = _mm_setzero_ps();
+
+		__m128 C0 = VectorSplatX(TanConstants);
+		__m128 C1 = VectorSplatY(TanConstants);
+		__m128 Epsilon = VectorSplatZ(TanConstants);
+
+		__m128 VA = _mm_mul_ps(V, TwoDivPi);
+
+		VA = round(VA);
+
+		__m128 VC = VectorNegativeMultiplySubtract(VA, C0, V);
+
+		__m128 VB = vx::abs(VA);
+
+		VC = VectorNegativeMultiplySubtract(VA, C1, VC);
+
+		reinterpret_cast<__m128i *>(&VB)[0] = _mm_cvttps_epi32(VB);
+
+		__m128 VC2 = _mm_mul_ps(VC, VC);
+
+		__m128 T7 = VectorSplatW(TanCoefficients1);
+		__m128 T6 = VectorSplatZ(TanCoefficients1);
+		__m128 T4 = VectorSplatX(TanCoefficients1);
+		__m128 T3 = VectorSplatW(TanCoefficients0);
+		__m128 T5 = VectorSplatY(TanCoefficients1);
+		__m128 T2 = VectorSplatZ(TanCoefficients0);
+		__m128 T1 = VectorSplatY(TanCoefficients0);
+		__m128 T0 = VectorSplatX(TanCoefficients0);
+
+		__m128 VBIsEven = VectorAndInt(VB, Mask.v);
+		VBIsEven = VectorEqualInt(VBIsEven, Zero);
+
+		__m128 N = vx::fma(VC2, T7, T6);
+		__m128 D = vx::fma(VC2, T4, T3);
+		N = vx::fma(VC2, N, T5);
+		D = vx::fma(VC2, D, T2);
+		N = _mm_mul_ps(VC2, N);
+		D = vx::fma(VC2, D, T1);
+		N = vx::fma(VC, N, VC);
+		__m128 VCNearZero = VectorInBounds(VC, Epsilon);
+		D = vx::fma(VC2, D, T0);
+
+		N = vx::VectorSelect(N, VC, VCNearZero);
+		D = vx::VectorSelect(D, vx::g_VXOne, VCNearZero);
+
+		__m128 R0 = vx::negate(N);
+		__m128 R1 = _mm_div_ps(N, D);
+		R0 = _mm_div_ps(D, R0);
+
+		__m128 VIsZero = _mm_cmpeq_ps(V, Zero);
+
+		__m128 Result = vx::VectorSelect(R0, R1, VBIsEven);
+
+		Result = vx::VectorSelect(Result, Zero, VIsZero);
+
+		return Result;
+	}
+
 	inline __m128 VX_CALLCONV VectorModAngles(CVEC4 Angles)
 	{
 		// Modulo the range of the given angles such that -XM_PI <= Angles < XM_PI
@@ -343,5 +468,37 @@ namespace vx
 	{
 		auto vTemp = VX_PERMUTE_PS(V, _MM_SHUFFLE(3, 3, 3, 3));
 		return _mm_cvtss_f32(vTemp);
+	}
+
+	inline __m128 VX_CALLCONV VectorSplatX
+		(
+			CVEC4 V
+			)
+	{
+		return VX_PERMUTE_PS(V, _MM_SHUFFLE(0, 0, 0, 0));
+	}
+
+	inline __m128 VX_CALLCONV VectorSplatY
+		(
+			CVEC4 V
+			)
+	{
+		return VX_PERMUTE_PS(V, _MM_SHUFFLE(1, 1, 1, 1));
+	}
+
+	inline __m128 VX_CALLCONV VectorSplatZ
+		(
+			CVEC4 V
+			)
+	{
+		return VX_PERMUTE_PS(V, _MM_SHUFFLE(2, 2, 2, 2));
+	}
+
+	inline __m128 VX_CALLCONV VectorSplatW
+		(
+			CVEC4 V
+			)
+	{
+		return VX_PERMUTE_PS(V, _MM_SHUFFLE(3, 3, 3, 3));
 	}
 }

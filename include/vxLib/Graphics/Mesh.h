@@ -63,6 +63,9 @@ namespace vx
 		void swap(Mesh &rhs) noexcept;
 
 		const u8* loadFromMemory(const u8 *src, vx::Allocator* allocator);
+
+		const u8* loadFromMemoryDataSize(const u8 *src, u32* dataSizeInBytes);
+		const u8* loadFromMemoryData(const u8* src, u8* dst, u32 size);
 		u8* saveToMemory(u8 *ptr) const;
 
 		bool saveToFile(File* file) const;

@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include <vxLib/Allocator/StackAllocator.h>
+#include <algorithm>
+#include <vxLib/Allocator/AllocationProfiler.h>
 
 namespace vx
 {
@@ -70,10 +72,17 @@ namespace vx
 			m_head += size;
 		}
 
+#if _VX_MEM_PROFILE
+		if (s_allocationProfiler)
+		{
+			s_allocationProfiler->updateAllocation(m_pMemory, size);
+		}
+#endif
+
 		return ptr;
 	}
 
-		u8* StackAllocator::allocate(u64 size, u8 alignment) noexcept
+	u8* StackAllocator::allocate(u64 size, u8 alignment) noexcept
 	{
 		u8 *ptr = nullptr;
 
@@ -87,25 +96,50 @@ namespace vx
 			m_head += adjustedSize;
 		}
 
+#if _VX_MEM_PROFILE
+		if (s_allocationProfiler)
+		{
+			s_allocationProfiler->updateAllocation(m_pMemory, adjustedSize);
+		}
+#endif
+
 		return ptr;
 	}
 
-		void StackAllocator::deallocate(u8*) noexcept
+	void StackAllocator::deallocate(u8*) noexcept
 	{
 	}
 
 	void StackAllocator::clear() noexcept
 	{
+#if _VX_MEM_PROFILE
+		if (s_allocationProfiler)
+		{
+			auto size = m_head;
+			s_allocationProfiler->updateDeallocation(m_pMemory, size);
+		}
+#endif
+
 		m_head = 0;
 	}
 
-		void StackAllocator::clear(Marker marker) noexcept
+	void StackAllocator::clear(Marker marker) noexcept
 	{
 		if (m_head >= marker)
-		m_head = marker;
+		{
+#if _VX_MEM_PROFILE
+			if (s_allocationProfiler)
+			{
+				auto size = m_head - marker;
+				s_allocationProfiler->updateDeallocation(m_pMemory, size);
+			}
+#endif
+
+			m_head = marker;
+		}
 	}
 
-		void* StackAllocator::release() noexcept
+	void* StackAllocator::release() noexcept
 	{
 		auto ptr = m_pMemory;
 
@@ -116,23 +150,25 @@ namespace vx
 		return ptr;
 	}
 
-		void StackAllocator::swap(StackAllocator &rhs) noexcept
+	void StackAllocator::swap(StackAllocator &rhs) noexcept
 	{
-		auto pMemory = m_pMemory;
-		auto head = m_head;
-		auto size = m_size;
-
-		m_pMemory = rhs.m_pMemory;
-		m_head = rhs.m_head;
-		m_size = rhs.m_size;
-
-		rhs.m_pMemory = pMemory;
-		rhs.m_head = head;
-		rhs.m_size = size;
+		std::swap(m_pMemory, rhs.m_pMemory);
+		std::swap(m_head, rhs.m_head);
+		std::swap(m_size, rhs.m_size);
 	}
 
-		StackAllocator::Marker StackAllocator::getMarker() const
+	StackAllocator::Marker StackAllocator::getMarker() const
 	{
 		return m_head;
+	}
+
+	u32 StackAllocator::getTotalSize() const
+	{
+		return m_size;
+	}
+
+	const u8* StackAllocator::getMemory() const
+	{
+		return m_pMemory;
 	}
 }

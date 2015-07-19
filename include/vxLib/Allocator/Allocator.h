@@ -27,35 +27,50 @@ SOFTWARE.
 
 namespace vx
 {
+	class AllocationProfiler;
+
 	class Allocator
 	{
+	protected:
+		thread_local static AllocationProfiler* s_allocationProfiler;
+
 	public:
+#if _VX_MEM_PROFILE
+		static void setProfiler(AllocationProfiler* profiler)
+		{
+			s_allocationProfiler = profiler;
+		}
+#endif
+
 		virtual ~Allocator(){}
 
 		virtual u8* allocate(u64 size) = 0;
 		virtual u8* allocate(u64 size, u8 alignment) = 0;
 		virtual void deallocate(u8 *ptr) = 0;
 
+		virtual u32 getTotalSize() const = 0;
+		virtual const u8* getMemory() const = 0;
+
 		template<class U>
-		static void construct(U *p)
+		static inline void construct(U *p)
 		{
 			new (p)U{};
 		}
 
 		template<class U>
-		static void construct(U *p, const U &v)
+		static inline void construct(U *p, const U &v)
 		{
 			new ((void*)p) U(v);
 		}
 
 		template<class U, class ...Args>
-		static void construct(U *p, Args&& ...args)
+		static inline void construct(U *p, Args&& ...args)
 		{
 			new (p)U(std::forward<Args>(args)...);
 		}
 
 		template<class U>
-		static void rangeConstruct(U *start, U *end) noexcept
+		static inline void rangeConstruct(U *start, U *end) noexcept
 		{
 			VX_ASSERT(start <= end);
 			for (; start != end; ++start)
@@ -71,7 +86,7 @@ namespace vx
 		}
 
 		template<class U>
-		static void rangeDestroy(U *start, U *end) noexcept
+		static inline void rangeDestroy(U *start, U *end) noexcept
 		{
 			VX_ASSERT(start <= end);
 			for (; start != end; ++start)
@@ -80,11 +95,11 @@ namespace vx
 			}
 		}
 
-		static u8 getAdjustment(void *ptr, u8 alignment) noexcept
+		static inline u8 getAdjustment(void *ptr, u8 alignment) noexcept
 		{
-			u8 adjustment = alignment - ((uintptr_t)ptr & (alignment - 1));
+			s16 adjustment = alignment - ((uintptr_t)ptr & (alignment - 1));
 
-			if (adjustment == alignment)
+			if ((adjustment - alignment) == 0)
 				return 0; //already aligned
 
 			return adjustment;

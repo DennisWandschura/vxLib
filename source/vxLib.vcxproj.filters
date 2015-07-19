@@ -40,6 +40,9 @@
     <Filter Include="Header Files\thread">
       <UniqueIdentifier>{9c87bd47-a631-4f73-8bfd-b3f3e40c54c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Allocator">
+      <UniqueIdentifier>{cd332192-32a8-4028-8e7b-a67695d7dd5d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\vxLib\ScopeGuard.h">
@@ -156,6 +159,9 @@
     <ClInclude Include="..\include\vxLib\TextPreprocessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\vxLib\Allocator\AllocationProfiler.h">
+      <Filter>Header Files\Allocator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CityHash.cpp">
@@ -182,12 +188,6 @@
     <ClCompile Include="Graphics\Mesh.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="PoolAllocator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StackAllocator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Keyboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -199,6 +199,18 @@
     </ClCompile>
     <ClCompile Include="TextPreprocessor.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PoolAllocator.cpp">
+      <Filter>Source Files\Allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="StackAllocator.cpp">
+      <Filter>Source Files\Allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="Allocator.cpp">
+      <Filter>Source Files\Allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="AllocationProfiler.cpp">
+      <Filter>Source Files\Allocator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

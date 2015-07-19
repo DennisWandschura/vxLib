@@ -963,6 +963,7 @@ namespace vx
 	VX_GLOBALCONST __m128 g_VXSinCoefficients1 = { -2.3889859e-08f, -0.16665852f /*Est1*/, +0.0083139502f /*Est2*/, -0.00018524670f /*Est3*/ };
 	VX_GLOBALCONST __m128 g_VXCosCoefficients0 = { -0.5f, +0.041666638f, -0.0013888378f, +2.4760495e-05f };
 	VX_GLOBALCONST __m128 g_VXCosCoefficients1 = { -2.6051615e-07f, -0.49992746f /*Est1*/, +0.041493919f /*Est2*/, -0.0012712436f /*Est3*/ };
+	VX_GLOBALCONST __m128 g_VXNoFraction = { 8388608.0f,8388608.0f,8388608.0f,8388608.0f };
 	VX_GLOBALCONST ivec4 g_VXInfinity = { 0x7F800000, 0x7F800000, 0x7F800000, 0x7F800000 };
 	VX_GLOBALCONST ivec4 g_VXQNaN = { 0x7FC00000, 0x7FC00000, 0x7FC00000, 0x7FC00000 };
 	VX_GLOBALCONST ivec4 g_VXQNaNTest = { 0x007FFFFF, 0x007FFFFF, 0x007FFFFF, 0x007FFFFF };
@@ -1057,6 +1058,7 @@ namespace vx
 	template<> inline __m128      VX_CALLCONV     VectorPermute<4, 5, 6, 7>(CVEC4 V1, CVEC4 V2) { return V2; }
 
 	inline __m128 VX_CALLCONV fma(CVEC4 a, CVEC4 b, CVEC4 c);
+	inline __m128 VX_CALLCONV VectorNegativeMultiplySubtract(CVEC4 a, CVEC4 b, CVEC4 c);
 	inline __m128 VX_CALLCONV dot2(CVEC4 v1, CVEC4 v2);
 	inline __m128 VX_CALLCONV dot3(CVEC4 v1, CVEC4 v2);
 	inline __m128 VX_CALLCONV dot4(CVEC4 v1, CVEC4 v2);
@@ -1068,9 +1070,14 @@ namespace vx
 
 	inline bool VX_CALLCONV Vector3IsInfinite(CVEC4 V);
 	inline bool VX_CALLCONV Vector3Equal(CVEC4 V1, CVEC4 V2);
+	inline __m128 VX_CALLCONV VectorInBounds(CVEC4 V, CVEC4 Bounds);
+
+	inline __m128 VX_CALLCONV VectorAndInt(CVEC4 V1, CVEC4 V2);
+	inline __m128 VX_CALLCONV VectorEqualInt(CVEC4 V1,CVEC4 V2);
 
 	inline __m128 VX_CALLCONV VectorSelect(CVEC4 V1, CVEC4 V2, CVEC4 Control);
 	inline __m128 VX_CALLCONV negate(CVEC4 V);
+	inline __m128 VX_CALLCONV round(CVEC4 V);
 
 	inline __m128 VX_CALLCONV cross3(CVEC4 v1, CVEC4 v2);
 
@@ -1086,68 +1093,74 @@ namespace vx
 	inline void VX_CALLCONV quaternionToAxisAngle(CVEC4 Q, __m128* pAxis, f32* pAngle);
 
 	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, CVEC4 V);
+	inline __m128 VX_CALLCONV VectorTan(CVEC4 V);
 	inline __m128 VX_CALLCONV VectorModAngles(CVEC4 Angles);
 
 	inline f32 VX_CALLCONV VectorGetW(CVEC4 V);
 
+	inline __m128 VX_CALLCONV VectorSplatX(CVEC4 V);
+	inline __m128 VX_CALLCONV VectorSplatY(CVEC4 V);
+	inline __m128 VX_CALLCONV VectorSplatZ(CVEC4 V);
+	inline __m128 VX_CALLCONV VectorSplatW(CVEC4 V);
+
 	//////////////////////// inline functions
 
 	template<class T>
-	detail::vec2<T> min(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
+	inline detail::vec2<T> min(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
 	{
 		return detail::vec2<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
 	}
 
 	template<>
-	detail::vec2<f32> min(const detail::vec2<f32> &v1, const detail::vec2<f32> &v2)
+	inline detail::vec2<f32> min(const detail::vec2<f32> &v1, const detail::vec2<f32> &v2)
 	{
 		return detail::vec2<f32>(fminf(v1.x, v2.x), fminf(v1.y, v2.y));
 	}
 
 	template<class T>
-	detail::vec2a<T> min(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
+	inline detail::vec2a<T> min(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
 	{
 		return detail::vec2a<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
 	}
 
 	template<class T>
-	detail::vec3<T> min(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
+	inline detail::vec3<T> min(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
 		return detail::vec3<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z));
 	}
 
 	template<>
-	detail::vec3<f32> min(const detail::vec3<f32> &v1, const detail::vec3<f32> &v2)
+	inline detail::vec3<f32> min(const detail::vec3<f32> &v1, const detail::vec3<f32> &v2)
 	{
 		return detail::vec3<f32>(fminf(v1.x, v2.x), fminf(v1.y, v2.y), fminf(v1.z, v2.z));
 	}
 
 	template<class T>
-	detail::vec4<T> min(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
+	inline detail::vec4<T> min(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
 	{
 		return detail::vec4<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z), std::min(v1.w, v2.w));
 	}
 
 	template<class T>
-	detail::vec2<T> max(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
+	inline detail::vec2<T> max(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
 	{
 		return detail::vec2<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
 	}
 
 	template<class T>
-	detail::vec2a<T> max(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
+	inline detail::vec2a<T> max(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
 	{
 		return detail::vec2a<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
 	}
 
 	template<class T>
-	detail::vec3<T> max(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
+	inline detail::vec3<T> max(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
 		return detail::vec3<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z));
 	}
 
 	template<class T>
-	detail::vec4<T> max(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
+	inline detail::vec4<T> max(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
 	{
 		return detail::vec4<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z), std::max(v1.w, v2.w));
 	}
@@ -1302,37 +1315,37 @@ namespace vx
 	}
 
 	template<class T>
-	detail::vec2<T> abs(const detail::vec2<T> &v)
+	inline detail::vec2<T> abs(const detail::vec2<T> &v)
 	{
 		return detail::vec2<T>(std::abs(v.x), std::abs(v.y));
 	}
 
 	template<>
-	float2 abs(const float2 &v)
+	inline float2 abs(const float2 &v)
 	{
 		return float2(fabs(v.x), fabs(v.y));
 	}
 
 	template<class T>
-	detail::vec3<T> abs(const detail::vec3<T> &v)
+	inline detail::vec3<T> abs(const detail::vec3<T> &v)
 	{
 		return detail::vec3<T>(std::abs(v.x), std::abs(v.y), std::abs(v.z));
 	}
 
 	template<>
-	float3 abs(const float3 &v)
+	inline float3 abs(const float3 &v)
 	{
 		return float3(fabs(v.x), fabs(v.y), fabs(v.z));
 	}
 
 	template<class T>
-	detail::vec4<T> abs(const detail::vec4<T> &v)
+	inline detail::vec4<T> abs(const detail::vec4<T> &v)
 	{
 		return detail::vec4<T>(std::abs(v.x), std::abs(v.y), std::abs(v.z), std::abs(v.w));
 	}
 
 	template<>
-	float4 abs(const float4 &v)
+	inline float4 abs(const float4 &v)
 	{
 		return float4(fabs(v.x), fabs(v.y), fabs(v.z), fabs(v.w));
 	}

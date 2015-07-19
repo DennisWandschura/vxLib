@@ -23,6 +23,7 @@ SOFTWARE.
 */
 #include <vxLib/Allocator/PoolAllocator.h>
 #include <algorithm>
+#include <vxLib/Allocator/AllocationProfiler.h>
 
 namespace vx
 {
@@ -84,6 +85,13 @@ namespace vx
 		if (m_freeEntries == 0)
 			return nullptr;
 
+#if _VX_MEM_PROFILE
+		if (s_allocationProfiler)
+		{
+			s_allocationProfiler->updateAllocation(m_pMemory, m_poolSize);
+		}
+#endif
+
 		auto ptr = m_pMemory + m_firstFreeEntry;
 		m_firstFreeEntry = *((u32*)ptr);
 		--m_freeEntries;
@@ -103,6 +111,13 @@ namespace vx
 			m_pMemory + m_size <= ptr)
 			return;
 
+#if _VX_MEM_PROFILE
+		if (s_allocationProfiler)
+		{
+			s_allocationProfiler->updateDeallocation(m_pMemory, m_poolSize);
+		}
+#endif
+
 		u32 firstFreeEntry = ((u8*)ptr) - m_pMemory;
 		*reinterpret_cast<u32*>(ptr) = m_firstFreeEntry;
 		m_firstFreeEntry = firstFreeEntry;
@@ -120,5 +135,15 @@ namespace vx
 		m_size = 0;
 
 		return ptr;
+	}
+
+	u32 PoolAllocator::getTotalSize() const
+	{
+		return m_size;
+	}
+
+	const u8* PoolAllocator::getMemory() const
+	{
+		return m_pMemory;
 	}
 }

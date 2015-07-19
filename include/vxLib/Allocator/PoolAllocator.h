@@ -54,5 +54,9 @@ namespace vx
 
 		// returns pointer to memory and sets everything to zero
 		void* release() noexcept;
+
+		u32 getTotalSize() const override;
+
+		const u8* getMemory() const override;
 	};
 }

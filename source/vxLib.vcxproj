@@ -17,25 +17,26 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A5CEF299-52A6-4D84-B0CC-AC809DB0897F}</ProjectGuid>
     <RootNamespace>vxLib</RootNamespace>
+    <TargetPlatformVersion>10.0.10069.0</TargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>Intel C++ Compiler XE 15.0</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <InterproceduralOptimization>true</InterproceduralOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='test|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>Intel C++ Compiler XE 15.0</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>Intel C++ Compiler XE 15.0</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -55,8 +56,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>d:\Users\dennis\Documents\Visual Studio 2015\Projects\vxLib\include;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)\lib\</OutDir>
-    <IntDir>$(SolutionDir)\tmp\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)\libt\</OutDir>
+    <IntDir>$(SolutionDir)\ttmp\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='test|x64'">
     <IncludePath>E:\dev\libraries\boost_1_55_0\include;d:\Users\dw\Documents\Visual Studio 2013\Projects\vxLib\include;$(IncludePath)</IncludePath>
@@ -75,12 +76,13 @@
       <CallingConvention>FastCall</CallingConvention>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <PreprocessorDefinitions>_VX_WINDOWS;_VX_ASSERT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <PreprocessorDefinitions>_VX_WINDOWS;_VX_ASSERT;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <OptimizeForWindowsApplication>false</OptimizeForWindowsApplication>
-      <CompileAs>CompileAsCpp</CompileAs>
+      <CompileAs>Default</CompileAs>
       <Cpp0xSupport>true</Cpp0xSupport>
       <RecognizeRestrictKeyword>true</RecognizeRestrictKeyword>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -133,6 +135,7 @@
   <ItemGroup>
     <ClInclude Include="..\include\vxLib\algorithm.h" />
     <ClInclude Include="..\include\vxLib\AlignedStorage.h" />
+    <ClInclude Include="..\include\vxLib\Allocator\AllocationProfiler.h" />
     <ClInclude Include="..\include\vxLib\Allocator\Allocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\PoolAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\StackAllocator.h" />
@@ -176,6 +179,8 @@
     <None Include="math\asm_include.inc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AllocationProfiler.cpp" />
+    <ClCompile Include="Allocator.cpp" />
     <ClCompile Include="CityHash.cpp" />
     <ClCompile Include="DebugPrint.cpp" />
     <ClCompile Include="File.cpp" />

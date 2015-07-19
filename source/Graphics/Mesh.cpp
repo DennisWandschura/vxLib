@@ -107,6 +107,31 @@ namespace vx
 		return src;
 	}
 
+	const u8* Mesh::loadFromMemoryDataSize(const u8 *src, u32* dataSizeInBytes)
+	{
+		m_vertexCount = *reinterpret_cast<const u32*>(src);
+		src += sizeof(u32);
+
+		m_indexCount = *reinterpret_cast<const u32*>(src);
+		src += sizeof(u32);
+
+		auto totalSize = Mesh::getArraySize(m_vertexCount, m_indexCount);
+
+		*dataSizeInBytes = totalSize;
+
+		return src;
+	}
+
+	const u8* Mesh::loadFromMemoryData(const u8* src, u8* dst, u32 size)
+	{
+		memcpy(dst, src, size);
+		src += size;
+
+		setPointers(dst);
+
+		return src;
+	}
+
 	u8* Mesh::saveToMemory(u8 *ptr) const
 	{
 		*reinterpret_cast<u32*>(ptr) = m_vertexCount;

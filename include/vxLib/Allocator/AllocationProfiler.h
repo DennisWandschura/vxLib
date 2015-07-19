@@ -1,4 +1,5 @@
 #pragma once
+
 /*
 The MIT License (MIT)
 
@@ -24,44 +25,25 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/Allocator.h>
+#include <vxLib/Container/sorted_vector.h>
 
 namespace vx
 {
-	class StackAllocator : public Allocator
+	class AllocationProfiler
 	{
-		u8 *m_pMemory;
-		u32 m_head;
-		u32 m_size;
+		struct Entry;
+
+		vx::sorted_vector<const u8*, Entry> m_entries;
 
 	public:
-		typedef u32 Marker;
+		AllocationProfiler();
+		~AllocationProfiler();
 
-		StackAllocator();
-		// passed in memory ptr must be aligned to 16 bytes
-		StackAllocator(u8 *ptr, u32 size);
-		StackAllocator(const StackAllocator&) = delete;
-		StackAllocator(StackAllocator &&rhs);
-		~StackAllocator();
+		void registerAllocator(const vx::Allocator* allocator, const char* text);
 
-		StackAllocator& operator=(const StackAllocator&) = delete;
-		StackAllocator& operator=(StackAllocator &&rhs);
+		void updateAllocation(const u8* memoryStart, u32 size);
+		void updateDeallocation(const u8* memoryStart, u32 size);
 
-		u8* allocate(u64 size) noexcept override;
-		u8* allocate(u64 size, u8 alignment) noexcept override;
-
-		void deallocate(u8 *ptr) noexcept override;
-
-		void clear() noexcept;
-		void clear(Marker marker) noexcept;
-
-		void* release() noexcept;
-
-		void swap(StackAllocator &rhs) noexcept;
-
-		Marker getMarker() const;
-
-		u32 getTotalSize() const override;
-
-		const u8* getMemory() const override;
+		void print() const;
 	};
 }
