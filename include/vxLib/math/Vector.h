@@ -23,6 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#pragma warning( push )
+#pragma warning(disable : 4201)
+
 #include <vxLib/math/math.h>
 #include <algorithm>
 
@@ -57,26 +60,23 @@ namespace vx
 		struct XMM_TYPE;
 
 		template<class T>
-		struct vec2
+		union vec2
 		{
 			typedef T value_type;
 
-			union
+			struct
 			{
-				struct
-				{
-					value_type x, y;
-				};
-
-				value_type v[2];
+				value_type x, y;
 			};
+
+			value_type v[2];
 
 			vec2() :x(), y(){}
 			explicit vec2(value_type v) :x(v), y(v){}
 			vec2(value_type vx, value_type vy) : x(vx), y(vy){}
 
 			template<typename U>
-			vec2(const vec2<U> &v) : x(static_cast<U>(v.x)), y(static_cast<U>(v.y)){}
+			vec2(const vec2<U> &v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)){}
 
 			operator value_type*()
 			{
@@ -224,19 +224,16 @@ namespace vx
 		};
 
 		template<class T>
-		struct VX_ALIGN(8) vec2a
+		union VX_ALIGN(8) vec2a
 		{
 			typedef T value_type;
 
-			union
+			struct
 			{
-				struct
-				{
-					value_type x, y;
-				};
-
-				value_type v[2];
+				value_type x, y;
 			};
+
+			value_type v[2];
 
 			vec2a() :x(), y(){}
 			explicit vec2a(value_type v) :x(v), y(v){}
@@ -244,7 +241,7 @@ namespace vx
 			vec2a(const vec2<T> &v) :x(v.x), y(v.y){}
 
 			template<typename U>
-			vec2a(const vec2a<U> &v) : x(static_cast<U>(v.x)), y(static_cast<U>(v.y)){}
+			vec2a(const vec2a<U> &v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)){}
 
 			operator value_type*()
 			{
@@ -397,19 +394,16 @@ namespace vx
 		};
 
 		template<class T>
-		struct vec3
+		union vec3
 		{
 			typedef T value_type;
 
-			union
+			struct
 			{
-				struct
-				{
-					value_type x, y, z;
-				};
-
-				value_type v[3];
+				value_type x, y, z;
 			};
+
+			value_type v[3];
 
 			vec3() :x(), y(), z(){}
 			explicit vec3(value_type v) :x(v), y(v), z(v){}
@@ -418,7 +412,7 @@ namespace vx
 			vec3(const vec2a<T> &v, value_type vz) : x(v.x), y(v.y), z(vz){}
 
 			template<typename U>
-			vec3(const vec3<U> &v) : x(static_cast<U>(v.x)), y(static_cast<U>(v.y)), z(static_cast<U>(v.z)){}
+			vec3(const vec3<U> &v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)), z(static_cast<T>(v.z)){}
 
 			vec3 operator-() const
 			{
@@ -579,19 +573,16 @@ namespace vx
 		};
 
 		template<class T>
-		struct vec4
+		union vec4
 		{
 			typedef T value_type;
 
-			union
+			struct
 			{
-				struct
-				{
-					value_type x, y, z, w;
-				};
-
-				value_type v[4];
+				value_type x, y, z, w;
 			};
+
+			value_type v[4];
 
 			vec4() :x(), y(), z(), w(){}
 			explicit vec4(value_type v) :x(v), y(v), z(v), w(){}
@@ -601,7 +592,7 @@ namespace vx
 			vec4(const vec3<T> &v, value_type vw) : x(v.x), y(v.y), z(v.z), w(vw){}
 
 			template<typename U>
-			vec4(const vec4<U> &v) : x(static_cast<U>(v.x)), y(static_cast<U>(v.y)), z(static_cast<U>(v.z)),w(static_cast<U>(v.w)){}
+			vec4(const vec4<U> &v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)), z(static_cast<T>(v.z)),w(static_cast<T>(v.w)){}
 
 			vec4 operator-() const
 			{
@@ -723,18 +714,15 @@ namespace vx
 		};
 
 		template<typename T>
-		struct VX_ALIGN(16) vec3a
+		union VX_ALIGN(16) vec3a
 		{
 			typedef T value_type;
 			typedef typename XMM_TYPE<value_type>::xmm_type xmm_type;
 
-			union
+			xmm_type v;
+			struct
 			{
-				xmm_type v;
-				struct
-				{
-					value_type x, y, z;
-				};
+				value_type x, y, z;
 			};
 
 			vec3a():v(){}
@@ -752,18 +740,15 @@ namespace vx
 		};
 
 		template<typename T>
-		struct VX_ALIGN(16) vec4a
+		union VX_ALIGN(16) vec4a
 		{
 			typedef T value_type;
 			typedef typename XMM_TYPE<value_type>::xmm_type xmm_type;
 
-			union
+			xmm_type v;
+			struct
 			{
-				xmm_type v;
-				struct
-				{
-					value_type x, y, z, w;
-				};
+				value_type x, y, z, w;
 			};
 
 			vec4a() :v(){}
@@ -795,26 +780,20 @@ namespace vx
 		};
 	}
 
-	struct ivec4
+	union ivec4
 	{
-		union
-		{
-			s32 i[4];
-			__m128 v;
-		};
+		s32 i[4];
+		__m128 v;
 
 		inline operator __m128() const { return v; }
 		inline operator __m128i() const { return _mm_castps_si128(v); }
 		inline operator __m128d() const { return _mm_castps_pd(v); }
 	};
 
-	struct uvec4
+	union uvec4
 	{
-		union
-		{
-			u32 i[4];
-			__m128 v;
-		};
+		u32 i[4];
+		__m128 v;
 
 		inline operator __m128() const { return v; }
 		inline operator __m128i() const { return _mm_castps_si128(v); }
@@ -1054,8 +1033,8 @@ namespace vx
 	}
 
 	// Special-case permute templates
-	template<> inline __m128      VX_CALLCONV     VectorPermute<0, 1, 2, 3>(CVEC4 V1, CVEC4 V2) { return V1; }
-	template<> inline __m128      VX_CALLCONV     VectorPermute<4, 5, 6, 7>(CVEC4 V1, CVEC4 V2) { return V2; }
+	template<> inline __m128      VX_CALLCONV     VectorPermute<0, 1, 2, 3>(CVEC4 V1, CVEC4) { return V1; }
+	template<> inline __m128      VX_CALLCONV     VectorPermute<4, 5, 6, 7>(CVEC4, CVEC4 V2) { return V2; }
 
 	inline __m128 VX_CALLCONV fma(CVEC4 a, CVEC4 b, CVEC4 c);
 	inline __m128 VX_CALLCONV VectorNegativeMultiplySubtract(CVEC4 a, CVEC4 b, CVEC4 c);
@@ -1429,3 +1408,5 @@ namespace vx
 }
 
 #include "Vector.inl"
+
+#pragma warning( pop )

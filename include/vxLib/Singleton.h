@@ -70,7 +70,7 @@ namespace vx
 	template<typename T, template <class> class CheckingPolicy = NoCheck, template<class> class CreationPolicy = CreationExplicit>
 	class GlobalSingleton : public CheckingPolicy < GlobalSingleton<T, CheckingPolicy, CreationPolicy> >, public CreationPolicy< GlobalSingleton<T, CheckingPolicy, CreationPolicy> >
 	{
-		using MyCheck = CheckingPolicy < GlobalSingleton<T, CheckingPolicy, CreationPolicy> >;
+		typedef CheckingPolicy < GlobalSingleton<T, CheckingPolicy, CreationPolicy> > MyCheck;
 		typedef CreationPolicy< GlobalSingleton<T, CheckingPolicy, CreationPolicy> > MyCreate;
 
 		struct Data
@@ -136,14 +136,16 @@ namespace vx
 
 		static T& get()
 		{
-			MyCreate::create();
-			MyCheck::check(s_constructed != 0);
-			return *((T*)s_data.m_buffer);
+			//MyCreate::create();
+			//MyCheck::check(s_constructed != 0);
+			//return *((T*)s_data.m_buffer);
+			auto data = reinterpret_cast<T*>(s_data.m_buffer);
+			return *data;
 		}
 	};
 
-	template<class U, template <class> class CheckingPolicy, template<class> class CreationPolicy>
-	typename GlobalSingleton<U, CheckingPolicy, CreationPolicy>::Data GlobalSingleton<U, CheckingPolicy, CreationPolicy>::s_data{};
+	template<typename U, template <class> class CheckingPolicy, template<class> class CreationPolicy>
+	typename GlobalSingleton<U, CheckingPolicy, CreationPolicy>::Data GlobalSingleton<U, CheckingPolicy, CreationPolicy>::s_data = {};
 
 	template<class U, template <class> class CheckingPolicy, template<class> class CreationPolicy>
 	u8 GlobalSingleton<U, CheckingPolicy, CreationPolicy>::s_constructed{ 0 };

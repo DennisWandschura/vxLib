@@ -25,11 +25,14 @@ SOFTWARE.
 
 #include <vxLib/math/Vector.h>
 #include <Windows.h>
+#include <memory>
 
 namespace vx
 {
 	class Window
 	{
+		struct ColdData;
+
 	public:
 		typedef void(*WindowCloseCallback)();
 
@@ -42,11 +45,7 @@ namespace vx
 
 		MSG m_msg;
 		WindowCloseCallback m_windowCloseCallback;
-		const char_type* m_windowName;
-		HINSTANCE m_hinstance;
-		HWND m_hwnd;
-		vx::uint2 m_windowSize{0, 0};
-		bool m_bFullscreen;
+		std::unique_ptr<ColdData> m_coldData;
 
 		void registerWindow(const char_type* windowName, bool bFullscreen);
 		bool createWindow(const vx::uint2 &windowSize);

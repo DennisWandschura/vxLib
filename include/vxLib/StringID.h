@@ -35,6 +35,8 @@ namespace vx
 		StringID() :value(0) {}
 		explicit StringID(u64 u) :value(u){}
 
+		~StringID() {}
+
 		StringID& operator=(u64 u)
 		{
 			value = u;

@@ -1,3 +1,4 @@
+#pragma once
 /*
 The MIT License (MIT)
 
@@ -23,7 +24,6 @@ SOFTWARE.
 */
 #ifndef __VX_STREAMHELPER_H
 #define __VX_STREAMHELPER_H
-#pragma once
 
 #include <istream>
 

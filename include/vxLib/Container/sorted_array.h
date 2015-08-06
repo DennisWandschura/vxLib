@@ -141,7 +141,7 @@ namespace vx
 			auto index = it - m_pKeys;
 			if (it == endKeys || Cmp()(key, *it))
 			{
-				size_type _Off = it - m_pKeys;
+				size_type _Off = static_cast<size_type>(it - m_pKeys);
 
 				emplace_back(key, value);
 
@@ -165,7 +165,7 @@ namespace vx
 			auto index = it - m_pKeys;
 			if (it == curEnd || Cmp()(key, *it))
 			{
-				size_type _Off = it - m_pKeys;
+				size_type _Off = static_cast<size_type>(it - m_pKeys);
 
 				emplace_back(std::forward<key_type>(key), std::forward<value_type>(value));
 

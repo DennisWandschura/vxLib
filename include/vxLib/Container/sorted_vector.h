@@ -25,8 +25,8 @@ SOFTWARE.
 
 #include <vxLib/types.h>
 #include <vxLib/Container/iterator.h>
-#include <algorithm>
 #include <vxLib/Allocator/Allocator.h>
+#include <algorithm>
 
 namespace vx
 {
@@ -35,10 +35,10 @@ namespace vx
 		template<bool>
 		struct Deleter
 		{
-			template<typename U>
-			static void destroy(U *p)
+			template<typename T>
+			void operator()(T* p)
 			{
-				p->~U();
+				p->~T();
 			}
 
 			template<u64 SIZE>
@@ -50,8 +50,8 @@ namespace vx
 		template<>
 		struct Deleter < false >
 		{
-			template<typename U>
-			static void destroy(U *p)
+			template<typename T>
+			void operator()(T*)
 			{
 			}
 		};
@@ -87,7 +87,6 @@ namespace vx
 				for (u32 i = 0; i < size; ++i)
 				{
 					strcpy_s(pDest[i], pSrc[i]);
-					//Deleter<std::is_destructible<char>::value>::destroy<char>(pSrc + i);
 				}
 			}
 		};
@@ -107,7 +106,7 @@ namespace vx
 				for (u32 i = 0; i < size; ++i)
 				{
 					new (pDest + i) U(std::move(*(pSrc + i)));
-					Deleter<std::is_destructible<U>::value>::destroy(pSrc + i);
+					Deleter<std::is_destructible<U>::value>()(pSrc + i);
 				}
 			}
 		};
@@ -147,7 +146,7 @@ namespace vx
 		void emplace_back(U &&key, _Valty&& ...args)
 		{
 			if (m_size >= m_capacity)
-				reserve((m_capacity + 1) * 1.3f);
+				reserve(static_cast<u32>((m_capacity + 1) * 1.3f));
 
 			new(m_pKeys + m_size) key_type(std::forward<U>(key));
 			//new(m_pValues + m_size) value_type(std::forward<_Valty>(args)...);
@@ -167,7 +166,7 @@ namespace vx
 		{
 			for (auto i = 0u; i < size; ++i)
 			{
-				detail::Deleter<std::is_destructible<U>::value>::destroy(ptr + i);
+				detail::Deleter<std::is_destructible<U>::value>()(ptr + i);
 			}
 		}
 
@@ -343,8 +342,8 @@ namespace vx
 			auto index = p - m_pValues;
 			auto pKey = m_pKeys + index;
 
-			detail::Deleter<std::is_destructible<value_type>::value>::destroy(p);
-			detail::Deleter<std::is_destructible<key_type>::value>::destroy(pKey);
+			detail::Deleter<std::is_destructible<value_type>::value>()(p);
+			detail::Deleter<std::is_destructible<key_type>::value>()(pKey);
 
 			std::move(p + 1, m_pValues + size(), p);
 			std::move(pKey + 1, m_pKeys + size(), pKey);
@@ -355,8 +354,8 @@ namespace vx
 
 		void pop_back()
 		{
-			detail::Deleter<std::is_destructible<value_type>::value>::destroy(m_pValues + m_size - 1);
-			detail::Deleter<std::is_destructible<key_type>::value>::destroy(m_pKeys + m_size - 1);
+			detail::Deleter<std::is_destructible<value_type>::value>()(m_pValues + m_size - 1);
+			detail::Deleter<std::is_destructible<key_type>::value>()(m_pKeys + m_size - 1);
 			--m_size;
 		}
 

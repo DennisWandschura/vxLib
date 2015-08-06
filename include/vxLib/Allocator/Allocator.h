@@ -24,6 +24,7 @@ SOFTWARE.
 */
 
 #include <vxLib/types.h>
+#include <new>
 
 namespace vx
 {
@@ -31,6 +32,25 @@ namespace vx
 
 	class Allocator
 	{
+		template<bool hasDestructor>
+		struct Destructor
+		{
+			template<typename T>
+			void operator()(T* ptr)
+			{
+				ptr->~T();
+			}
+		};
+
+		template<>
+		struct Destructor<false>
+		{
+			template<typename T>
+			void operator()(T*)
+			{
+			}
+		};
+
 	protected:
 		thread_local static AllocationProfiler* s_allocationProfiler;
 
@@ -82,7 +102,8 @@ namespace vx
 		template<class U>
 		static inline void destroy(U *p)
 		{
-			p->~U();
+			Destructor<std::is_destructible<U>::value>()(p);
+			//p->~U();
 		}
 
 		template<class U>
@@ -102,7 +123,7 @@ namespace vx
 			if ((adjustment - alignment) == 0)
 				return 0; //already aligned
 
-			return adjustment;
+			return static_cast<u8>(adjustment);
 		}
 	};
 

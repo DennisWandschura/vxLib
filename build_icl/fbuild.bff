@@ -27,16 +27,21 @@
 	.AsmCompiler = '$VS14Path$/ml64.exe'
 ]
 
-.DefaultCompilerSettings =
+.DefaultCompilerSettingsIntel =
 [
 	.CompilerSettingsDefault = '/fp:fast /Qstd=c++11 /W4 /Qrestrict /GS /Zc:wchar_t /GR- /arch:AVX'
+]
+
+.DefaultCompilerSettingsVS =
+[
+	.CompilerSettingsDefault = '/fp:fast /W4 /GS /Zc:wchar_t /GR- /arch:AVX'
 ]
 
 .InPath = '../source/'
 .OutPathObj = 'tmp'
 .ProjectName = 'vxLib'
 
-.DefinesCommon   = '/D "_UNICODE" /D "UNICODE" /D "_VX_WINDOWS" /D "NOMINMAX" /D "_CRT_SECURE_NO_WARNINGS"'	
+.DefinesCommon   = '/D "_UNICODE" /D "UNICODE" /D "_VX_WINDOWS" /D "NOMINMAX" /D "_CRT_SECURE_NO_WARNINGS" /D "_VX_NO_EXCEPTIONS"'	
 .DefinesDebug = '/D "_DEBUG" /D "_VX_ASSERT"'
 .DefinesRelease = '/D "NDEBUG"'
 .Includes = '/I..\include\'
@@ -46,16 +51,25 @@
 .BuildDebug =
 [
 	.OutputPathB = '$OutPathObj$\Debug\'
-	.CompilerSettingsB = '/Od /Ob0 /Zi /debug /nologo'
+	.CompilerSettingsB = '/Od /Ob0 /debug /nologo /ZI'
 	.FileExtension = '_d'
 	.DefinesBuild = '$DefinesDebug$'
 	.DebugMode = 1
 ]
 
-.BuildRelease =
+.BuildReleaseIntel =
 [
 	.OutputPathB = '$OutPathObj$\Release\'
-	.CompilerSettingsB = '/GS /O3 /Oi /nologo /Ob2'
+	.CompilerSettingsB = '/GS /O3 /Oi /nologo /Ob2 /GF'
+	.FileExtension = ''
+	.DefinesBuild = '$DefinesRelease$'
+	.DebugMode = 0
+]
+
+.BuildReleaseVS =
+[
+	.OutputPathB = '$OutPathObj$\Release\'
+	.CompilerSettingsB = '/GS /Ox /Oi /nologo /Ob2 /GF'
 	.FileExtension = ''
 	.DefinesBuild = '$DefinesRelease$'
 	.DebugMode = 0
@@ -64,7 +78,7 @@
 .Target_Debug_x64_Static_intel_vs12 =
 [
 	Using(.IntelX64)
-	Using(.DefaultCompilerSettings)
+	Using(.DefaultCompilerSettingsIntel)
 	Using(.BuildDebug)
 	
 	.CompilerSettingsT = '$CompilerSettingsB$ /MTd'
@@ -77,20 +91,20 @@
 .Target_Debug_x64_Static_vs12 =
 [
 	Using(.VS12)
-	Using(.DefaultCompilerSettings)
+	Using(.DefaultCompilerSettingsVS)
 	Using(.BuildDebug)
 	
 	.CompilerSettingsT = '$CompilerSettingsB$ /MTd'
 	.FileName = '$ProjectName$_sd'
 	.OutPath = '../lib/vs12'
 	.TargetName = '$FileName$_vs12'
-	.DefinesTarget = ''
+	.DefinesTarget = '/D_VX_VS12'
 ]
 
 .Target_Debug_x64_Static_vs14 =
 [
 	Using(.VS14)
-	Using(.DefaultCompilerSettings)
+	Using(.DefaultCompilerSettingsVS)
 	Using(.BuildDebug)
 	
 	.FileName = '$ProjectName$_sd'
@@ -103,7 +117,7 @@
 .Target_Debug_x64_Static_intel_vs14 =
 [
 	Using(.IntelX64)
-	Using(.DefaultCompilerSettings)
+	Using(.DefaultCompilerSettingsIntel)
 	Using(.BuildDebug)
 	
 	.CompilerSettingsT = '$CompilerSettingsB$ /MTd'
@@ -116,21 +130,21 @@
 .Target_Release_Static_x64_vs12 =
 [
 	Using(.VS12)
-	Using(.DefaultCompilerSettings)
-	Using(.BuildRelease)
+	Using(.DefaultCompilerSettingsVS)
+	Using(.BuildReleaseVS)
 	
 	.CompilerSettingsT = '$CompilerSettingsB$ /MT'
 	.FileName = '$ProjectName$_s'
 	.OutPath = '../lib/vs12'
 	.TargetName = '$FileName$_vs12'
-	.DefinesTarget = ''
+	.DefinesTarget = '/D_VX_VS12'
 ]
 
 .Target_Release_Static_x64_vs14 =
 [
 	Using(.VS14)
-	Using(.DefaultCompilerSettings)
-	Using(.BuildRelease)
+	Using(.DefaultCompilerSettingsVS)
+	Using(.BuildReleaseVS)
 	
 	.CompilerSettingsT = '$CompilerSettingsB$ /MT'
 	.FileName = '$ProjectName$_s'
@@ -142,8 +156,8 @@
 .Target_Release_Static_x64_intel_vs12 =
 [
 	Using(.IntelX64)
-	Using(.DefaultCompilerSettings)
-	Using(.BuildRelease)
+	Using(.DefaultCompilerSettingsIntel)
+	Using(.BuildReleaseIntel)
 	
 	.CompilerSettingsT = '$CompilerSettingsB$ /MT'
 	.FileName = '$ProjectName$_s'
@@ -155,8 +169,8 @@
 .Target_Release_Static_x64_intel_vs14 =
 [
 	Using(.IntelX64)
-	Using(.DefaultCompilerSettings)
-	Using(.BuildRelease)
+	Using(.DefaultCompilerSettingsIntel)
+	Using(.BuildReleaseIntel)
 	
 	.CompilerSettingsT = '$CompilerSettingsB$ /MT'
 	.FileName = '$ProjectName$_s'
@@ -183,11 +197,30 @@
 	.DefinesTarget = '/D "_VX_MEM_PROFILE"'
 ]
 
+.Target_Debug_Static_x64_vs14_mem =
+[
+	Using(.Target_Debug_x64_Static_vs14)
+
+	.FileName = '$ProjectName$MEMPROFILE_sd'
+	.TargetName = '$FileName$_vs14'
+	.DefinesTarget = '/D "_VX_MEM_PROFILE"'
+]
+
+.Target_Release_Static_x64_vs14_mem =
+[
+	Using(.Target_Release_Static_x64_vs14)
+	
+	.FileName = '$ProjectName$MEMPROFILE_s'
+	.TargetName = '$FileName$_vs14'
+	.DefinesTarget = '/D "_VX_MEM_PROFILE"'
+]
+
 .Targets = { .Target_Debug_x64_Static_intel_vs12, .Target_Release_Static_x64_intel_vs12,
 			.Target_Debug_x64_Static_intel_vs14, .Target_Release_Static_x64_intel_vs14, 
 			.Target_Debug_x64_Static_intel_mem, .Target_Release_Static_x64_mem,
 			.Target_Debug_x64_Static_vs12, .Target_Release_Static_x64_vs12,
-			.Target_Debug_x64_Static_vs14, .Target_Release_Static_x64_vs14 }
+			.Target_Debug_x64_Static_vs14, .Target_Release_Static_x64_vs14,
+			.Target_Debug_Static_x64_vs14_mem, .Target_Release_Static_x64_vs14_mem}
 
 ForEach( .Target in .Targets )
 {
@@ -198,8 +231,8 @@ ForEach( .Target in .Targets )
 	Unity("Unity_$TargetName$")
 	{
 		.UnityInputPath = '$InPath$'
-		.UnityOutputPattern = 'Unity_$FileName$*.cpp'
 		.UnityOutputPath = '$OutputPathF$\unity\'
+		.UnityOutputPattern = 'Unity_$FileName$*.cpp'
 	}
 	
 	Unity("Unity_C_$TargetName$")
@@ -213,15 +246,15 @@ ForEach( .Target in .Targets )
 	ObjectList("Obj_C_$TargetName$")
 	{
 		.CompilerInputUnity = 'Unity_C_$TargetName$'
-		.CompilerOptions = '"%1" /c /Fo"%2" $CompilerSettingsDefault$ $CompilerSettingsT$ $Includes$ $DefinesCommon$ $DefinesBuild$ $DefinesTarget$'
 		.CompilerOutputPath = '$OutputPathF$\C\'
+		.CompilerOptions = '"%1" /c /Fo"%2" /Fd"$CompilerOutputPath$\$TargetName$.pdb" $CompilerSettingsDefault$ $CompilerSettingsT$ $Includes$ $DefinesCommon$ $DefinesBuild$ $DefinesTarget$'
 	}
 	
 	ObjectList("Obj_$TargetName$")
 	{
 		.CompilerInputUnity = 'Unity_$TargetName$'
 		.CompilerOutputPath = '$OutputPathF$\CPP\'
-		.CompilerOptions = '"%1" /c /Fo"%2" /Fd"$OutputPathF$\CPP\debug.pdb" $CompilerSettingsDefault$ $CompilerSettingsT$ $Includes$ $DefinesCommon$ $DefinesBuild$ $DefinesTarget$'
+		.CompilerOptions = '"%1" /c /Fo"%2" /Fd"$CompilerOutputPath$\$TargetName$.pdb" $CompilerSettingsDefault$ $CompilerSettingsT$ $Includes$ $DefinesCommon$ $DefinesBuild$ $DefinesTarget$'
 	}
 	
 	ObjectList("Obj_ASM_$TargetName$")
@@ -251,7 +284,7 @@ Alias('vs12')
 
 Alias('vs14')
 {
-	.Targets = { 'Lib_vxLib_sd_vs14', 'Lib_vxLib_s_vs14' }
+	.Targets = { 'Lib_vxLib_sd_vs14', 'Lib_vxLib_s_vs14', 'Lib_vxLibMEMPROFILE_sd_vs14', 'Lib_vxLibMEMPROFILE_s_vs14' }
 }
 
 Alias('intel_vs12')

@@ -30,19 +30,26 @@ namespace vx
 	LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 	Window *g_windowHandle = nullptr;
 
+	struct Window::ColdData
+	{
+		const char_type* m_windowName;
+		HINSTANCE m_hinstance;
+		HWND m_hwnd;
+		vx::uint2 m_windowSize{ 0, 0 };
+		bool m_bFullscreen;
+	};
+
 	Window::Window()
 		:m_msg(),
-		m_windowCloseCallback(nullptr)
+		m_windowCloseCallback(nullptr),
+		m_coldData()
 	{
 	}
 
 	Window::Window(Window &&rhs)
 		: m_msg(rhs.m_msg),
-		m_windowName(rhs.m_windowName),
-		m_hinstance(rhs.m_hinstance),
-		m_hwnd(rhs.m_hwnd),
-		m_windowSize(rhs.m_windowSize),
-		m_bFullscreen(rhs.m_bFullscreen)
+		m_windowCloseCallback(rhs.m_windowCloseCallback),
+		m_coldData(std::move(rhs.m_coldData))
 	{
 	}
 
@@ -56,11 +63,8 @@ namespace vx
 		if (this != &rhs)
 		{
 			m_msg = rhs.m_msg;
-			m_windowName = rhs.m_windowName;
-			m_hinstance = rhs.m_hinstance;
-			m_hwnd = rhs.m_hwnd;
-			m_windowSize = rhs.m_windowSize;
-			m_bFullscreen = rhs.m_bFullscreen;
+			m_windowCloseCallback = rhs.m_windowCloseCallback;
+			m_coldData = std::move(rhs.m_coldData);
 		}
 
 		return *this;
@@ -69,15 +73,15 @@ namespace vx
 	void Window::registerWindow(const char_type *windowName, bool bFullscreen)
 	{
 		// Give the application a name.
-		m_windowName = windowName;
+		m_coldData->m_windowName = windowName;
 
-		m_bFullscreen = bFullscreen;
+		m_coldData->m_bFullscreen = bFullscreen;
 
 		// Get an external pointer to this object.	
 		g_windowHandle = this;
 
 		// Get the instance of this application.
-		m_hinstance = GetModuleHandle(NULL);
+		m_coldData->m_hinstance = GetModuleHandle(NULL);
 
 		WNDCLASSEX wc;
 		// Setup the windows class with default settings.
@@ -85,13 +89,13 @@ namespace vx
 		wc.lpfnWndProc = WndProc;
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = 0;
-		wc.hInstance = m_hinstance;
+		wc.hInstance = m_coldData->m_hinstance;
 		wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
 		wc.hIconSm = wc.hIcon;
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH)GetStockObject(DKGRAY_BRUSH);
 		wc.lpszMenuName = NULL;
-		wc.lpszClassName = m_windowName;
+		wc.lpszClassName = m_coldData->m_windowName;
 		wc.cbSize = sizeof(WNDCLASSEX);
 
 		// Register the window class.
@@ -101,19 +105,19 @@ namespace vx
 	bool Window::createWindow(const vx::uint2 &windowSize)
 	{
 		// Determine the resolution of the clients desktop screen.
-		m_windowSize.x = GetSystemMetrics(SM_CXSCREEN);
-		m_windowSize.y = GetSystemMetrics(SM_CYSCREEN);
+		m_coldData->m_windowSize.x = GetSystemMetrics(SM_CXSCREEN);
+		m_coldData->m_windowSize.y = GetSystemMetrics(SM_CYSCREEN);
 
 		int posX, posY;
 		// Setup the screen settings depending on whether it is running in full screen or in windowed mode.
-		if (m_bFullscreen)
+		if (m_coldData->m_bFullscreen)
 		{
 			DEVMODE dmScreenSettings;
 			// If full screen set the screen to maximum size of the users desktop and 32bit.
 			memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
 			dmScreenSettings.dmSize = sizeof(dmScreenSettings);
-			dmScreenSettings.dmPelsWidth = (unsigned long)m_windowSize.x;
-			dmScreenSettings.dmPelsHeight = (unsigned long)m_windowSize.y;
+			dmScreenSettings.dmPelsWidth = (unsigned long)m_coldData->m_windowSize.x;
+			dmScreenSettings.dmPelsHeight = (unsigned long)m_coldData->m_windowSize.y;
 			dmScreenSettings.dmBitsPerPel = 32;
 			dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
@@ -126,35 +130,35 @@ namespace vx
 		else
 		{
 			// If windowed then set it to 800x600 resolution.
-			m_windowSize = windowSize;
+			m_coldData->m_windowSize = windowSize;
 
 			// Place the window in the middle of the screen.
-			posX = (GetSystemMetrics(SM_CXSCREEN) - m_windowSize.x) / 2;
-			posY = (GetSystemMetrics(SM_CYSCREEN) - m_windowSize.y) / 2;
+			posX = (GetSystemMetrics(SM_CXSCREEN) - m_coldData->m_windowSize.x) / 2;
+			posY = (GetSystemMetrics(SM_CYSCREEN) - m_coldData->m_windowSize.y) / 2;
 		}
 
 		// Create the window with the screen settings and get the handle to it.
-		m_hwnd = CreateWindowEx(
+		m_coldData->m_hwnd = CreateWindowEx(
 			WS_EX_APPWINDOW,
-			m_windowName,
-			m_windowName,
+			m_coldData->m_windowName,
+			m_coldData->m_windowName,
 			WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
 			posX,
 			posY,
-			m_windowSize.x,
-			m_windowSize.y,
+			m_coldData->m_windowSize.x,
+			m_coldData->m_windowSize.y,
 			NULL,
 			NULL,
-			m_hinstance,
+			m_coldData->m_hinstance,
 			NULL);
 
-		if (m_hwnd == NULL)
+		if (m_coldData->m_hwnd == NULL)
 			return false;
 
 		// Bring the window up on the screen and set it as main focus.
-		ShowWindow(m_hwnd, SW_SHOW);
-		SetForegroundWindow(m_hwnd);
-		SetFocus(m_hwnd);
+		ShowWindow(m_coldData->m_hwnd, SW_SHOW);
+		SetForegroundWindow(m_coldData->m_hwnd);
+		SetFocus(m_coldData->m_hwnd);
 
 		//SetCursorPos(posX + m_windowSize.x / 2, posY + m_windowSize.y /2);
 		setCursorPos(0, 0);
@@ -168,6 +172,7 @@ namespace vx
 	bool Window::initialize(const char_type *windowName, const vx::uint2 &windowSize, bool bFullscreen)
 	{
 		ZeroMemory(&m_msg, sizeof(MSG));
+		m_coldData = std::make_unique<ColdData>();
 
 		registerWindow(windowName, bFullscreen);
 
@@ -177,7 +182,7 @@ namespace vx
 			return false;
 		}
 
-		if (!RawInput::initialize(m_hwnd))
+		if (!RawInput::initialize(m_coldData->m_hwnd))
 			return false;
 
 		return true;
@@ -196,16 +201,16 @@ namespace vx
 		ShowCursor(true);
 
 		// Fix the display settings if leaving full screen mode.
-		if (m_bFullscreen)
+		if (m_coldData->m_bFullscreen)
 			ChangeDisplaySettings(NULL, 0);
 
 		// Remove the window.
-		DestroyWindow(m_hwnd);
-		m_hwnd = nullptr;
+		DestroyWindow(m_coldData->m_hwnd);
+		m_coldData->m_hwnd = nullptr;
 
 		// Remove the application instance.
-		UnregisterClass(m_windowName, m_hinstance);
-		m_hinstance = nullptr;
+		UnregisterClass(m_coldData->m_windowName, m_coldData->m_hinstance);
+		m_coldData->m_hinstance = nullptr;
 
 		// Release the pointer to this class.
 		g_windowHandle = nullptr;
@@ -279,22 +284,22 @@ namespace vx
 
 	HWND Window::getHwnd() const
 	{
-		return m_hwnd;
+		return m_coldData->m_hwnd;
 	}
 
 	HINSTANCE Window::getHinstance() const
 	{
-		return m_hinstance;
+		return m_coldData->m_hinstance;
 	}
 
 	LPCWSTR Window::getClassName() const
 	{
-		return m_windowName;
+		return m_coldData->m_windowName;
 	}
 
 	const vx::uint2& Window::getSize() const
 	{
-		return m_windowSize;
+		return m_coldData->m_windowSize;
 	}
 
 	void Window::showCursor(bool b)
@@ -305,9 +310,9 @@ namespace vx
 	void Window::setCursorPos(const vx::int2 &pos)
 	{
 		RECT windowRect;
-		GetWindowRect(m_hwnd, &windowRect);
+		GetWindowRect(m_coldData->m_hwnd, &windowRect);
 
-		SetCursorPos(windowRect.left + m_windowSize.x / 2 + pos.x, windowRect.top + m_windowSize.y / 2 + pos.y);
+		SetCursorPos(windowRect.left + m_coldData->m_windowSize.x / 2 + pos.x, windowRect.top + m_coldData->m_windowSize.y / 2 + pos.y);
 
 		//SetCursorPos(pos.x, pos.y);
 	}
@@ -315,9 +320,9 @@ namespace vx
 	void Window::setCursorPos(s32 x, s32 y)
 	{
 		RECT windowRect;
-		GetWindowRect(m_hwnd, &windowRect);
+		GetWindowRect(m_coldData->m_hwnd, &windowRect);
 
-		SetCursorPos(windowRect.left + m_windowSize.x / 2 + x, windowRect.top + m_windowSize.y / 2 + y);
+		SetCursorPos(windowRect.left + m_coldData->m_windowSize.x / 2 + x, windowRect.top + m_coldData->m_windowSize.y / 2 + y);
 	}
 
 
@@ -328,12 +333,12 @@ namespace vx
 
 	void Window::setForeground()
 	{
-		SetForegroundWindow(m_hwnd);
+		SetForegroundWindow(m_coldData->m_hwnd);
 	}
 
 	void Window::focus()
 	{
-		SetFocus(m_hwnd);
+		SetFocus(m_coldData->m_hwnd);
 	}
 
 	LRESULT CALLBACK Window::messageHandler(HWND hwnd, UINT umsg, WPARAM wParam, LPARAM lParam)

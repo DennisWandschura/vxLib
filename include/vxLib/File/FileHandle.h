@@ -50,7 +50,7 @@ namespace vx
 			u32 i = 0;
 			while (m_string[i])
 			{
-				m_string[i] = tolower(m_string[i]);
+				m_string[i] = static_cast<char>(tolower(m_string[i]));
 				++i;
 			}
 

@@ -24,8 +24,8 @@ SOFTWARE.
 */
 
 #include <vxLib\Container\iterator.h>
-#include <new>
 #include <vxLib\Allocator\Allocator.h>
+#include <new>
 
 namespace vx
 {

@@ -23,6 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#if _VX_NO_EXCEPTIONS
+#define _HAS_EXCEPTIONS 0
+#endif
+
 #include <assert.h>
 #include <type_traits>
 
@@ -44,6 +48,7 @@ static_assert(sizeof(u8) == 1, "Wrong type size");
 static_assert(sizeof(s16) == 2, "Wrong type size");
 static_assert(sizeof(u16) == 2, "Wrong type size");
 static_assert(sizeof(s32) == 4, "Wrong type size");
+static_assert(sizeof(s32) == sizeof(long), "Wrong type size");
 static_assert(sizeof(u32) == 4, "Wrong type size");
 static_assert(sizeof(s64) == 8, "Wrong type size");
 static_assert(sizeof(u64) == 8, "Wrong type size");
@@ -105,3 +110,8 @@ extern "C" {
 
 #define KBYTE *1024
 #define MBYTE KBYTE *1024
+
+#ifdef _VX_VS12
+#define thread_local __declspec(thread)
+#define noexcept
+#endif
