@@ -72,9 +72,9 @@ namespace vx
 			m_pAllocator(pAllocator)
 		{
 			m_pKeys = (key_type*)m_pAllocator->allocate(sizeof(key_type) * capacity, __alignof(key_type));
-			assert(m_pKeys);
+			VX_ASSERT(m_pKeys);
 			m_pValues = (pointer)m_pAllocator->allocate(sizeof(value_type) * capacity, __alignof(value_type));
-			assert(m_pValues);
+			VX_ASSERT(m_pValues);
 		}
 
 		sorted_array(const sorted_array&) = delete;

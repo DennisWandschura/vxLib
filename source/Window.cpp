@@ -200,17 +200,20 @@ namespace vx
 		// Show the mouse cursor.
 		ShowCursor(true);
 
-		// Fix the display settings if leaving full screen mode.
-		if (m_coldData->m_bFullscreen)
-			ChangeDisplaySettings(NULL, 0);
+		if (m_coldData)
+		{
+			// Fix the display settings if leaving full screen mode.
+			if (m_coldData->m_bFullscreen)
+				ChangeDisplaySettings(NULL, 0);
 
-		// Remove the window.
-		DestroyWindow(m_coldData->m_hwnd);
-		m_coldData->m_hwnd = nullptr;
+			// Remove the window.
+			DestroyWindow(m_coldData->m_hwnd);
+			m_coldData->m_hwnd = nullptr;
 
-		// Remove the application instance.
-		UnregisterClass(m_coldData->m_windowName, m_coldData->m_hinstance);
-		m_coldData->m_hinstance = nullptr;
+			// Remove the application instance.
+			UnregisterClass(m_coldData->m_windowName, m_coldData->m_hinstance);
+			m_coldData->m_hinstance = nullptr;
+		}
 
 		// Release the pointer to this class.
 		g_windowHandle = nullptr;

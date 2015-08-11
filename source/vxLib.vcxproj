@@ -198,6 +198,7 @@
     <ClInclude Include="..\include\vxLib\Graphics\Camera.h" />
     <ClInclude Include="..\include\vxLib\Graphics\Mesh.h" />
     <ClInclude Include="..\include\vxLib\Keyboard.h" />
+    <ClInclude Include="..\include\vxLib\math\half.h" />
     <ClInclude Include="..\include\vxLib\math\math.h" />
     <ClInclude Include="..\include\vxLib\math\matrix.h" />
     <ClInclude Include="..\include\vxLib\math\Vector.h" />
@@ -233,6 +234,7 @@
     <ClCompile Include="Graphics\Camera.cpp" />
     <ClCompile Include="Graphics\Mesh.cpp" />
     <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="math\half.cpp" />
     <ClCompile Include="PoolAllocator.cpp" />
     <ClCompile Include="RawInput.cpp" />
     <ClCompile Include="Semaphore.cpp" />

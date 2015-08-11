@@ -46,6 +46,16 @@ namespace vx
 		VX_ASSERT(adjustment == 0);
 	}
 
+	StackAllocator::StackAllocator(StackAllocator &&rhs)
+		:m_pMemory(rhs.m_pMemory),
+		m_head(rhs.m_head),
+		m_size(rhs.m_size)
+	{
+		rhs.m_pMemory = nullptr;
+		rhs.m_head = 0;
+		rhs.m_size = 0;
+	}
+
 	StackAllocator::~StackAllocator()
 	{
 		m_pMemory = nullptr;

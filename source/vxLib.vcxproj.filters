@@ -162,6 +162,9 @@
     <ClInclude Include="..\include\vxLib\Allocator\AllocationProfiler.h">
       <Filter>Header Files\Allocator</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\vxLib\math\half.h">
+      <Filter>Header Files\math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CityHash.cpp">
@@ -211,6 +214,9 @@
     </ClCompile>
     <ClCompile Include="AllocationProfiler.cpp">
       <Filter>Source Files\Allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="math\half.cpp">
+      <Filter>Source Files\math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

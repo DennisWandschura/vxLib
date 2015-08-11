@@ -27,9 +27,9 @@ SOFTWARE.
 
 namespace vx
 {
-	struct VX_ALIGN(16) Aligned16{};
-	struct VX_ALIGN(32) Aligned32{};
-	struct VX_ALIGN(64) Aligned64{};
+	struct VX_ALIGN(16) Aligned16 { f32 padding[4]; };
+	struct VX_ALIGN(32) Aligned32{ f32 padding[8]; };
+	struct VX_ALIGN(64) Aligned64{ f32 padding[16]; };
 	typedef Aligned64 max_align_t;
 
 	template<size_t Align>
