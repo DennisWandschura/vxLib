@@ -74,5 +74,7 @@ namespace vx
 		bool seek(s64 offset);
 
 		s64 getSize() const;
+
+		bool isOpen() const;
 	};
 }

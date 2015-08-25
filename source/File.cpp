@@ -123,4 +123,9 @@ namespace vx
 
 		return fileSize.QuadPart;
 	}
+
+	bool File::isOpen() const
+	{
+		return (m_pFile != nullptr);
+	}
 }
