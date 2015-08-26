@@ -790,6 +790,12 @@ namespace vx
 		inline operator __m128d() const { return _mm_castps_pd(v); }
 	};
 
+	union ivec4l
+	{
+		long long i[4];
+		__m256d v;
+	};
+
 	union uvec4
 	{
 		u32 i[4];
@@ -959,6 +965,14 @@ namespace vx
 	VX_GLOBALCONST ivec4 g_VXNegate3 = { (s32)0x80000000, (s32)0x80000000, (s32)0x80000000, 0x00000000 };
 	VX_GLOBALCONST ivec4 g_VXMask3 = { (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, 0x00000000 };
 
+	VX_GLOBALCONST __m256d g_VXNegIdentityR3_d = { 0.0, 0.0, 0.0, -1.0 };
+
+	VX_GLOBALCONST ivec4l g_VXInfinity_d = { 0x7FF0000000000000, 0x7FF0000000000000, 0x7FF0000000000000, 0x7FF0000000000000 };
+	VX_GLOBALCONST ivec4l g_VXQNaN_d = { 0x7FF8000000000000, 0x7FF8000000000000, 0x7FF8000000000000, 0x7FF8000000000000 };
+	VX_GLOBALCONST ivec4l g_VXSelect1110_d = { (s64)0xFFFFFFFFFFFFFFFF, (s64)0xFFFFFFFFFFFFFFFF, (s64)0xFFFFFFFFFFFFFFFF, 0 };
+	VX_GLOBALCONST ivec4l g_VXMask3_d = { (s64)0xFFFFFFFFFFFFFFFF, (s64)0xFFFFFFFFFFFFFFFF, (s64)0xFFFFFFFFFFFFFFFF, 0x0000000000000000 };
+	VX_GLOBALCONST ivec4l g_VXMaskY_d = { 0, (s64)0xffffffffffffffff, 0, 0 };
+
 	// PermuteHelper internal template (SSE only)
 	namespace Internal
 	{
@@ -1040,6 +1054,7 @@ namespace vx
 	inline __m128 VX_CALLCONV VectorNegativeMultiplySubtract(CVEC4 a, CVEC4 b, CVEC4 c);
 	inline __m128 VX_CALLCONV dot2(CVEC4 v1, CVEC4 v2);
 	inline __m128 VX_CALLCONV dot3(CVEC4 v1, CVEC4 v2);
+	inline __m256d VX_CALLCONV dot3(__m256d v1, __m256d v2);
 	inline __m128 VX_CALLCONV dot4(CVEC4 v1, CVEC4 v2);
 
 	inline __m128 VX_CALLCONV min(CVEC4 a, CVEC4 b);
@@ -1055,19 +1070,26 @@ namespace vx
 	inline __m128 VX_CALLCONV VectorEqualInt(CVEC4 V1,CVEC4 V2);
 
 	inline __m128 VX_CALLCONV VectorSelect(CVEC4 V1, CVEC4 V2, CVEC4 Control);
+	inline __m256d VX_CALLCONV VectorSelect(__m256d V1, __m256d V2, const __m256d &Control);
 	inline __m128 VX_CALLCONV negate(CVEC4 V);
+	inline __m256d VX_CALLCONV negate(__m256d V);
 	inline __m128 VX_CALLCONV round(CVEC4 V);
 
 	inline __m128 VX_CALLCONV cross3(CVEC4 v1, CVEC4 v2);
+	inline __m256d VX_CALLCONV cross3(__m256d v1, const __m256d &v2);
 
 	inline __m128 VX_CALLCONV length3(CVEC4 V);
 
 	inline __m128 VX_CALLCONV normalize3(CVEC4 V);
+	inline __m256d VX_CALLCONV normalize3(__m256d V);
 
 	inline __m128 VX_CALLCONV quaternionRotation(CVEC4 V, CVEC4 RotationQuaternion);
+	inline __m256d VX_CALLCONV quaternionRotation(__m256d V, __m256d RotationQuaternion);
 
 	inline __m128 VX_CALLCONV quaternionMultiply(CVEC4 Q1, CVEC4 Q2);
+	inline __m256d VX_CALLCONV quaternionMultiply(__m256d Q1, __m256d Q2);
 	inline __m128 VX_CALLCONV quaternionConjugate(CVEC4 Q);
+	inline __m256d VX_CALLCONV quaternionConjugate(__m256d Q);
 	inline __m128 VX_CALLCONV quaternionRotationRollPitchYawFromVector(CVEC4 vector);
 	inline void VX_CALLCONV quaternionToAxisAngle(CVEC4 Q, __m128* pAxis, f32* pAngle);
 

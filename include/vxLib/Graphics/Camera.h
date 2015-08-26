@@ -29,23 +29,22 @@ namespace vx
 {
 	class Camera
 	{
-		__m128 m_position;
-		__m128 m_qRotation;
+		__m256d m_position;
+		__m256d m_qRotation;
 
 	public:
 		Camera();
 
-		void setPosition(f32 x, f32 y, f32 z);
-		void setPosition(const vx::float3 &position);
-		void VX_CALLCONV setPosition(const __m128 position);
-		void VX_CALLCONV setRotation(const __m128 qRotation);
+		void setPosition(f64 x, f64 y, f64 z);
+		void VX_CALLCONV setPosition(const __m256d position);
+		void VX_CALLCONV setRotation(const __m256d qRotation);
 
-		void VX_CALLCONV rotate(const __m128 qRotation);
-		void VX_CALLCONV move(const __m128 direction, const f32 &speed);
-		void move(f32 x, f32 y, f32 z);
+		void VX_CALLCONV rotate(const __m256d qRotation);
+		void VX_CALLCONV move(const __m256d direction, f64 speed);
+		void move(f64 x, f64 y, f64 z);
 
-		void getViewMatrix(vx::mat4 *viewMatrix) const;
-		const __m128 VX_CALLCONV getPosition() const { return m_position; }
-		const __m128 VX_CALLCONV getRotation() const { return m_qRotation; }
+		void getViewMatrix(vx::mat4d *viewMatrix) const;
+		const __m256d VX_CALLCONV getPosition() const { return m_position; }
+		const __m256d VX_CALLCONV getRotation() const { return m_qRotation; }
 	};
 }

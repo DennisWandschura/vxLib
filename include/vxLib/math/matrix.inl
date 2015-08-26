@@ -269,9 +269,9 @@ namespace vx
 
 	inline mat4 VX_CALLCONV MatrixPerspectiveFovRH(f32 fovAngleY, f32 aspectHByW, f32 nearZ, f32 farZ)
 	{
-		assert(!scalarNearEqual(fovAngleY, 0.0f, 0.00001f * 2.0f));
-		assert(!scalarNearEqual(aspectHByW, 0.0f, 0.00001f));
-		assert(!scalarNearEqual(farZ, nearZ, 0.00001f));
+		VX_ASSERT(!scalarNearEqual(fovAngleY, 0.0f, 0.00001f * 2.0f));
+		VX_ASSERT(!scalarNearEqual(aspectHByW, 0.0f, 0.00001f));
+		VX_ASSERT(!scalarNearEqual(farZ, nearZ, 0.00001f));
 
 		float    SinFov;
 		float    CosFov;
@@ -354,9 +354,9 @@ namespace vx
 		float FarZ
 		)
 	{
-		assert(!scalarNearEqual(ViewWidth, 0.0f, 0.00001f));
-		assert(!scalarNearEqual(ViewHeight, 0.0f, 0.00001f));
-		assert(!scalarNearEqual(FarZ, NearZ, 0.00001f));
+		VX_ASSERT(!scalarNearEqual(ViewWidth, 0.0f, 0.00001f));
+		VX_ASSERT(!scalarNearEqual(ViewHeight, 0.0f, 0.00001f));
+		VX_ASSERT(!scalarNearEqual(FarZ, NearZ, 0.00001f));
 
 		mat4 M;
 		float fRange = 1.0f / (FarZ - NearZ);
@@ -441,9 +441,9 @@ namespace vx
 		float FarZ
 		)
 	{
-		assert(!scalarNearEqual(ViewRight, ViewLeft, 0.00001f));
-		assert(!scalarNearEqual(ViewTop, ViewBottom, 0.00001f));
-		assert(!scalarNearEqual(FarZ, NearZ, 0.00001f));
+		VX_ASSERT(!scalarNearEqual(ViewRight, ViewLeft, 0.00001f));
+		VX_ASSERT(!scalarNearEqual(ViewTop, ViewBottom, 0.00001f));
+		VX_ASSERT(!scalarNearEqual(FarZ, NearZ, 0.00001f));
 
 		mat4 M;
 
@@ -662,8 +662,8 @@ namespace vx
 		float     Angle
 		)
 	{
-		assert(!Vector3Equal(Axis, g_VXZero));
-		assert(!Vector3IsInfinite(Axis));
+		VX_ASSERT(!Vector3Equal(Axis, g_VXZero));
+		VX_ASSERT(!Vector3IsInfinite(Axis));
 
 		__m128 Normal = normalize3(Axis);
 		return MatrixRotationNormal(Normal, Angle);
@@ -840,10 +840,10 @@ namespace vx
 		const __m128 &UpDirection
 		)
 	{
-		assert(!Vector3Equal(EyeDirection, g_VXZero));
-		assert(!Vector3IsInfinite(EyeDirection));
-		assert(!Vector3Equal(UpDirection, g_VXZero));
-		assert(!Vector3IsInfinite(UpDirection));
+		VX_ASSERT(!Vector3Equal(EyeDirection, g_VXZero));
+		VX_ASSERT(!Vector3IsInfinite(EyeDirection));
+		VX_ASSERT(!Vector3Equal(UpDirection, g_VXZero));
+		VX_ASSERT(!Vector3IsInfinite(UpDirection));
 
 		__m128 R2 = normalize3(EyeDirection);
 
@@ -891,6 +891,119 @@ namespace vx
 		return M;
 	}
 
+	inline mat4d VX_CALLCONV mul(const mat4d &M1, const mat4d &M2)
+	{
+		mat4d mResult;
+		// Use vW to hold the original row
+		auto vW = M2.c[0];
+		// Splat the component X,Y,Z then W
+		__m256d vX = { vW.m256d_f64[0], vW.m256d_f64[0], vW.m256d_f64[0], vW.m256d_f64[0] };
+		__m256d vY = { vW.m256d_f64[1], vW.m256d_f64[1], vW.m256d_f64[1], vW.m256d_f64[1] };
+		__m256d vZ = { vW.m256d_f64[2], vW.m256d_f64[2], vW.m256d_f64[2], vW.m256d_f64[2] };
+		vW = { vW.m256d_f64[3], vW.m256d_f64[3], vW.m256d_f64[3], vW.m256d_f64[3] };
+		// Perform the operation on the first row
+		vX = _mm256_mul_pd(vX, M1.c[0]);
+		vY = _mm256_mul_pd(vY, M1.c[1]);
+		vZ = _mm256_mul_pd(vZ, M1.c[2]);
+		vW = _mm256_mul_pd(vW, M1.c[3]);
+		// Perform a binary add to reduce cumulative errors
+		vX = _mm256_add_pd(vX, vZ);
+		vY = _mm256_add_pd(vY, vW);
+		vX = _mm256_add_pd(vX, vY);
+		mResult.c[0] = vX;
+		// Repeat for the other 3 rows
+		vW = M2.c[1];
+		vX = { vW.m256d_f64[0], vW.m256d_f64[0], vW.m256d_f64[0], vW.m256d_f64[0] };
+		vY = { vW.m256d_f64[1], vW.m256d_f64[1], vW.m256d_f64[1], vW.m256d_f64[1] };
+		vZ = { vW.m256d_f64[2], vW.m256d_f64[2], vW.m256d_f64[2], vW.m256d_f64[2] };
+		vW = { vW.m256d_f64[3], vW.m256d_f64[3], vW.m256d_f64[3], vW.m256d_f64[3] };
+		vX = _mm256_mul_pd(vX, M1.c[0]);
+		vY = _mm256_mul_pd(vY, M1.c[1]);
+		vZ = _mm256_mul_pd(vZ, M1.c[2]);
+		vW = _mm256_mul_pd(vW, M1.c[3]);
+		vX = _mm256_add_pd(vX, vZ);
+		vY = _mm256_add_pd(vY, vW);
+		vX = _mm256_add_pd(vX, vY);
+		mResult.c[1] = vX;
+		vW = M2.c[2];
+		vX = { vW.m256d_f64[0], vW.m256d_f64[0], vW.m256d_f64[0], vW.m256d_f64[0] };
+		vY = { vW.m256d_f64[1], vW.m256d_f64[1], vW.m256d_f64[1], vW.m256d_f64[1] };
+		vZ = { vW.m256d_f64[2], vW.m256d_f64[2], vW.m256d_f64[2], vW.m256d_f64[2] };
+		vW = { vW.m256d_f64[3], vW.m256d_f64[3], vW.m256d_f64[3], vW.m256d_f64[3] };
+		vX = _mm256_mul_pd(vX, M1.c[0]);
+		vY = _mm256_mul_pd(vY, M1.c[1]);
+		vZ = _mm256_mul_pd(vZ, M1.c[2]);
+		vW = _mm256_mul_pd(vW, M1.c[3]);
+		vX = _mm256_add_pd(vX, vZ);
+		vY = _mm256_add_pd(vY, vW);
+		vX = _mm256_add_pd(vX, vY);
+		mResult.c[2] = vX;
+		vW = M2.c[3];
+		vX = { vW.m256d_f64[0], vW.m256d_f64[0], vW.m256d_f64[0], vW.m256d_f64[0] };
+		vY = { vW.m256d_f64[1], vW.m256d_f64[1], vW.m256d_f64[1], vW.m256d_f64[1] };
+		vZ = { vW.m256d_f64[2], vW.m256d_f64[2], vW.m256d_f64[2], vW.m256d_f64[2] };
+		vW = { vW.m256d_f64[3], vW.m256d_f64[3], vW.m256d_f64[3], vW.m256d_f64[3] };
+		vX = _mm256_mul_pd(vX, M1.c[0]);
+		vY = _mm256_mul_pd(vY, M1.c[1]);
+		vZ = _mm256_mul_pd(vZ, M1.c[2]);
+		vW = _mm256_mul_pd(vW, M1.c[3]);
+		vX = _mm256_add_pd(vX, vZ);
+		vY = _mm256_add_pd(vY, vW);
+		vX = _mm256_add_pd(vX, vY);
+		mResult.c[3] = vX;
+		return mResult;
+	}
+
+	inline mat4d VX_CALLCONV MatrixLookToLH(const __m256d EyePosition, const __m256d EyeDirection, const __m256d &UpDirection)
+	{
+		//VX_ASSERT(!Vector3Equal(EyeDirection, g_VXZero));
+		//VX_ASSERT(!Vector3IsInfinite(EyeDirection));
+		//VX_ASSERT(!Vector3Equal(UpDirection, g_VXZero));
+	//	VX_ASSERT(!Vector3IsInfinite(UpDirection));
+
+		__m256d R2 = normalize3(EyeDirection);
+
+		__m256d R0 = cross3(UpDirection, R2);
+		R0 = normalize3(R0);
+
+		__m256d R1 = cross3(R2, R0);
+
+		__m256d NegEyePosition = negate(EyePosition);
+
+		__m256d D0 = dot3(R0, NegEyePosition);
+		__m256d D1 = dot3(R1, NegEyePosition);
+		__m256d D2 = dot3(R2, NegEyePosition);
+
+		mat4d M;
+
+		__m256d tmp;
+		tmp.m256d_f64[0] = R0.m256d_f64[0];
+		tmp.m256d_f64[1] = R1.m256d_f64[0];
+		tmp.m256d_f64[2] = R2.m256d_f64[0];
+		tmp.m256d_f64[3] = R2.m256d_f64[1];
+		M.c[0] = _mm256_and_pd(tmp, g_VXMask3_d.v);
+
+		tmp.m256d_f64[0] = R0.m256d_f64[1];
+		tmp.m256d_f64[1] = R1.m256d_f64[1];
+		tmp.m256d_f64[2] = R2.m256d_f64[1];
+		tmp.m256d_f64[3] = R2.m256d_f64[0];
+		M.c[1] = _mm256_and_pd(tmp, g_VXMask3_d.v);
+
+		tmp.m256d_f64[0] = R0.m256d_f64[2];
+		tmp.m256d_f64[1] = R1.m256d_f64[2];
+		tmp.m256d_f64[2] = R2.m256d_f64[2];
+		tmp.m256d_f64[3] = R2.m256d_f64[2];
+		M.c[2] = _mm256_and_pd(tmp, g_VXMask3_d.v);
+
+		tmp.m256d_f64[0] = D0.m256d_f64[0];
+		tmp.m256d_f64[1] = D1.m256d_f64[0];
+		tmp.m256d_f64[2] = D2.m256d_f64[0];
+		tmp.m256d_f64[3] = 1.0;
+		M.c[3] = tmp;
+
+		return M;
+	}
+
 	inline mat4 VX_CALLCONV MatrixLookToRH
 		(
 		const __m128 &EyePosition,
@@ -900,6 +1013,59 @@ namespace vx
 	{
 		__m128 NegEyeDirection = negate(EyeDirection);
 		return MatrixLookToLH(EyePosition, NegEyeDirection, UpDirection);
+	}
+
+	inline mat4d VX_CALLCONV MatrixLookToRH(const __m256d EyePosition, const __m256d EyeDirection, const __m256d &UpDirection)
+	{
+
+		__m256d NegEyeDirection = negate(EyeDirection);
+		return MatrixLookToLH(EyePosition, NegEyeDirection, UpDirection);
+	}
+
+	inline mat4d VX_CALLCONV MatrixPerspectiveFovRHDX(f64 FovAngleY, f64 AspectHByW, f64 NearZ, f64 FarZ)
+	{
+		double    SinFov;
+		double    CosFov;
+		scalarSinCos(&SinFov, &CosFov, 0.5 * FovAngleY);
+		double fRange = FarZ / (NearZ - FarZ);
+		// Note: This is recorded on the stack
+		double Height = CosFov / SinFov;
+		__m256d rMem = {
+			Height / AspectHByW,
+			Height,
+			fRange,
+			fRange * NearZ
+		};
+		// Copy from memory to SSE register
+		__m256d vValues = rMem;
+		__m256d vTemp = _mm256_setzero_pd();
+		// Copy x only
+		vTemp.m256d_f64[0] = vValues.m256d_f64[0];
+		//vTemp = _mm_move_ss(vTemp, vValues);
+		// CosFov / SinFov,0,0,0
+		mat4d M;
+		M.c[0] = vTemp;
+		// 0,Height / AspectHByW,0,0
+		vTemp = vValues;
+		vTemp = _mm256_and_pd(vTemp, g_VXMaskY_d.v);
+		M.c[1] = vTemp;
+
+		// x=fRange,y=-fRange * NearZ,0,-1.0f
+		vTemp = _mm256_setzero_pd();
+		//vValues = _mm_shuffle_ps(vValues, g_XMNegIdentityR3, _MM_SHUFFLE(3, 2, 3, 2));
+		vValues = { vValues.m256d_f64[2],vValues.m256d_f64[3], g_VXNegIdentityR3_d.m256d_f64[2], g_VXNegIdentityR3_d.m256d_f64[3] };
+
+		// 0,0,fRange,-1.0f
+		//vTemp = _mm_shuffle_ps(vTemp, vValues, _MM_SHUFFLE(3, 0, 0, 0));
+		vTemp = { vTemp.m256d_f64[0], vTemp.m256d_f64[0], vValues.m256d_f64[0], vValues.m256d_f64[3] };
+		M.c[2] = vTemp;
+
+		// 0,0,fRange * NearZ,0.0f
+		//vTemp = _mm_shuffle_ps(vTemp, vValues, _MM_SHUFFLE(2, 1, 0, 0));
+		vTemp = { vTemp.m256d_f64[0], vTemp.m256d_f64[0], vValues.m256d_f64[1], vValues.m256d_f64[2] };
+
+		M.c[3] = vTemp;
+		return M;
 	}
 
 	inline __m128 VX_CALLCONV Vector3TransformCoord(const mat4 &M, const __m128 &V)

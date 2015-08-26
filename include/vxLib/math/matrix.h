@@ -78,6 +78,11 @@ namespace vx
 			return (float*)c;
 		}
 
+		const __m128& operator[](u32 i) const
+		{
+			return c[i];
+		}
+
 		mat4x4& operator=(const mat4x4 &rhs)
 		{
 			c[0] = rhs.c[0];
@@ -89,7 +94,64 @@ namespace vx
 		}
 	};
 
+	struct VX_ALIGN(32) mat4x4d
+	{
+		__m256d c[4];
+
+		mat4x4d() :c() {}
+
+		// column major
+		mat4x4d(const __m256d &c0, const __m256d &c1, const __m256d &c2, const __m256d &c3)
+		{
+			c[0] = c0;
+			c[1] = c1;
+			c[2] = c2;
+			c[3] = c3;
+		}
+
+		mat4x4d(const mat4x4d &rhs)
+		{
+			c[0] = rhs.c[0];
+			c[1] = rhs.c[1];
+			c[2] = rhs.c[2];
+			c[3] = rhs.c[3];
+		}
+		
+		~mat4x4d()
+		{
+		}
+
+		operator f64*()
+		{
+			return (f64*)c;
+		}
+
+		operator const f64*() const
+		{
+			return (f64*)c;
+		}
+
+		mat4x4d& operator=(const mat4x4d &rhs)
+		{
+			c[0] = rhs.c[0];
+			c[1] = rhs.c[1];
+			c[2] = rhs.c[2];
+			c[3] = rhs.c[3];
+
+			return *this;
+		}
+
+		void asFloat(mat4x4* m)
+		{
+			m->c[0] = _mm256_cvtpd_ps(c[0]);
+			m->c[1] = _mm256_cvtpd_ps(c[1]);
+			m->c[2] = _mm256_cvtpd_ps(c[2]);
+			m->c[3] = _mm256_cvtpd_ps(c[3]);
+		}
+	};
+
 	typedef mat4x4 mat4;
+	typedef mat4x4d mat4d;
 
 	inline mat4 VX_CALLCONV add(const mat4 &M1, const mat4 &M2);
 	inline mat4 VX_CALLCONV subtract(const mat4 &M1, const mat4 &M2);
@@ -118,6 +180,13 @@ namespace vx
 	inline mat4 VX_CALLCONV MatrixLookToLH(const __m128 &EyePosition, const __m128 &EyeDirection, const __m128 &UpDirection);
 	inline mat4 VX_CALLCONV MatrixLookToRH(const __m128 &EyePosition, const __m128 &EyeDirection, const __m128 &UpDirection);
 
+	inline mat4d VX_CALLCONV mul(const mat4d &M1, const mat4d &M2);
+
+	inline mat4d VX_CALLCONV MatrixLookToLH(const __m256d EyePosition, const __m256d EyeDirection, const __m256d &UpDirection);
+	inline mat4d VX_CALLCONV MatrixLookToRH(const __m256d EyePosition, const __m256d EyeDirection, const __m256d &UpDirection);
+
+	inline mat4d VX_CALLCONV MatrixPerspectiveFovRHDX(f64 FovAngleY, f64 AspectHByW, f64 NearZ, f64 FarZ);
+
 	inline __m128 VX_CALLCONV Vector3TransformCoord(const mat4 &M, const __m128 &V);
 	inline __m128 VX_CALLCONV Vector4Transform(const mat4 &M, const __m128 &V);
 }
@@ -133,6 +202,11 @@ inline vx::mat4 VX_CALLCONV operator -(const vx::mat4 &lhs, const vx::mat4 &rhs)
 }
 
 inline vx::mat4 VX_CALLCONV operator *(const vx::mat4 &lhs, const vx::mat4 &rhs)
+{
+	return vx::mul(lhs, rhs);
+}
+
+inline vx::mat4d VX_CALLCONV operator *(const vx::mat4d &lhs, const vx::mat4d &rhs)
 {
 	return vx::mul(lhs, rhs);
 }

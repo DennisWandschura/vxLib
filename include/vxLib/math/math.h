@@ -41,12 +41,19 @@ namespace vx
 	const f32 VX_DEGTORAD = 0.0174532925f;
 	const f32 VX_RADTODEG = 57.2957795f;
 
+	const f64 VX_PI_D = 3.14159265358979323846;
+	const f64 VX_2PI_D = 6.28318530717958647692;
+	const f64 VX_1DIVPI_D = 0.318309886183790671538;
+	const f64 VX_1DIV2PI_D = 0.15915494309189533576;
+	const f64 VX_PIDIV2_D = 1.57079632679489661923;
+	const f64 VX_PIDIV4_D = 0.785398163397448309616;
+
 	namespace detail
 	{
 		union FloatInt
 		{
-			float f;
-			int i;
+			f32 f;
+			s32 i;
 		};
 	}
 
@@ -86,39 +93,39 @@ namespace vx
 
 	inline bool scalarNearEqual
 		(
-		float S1,
-		float S2,
-		float Epsilon
+			f32 S1,
+			f32 S2,
+			f32 Epsilon
 		)
 	{
-		float Delta = S1 - S2;
+		f32 Delta = S1 - S2;
 		return (abs(Delta) <= Epsilon);
 	}
 
 	inline void scalarSinCos
 		(
-		float* pSin,
-		float* pCos,
-		float  Value
+			f32* pSin,
+			f32* pCos,
+			f32  Value
 		)
 	{
-		assert(pSin);
-		assert(pCos);
+		VX_ASSERT(pSin);
+		VX_ASSERT(pCos);
 
 		// Map Value to y in [-pi,pi], x = 2*pi*quotient + remainder.
-		float quotient = VX_1DIV2PI * Value;
+		f32 quotient = VX_1DIV2PI * Value;
 		if (Value >= 0.0f)
 		{
-			quotient = (float)((int)(quotient + 0.5f));
+			quotient = (f32)((int)(quotient + 0.5f));
 		}
 		else
 		{
-			quotient = (float)((int)(quotient - 0.5f));
+			quotient = (f32)((int)(quotient - 0.5f));
 		}
-		float y = Value - VX_2PI * quotient;
+		f32 y = Value - VX_2PI * quotient;
 
 		// Map y to [-pi/2,pi/2] with sin(y) = sin(Value).
-		float sign;
+		f32 sign;
 		if (y > VX_PIDIV2)
 		{
 			y = VX_PI - y;
@@ -134,13 +141,13 @@ namespace vx
 			sign = +1.0f;
 		}
 
-		float y2 = y * y;
+		f32 y2 = y * y;
 
 		// 11-degree minimax approximation
 		*pSin = (((((-2.3889859e-08f * y2 + 2.7525562e-06f) * y2 - 0.00019840874f) * y2 + 0.0083333310f) * y2 - 0.16666667f) * y2 + 1.0f) * y;
 
 		// 10-degree minimax approximation
-		float p = ((((-2.6051615e-07f * y2 + 2.4760495e-05f) * y2 - 0.0013888378f) * y2 + 0.041666638f) * y2 - 0.5f) * y2 + 1.0f;
+		f32 p = ((((-2.6051615e-07f * y2 + 2.4760495e-05f) * y2 - 0.0013888378f) * y2 + 0.041666638f) * y2 - 0.5f) * y2 + 1.0f;
 		*pCos = sign*p;
 	}
 
@@ -151,11 +158,11 @@ namespace vx
 			f64  Value
 			)
 	{
-		assert(pSin);
-		assert(pCos);
+		VX_ASSERT(pSin);
+		VX_ASSERT(pCos);
 
 		// Map Value to y in [-pi,pi], x = 2*pi*quotient + remainder.
-		float quotient = VX_1DIV2PI * Value;
+		f64 quotient = VX_1DIV2PI_D * Value;
 		if (Value >= 0.0)
 		{
 			quotient = (f64)((int)(quotient + 0.5));
@@ -164,18 +171,18 @@ namespace vx
 		{
 			quotient = (f64)((int)(quotient - 0.5));
 		}
-		f64 y = Value - VX_2PI * quotient;
+		f64 y = Value - VX_2PI_D * quotient;
 
 		// Map y to [-pi/2,pi/2] with sin(y) = sin(Value).
 		f64 sign;
-		if (y > VX_PIDIV2)
+		if (y > VX_PIDIV2_D)
 		{
-			y = VX_PI - y;
+			y = VX_PI_D - y;
 			sign = -1.0;
 		}
-		else if (y < -VX_PIDIV2)
+		else if (y < -VX_PIDIV2_D)
 		{
-			y = -VX_PI - y;
+			y = -VX_PI_D - y;
 			sign = -1.0;
 		}
 		else

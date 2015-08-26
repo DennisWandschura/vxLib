@@ -27,65 +27,57 @@ SOFTWARE.
 namespace vx
 {
 	Camera::Camera()
-		:m_position(_mm_setzero_ps()),
-		m_qRotation(g_VXIdentityR3)
+		:m_position(_mm256_setzero_pd()),
+		m_qRotation({0, 0, 0, 1})
 	{
 	}
 
-	void Camera::setPosition(f32 x, f32 y, f32 z)
+	void Camera::setPosition(f64 x, f64 y, f64 z)
 	{
-		auto vX = _mm_load_ss(&x);
-		auto vY = _mm_load_ss(&y);
+		__m256d position;
+		position.m256d_f64[0] = x;
+		position.m256d_f64[1] = y;
+		position.m256d_f64[2] = z;
+		position.m256d_f64[3] = 0;
 
-		// x y 0 0
-		m_position = _mm_unpacklo_ps(vX, vY);
-
-		auto vZ = _mm_load_ss(&z);
-		// x y z 0
-		m_position = _mm_movelh_ps(m_position, vZ);
+		setPosition(position);
 	}
 
-	void Camera::setPosition(const vx::float3 &position)
-	{
-		m_position = vx::loadFloat3(position);
-	}
-
-	void VX_CALLCONV Camera::setPosition(const __m128 position)
+	void VX_CALLCONV Camera::setPosition(const __m256d position)
 	{
 		m_position = position;
 	}
 
-	void VX_CALLCONV Camera::setRotation(const __m128 qRotation)
+	void VX_CALLCONV Camera::setRotation(const __m256d qRotation)
 	{
 		m_qRotation = qRotation;
 	}
 
-	void VX_CALLCONV Camera::rotate(const __m128 qRotation)
+	void VX_CALLCONV Camera::rotate(const __m256d qRotation)
 	{
-		m_qRotation = _mm_add_ps(m_qRotation, qRotation);
+		m_qRotation = _mm256_add_pd(m_qRotation, qRotation);
 	}
 
-	void VX_CALLCONV Camera::move(const __m128 direction, const f32 &speed)
+	void VX_CALLCONV Camera::move(const __m256d direction, f64 speed)
 	{
-		__m128 vSpeed = _mm_load_ss(&speed);
-		vSpeed = VX_PERMUTE_PS(vSpeed, _MM_SHUFFLE(3, 0, 0, 0));
+		__m256d vSpeed = {speed, speed, speed, 0.0};
 
 		auto offset = quaternionRotation(direction, m_qRotation);
 
-		m_position = _mm_add_ps(_mm_mul_ps(offset, vSpeed), m_position);
-		//m_position = _mm_fmadd_ps(offset, vSpeed, m_position);
+		m_position = _mm256_fmadd_pd(offset, vSpeed, m_position);
+		//m_position = _mm256_add_pd(_mm256_mul_pd(offset, vSpeed), m_position);
 	}
 
-	void Camera::move(f32 x, f32 y, f32 z)
+	void Camera::move(f64 x, f64 y, f64 z)
 	{
-		__m128 offset = { x, y, z, 0.0f };
-		m_position = _mm_add_ps(m_position, offset);
+		__m256d offset = { x, y, z, 0.0f };
+		m_position = _mm256_add_pd(m_position, offset);
 	}
 
-	void Camera::getViewMatrix(vx::mat4 *viewMatrix) const
+	void Camera::getViewMatrix(vx::mat4d *viewMatrix) const
 	{
-		const __m128 lookAt = { 0, 0, -1, 0 };
-		const __m128 up = { 0, 1, 0, 0 };
+		const __m256d lookAt = { 0, 0, -1, 0 };
+		const __m256d up = { 0, 1, 0, 0 };
 		// Set the yaw (Y axis), pitch (X axis), and roll (Z axis) rotations in radians.
 
 		// Create the rotation matrix from the yaw, pitch, and roll values.
