@@ -395,11 +395,11 @@ namespace vx
 		auto Q1Shuffle = Q1;
 		// Shuffle the copies of Q1
 		//Q1Shuffle = VX_PERMUTE_PD(Q1Shuffle, _MM_SHUFFLE(0, 1, 2, 3));
-		Q1Shuffle = { Q1Shuffle.m256d_f64[0], Q1Shuffle.m256d_f64[1], Q1Shuffle.m256d_f64[2], Q1Shuffle.m256d_f64[3] };
+		Q1Shuffle = { Q1Shuffle.m256d_f64[3], Q1Shuffle.m256d_f64[2], Q1Shuffle.m256d_f64[1], Q1Shuffle.m256d_f64[0] };
 		// Mul by Q1WZYX
 		Q2X = _mm256_mul_pd(Q2X, Q1Shuffle);
 		//Q1Shuffle = VX_PERMUTE_PD(Q1Shuffle, _MM_SHUFFLE(2, 3, 0, 1));
-		Q1Shuffle = { Q1Shuffle.m256d_f64[2], Q1Shuffle.m256d_f64[3], Q1Shuffle.m256d_f64[0], Q1Shuffle.m256d_f64[1] };
+		Q1Shuffle = { Q1Shuffle.m256d_f64[1], Q1Shuffle.m256d_f64[0], Q1Shuffle.m256d_f64[3], Q1Shuffle.m256d_f64[2] };
 		// Flip the signs on y and z
 		Q2X = _mm256_mul_pd(Q2X, ControlWZYX);
 		// Mul by Q1ZWXY
