@@ -29,7 +29,7 @@
 
 .DefaultCompilerSettingsIntel =
 [
-	.CompilerSettingsDefault = '/fp:fast /Qstd=c++11 /W4 /Qrestrict /GS /Zc:wchar_t /GR- /arch:AVX'
+	.CompilerSettingsDefault = '/fp:fast/W4 /Qrestrict /GS /Zc:wchar_t /GR- /arch:AVX'
 ]
 
 .DefaultCompilerSettingsVS =
@@ -51,7 +51,7 @@
 .BuildDebug =
 [
 	.OutputPathB = '$OutPathObj$\Debug\'
-	.CompilerSettingsB = '/Od /Ob0 /debug /nologo /ZI'
+	.CompilerSettingsB = '/Od /Ob0 /nologo /ZI'
 	.FileExtension = '_d'
 	.DefinesBuild = '$DefinesDebug$'
 	.DebugMode = 1
