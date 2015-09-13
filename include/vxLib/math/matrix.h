@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib\math\Vector.h>
+#include <vxLib/math/Vector.h>
 
 /*
 Matrix
@@ -159,23 +159,31 @@ namespace vx
 	inline mat4 VX_CALLCONV MatrixIdentity();
 	inline mat4 VX_CALLCONV MatrixTranspose(const mat4 &M);
 	inline mat4 VX_CALLCONV MatrixInverse(const mat4 &M);
+
 	inline mat4 VX_CALLCONV MatrixPerspectiveFovRH(f32 fovAngleY, f32 aspectHByW, f32 nearZ, f32 farZ);
 	inline mat4 VX_CALLCONV MatrixPerspectiveFovRHDX(f32 FovAngleY, f32 AspectHByW, f32 NearZ, f32 FarZ);
+	inline mat4 VX_CALLCONV MatrixPerspectiveFovLHDX(f32 FovAngleY, f32 AspectHByW, f32 NearZ, f32 FarZ);
+
 	inline mat4 VX_CALLCONV MatrixOrthographicRH(float ViewWidth, float ViewHeight, float NearZ, float FarZ);
 	inline mat4 VX_CALLCONV MatrixOrthographicRHDX(float ViewWidth, float ViewHeight, float NearZ, float FarZ);
 	inline mat4 VX_CALLCONV MatrixOrthographicOffCenterRH(float ViewLeft, float ViewRight, float ViewBottom, float ViewTop, float NearZ, float FarZ);
+
 	inline mat4 VX_CALLCONV MatrixTranslation(const f32 x, const f32 y, const f32 z);
 	inline mat4 VX_CALLCONV MatrixTranslation(const __m128 &v);
+
 	inline mat4 VX_CALLCONV MatrixRotationX(const f32 rad);
 	inline mat4 VX_CALLCONV MatrixRotationY(const f32 rad);
 	inline mat4 VX_CALLCONV MatrixRotationZ(const f32 rad);
+
 	inline mat4 VX_CALLCONV MatrixScaling(const f32 x, const f32 y, const f32 z);
 	inline mat4 VX_CALLCONV MatrixScaling(const __m128 &v);
+
 	inline mat4 VX_CALLCONV MatrixRotationRollPitchYaw(const f32 roll, const f32 pitch, const f32 yaw);
 	inline mat4 VX_CALLCONV MatrixRotationRollPitchYaw(const __m128 &angles);
 	inline mat4 VX_CALLCONV MatrixRotationAxis(const __m128 &Axis, float Angle);
 	inline mat4 VX_CALLCONV MatrixRotationNormal(const __m128 &NormalAxis, float Angle);
 	inline mat4 VX_CALLCONV MatrixRotationQuaternion(const __m128 &q);
+
 	inline mat4 VX_CALLCONV MatrixLookAtLH(const __m128 &EyePosition, const __m128 &FocusPosition, const __m128 &UpDirection);
 	inline mat4 VX_CALLCONV MatrixLookToLH(const __m128 &EyePosition, const __m128 &EyeDirection, const __m128 &UpDirection);
 	inline mat4 VX_CALLCONV MatrixLookToRH(const __m128 &EyePosition, const __m128 &EyeDirection, const __m128 &UpDirection);
@@ -186,6 +194,7 @@ namespace vx
 	inline mat4d VX_CALLCONV MatrixLookToRH(const __m256d EyePosition, const __m256d EyeDirection, const __m256d &UpDirection);
 
 	inline mat4d VX_CALLCONV MatrixPerspectiveFovRHDX(f64 FovAngleY, f64 AspectHByW, f64 NearZ, f64 FarZ);
+	inline mat4d VX_CALLCONV MatrixPerspectiveFovLHDX(f64 FovAngleY, f64 AspectHByW, f64 NearZ, f64 FarZ);
 
 	inline __m128 VX_CALLCONV Vector3TransformCoord(const mat4 &M, const __m128 &V);
 	inline __m128 VX_CALLCONV Vector4Transform(const mat4 &M, const __m128 &V);

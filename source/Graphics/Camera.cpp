@@ -74,25 +74,25 @@ namespace vx
 		m_position = _mm256_add_pd(m_position, offset);
 	}
 
-	void Camera::getViewMatrix(vx::mat4d *viewMatrix) const
+	void Camera::getViewMatrixRH(vx::mat4d *viewMatrix) const
 	{
 		const __m256d lookAt = { 0, 0, -1, 0 };
 		const __m256d up = { 0, 1, 0, 0 };
-		// Set the yaw (Y axis), pitch (X axis), and roll (Z axis) rotations in radians.
 
-		// Create the rotation matrix from the yaw, pitch, and roll values.
-		//auto q = DirectX::XMQuaternionRotationRollPitchYawFromVector(m_rotation);
-		//auto q = vx::quaternionRotationRollPitchYawFromVector(m_rotation);
-		//auto rotationMatrix = DirectX::XMMatrixRotationRollPitchYawFromVector(m_rotation);
-
-		// Setup where the camera is looking by default.
-
-
-		//m_direction = DirectX::XMVector3Transform(lookAt, rotationMatrix);
-		//up = DirectX::XMVector3Transform(up, rotationMatrix);
 		auto viewDir = quaternionRotation(lookAt, m_qRotation);
 		auto upDir = quaternionRotation(up, m_qRotation);
 
 		*viewMatrix = vx::MatrixLookToRH(m_position, viewDir, upDir);
+	}
+
+	void Camera::getViewMatrixLH(vx::mat4d *viewMatrix) const
+	{
+		const __m256d lookAt = { 0, 0, 1, 0 };
+		const __m256d up = { 0, 1, 0, 0 };
+
+		auto viewDir = quaternionRotation(lookAt, m_qRotation);
+		auto upDir = quaternionRotation(up, m_qRotation);
+
+		*viewMatrix = vx::MatrixLookToLH(m_position, viewDir, upDir);
 	}
 }

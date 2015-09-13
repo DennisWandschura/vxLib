@@ -346,6 +346,45 @@ namespace vx
 		return M;
 	}
 
+	inline mat4 VX_CALLCONV MatrixPerspectiveFovLHDX(f32 FovAngleY, f32 AspectHByW, f32 NearZ, f32 FarZ)
+	{
+		float    SinFov;
+		float    CosFov;
+		scalarSinCos(&SinFov, &CosFov, 0.5f * FovAngleY);
+
+		float fRange = FarZ / (FarZ - NearZ);
+		// Note: This is recorded on the stack
+		float Height = CosFov / SinFov;
+		__m128 rMem = {
+			Height / AspectHByW,
+			Height,
+			fRange,
+			-fRange * NearZ
+		};
+		// Copy from memory to SSE register
+		__m128 vValues = rMem;
+		__m128 vTemp = _mm_setzero_ps();
+		// Copy x only
+		vTemp = _mm_move_ss(vTemp, vValues);
+		// CosFov / SinFov,0,0,0
+		mat4 M;
+		M.c[0] = vTemp;
+		// 0,Height / AspectHByW,0,0
+		vTemp = vValues;
+		vTemp = _mm_and_ps(vTemp, g_VXMaskY);
+		M.c[1] = vTemp;
+		// x=fRange,y=-fRange * NearZ,0,1.0f
+		vTemp = _mm_setzero_ps();
+		vValues = _mm_shuffle_ps(vValues, g_VXIdentityR3, _MM_SHUFFLE(3, 2, 3, 2));
+		// 0,0,fRange,1.0f
+		vTemp = _mm_shuffle_ps(vTemp, vValues, _MM_SHUFFLE(3, 0, 0, 0));
+		M.c[2] = vTemp;
+		// 0,0,-fRange * NearZ,0.0f
+		vTemp = _mm_shuffle_ps(vTemp, vValues, _MM_SHUFFLE(2, 1, 0, 0));
+		M.c[3] = vTemp;
+		return M;
+	}
+
 	inline mat4 VX_CALLCONV MatrixOrthographicRH
 		(
 		float ViewWidth,
@@ -1024,12 +1063,12 @@ namespace vx
 
 	inline mat4d VX_CALLCONV MatrixPerspectiveFovRHDX(f64 FovAngleY, f64 AspectHByW, f64 NearZ, f64 FarZ)
 	{
-		double    SinFov;
-		double    CosFov;
+		f64    SinFov;
+		f64    CosFov;
 		scalarSinCos(&SinFov, &CosFov, 0.5 * FovAngleY);
-		double fRange = FarZ / (NearZ - FarZ);
+		f64 fRange = FarZ / (NearZ - FarZ);
 		// Note: This is recorded on the stack
-		double Height = CosFov / SinFov;
+		f64 Height = CosFov / SinFov;
 		__m256d rMem = {
 			Height / AspectHByW,
 			Height,
@@ -1064,6 +1103,50 @@ namespace vx
 		//vTemp = _mm_shuffle_ps(vTemp, vValues, _MM_SHUFFLE(2, 1, 0, 0));
 		vTemp = { vTemp.m256d_f64[0], vTemp.m256d_f64[0], vValues.m256d_f64[1], vValues.m256d_f64[2] };
 
+		M.c[3] = vTemp;
+		return M;
+	}
+
+	inline mat4d VX_CALLCONV MatrixPerspectiveFovLHDX(f64 FovAngleY, f64 AspectHByW, f64 NearZ, f64 FarZ)
+	{
+		f64    SinFov;
+		f64    CosFov;
+		scalarSinCos(&SinFov, &CosFov, 0.5 * FovAngleY);
+
+		f64 fRange = FarZ / (FarZ - NearZ);
+		// Note: This is recorded on the stack
+		f64 Height = CosFov / SinFov;
+		__m256d rMem = {
+			Height / AspectHByW,
+			Height,
+			fRange,
+			-fRange * NearZ
+		};
+		// Copy from memory to SSE register
+		__m256d vValues = rMem;
+		__m256d vTemp = _mm256_setzero_pd();
+		// Copy x only
+		//vTemp = _mm_move_ss(vTemp, vValues);
+		vTemp.m256d_f64[0] = vValues.m256d_f64[0];
+		// CosFov / SinFov,0,0,0
+		mat4d M;
+		M.c[0] = vTemp;
+		// 0,Height / AspectHByW,0,0
+		vTemp = vValues;
+		//vTemp = _mm_and_ps(vTemp, g_XMMaskY);
+		vTemp = _mm256_and_pd(vTemp, g_VXMaskY_d.v);
+		M.c[1] = vTemp;
+		// x=fRange,y=-fRange * NearZ,0,1.0f
+		vTemp = _mm256_setzero_pd();
+		//vValues = _mm_shuffle_ps(vValues, g_XMIdentityR3, _MM_SHUFFLE(3, 2, 3, 2));
+		vValues = { vValues.m256d_f64[2],vValues.m256d_f64[3], g_VXNegIdentityR3_d.m256d_f64[2], g_VXNegIdentityR3_d.m256d_f64[3] };
+		// 0,0,fRange,1.0f
+		//vTemp = _mm_shuffle_ps(vTemp, vValues, _MM_SHUFFLE(3, 0, 0, 0));
+		vTemp = { vTemp.m256d_f64[0], vTemp.m256d_f64[0], vValues.m256d_f64[0], vValues.m256d_f64[3] };
+		M.c[2] = vTemp;
+		// 0,0,-fRange * NearZ,0.0f
+		//vTemp = _mm_shuffle_ps(vTemp, vValues, _MM_SHUFFLE(2, 1, 0, 0));
+		vTemp = { vTemp.m256d_f64[0], vTemp.m256d_f64[0], vValues.m256d_f64[1], vValues.m256d_f64[2] };
 		M.c[3] = vTemp;
 		return M;
 	}
