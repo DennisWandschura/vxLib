@@ -222,5 +222,8 @@
     <ClInclude Include="..\include\vxLib\util\CityHash.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\vxLib\string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

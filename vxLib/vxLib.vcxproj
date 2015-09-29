@@ -179,6 +179,7 @@
     <ClInclude Include="..\include\vxLib\Singleton.h" />
     <ClInclude Include="..\include\vxLib\stb_image.h" />
     <ClInclude Include="..\include\vxLib\stb_image_write.h" />
+    <ClInclude Include="..\include\vxLib\string.h" />
     <ClInclude Include="..\include\vxLib\StringID.h" />
     <ClInclude Include="..\include\vxLib\TextPreprocessor.h" />
     <ClInclude Include="..\include\vxLib\types.h" />
