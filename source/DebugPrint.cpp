@@ -25,9 +25,9 @@ SOFTWARE.
 
 namespace vx
 {
-	u32 DebugPrint::g_verbosity = 0;
-	u16 DebugPrint::g_filter = 0;
-	HANDLE DebugPrint::g_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	u32 debugPrint::g_verbosity = 0;
+	u16 debugPrint::g_filter = 0;
+	HANDLE debugPrint::g_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	inline void debugPrintF(const char *format, va_list argList)
 	{
@@ -54,7 +54,7 @@ namespace vx
 
 	inline void verbosePrintF(u32 verbosity, const char *format, ...)
 	{
-		if (vx::DebugPrint::g_verbosity >= verbosity)
+		if (vx::debugPrint::g_verbosity >= verbosity)
 		{
 			va_list argList;
 			va_start(argList, format);
@@ -67,7 +67,7 @@ namespace vx
 
 	inline void verboseFPrintF(u32 verbosity, FILE *stream, const char *format, ...)
 	{
-		if (vx::DebugPrint::g_verbosity >= verbosity)
+		if (vx::debugPrint::g_verbosity >= verbosity)
 		{
 			va_list argList;
 			va_start(argList, format);
@@ -83,35 +83,35 @@ namespace vx
 		switch (channel)
 		{
 		case(CHANNEL_ONE) :
-			SetConsoleTextAttribute(vx::DebugPrint::g_hConsole, 9);
+			SetConsoleTextAttribute(vx::debugPrint::g_hConsole, 9);
 			break;
 		case(CHANNEL_TWO) :
-			SetConsoleTextAttribute(vx::DebugPrint::g_hConsole, 10);
+			SetConsoleTextAttribute(vx::debugPrint::g_hConsole, 10);
 			break;
 		case(CHANNEL_THREE) :
-			SetConsoleTextAttribute(vx::DebugPrint::g_hConsole, 11);
+			SetConsoleTextAttribute(vx::debugPrint::g_hConsole, 11);
 			break;
 		case(CHANNEL_FOUR) :
-			SetConsoleTextAttribute(vx::DebugPrint::g_hConsole, 12);
+			SetConsoleTextAttribute(vx::debugPrint::g_hConsole, 12);
 			break;
 		case(CHANNEL_FIVE) :
-			SetConsoleTextAttribute(vx::DebugPrint::g_hConsole, 13);
+			SetConsoleTextAttribute(vx::debugPrint::g_hConsole, 13);
 			break;
 		case(CHANNEL_SIX) :
-			SetConsoleTextAttribute(vx::DebugPrint::g_hConsole, 14);
+			SetConsoleTextAttribute(vx::debugPrint::g_hConsole, 14);
 			break;
 		case(CHANNEL_SEVEN) :
-			SetConsoleTextAttribute(vx::DebugPrint::g_hConsole, 15);
+			SetConsoleTextAttribute(vx::debugPrint::g_hConsole, 15);
 			break;
 		case(CHANNEL_ERROR) :
-			SetConsoleTextAttribute(vx::DebugPrint::g_hConsole, 15 | BACKGROUND_RED | BACKGROUND_INTENSITY);
+			SetConsoleTextAttribute(vx::debugPrint::g_hConsole, 15 | BACKGROUND_RED | BACKGROUND_INTENSITY);
 			break;
 		}
 	}
 
 	void verboseChannelPrintF(u32 verbosity, u8 channel, const char *format, ...)
 	{
-		if (vx::checkChannel(channel) && vx::DebugPrint::g_verbosity >= verbosity)
+		if (vx::checkChannel(channel) && vx::debugPrint::g_verbosity >= verbosity)
 		{
 			setConsoleFormat(channel);
 
@@ -122,13 +122,13 @@ namespace vx
 
 			va_end(argList);
 
-			SetConsoleTextAttribute(vx::DebugPrint::g_hConsole, 7);
+			SetConsoleTextAttribute(vx::debugPrint::g_hConsole, 7);
 		}
 	}
 
 	void verboseChannelFPrintF(u32 verbosity, u8 channel, FILE *stream, const char *format, ...)
 	{
-		if (vx::checkChannel(channel) && vx::DebugPrint::g_verbosity >= verbosity)
+		if (vx::checkChannel(channel) && vx::debugPrint::g_verbosity >= verbosity)
 		{
 			setConsoleFormat(channel);
 
@@ -139,7 +139,7 @@ namespace vx
 
 			va_end(argList);
 
-			SetConsoleTextAttribute(vx::DebugPrint::g_hConsole, 7);
+			SetConsoleTextAttribute(vx::debugPrint::g_hConsole, 7);
 		}
 	}
 }

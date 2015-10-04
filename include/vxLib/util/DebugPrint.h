@@ -31,7 +31,7 @@ SOFTWARE.
 
 namespace vx
 {
-	namespace DebugPrint
+	namespace debugPrint
 	{
 		extern u16 g_filter;
 		extern u32 g_verbosity;
@@ -40,24 +40,24 @@ namespace vx
 
 	static void activateChannel(u8 channel)
 	{
-		DebugPrint::g_filter |= channel;
+		debugPrint::g_filter |= channel;
 	}
 
 	static void deactivateChannel(u8 channel)
 	{
-		DebugPrint::g_filter ^= channel;
+		debugPrint::g_filter ^= channel;
 	}
 
 	static bool checkChannel(u8 channel)
 	{
-		return ((DebugPrint::g_filter & channel) != 0);
+		return ((debugPrint::g_filter & channel) != 0);
 	}
 
 	extern void setConsoleFormat(u8 channel);
-	extern inline void debugPrintF(const char *format, va_list argList);
-	extern inline void debugFPrintF(FILE *stream, const char *format, va_list argList);
-	extern inline void verbosePrintF(u32 verbosity, const char *format, ...);
-	extern inline void verboseFPrintF(u32 verbosity, FILE *stream, const char *format, ...);
+	extern void debugPrintF(const char *format, va_list argList);
+	extern void debugFPrintF(FILE *stream, const char *format, va_list argList);
+	extern void verbosePrintF(u32 verbosity, const char *format, ...);
+	extern void verboseFPrintF(u32 verbosity, FILE *stream, const char *format, ...);
 	extern void verboseChannelPrintF(u32 verbosity, u8 channel, const char *format, ...);
 	extern void verboseChannelFPrintF(u32 verbosity, u8 channel, FILE *stream, const char *format, ...);
 
