@@ -817,25 +817,25 @@ namespace vx
 			);
 	}
 
-	inline __m128 VX_CALLCONV loadFloat2(const detail::vec2<f32> &source)
+	inline __m128 VX_CALLCONV loadFloat2(const detail::vec2<f32>* source)
 	{
-		__m128 x = _mm_load_ss(&source.x);
-		__m128 y = _mm_load_ss(&source.y);
+		__m128 x = _mm_load_ss(&source->x);
+		__m128 y = _mm_load_ss(&source->y);
 		return _mm_unpacklo_ps(x, y);
 	}
 
-	inline __m128 VX_CALLCONV loadFloat3(const detail::vec3<f32> &source)
+	inline __m128 VX_CALLCONV loadFloat3(const detail::vec3<f32>* source)
 	{
-		__m128 x = _mm_load_ss(&source.x);
-		__m128 y = _mm_load_ss(&source.y);
-		__m128 z = _mm_load_ss(&source.z);
+		__m128 x = _mm_load_ss(&source->x);
+		__m128 y = _mm_load_ss(&source->y);
+		__m128 z = _mm_load_ss(&source->z);
 		__m128 xy = _mm_unpacklo_ps(x, y);
 		return _mm_movelh_ps(xy, z);
 	}
 
-	inline __m128 VX_CALLCONV loadFloat4(const detail::vec4<f32> &source)
+	inline __m128 VX_CALLCONV loadFloat4(const detail::vec4<f32>* source)
 	{
-		return _mm_loadu_ps(&source.x);
+		return _mm_loadu_ps(&source->x);
 	}
 
 	inline void VX_CALLCONV storeFloat2(detail::vec2<f32>* pDestination, CVEC4 V)
@@ -1229,8 +1229,8 @@ namespace vx
 	template<>
 	inline f32 distance3(const detail::vec3<f32> &v1, const detail::vec3<f32> &v2)
 	{
-		auto a = vx::loadFloat3(v1);
-		auto b = vx::loadFloat3(v2);
+		auto a = vx::loadFloat3(&v1);
+		auto b = vx::loadFloat3(&v2);
 		auto d = _mm_sub_ps(b, a);
 		d = _mm_dp_ps(d, d, 255);
 		d = _mm_sqrt_ps(d);
@@ -1247,8 +1247,8 @@ namespace vx
 	template<>
 	inline f32 distance4(const detail::vec4<f32> &v1, const detail::vec4<f32> &v2)
 	{
-		auto a = vx::loadFloat4(v1);
-		auto b = vx::loadFloat4(v2);
+		auto a = vx::loadFloat4(&v1);
+		auto b = vx::loadFloat4(&v2);
 		auto d = _mm_sub_ps(b, a);
 		d = _mm_dp_ps(d, d, 255);
 		d = _mm_sqrt_ps(d);

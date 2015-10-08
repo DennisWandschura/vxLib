@@ -78,7 +78,10 @@ namespace vx
 
 	inline __m128 VX_CALLCONV abs(CVEC4 v)
 	{
-		return _mm_andnot_ps(g_VXAbsMask, v);
+		__m128 vResult = _mm_setzero_ps();
+		vResult = _mm_sub_ps(vResult, v);
+		vResult = _mm_max_ps(vResult, v);
+		return vResult;
 	}
 
 	inline __m128 VX_CALLCONV normalize(CVEC4 V)
