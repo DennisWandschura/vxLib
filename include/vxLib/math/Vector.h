@@ -1390,26 +1390,26 @@ namespace vx
 		f32 tmp = (normalizedAxis.x * normalizedAxis.y * t + normalizedAxis.z * s);
 		if (tmp > 0.998f)
 		{ // north pole singularity detected
-			pitch = 2.0f * atan2(normalizedAxis.x * sin(angle / 2.0f), cos(angle / 2.0f));
+			pitch = 2.0f * ::atan2(normalizedAxis.x * sin(angle / 2.0f), cos(angle / 2.0f));
 			yaw = vx::VX_PI / 2.0f;
 			roll = 0.0f;
 		}
 		else if (tmp < -0.998f)
 		{ // south pole singularity detected
-			pitch = -2.0f * atan2(normalizedAxis.x * sin(angle / 2.0f), cos(angle / 2.0f));
+			pitch = -2.0f * ::atan2(normalizedAxis.x * sin(angle / 2.0f), cos(angle / 2.0f));
 			yaw = -vx::VX_PI / 2.0f;
 			roll = 0.0f;
 		}
 		else
 		{
-			pitch = atan2(normalizedAxis.y * s - normalizedAxis.x * normalizedAxis.z * t, 1.0f - (normalizedAxis.y * normalizedAxis.y + normalizedAxis.z * normalizedAxis.z) * t);
-			yaw = asin(normalizedAxis.x * normalizedAxis.y * t + normalizedAxis.z * s);
-			roll = atan2(normalizedAxis.x * s - normalizedAxis.y * normalizedAxis.z * t, 1.0f - (normalizedAxis.x * normalizedAxis.x + normalizedAxis.z * normalizedAxis.z) * t);
+			pitch = ::atan2(normalizedAxis.y * s - normalizedAxis.x * normalizedAxis.z * t, 1.0f - (normalizedAxis.y * normalizedAxis.y + normalizedAxis.z * normalizedAxis.z) * t);
+			yaw = ::asin(normalizedAxis.x * normalizedAxis.y * t + normalizedAxis.z * s);
+			roll = ::atan2(normalizedAxis.x * s - normalizedAxis.y * normalizedAxis.z * t, 1.0f - (normalizedAxis.x * normalizedAxis.x + normalizedAxis.z * normalizedAxis.z) * t);
 		}
 
-		rollPitchYaw->x = vx::radToDeg(roll);
-		rollPitchYaw->y = vx::radToDeg(pitch);
-		rollPitchYaw->z = vx::radToDeg(yaw);
+		rollPitchYaw->x = radToDeg(roll);
+		rollPitchYaw->y = radToDeg(pitch);
+		rollPitchYaw->z = radToDeg(yaw);
 	}
 
 	template<typename T>
