@@ -138,6 +138,12 @@ namespace vx
 		return vTemp1;
 	}
 
+	inline __m128 VX_CALLCONV VectorTrueInt()
+	{
+		__m128i V = _mm_set1_epi32(-1);
+		return _mm_castsi128_ps(V);
+	}
+
 	inline __m128 VX_CALLCONV VectorAndInt
 		(
 			CVEC4 V1,
@@ -155,6 +161,26 @@ namespace vx
 	{
 		__m128i V = _mm_cmpeq_epi32(_mm_castps_si128(V1), _mm_castps_si128(V2));
 		return _mm_castsi128_ps(V);
+	}
+
+	inline __m128 VX_CALLCONV VectorOrInt
+		(
+			CVEC4 V1,
+			CVEC4 V2
+			)
+	{
+		__m128i V = _mm_or_si128(_mm_castps_si128(V1), _mm_castps_si128(V2));
+		return _mm_castsi128_ps(V);
+	}
+
+	inline __m128 VX_CALLCONV VectorIsInfinite(CVEC4 V)
+	{
+		// Mask off the sign bit
+		__m128 vTemp = _mm_and_ps(V, g_VXAbsMask);
+		// Compare to infinity
+		vTemp = _mm_cmpeq_ps(vTemp, g_VXInfinity);
+		// If any are infinity, the signs are true.
+		return vTemp;
 	}
 
 	inline __m128 VX_CALLCONV VectorSelect(CVEC4 V1, CVEC4 V2, CVEC4 Control)
@@ -440,7 +466,7 @@ namespace vx
 		auto HalfAngles = _mm_mul_ps(Angles, g_VXOneHalf);
 
 		__m128 SinAngles, CosAngles;
-		VectorSinCos(&SinAngles, &CosAngles, HalfAngles);
+		sinCos(&SinAngles, &CosAngles, HalfAngles);
 
 		auto P0 = VectorPermute<VX_PERMUTE_0X, VX_PERMUTE_1X, VX_PERMUTE_1X, VX_PERMUTE_1X>(SinAngles, CosAngles);
 		auto Y0 = VectorPermute<VX_PERMUTE_1Y, VX_PERMUTE_0Y, VX_PERMUTE_1Y, VX_PERMUTE_1Y>(SinAngles, CosAngles);
@@ -469,10 +495,10 @@ namespace vx
 		*pAngle = 2.0f * scalarACos(VectorGetW(Q));
 	}
 
-	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, CVEC4 V)
+	inline void VX_CALLCONV sinCos(__m128* pSin, __m128* pCos, CVEC4 V)
 	{
 		// Force the value within the bounds of pi
-		__m128 x = VectorModAngles(V);
+		__m128 x = modAngles(V);
 
 		// Map in [-pi/2,pi/2] with sin(y) = sin(x), cos(y) = sign*cos(x).
 		__m128 sign = _mm_and_ps(x, g_VXNegativeZero);
@@ -540,7 +566,7 @@ namespace vx
 		*pCos = Result;
 	}
 
-	inline __m128 VX_CALLCONV VectorTan(CVEC4 V)
+	inline __m128 VX_CALLCONV tan(CVEC4 V)
 	{
 		static const __m128 TanCoefficients0 = { 1.0f, -4.667168334e-1f, 2.566383229e-2f, -3.118153191e-4f };
 		static const __m128 TanCoefficients1 = { 4.981943399e-7f, -1.333835001e-1f, 3.424887824e-3f, -1.786170734e-5f };
@@ -606,7 +632,125 @@ namespace vx
 		return Result;
 	}
 
-	inline __m128 VX_CALLCONV VectorModAngles(CVEC4 Angles)
+	inline __m128 VX_CALLCONV atan(CVEC4 V)
+	{
+		__m128 absV = abs(V);
+		__m128 invV = _mm_div_ps(g_VXOne, V);
+		__m128 comp = _mm_cmpgt_ps(V, g_VXOne);
+		__m128 select0 = _mm_and_ps(comp, g_VXOne);
+		__m128 select1 = _mm_andnot_ps(comp, g_VXNegativeOne);
+		__m128 sign = _mm_or_ps(select0, select1);
+		comp = _mm_cmple_ps(absV, g_VXOne);
+		select0 = _mm_and_ps(comp, g_VXZero);
+		select1 = _mm_andnot_ps(comp, sign);
+		sign = _mm_or_ps(select0, select1);
+		select0 = _mm_and_ps(comp, V);
+		select1 = _mm_andnot_ps(comp, invV);
+		__m128 x = _mm_or_ps(select0, select1);
+
+		__m128 x2 = _mm_mul_ps(x, x);
+
+		// Compute polynomial approximation
+		const __m128 TC1 = g_VXATanCoefficients1;
+		__m128 vConstants = VX_PERMUTE_PS(TC1, _MM_SHUFFLE(3, 3, 3, 3));
+		__m128 Result = _mm_mul_ps(vConstants, x2);
+
+		vConstants = VX_PERMUTE_PS(TC1, _MM_SHUFFLE(2, 2, 2, 2));
+		Result = _mm_add_ps(Result, vConstants);
+		Result = _mm_mul_ps(Result, x2);
+
+		vConstants = VX_PERMUTE_PS(TC1, _MM_SHUFFLE(1, 1, 1, 1));
+		Result = _mm_add_ps(Result, vConstants);
+		Result = _mm_mul_ps(Result, x2);
+
+		vConstants = VX_PERMUTE_PS(TC1, _MM_SHUFFLE(0, 0, 0, 0));
+		Result = _mm_add_ps(Result, vConstants);
+		Result = _mm_mul_ps(Result, x2);
+
+		const __m128 TC0 = g_VXATanCoefficients0;
+		vConstants = VX_PERMUTE_PS(TC0, _MM_SHUFFLE(3, 3, 3, 3));
+		Result = _mm_add_ps(Result, vConstants);
+		Result = _mm_mul_ps(Result, x2);
+
+		vConstants = VX_PERMUTE_PS(TC0, _MM_SHUFFLE(2, 2, 2, 2));
+		Result = _mm_add_ps(Result, vConstants);
+		Result = _mm_mul_ps(Result, x2);
+
+		vConstants = VX_PERMUTE_PS(TC0, _MM_SHUFFLE(1, 1, 1, 1));
+		Result = _mm_add_ps(Result, vConstants);
+		Result = _mm_mul_ps(Result, x2);
+
+		vConstants = VX_PERMUTE_PS(TC0, _MM_SHUFFLE(0, 0, 0, 0));
+		Result = _mm_add_ps(Result, vConstants);
+		Result = _mm_mul_ps(Result, x2);
+		Result = _mm_add_ps(Result, g_VXOne);
+		Result = _mm_mul_ps(Result, x);
+		__m128 result1 = _mm_mul_ps(sign, g_VXHalfPi);
+		result1 = _mm_sub_ps(result1, Result);
+
+		comp = _mm_cmpeq_ps(sign, g_VXZero);
+		select0 = _mm_and_ps(comp, Result);
+		select1 = _mm_andnot_ps(comp, result1);
+		Result = _mm_or_ps(select0, select1);
+		return Result;
+	}
+
+	inline __m128 VX_CALLCONV atan2(CVEC4 X, CVEC4 Y)
+	{
+		// Return the inverse tangent of Y / X in the range of -Pi to Pi with the following exceptions:
+
+		//     Y == 0 and X is Negative         -> Pi with the sign of Y
+		//     y == 0 and x is positive         -> 0 with the sign of y
+		//     Y != 0 and X == 0                -> Pi / 2 with the sign of Y
+		//     Y != 0 and X is Negative         -> atan(y/x) + (PI with the sign of Y)
+		//     X == -Infinity and Finite Y      -> Pi with the sign of Y
+		//     X == +Infinity and Finite Y      -> 0 with the sign of Y
+		//     Y == Infinity and X is Finite    -> Pi / 2 with the sign of Y
+		//     Y == Infinity and X == -Infinity -> 3Pi / 4 with the sign of Y
+		//     Y == Infinity and X == +Infinity -> Pi / 4 with the sign of Y
+
+		static const __m128 ATan2Constants = { VX_PI, VX_PIDIV2, VX_PIDIV4, VX_PI * 3.0f / 4.0f };
+
+		__m128 Zero = _mm_setzero_ps();
+		__m128 ATanResultValid = g_VXMask4;//VectorTrueInt();
+
+		__m128 Pi = VectorSplatX(ATan2Constants);
+		__m128 PiOverTwo = VectorSplatY(ATan2Constants);
+		__m128 PiOverFour = VectorSplatZ(ATan2Constants);
+		__m128 ThreePiOverFour = VectorSplatW(ATan2Constants);
+
+		__m128 YEqualsZero = _mm_cmpeq_ps(Y, Zero);
+		__m128 XEqualsZero = _mm_cmpeq_ps(X, Zero);
+		__m128 XIsPositive = _mm_and_ps(X, g_VXNegativeZero.v);
+		XIsPositive = VectorEqualInt(XIsPositive, Zero);
+		__m128 YEqualsInfinity = VectorIsInfinite(Y);
+		__m128 XEqualsInfinity = VectorIsInfinite(X);
+
+		__m128 YSign = _mm_and_ps(Y, g_VXNegativeZero.v);
+		Pi = VectorOrInt(Pi, YSign);
+		PiOverTwo = VectorOrInt(PiOverTwo, YSign);
+		PiOverFour = VectorOrInt(PiOverFour, YSign);
+		ThreePiOverFour = VectorOrInt(ThreePiOverFour, YSign);
+
+		__m128 R1 = VectorSelect(Pi, YSign, XIsPositive);
+		__m128 R2 = VectorSelect(ATanResultValid, PiOverTwo, XEqualsZero);
+		__m128 R3 = VectorSelect(R2, R1, YEqualsZero);
+		__m128 R4 = VectorSelect(ThreePiOverFour, PiOverFour, XIsPositive);
+		__m128 R5 = VectorSelect(PiOverTwo, R4, XEqualsInfinity);
+		__m128 Result = VectorSelect(R3, R5, YEqualsInfinity);
+		ATanResultValid = VectorEqualInt(Result, ATanResultValid);
+
+		__m128 V = _mm_div_ps(Y, X);
+
+		__m128 R0 = atan(V);
+
+		R1 = VectorSelect(Pi, g_VXNegativeZero, XIsPositive);
+		R2 = _mm_add_ps(R0, R1);
+
+		return VectorSelect(Result, R2, ATanResultValid);
+	}
+
+	inline __m128 VX_CALLCONV modAngles(CVEC4 Angles)
 	{
 		// Modulo the range of the given angles such that -XM_PI <= Angles < XM_PI
 		auto vResult = _mm_mul_ps(Angles, g_VXReciprocalTwoPi);

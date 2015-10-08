@@ -948,6 +948,8 @@ namespace vx
 	VX_GLOBALCONST __m128 g_VXSinCoefficients1 = { -2.3889859e-08f, -0.16665852f /*Est1*/, +0.0083139502f /*Est2*/, -0.00018524670f /*Est3*/ };
 	VX_GLOBALCONST __m128 g_VXCosCoefficients0 = { -0.5f, +0.041666638f, -0.0013888378f, +2.4760495e-05f };
 	VX_GLOBALCONST __m128 g_VXCosCoefficients1 = { -2.6051615e-07f, -0.49992746f /*Est1*/, +0.041493919f /*Est2*/, -0.0012712436f /*Est3*/ };
+	VX_GLOBALCONST __m128 g_VXATanCoefficients0 = { -0.3333314528f, +0.1999355085f, -0.1420889944f, +0.1065626393f };
+	VX_GLOBALCONST __m128 g_VXATanCoefficients1 = { -0.0752896400f, +0.0429096138f, -0.0161657367f, +0.0028662257f };
 	VX_GLOBALCONST __m128 g_VXNoFraction = { 8388608.0f,8388608.0f,8388608.0f,8388608.0f };
 	VX_GLOBALCONST ivec4 g_VXInfinity = { 0x7F800000, 0x7F800000, 0x7F800000, 0x7F800000 };
 	VX_GLOBALCONST ivec4 g_VXQNaN = { 0x7FC00000, 0x7FC00000, 0x7FC00000, 0x7FC00000 };
@@ -964,6 +966,7 @@ namespace vx
 	VX_GLOBALCONST ivec4 g_VXNegativeZero = { (s32)0x80000000, (s32)0x80000000, (s32)0x80000000, (s32)0x80000000 };
 	VX_GLOBALCONST ivec4 g_VXNegate3 = { (s32)0x80000000, (s32)0x80000000, (s32)0x80000000, 0x00000000 };
 	VX_GLOBALCONST ivec4 g_VXMask3 = { (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, 0x00000000 };
+	VX_GLOBALCONST ivec4 g_VXMask4 = { (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF };
 
 	VX_GLOBALCONST __m256d g_VXNegIdentityR3_d = { 0.0, 0.0, 0.0, -1.0 };
 
@@ -1066,8 +1069,11 @@ namespace vx
 	inline bool VX_CALLCONV Vector3Equal(CVEC4 V1, CVEC4 V2);
 	inline __m128 VX_CALLCONV VectorInBounds(CVEC4 V, CVEC4 Bounds);
 
+	inline __m128 VX_CALLCONV VectorTrueInt();
 	inline __m128 VX_CALLCONV VectorAndInt(CVEC4 V1, CVEC4 V2);
 	inline __m128 VX_CALLCONV VectorEqualInt(CVEC4 V1,CVEC4 V2);
+	inline __m128 VX_CALLCONV VectorOrInt(CVEC4 V1, CVEC4 V2);
+	inline __m128 VX_CALLCONV VectorIsInfinite(CVEC4 V);
 
 	inline __m128 VX_CALLCONV VectorSelect(CVEC4 V1, CVEC4 V2, CVEC4 Control);
 	inline __m256d VX_CALLCONV VectorSelect(__m256d V1, __m256d V2, const __m256d &Control);
@@ -1093,9 +1099,11 @@ namespace vx
 	inline __m128 VX_CALLCONV quaternionRotationRollPitchYawFromVector(CVEC4 vector);
 	inline void VX_CALLCONV quaternionToAxisAngle(CVEC4 Q, __m128* pAxis, f32* pAngle);
 
-	inline void VX_CALLCONV VectorSinCos(__m128* pSin, __m128* pCos, CVEC4 V);
-	inline __m128 VX_CALLCONV VectorTan(CVEC4 V);
-	inline __m128 VX_CALLCONV VectorModAngles(CVEC4 Angles);
+	inline void VX_CALLCONV sinCos(__m128* pSin, __m128* pCos, CVEC4 V);
+	inline __m128 VX_CALLCONV tan(CVEC4 V);
+	inline __m128 VX_CALLCONV atan(CVEC4 V);
+	inline __m128 VX_CALLCONV atan2(CVEC4 x, CVEC4 y);
+	inline __m128 VX_CALLCONV modAngles(CVEC4 Angles);
 
 	inline f32 VX_CALLCONV VectorGetW(CVEC4 V);
 
