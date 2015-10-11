@@ -32,11 +32,11 @@ namespace vx
 
 	struct MeshVertex
 	{
-		vx::float3 position;
-		vx::float2 texCoords;
-		vx::float3 normal;
-		vx::float3 tangent;
-		vx::float3 bitangent;
+		float3 position;
+		float2 texCoords;
+		float3 normal;
+		float3 tangent;
+		float3 bitangent;
 	};
 
 	class Mesh

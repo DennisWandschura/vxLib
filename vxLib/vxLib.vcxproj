@@ -169,6 +169,9 @@
     <ClInclude Include="..\include\vxLib\Graphics\Camera.h" />
     <ClInclude Include="..\include\vxLib\Graphics\Mesh.h" />
     <ClInclude Include="..\include\vxLib\Keyboard.h" />
+    <ClInclude Include="..\include\vxLib\math\float2.h" />
+    <ClInclude Include="..\include\vxLib\math\float3.h" />
+    <ClInclude Include="..\include\vxLib\math\float4.h" />
     <ClInclude Include="..\include\vxLib\math\half.h" />
     <ClInclude Include="..\include\vxLib\math\math.h" />
     <ClInclude Include="..\include\vxLib\math\matrix.h" />

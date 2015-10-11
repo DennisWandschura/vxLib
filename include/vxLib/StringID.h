@@ -26,70 +26,23 @@ SOFTWARE.
 #include <vxLib/types.h>
 #include <vxLib/util/CityHash.h>
 
-namespace vx
+typedef struct vxStringID
 {
-	struct StringID
-	{
-		u64 value;
+	u64 value;
 
-		StringID() :value(0) {}
-		explicit StringID(u64 u) :value(u){}
+} vxStringID;
 
-		~StringID() {}
+inline void vx_makeSid(const char *str, vxStringID* sid)
+{
+	sid->value = CityHash64(str, strlen(str));
+}
 
-		StringID& operator=(u64 u)
-		{
-			value = u;
-			return *this;
-		}
+inline void vx_makeSid(const char *str, u32 size, vxStringID* sid)
+{
+	sid->value = CityHash64(str, size);
+}
 
-		friend bool operator==(const StringID &lhs, const StringID &rhs)
-		{
-			return lhs.value == rhs.value;
-		}
-
-		friend bool operator!=(const StringID &lhs, const StringID &rhs)
-		{
-			return lhs.value != rhs.value;
-		}
-
-		friend bool operator<(const StringID &lhs, const StringID &rhs)
-		{
-			return lhs.value < rhs.value;
-		}
-
-		friend bool operator<=(const StringID &lhs, const StringID &rhs)
-		{
-			return lhs.value <= rhs.value;
-		}
-
-		friend bool operator>(const StringID &lhs, const StringID &rhs)
-		{
-			return lhs.value > rhs.value;
-		}
-
-		friend bool operator>=(const StringID &lhs, const StringID &rhs)
-		{
-			return lhs.value >= rhs.value;
-		}
-	};
-
-	inline StringID make_sid(const char *str)
-	{
-		StringID sid = StringID(CITYHASH64(str));
-		return sid;
-	}
-
-	template<u64 SIZE>
-	inline StringID make_sid(const char(&str)[SIZE])
-	{
-		StringID sid = CityHash64((char*)str, SIZE);
-		return sid;
-	}
-
-	inline StringID make_sid(const wchar_t *str)
-	{
-		StringID sid = StringID(CityHash64((char*)str, sizeof(wchar_t) * std::char_traits<wchar_t>::length(str)));
-		return sid;
-	}
+inline vxStringID vx_makeSid(const wchar_t *str, vxStringID* sid)
+{
+	sid->value = CityHash64((char*)str, sizeof(wchar_t) * std::char_traits<wchar_t>::length(str));
 }
