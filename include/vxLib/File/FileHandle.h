@@ -31,8 +31,10 @@ namespace vx
 {
 	struct FileHandle
 	{
+		enum FileHandleStringSize {size = 64};
+
 		StringID m_sid;
-		char m_string[64];
+		char m_string[FileHandleStringSize::size];
 
 		FileHandle()
 			:m_sid(),
@@ -54,7 +56,7 @@ namespace vx
 				++i;
 			}
 
-			m_sid = vx::make_sid(m_string);
+			m_sid = vx_makeSid(m_string, FileHandleStringSize::size);
 		}
 
 		template<u64 SIZE>
@@ -71,7 +73,7 @@ namespace vx
 				++i;
 			}
 
-			m_sid = vx::make_sid(m_string);
+			m_sid = vx_makeSid(m_string, FileHandleStringSize::size);
 		}
 	};
 }

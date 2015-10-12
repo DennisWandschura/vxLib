@@ -26,23 +26,28 @@ SOFTWARE.
 #include <vxLib/types.h>
 #include <vxLib/util/CityHash.h>
 
-typedef struct vxStringID
+typedef struct StringID
 {
 	u64 value;
+} StringID;
 
-} vxStringID;
-
-inline void vx_makeSid(const char *str, vxStringID* sid)
+inline StringID vx_makeSid(const char *str)
 {
-	sid->value = CityHash64(str, strlen(str));
+	StringID sid;
+	sid.value = CityHash64(str, strlen(str));
+	return sid;
 }
 
-inline void vx_makeSid(const char *str, u32 size, vxStringID* sid)
+inline StringID vx_makeSid(const char *str, u32 size)
 {
-	sid->value = CityHash64(str, size);
+	StringID sid;
+	sid.value = CityHash64(str, size);
+	return sid;
 }
 
-inline vxStringID vx_makeSid(const wchar_t *str, vxStringID* sid)
+inline StringID vx_makeSid(const wchar_t *str)
 {
-	sid->value = CityHash64((char*)str, sizeof(wchar_t) * std::char_traits<wchar_t>::length(str));
+	StringID sid;
+	sid.value = CityHash64((char*)str, sizeof(wchar_t) * wcslen(str));
+	return sid;
 }

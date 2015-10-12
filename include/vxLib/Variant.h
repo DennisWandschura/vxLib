@@ -25,7 +25,7 @@ SOFTWARE.
 
 #include "types.h"
 
-typedef union vxVariant
+typedef union Variant
 {
 	u8 u8;
 	s8 i8;
@@ -38,4 +38,4 @@ typedef union vxVariant
 	f32 f32;
 	f64 f64;
 	void* ptr;
-} vxVariant;
+} Variant;

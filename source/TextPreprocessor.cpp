@@ -180,8 +180,8 @@ namespace TextPreprocessorCpp
 			std::string* text,
 			const char* cmdStart,
 			const char* cmdEnd,
-			const std::map<vxStringID, std::string, ::vx::detail::StringIdCmp> &includeFiles,
-			std::map<vxStringID, int, ::vx::detail::StringIdCmp>* alreadyIncludedFiles
+			const std::map<StringID, std::string, ::vx::detail::StringIdCmp> &includeFiles,
+			std::map<StringID, int, ::vx::detail::StringIdCmp>* alreadyIncludedFiles
 			)
 	{
 		auto result = cmdEnd;
@@ -192,8 +192,7 @@ namespace TextPreprocessorCpp
 		std::string value;
 		value.assign(valueStart, valueEnd);
 
-		vxStringID sid;
-		vx_makeSid(value.c_str(), &sid);
+		StringID sid = vx_makeSid(value.c_str());
 
 		bool changedText = false;
 		auto alreadyIncludedIter = alreadyIncludedFiles->find(sid);
@@ -246,8 +245,8 @@ namespace TextPreprocessorCpp
 			std::string* text,
 			const char* cmdStart,
 			const char* cmdEnd,
-			const std::map<vxStringID, int, ::vx::detail::StringIdCmp> &localDefines,
-			const std::map<vxStringID, int, ::vx::detail::StringIdCmp> &globalDefines,
+			const std::map<StringID, int, ::vx::detail::StringIdCmp> &localDefines,
+			const std::map<StringID, int, ::vx::detail::StringIdCmp> &globalDefines,
 			bool b
 			)
 	{
@@ -259,8 +258,7 @@ namespace TextPreprocessorCpp
 		std::string value;
 		value.assign(valueStart, valueEnd);
 
-		vxStringID sid;
-		vx_makeSid(value.c_str(), &sid);
+		StringID sid = vx_makeSid(value.c_str());
 
 		bool foundDefine = b;
 
@@ -335,10 +333,10 @@ namespace TextPreprocessorCpp
 			std::string* text,
 			const char* cmdStart,
 			const char* cmdEnd,
-			const std::string &cmd, const std::map<vxStringID, std::string, ::vx::detail::StringIdCmp> &includeFiles,
-			std::map<vxStringID, int, ::vx::detail::StringIdCmp>* alreadyIncludedFiles,
-			std::map<vxStringID, int, ::vx::detail::StringIdCmp>* localDefines,
-			const std::map<vxStringID, int, ::vx::detail::StringIdCmp> &globalDefines
+			const std::string &cmd, const std::map<StringID, std::string, ::vx::detail::StringIdCmp> &includeFiles,
+			std::map<StringID, int, ::vx::detail::StringIdCmp>* alreadyIncludedFiles,
+			std::map<StringID, int, ::vx::detail::StringIdCmp>* localDefines,
+			const std::map<StringID, int, ::vx::detail::StringIdCmp> &globalDefines
 			)
 	{
 		auto result = cmdEnd;
@@ -363,8 +361,7 @@ namespace TextPreprocessorCpp
 			std::string value;
 			value.assign(valueStart, valueEnd);
 
-			vxStringID sid;
-			vx_makeSid(value.c_str(), &sid);
+			StringID sid = vx_makeSid(value.c_str());
 
 			auto it = localDefines->find(sid);
 			if (it == localDefines->end())
@@ -412,8 +409,8 @@ namespace vx
 
 	void TextPreprocessor::processText(std::string* text)
 	{
-		std::map<vxStringID, int, ::vx::detail::StringIdCmp> alreadyIncludedFiles;
-		std::map<vxStringID, int, ::vx::detail::StringIdCmp> localDefines;
+		std::map<StringID, int, ::vx::detail::StringIdCmp> alreadyIncludedFiles;
+		std::map<StringID, int, ::vx::detail::StringIdCmp> localDefines;
 
 		auto current = text->c_str();
 
@@ -445,8 +442,7 @@ namespace vx
 				std::string customValueKey;
 				customValueKey.assign(begin, customValueEnd);
 
-				vxStringID sid;
-				vx_makeSid(customValueKey.c_str(), &sid);
+				StringID sid = vx_makeSid(customValueKey.c_str());
 
 				auto it = m_customValues.find(sid);
 				if (it != m_customValues.end())
@@ -505,8 +501,7 @@ namespace vx
 
 	void TextPreprocessor::setDefine(const char* id)
 	{
-		vxStringID sid;
-		vx_makeSid(id, &sid);
+		StringID sid = vx_makeSid(id);
 		auto it = m_globalDefines.find(sid);
 		if (it == m_globalDefines.end())
 		{
@@ -516,8 +511,7 @@ namespace vx
 
 	void TextPreprocessor::removeDefine(const char* id)
 	{
-		vxStringID sid;
-		vx_makeSid(id, &sid);
+		StringID sid = vx_makeSid(id);
 		auto it = m_globalDefines.find(sid);
 		if (it != m_globalDefines.end())
 		{
@@ -527,8 +521,7 @@ namespace vx
 
 	void TextPreprocessor::setCustomValue(const char* id, s32 value)
 	{
-		vxStringID sid;
-		vx_makeSid(id, &sid);
+		StringID sid = vx_makeSid(id);
 		auto it = m_customValues.find(sid);
 		if (it == m_customValues.end())
 		{
@@ -547,8 +540,7 @@ namespace vx
 
 	void TextPreprocessor::setCustomValue(const char* id, u32 value)
 	{
-		vxStringID sid;
-		vx_makeSid(id, &sid);
+		StringID sid = vx_makeSid(id);
 		auto it = m_customValues.find(sid);
 		if (it == m_customValues.end())
 		{
@@ -567,8 +559,7 @@ namespace vx
 
 	void TextPreprocessor::setCustomValue(const char* id, f32 value)
 	{
-		vxStringID sid;
-		vx_makeSid(id, &sid);
+		StringID sid = vx_makeSid(id);
 		auto it = m_customValues.find(sid);
 		if (it == m_customValues.end())
 		{
@@ -587,8 +578,7 @@ namespace vx
 
 	void TextPreprocessor::loadIncludeFile(const char* filename, const char* key)
 	{
-		vxStringID sid;
-		vx_makeSid(filename, &sid);
+		StringID sid = vx_makeSid(filename);
 		auto it = m_includeFiles.find(sid);
 		if (it == m_includeFiles.end())
 		{

@@ -36,7 +36,7 @@ namespace vx
 	{
 		struct StringIdCmp
 		{
-			bool operator()(const vxStringID &lhs, const vxStringID &rhs) const
+			bool operator()(const StringID &lhs, const StringID &rhs) const
 			{
 				return lhs.value < rhs.value;
 			}
@@ -57,9 +57,9 @@ namespace vx
 			Type type;
 		};
 
-		std::map<vxStringID, std::string, detail::StringIdCmp> m_includeFiles;
-		std::map<vxStringID, int, detail::StringIdCmp> m_globalDefines;
-		std::map<vxStringID, CustomValueData, detail::StringIdCmp> m_customValues;
+		std::map<StringID, std::string, detail::StringIdCmp> m_includeFiles;
+		std::map<StringID, int, detail::StringIdCmp> m_globalDefines;
+		std::map<StringID, CustomValueData, detail::StringIdCmp> m_customValues;
 
 		void processText(std::string* text);
 
