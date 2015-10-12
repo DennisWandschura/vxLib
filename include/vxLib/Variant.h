@@ -1,4 +1,3 @@
-#pragma once
 /*
 The MIT License (MIT)
 
@@ -22,20 +21,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#pragma once
 
-#include "types.h"
-
-typedef union Variant
+namespace vx
 {
-	u8 u8;
-	s8 i8;
-	u16 u16;
-	s16 s16;
-	u32 u32;
-	s32 s32;
-	u64 u64;
-	s64 s64;
-	f32 f32;
-	f64 f64;
-	void* ptr;
-} Variant;
+	union Variant
+	{
+		u8 u8;
+		s8 i8;
+		u16 u16;
+		s16 s16;
+		u32 u32;
+		s32 s32;
+		u64 u64;
+		s64 s64;
+		f32 f32;
+		f64 f64;
+		void* ptr;
+	};
+}

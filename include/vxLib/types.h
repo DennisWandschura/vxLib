@@ -73,11 +73,7 @@ extern "C" {
 #endif
 
 #if defined(_VX_GCC) || defined(_VX_CLANG) || (_MSC_VER > 1800)
-#ifdef __cplusplus
 #define VX_ALIGN(X) alignas(X)
-#else
-#define VX_ALIGN(X) __declspec( align( X ) )
-#endif
 #else
 #define VX_ALIGN(X) __declspec( align( X ) )
 #endif
@@ -101,8 +97,21 @@ extern "C" {
 
 #define VX_UNREFERENCED_PARAMETER(P) (P)
 
+#if defined(__GNUC__) || defined(__INTEL_COMPILER)
+# define VX_LIKELY(x) __builtin_expect(!!(x), 1)
+# define VX_UNLIKELY(x) __builtin_expect(!!(x), 0)
+#else
+# define VX_LIKELY(x)
+# define VX_UNLIKELY(x)
+#endif
+
 #define CONCATENATE_IMPL(s1, s2) s1##s2
 #define CONCATENATE(s1, s2) CONCATENATE_IMPL(s1, s2)
 
 #define KBYTE *1024
 #define MBYTE KBYTE *1024
+
+#ifdef _VX_VS12
+#define thread_local __declspec(thread)
+#define noexcept
+#endif

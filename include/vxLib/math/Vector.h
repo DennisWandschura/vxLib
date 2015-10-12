@@ -28,9 +28,6 @@ SOFTWARE.
 
 #include <vxLib/math/math.h>
 #include <algorithm>
-#include <vxLib/math/float2.h>
-#include <vxLib/math/float3.h>
-#include <vxLib/math/float4.h>
 
 #define VX_PERMUTE_PS(V, U) _mm_shuffle_ps(V, V, U)
 #define _VX_DOT(M0, M1, M2, M3, X, Y, Z, W) M0 << 0 | M1 << 1 | M2 << 2 | M3 << 3 | X << 4 | Y << 5 | Z << 6 | W << 7
@@ -836,6 +833,11 @@ namespace vx
 		return _mm_movelh_ps(xy, z);
 	}
 
+	inline __m128 VX_CALLCONV loadFloat4(const detail::vec4<f32>* source)
+	{
+		return _mm_loadu_ps(&source->x);
+	}
+
 	inline void VX_CALLCONV storeFloat2(detail::vec2<f32>* pDestination, CVEC4 V)
 	{
 		auto T = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
@@ -850,6 +852,11 @@ namespace vx
 		_mm_store_ss(&pDestination->x, V);
 		_mm_store_ss(&pDestination->y, T1);
 		_mm_store_ss(&pDestination->z, T2);
+	}
+
+	inline void VX_CALLCONV storeFloat4(detail::vec4<f32> *pDestination, CVEC4 V)
+	{
+		_mm_storeu_ps(&pDestination->x, V);
 	}
 
 	////////////////////////
@@ -904,8 +911,11 @@ namespace vx
 	typedef detail::vec4 < u32 > uint4;
 	typedef detail::vec4a < u32 > uint4a;
 
+	typedef detail::vec2 < f32 > float2;
 	typedef detail::vec2a < f32 > float2a;
+	typedef detail::vec3 < f32 > float3;
 	typedef detail::vec3a < f32 > float3a;
+	typedef detail::vec4 < f32 > float4;
 	typedef detail::vec4a < f32 > float4a;
 
 	VX_GLOBALCONST __m128 g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD };
@@ -1188,6 +1198,19 @@ namespace vx
 		return v1.x*v2.x + v1.y*v2.y + v1.z * v2.z + v1.w * v2.w;
 	}
 
+	template<>
+	inline f32 dot4<f32>(const float4 &v1, const float4 &v2)
+	{
+		auto a = _mm_loadu_ps(v1);
+		auto b = _mm_loadu_ps(v2);
+
+		auto tmp = dot4(a, b);
+
+		f32 result;
+		_mm_store_ss(&result, tmp);
+		return result;
+	}
+
 	inline f32 VX_CALLCONV dot4(const float4a &v1, const float4a &v2)
 	{
 		auto tmp = dot4(v1.v, v2.v);
@@ -1229,6 +1252,17 @@ namespace vx
 		auto tmp = v2 - v1;
 		return ::sqrtf(dot(tmp, tmp));
 	}
+	template<>
+	inline f32 distance4(const detail::vec4<f32> &v1, const detail::vec4<f32> &v2)
+	{
+		auto a = vx::loadFloat4(&v1);
+		auto b = vx::loadFloat4(&v2);
+		auto d = _mm_sub_ps(b, a);
+		d = _mm_dp_ps(d, d, 255);
+		d = _mm_sqrt_ps(d);
+
+		return d.m128_f32[0];
+	}
 
 	template<class T>
 	f32 length2(const detail::vec2<T> &v)
@@ -1248,6 +1282,19 @@ namespace vx
 		return sqrt(dot4(v, v));
 	}
 
+	inline float2 normalize2(const float2 &v1)
+	{
+		auto l = sqrt(dot2(v1, v1));
+		float2 result(v1);
+		if (l > 0.0f)
+		{
+			result.x /= l;
+			result.y /= l;
+		}
+
+		return result;
+	}
+
 	inline float2a normalize2(const float2a &v1)
 	{
 		auto l = sqrt(dot2(v1, v1));
@@ -1261,10 +1308,31 @@ namespace vx
 		return result;
 	}
 
+	inline float3 normalize3(const float3 &v1)
+	{
+		auto l = sqrt(vx::dot3(v1, v1));
+
+		float3 result(v1);
+		if (l > 0.0f)
+		{
+			result.x /= l;
+			result.y /= l;
+			result.z /= l;
+		}
+
+		return result;
+	}
+
 	template<class T>
 	inline detail::vec2<T> abs(const detail::vec2<T> &v)
 	{
 		return detail::vec2<T>(std::abs(v.x), std::abs(v.y));
+	}
+
+	template<>
+	inline float2 abs(const float2 &v)
+	{
+		return float2(fabs(v.x), fabs(v.y));
 	}
 
 	template<class T>
@@ -1273,10 +1341,27 @@ namespace vx
 		return detail::vec3<T>(std::abs(v.x), std::abs(v.y), std::abs(v.z));
 	}
 
+	template<>
+	inline float3 abs(const float3 &v)
+	{
+		return float3(fabs(v.x), fabs(v.y), fabs(v.z));
+	}
+
 	template<class T>
 	inline detail::vec4<T> abs(const detail::vec4<T> &v)
 	{
 		return detail::vec4<T>(std::abs(v.x), std::abs(v.y), std::abs(v.z), std::abs(v.w));
+	}
+
+	template<>
+	inline float4 abs(const float4 &v)
+	{
+		return float4(fabs(v.x), fabs(v.y), fabs(v.z), fabs(v.w));
+	}
+
+	inline vx::float3 degToRad(const vx::float3 &degAngle)
+	{
+		return vx::float3(degAngle.x * VX_DEGTORAD, degAngle.y * VX_DEGTORAD, degAngle.z * VX_DEGTORAD);
 	}
 
 	inline __m128 degToRad(__m128 deg)
@@ -1289,7 +1374,12 @@ namespace vx
 		return _mm_mul_ps(rad, g_VXRadToDeg);
 	}
 
-	inline void angleAxisToEuler(const vx::float4a &normalizedAxis, f32 angle, float3* rollPitchYaw)
+	inline vx::float3 radToDeg(const vx::float3 &radAngle)
+	{
+		return vx::float3(radAngle.x * VX_RADTODEG, radAngle.y * VX_RADTODEG, radAngle.z * VX_RADTODEG);
+	}
+
+	inline void angleAxisToEuler(const vx::float4a &normalizedAxis, f32 angle, vx::float3* rollPitchYaw)
 	{
 		f32 s = sin(angle);
 		f32 c = cos(angle);

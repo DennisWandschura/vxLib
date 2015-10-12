@@ -29,20 +29,8 @@ SOFTWARE.
 #include <string>
 #include <vxLib/StringID.h>
 
-
 namespace vx
 {
-	namespace detail
-	{
-		struct StringIdCmp
-		{
-			bool operator()(const StringID &lhs, const StringID &rhs) const
-			{
-				return lhs.value < rhs.value;
-			}
-		};
-	}
-
 	class TextPreprocessor
 	{
 		struct CustomValueData
@@ -50,23 +38,20 @@ namespace vx
 			enum Type { Float, Int, Uint };
 			union
 			{
-				f32 f;
-				s32 i;
-				u32 u;
+				float f;
+				int i;
+				unsigned int u;
 			};
 			Type type;
 		};
 
-		std::map<StringID, std::string, detail::StringIdCmp> m_includeFiles;
-		std::map<StringID, int, detail::StringIdCmp> m_globalDefines;
-		std::map<StringID, CustomValueData, detail::StringIdCmp> m_customValues;
+		std::map<vx::StringID, std::string> m_includeFiles;
+		std::map<vx::StringID, int> m_globalDefines;
+		std::map<vx::StringID, CustomValueData> m_customValues;
 
 		void processText(std::string* text);
 
 	public:
-		TextPreprocessor();
-		~TextPreprocessor();
-
 		void setDefine(const char* id);
 		void removeDefine(const char* id);
 

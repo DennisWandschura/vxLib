@@ -225,14 +225,5 @@
     <ClInclude Include="..\include\vxLib\string.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vxLib\math\float2.h">
-      <Filter>Header Files\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vxLib\math\float3.h">
-      <Filter>Header Files\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vxLib\math\float4.h">
-      <Filter>Header Files\math</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
