@@ -1,4 +1,5 @@
 #pragma once
+
 /*
 The MIT License (MIT)
 
@@ -24,131 +25,146 @@ SOFTWARE.
 */
 
 #include <vxLib/types.h>
-#include <new>
 
-namespace vx
+template<size_t SIZE, size_t ALIGNMENT>
+struct GetAlignedSize
 {
-	class AllocationProfiler;
+	enum { size = (SIZE + (ALIGNMENT - 1) & ~(ALIGNMENT - 1)) };
+};
 
-	class Allocator
-	{
-		template<bool hasDestructor>
-		struct Destructor
-		{
-			template<typename T>
-			void operator()(T* ptr)
-			{
-				ptr->~T();
-			}
-		};
-
-		template<>
-		struct Destructor<false>
-		{
-			template<typename T>
-			void operator()(T*)
-			{
-			}
-		};
-
-	protected:
-		thread_local static AllocationProfiler* s_allocationProfiler;
-
-	public:
-#if _VX_MEM_PROFILE
-		static void setProfiler(AllocationProfiler* profiler)
-		{
-			s_allocationProfiler = profiler;
-		}
-#endif
-
-		virtual ~Allocator(){}
-
-		virtual u8* allocate(u64 size) = 0;
-		virtual u8* allocate(u64 size, u8 alignment) = 0;
-		virtual void deallocate(u8 *ptr) = 0;
-
-		virtual u32 getTotalSize() const = 0;
-		virtual const u8* getMemory() const = 0;
-
-		template<class U>
-		static inline void construct(U *p)
-		{
-			new (p)U{};
-		}
-
-		template<class U>
-		static inline void construct(U *p, const U &v)
-		{
-			new ((void*)p) U(v);
-		}
-
-		template<class U, class ...Args>
-		static inline void construct(U *p, Args&& ...args)
-		{
-			new (p)U(std::forward<Args>(args)...);
-		}
-
-		template<class U>
-		static inline void rangeConstruct(U *start, U *end) noexcept
-		{
-			VX_ASSERT(start <= end);
-			for (; start != end; ++start)
-			{
-				construct(start);
-			}
-		}
-
-		template<class U>
-		static inline void destroy(U *p)
-		{
-			Destructor<std::is_destructible<U>::value>()(p);
-			//p->~U();
-		}
-
-		template<class U>
-		static inline void rangeDestroy(U *start, U *end) noexcept
-		{
-			VX_ASSERT(start <= end);
-			for (; start != end; ++start)
-			{
-				destroy(start);
-			}
-		}
-
-		static inline u8 getAdjustment(void *ptr, u8 alignment) noexcept
-		{
-			s16 adjustment = alignment - ((uintptr_t)ptr & (alignment - 1));
-
-			if ((adjustment - alignment) == 0)
-				return 0; //already aligned
-
-			return static_cast<u8>(adjustment);
-		}
-	};
-
-	template<class T>
-	struct StlAllocator : public Allocator
-	{
-		typedef T value_type;
-		typedef value_type* pointer;
-
-		static pointer allocate(u32 n)
-		{
-			return (pointer) ::operator new(sizeof(value_type) * n);
-		}
-
-		static void deallocate(pointer p)
-		{
-			::operator delete(p);
-		}
-
-		static void destroy(pointer p)
-		{
-			if (p != nullptr)
-			{
-				Allocator::destroy(p);
-			}
-		}
-	};
+inline size_t getAlignedSize(size_t size, size_t alignment)
+{
+	return (size + (alignment - 1) & ~(alignment - 1));
 }
+
+inline u8* getAlignedPtr(u8* ptr, size_t alignment)
+{
+	return (u8*)getAlignedSize((size_t)ptr, alignment);
+}
+
+struct AllocatedBlock
+{
+	u8* ptr;
+	size_t size;
+};
+
+template<typename T>
+class Memory
+{
+protected:
+	inline Memory() {}
+
+	inline ~Memory() {}
+
+	T& get()
+	{
+		return static_cast<T&>(*this);
+	}
+
+	const T& get() const
+	{
+		return static_cast<const T&>(*this);
+	}
+
+public:
+	u8* aquire(size_t* size)
+	{
+		return get().aquire(size);
+	}
+};
+
+class HeapMemory : public Memory<HeapMemory>
+{
+	u8* m_data;
+	size_t m_size;
+	size_t m_aquired;
+
+public:
+	HeapMemory() :m_data(nullptr), m_size(0), m_aquired(0){}
+
+	HeapMemory(const HeapMemory&) = delete;
+
+	~HeapMemory()
+	{
+		if (m_data)
+		{
+			_aligned_free(m_data);
+			m_data = nullptr;
+			m_size = 0;
+		}
+	}
+
+	HeapMemory& operator=(const HeapMemory&) = delete;
+
+	void initialize(size_t size, size_t alignment)
+	{
+		auto alignedSize = getAlignedSize(size, alignment);
+		m_data = (u8*)_aligned_malloc(alignedSize, alignment);
+		m_size = alignedSize;
+	}
+
+	u8* aquire(size_t* size)
+	{
+		if (m_aquired == 0)
+		{
+			m_aquired = 1;
+
+			*size = m_size;
+			return m_data;
+		}
+		
+		return nullptr;
+	}
+};
+
+template<size_t SIZE, size_t ALIGNMENT>
+class alignas(ALIGNMENT) StackMemory : public Memory<StackMemory<SIZE, ALIGNMENT>>
+{
+	enum : size_t { alignedSize = GetAlignedSize<SIZE, ALIGNMENT>::size };
+
+	u8 m_data[alignedSize];
+	size_t m_aquired;
+
+public:
+	inline StackMemory():m_data(), m_aquired(0){}
+	inline ~StackMemory() {}
+
+	u8* aquire(size_t* size)
+	{
+		if (m_aquired == 0)
+		{
+			*size = alignedSize;
+			return m_data;
+		}
+
+		return nullptr;
+	}
+};
+
+template<typename T>
+struct Allocator
+{
+private:
+	T& get() { return static_cast<T&>(*this); }
+
+public:
+	AllocatedBlock allocate(size_t size, size_t alignment)
+	{
+		return get().allocate(size, alignment);
+	}
+
+	void deallocate(const AllocatedBlock &block)
+	{
+		return get().deallocate(block);
+	}
+
+	void deallocateAll()
+	{
+		return get().deallocateAll();
+	}
+
+	bool contains(const AllocatedBlock &block) const
+	{
+		return get().contains(block);
+	}
+};

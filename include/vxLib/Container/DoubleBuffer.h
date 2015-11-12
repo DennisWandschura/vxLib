@@ -70,10 +70,10 @@ namespace vx
 	public:
 		DoubleBuffer(){}
 
-		DoubleBuffer(pointer p, size_type m_capacity)
+		DoubleBuffer(pointer p, size_type capacity)
 			:m_frontBuffer(p),
 			m_backBuffer(p + m_capacity),
-			m_capacity(m_capacity)
+			m_capacity(capacity)
 		{
 		}
 

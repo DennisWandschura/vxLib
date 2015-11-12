@@ -56,7 +56,7 @@ namespace vx
 				++i;
 			}
 
-			m_sid = vx_makeSid(m_string, FileHandleStringSize::size);
+			m_sid = vx::make_sid(m_string);
 		}
 
 		template<u64 SIZE>

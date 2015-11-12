@@ -29,7 +29,7 @@ namespace vx
 	u16 debugPrint::g_filter = 0;
 	HANDLE debugPrint::g_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	inline void debugPrintF(const char *format, va_list argList)
+	void debugPrintF(const char *format, va_list argList)
 	{
 		const u32 max = 1023;
 		static char sBuffer[max + 1];
@@ -40,7 +40,7 @@ namespace vx
 		puts(sBuffer);
 	}
 
-	inline void debugFPrintF(FILE *stream, const char *format, va_list argList)
+	void debugFPrintF(FILE *stream, const char *format, va_list argList)
 	{
 		const u32 max = 1023;
 		static char sBuffer[max + 2];
@@ -52,7 +52,7 @@ namespace vx
 		fputs(sBuffer, stream);
 	}
 
-	inline void verbosePrintF(u32 verbosity, const char *format, ...)
+	void verbosePrintF(u32 verbosity, const char *format, ...)
 	{
 		if (vx::debugPrint::g_verbosity >= verbosity)
 		{
@@ -65,7 +65,7 @@ namespace vx
 		}
 	}
 
-	inline void verboseFPrintF(u32 verbosity, FILE *stream, const char *format, ...)
+	void verboseFPrintF(u32 verbosity, FILE *stream, const char *format, ...)
 	{
 		if (vx::debugPrint::g_verbosity >= verbosity)
 		{

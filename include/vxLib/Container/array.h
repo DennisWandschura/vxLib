@@ -1,4 +1,5 @@
 #pragma once
+
 /*
 The MIT License (MIT)
 
@@ -23,197 +24,144 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/Container/iterator.h>
 #include <vxLib/Allocator/Allocator.h>
 
-namespace vx
+template<typename T, typename Allocator>
+class array
 {
-	template<typename T>
-	class array
+	typedef T value_type;
+	typedef value_type* pointer;
+
+	AllocatedBlock m_block;
+	pointer m_end;
+	Allocator* m_allocator;
+
+public:
+	array(): m_block(), m_end(nullptr), m_allocator(nullptr){}
+
+	explicit array(Allocator* alloc, size_t capacity) : m_block(), m_end(nullptr), m_allocator(alloc)
 	{
-	public:
-		typedef array<T> _MyContainer;
-		typedef T value_type;
-		typedef value_type& reference;
-		typedef const value_type& const_reference;
-		typedef value_type* pointer;
-		typedef const pointer const_pointer;
+		m_block = alloc->allocate(sizeof(value_type) * capacity, __alignof(value_type));
+		m_end = (pointer)m_block.ptr;
+	}
 
-		typedef vx::vector_const_iterator<_MyContainer> const_iterator;
-		typedef vx::vector_iterator<_MyContainer> iterator;
+	array(const array&) = delete;
 
-		typedef u32 size_type;
-		typedef s64 difference_type;
+	array(array &&other)
+		: m_block(other.m_block),
+		m_end(other.m_end),
+		m_allocator(other.m_allocator)
+	{
+		other.m_block.ptr = nullptr;
+		other.m_block.size = 0;
+		other.m_allocator = nullptr;
+	}
 
-	private:
-		pointer m_pValues{ nullptr };
-		size_type m_size{ 0 };
-		size_type m_capacity{ 0 };
-
-	public:
-		// destroys all values and sets everything to zero
-		pointer release()
+	~array()
+	{
+		if (m_allocator)
 		{
-			auto p = m_pValues;
-			if (m_pValues)
-			{
-				Allocator::rangeDestroy(m_pValues, m_pValues + m_size);
-				m_size = 0;
-				m_pValues = nullptr;
-				m_capacity = 0;
-			}
-			return p;
+			clear();
+			m_allocator->deallocate(m_block);
+		}
+	}
+
+	array& operator=(const array&) = delete;
+
+	array& operator=(array &&rhs)
+	{
+		if (this != &rhs)
+		{
+			swap(rhs);
+		}
+		return *this;
+	}
+
+	void swap(array &other)
+	{
+		std::swap(m_block, other.m_block);
+		std::swap(m_end, other.m_end);
+		std::swap(m_allocator, other.m_allocator);
+	}
+
+	template<typename ...Args>
+	void push_back(Args&&... args)
+	{
+		auto last = (pointer)(m_block.ptr + m_block.size);
+		auto end = m_end;
+		if (end >= last)
+		{
+			return;
 		}
 
-		array(){}
+		new(m_end) value_type{std::forward<Args>(args)...};
+		++m_end;
+	}
 
-		template<typename Alloc>
-		array(size_type capacity, Alloc* pAllocator)
-			:m_capacity(capacity)
+	void pop_back()
+	{
+		(m_end - 1)->~value_type();
+		--m_end;
+	}
+
+	void clear()
+	{
+		auto p = begin();
+		auto e = end();
+
+		while(p != e)
 		{
-			m_pValues = (pointer)pAllocator->allocate(sizeof(value_type) * capacity, __alignof(value_type));
-			VX_ASSERT(m_pValues);
+			p->~value_type();
+			++p;
 		}
 
-		array(const array&) = delete;
+		m_end = begin();
+	}
 
-		array(array &&rhs)
-			:m_pValues(rhs.m_pValues),
-			m_size(rhs.m_size),
-			m_capacity(rhs.m_capacity)
-		{
-			rhs.m_pValues = nullptr;
-			rhs.m_size = 0;
-			rhs.m_capacity = 0;
-		}
+	inline value_type& operator[](size_t idx)
+	{
+		return begin()[idx];
+	}
 
-		array& operator=(const array&) = delete;
+	inline const value_type& operator[](size_t idx) const
+	{
+		return begin()[idx];
+	}
 
-		array& operator=(array &&rhs)
-		{
-			if (this != &rhs)
-			{
-				this->swap(rhs);
-			}
-			return *this;
-		}
+	inline pointer begin()
+	{
+		return (pointer)m_block.ptr;
+	}
 
-		~array()
-		{
-			release();
-		}
+	inline pointer end()
+	{
+		return m_end;
+	}
 
-		void swap(array &other)
-		{
-			std::swap(m_pValues, other.m_pValues);
-			std::swap(m_size, other.m_size);
-			std::swap(m_capacity, other.m_capacity);
-		}
+	inline const pointer begin() const
+	{
+		return (pointer)m_block.ptr;
+	}
 
-		void push_back(const value_type &value)
-		{
-			VX_ASSERT(m_size < m_capacity);
-			Allocator::construct(m_pValues + m_size, value);
-			++m_size;
-		}
+	inline const pointer end() const
+	{
+		return m_end;
+	}
 
-		//template<typename = typename std::enable_if_t<std::is_nothrow_move_constructible<value_type>::value>>
-		void push_back(value_type &&value)
-		{
-			VX_ASSERT(m_size < m_capacity);
-			Allocator::construct(m_pValues + m_size, std::forward<value_type>(value));
-			++m_size;
-		}
+	inline bool empty() const
+	{
+		return (end() == begin());
+	}
 
-		void pop_back()
-		{
-			VX_ASSERT(m_size > 0);
-			vx::Allocator::destroy(&back());
-			--m_size;
-		}
+	inline size_t size() const
+	{
+		return end() - begin();
+	}
 
-		template<typename... _Valty>
-		void emplace_back(_Valty&&... _Val)
-		{
-			VX_ASSERT(m_size < m_capacity);
-			Allocator::construct(m_pValues + m_size, std::forward<_Valty>(_Val)...);
-			++m_size;
-		}
+	inline size_t capacity() const
+	{
+		auto last = (pointer)(m_block.ptr + m_block.size);
 
-		void clear()
-		{
-			Allocator::rangeDestroy(m_pValues, m_pValues + m_size);
-			m_size = 0;
-		}
-
-		reference front()
-		{
-			return *m_pValues;
-		}
-
-		const_reference front() const
-		{
-			return *m_pValues;
-		}
-
-		reference back()
-		{
-			return *(end() - 1);
-		}
-
-		const_reference back() const
-		{
-			return *(end() - 1);
-		}
-
-		reference operator[](size_type i)
-		{
-			return m_pValues[i];
-		}
-
-		const_reference operator[](size_type i) const
-		{
-			return m_pValues[i];
-		}
-
-		const_iterator begin() const
-		{
-			return const_iterator(m_pValues, this);
-		}
-
-		iterator begin()
-		{
-			return iterator(m_pValues, this);
-		}
-
-		const_iterator end() const
-		{
-			return const_iterator(m_pValues + m_size, this);
-		}
-
-		iterator end()
-		{
-			return iterator(m_pValues + m_size, this);
-		}
-
-		pointer data()
-		{
-			return m_pValues;
-		}
-
-		const_pointer data() const
-		{
-			return m_pValues;
-		}
-
-		size_type size() const
-		{
-			return m_size;
-		}
-
-		size_type capacity() const
-		{
-			return m_capacity;
-		}
-	};
-}
+		return last - begin();
+	}
+};
