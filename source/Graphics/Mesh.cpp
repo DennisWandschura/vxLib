@@ -24,7 +24,6 @@ SOFTWARE.
 
 #include <vxLib/Graphics/Mesh.h>
 #include <vxLib/File/File.h>
-#include <vxLib/Allocator/Allocator.h>
 #include <algorithm>
 
 namespace vx
@@ -86,28 +85,7 @@ namespace vx
 		m_pIndices = (u32*)p;
 	}
 
-	const u8* Mesh::loadFromMemory(const u8 *src, vx::Allocator* allocator)
-	{
-		m_vertexCount = *reinterpret_cast<const u32*>(src);
-		src += sizeof(u32);
-
-		m_indexCount = *reinterpret_cast<const u32*>(src);
-		src += sizeof(u32);
-
-		auto totalSize = Mesh::getArraySize(m_vertexCount, m_indexCount);
-		auto pMemory = allocator->allocate(totalSize, 4);
-		if (!pMemory)
-			return nullptr;
-
-		memcpy(pMemory, src, totalSize);
-		src += totalSize;
-
-		setPointers(pMemory);
-
-		return src;
-	}
-
-	const u8* Mesh::loadFromMemoryDataSize(const u8 *src, u32* dataSizeInBytes)
+	const u8* Mesh::loadFromMemoryDataSize(const u8 *src, u64* dataSizeInBytes)
 	{
 		m_vertexCount = *reinterpret_cast<const u32*>(src);
 		src += sizeof(u32);
@@ -122,7 +100,7 @@ namespace vx
 		return src;
 	}
 
-	const u8* Mesh::loadFromMemoryData(const u8* src, u8* dst, u32 size)
+	const u8* Mesh::loadFromMemoryData(const u8* src, u8* dst, u64 size)
 	{
 		memcpy(dst, src, size);
 		src += size;

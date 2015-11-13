@@ -29,12 +29,12 @@
 
 .DefaultCompilerSettingsIntel =
 [
-	.CompilerSettingsDefault = '/fp:fast/W4 /Qrestrict /GS /Zc:wchar_t /GR- /arch:AVX'
+	.CompilerSettingsDefault = '/fp:fast/W4 /Qrestrict /GS /Zc:wchar_t /GR- /arch:SSE2'
 ]
 
 .DefaultCompilerSettingsVS =
 [
-	.CompilerSettingsDefault = '/fp:fast /W4 /GS /Zc:wchar_t /GR- /arch:AVX'
+	.CompilerSettingsDefault = '/fp:fast /W4 /GS /Zc:wchar_t /GR- /arch:SSE2'
 ]
 
 .InPath = '../source/'
@@ -179,48 +179,11 @@
 	.DefinesTarget = ''
 ]
 
-.Target_Debug_x64_Static_intel_mem =
-[
-	Using(.Target_Debug_x64_Static_intel_vs14)
-
-	.FileName = '$ProjectName$MEMPROFILE_sd'
-	.TargetName = '$FileName$_intel_vs14'
-	.DefinesTarget = '/D "_VX_MEM_PROFILE"'
-]
-
-.Target_Release_Static_x64_mem =
-[
-	Using(.Target_Release_Static_x64_intel_vs14)
-	
-	.FileName = '$ProjectName$MEMPROFILE_s'
-	.TargetName = '$FileName$_intel_vs14'
-	.DefinesTarget = '/D "_VX_MEM_PROFILE"'
-]
-
-.Target_Debug_Static_x64_vs14_mem =
-[
-	Using(.Target_Debug_x64_Static_vs14)
-
-	.FileName = '$ProjectName$MEMPROFILE_sd'
-	.TargetName = '$FileName$_vs14'
-	.DefinesTarget = '/D "_VX_MEM_PROFILE"'
-]
-
-.Target_Release_Static_x64_vs14_mem =
-[
-	Using(.Target_Release_Static_x64_vs14)
-	
-	.FileName = '$ProjectName$MEMPROFILE_s'
-	.TargetName = '$FileName$_vs14'
-	.DefinesTarget = '/D "_VX_MEM_PROFILE"'
-]
-
 .Targets = { .Target_Debug_x64_Static_intel_vs12, .Target_Release_Static_x64_intel_vs12,
 			.Target_Debug_x64_Static_intel_vs14, .Target_Release_Static_x64_intel_vs14, 
-			.Target_Debug_x64_Static_intel_mem, .Target_Release_Static_x64_mem,
 			.Target_Debug_x64_Static_vs12, .Target_Release_Static_x64_vs12,
-			.Target_Debug_x64_Static_vs14, .Target_Release_Static_x64_vs14,
-			.Target_Debug_Static_x64_vs14_mem, .Target_Release_Static_x64_vs14_mem}
+			.Target_Debug_x64_Static_vs14, .Target_Release_Static_x64_vs14
+			}
 
 ForEach( .Target in .Targets )
 {
@@ -284,7 +247,7 @@ Alias('vs12')
 
 Alias('vs14')
 {
-	.Targets = { 'Lib_vxLib_sd_vs14', 'Lib_vxLib_s_vs14', 'Lib_vxLibMEMPROFILE_sd_vs14', 'Lib_vxLibMEMPROFILE_s_vs14' }
+	.Targets = { 'Lib_vxLib_sd_vs14', 'Lib_vxLib_s_vs14' }
 }
 
 Alias('intel_vs12')

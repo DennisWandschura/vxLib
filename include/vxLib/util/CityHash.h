@@ -59,9 +59,11 @@
 // of a+b is easily derived from the hashes of a and b.  This property
 // doesn't hold for any hash functions in this file.
 
+#pragma once
 #ifndef CITY_HASH_H_
 #define CITY_HASH_H_
 
+#include <vxLib/types.h>
 #include <stdlib.h>  // for size_t.
 #include <stdint.h>
 #include <utility>

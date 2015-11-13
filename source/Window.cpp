@@ -21,8 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include <vxLib\Window.h>
-#include <cstdio>
+#include <vxLib/Window.h>
 #include <vxLib/RawInput.h>
 
 namespace vx
@@ -32,7 +31,7 @@ namespace vx
 
 	struct Window::ColdData
 	{
-		const char_type* m_windowName;
+		const wchar_t* m_windowName;
 		HINSTANCE m_hinstance;
 		HWND m_hwnd;
 		vx::uint2 m_windowSize{ 0, 0 };
@@ -49,13 +48,18 @@ namespace vx
 	Window::Window(Window &&rhs)
 		: m_msg(rhs.m_msg),
 		m_windowCloseCallback(rhs.m_windowCloseCallback),
-		m_coldData(std::move(rhs.m_coldData))
+		m_coldData(rhs.m_coldData)
 	{
+		rhs.m_coldData = nullptr;
 	}
 
 	Window::~Window()
 	{
-
+		if (m_coldData)
+		{
+			delete m_coldData;
+			m_coldData = nullptr;
+		}
 	}
 
 	Window& Window::operator = (Window &&rhs)
@@ -64,13 +68,14 @@ namespace vx
 		{
 			m_msg = rhs.m_msg;
 			m_windowCloseCallback = rhs.m_windowCloseCallback;
-			m_coldData = std::move(rhs.m_coldData);
+			m_coldData =rhs.m_coldData;
+			rhs.m_coldData = nullptr;
 		}
 
 		return *this;
 	}
 
-	void Window::registerWindow(const char_type *windowName, bool bFullscreen)
+	void Window::registerWindow(const wchar_t *windowName, bool bFullscreen)
 	{
 		// Give the application a name.
 		m_coldData->m_windowName = windowName;
@@ -169,10 +174,10 @@ namespace vx
 		return true;
 	}
 
-	bool Window::initialize(const char_type *windowName, const vx::uint2 &windowSize, bool bFullscreen)
+	bool Window::initialize(const wchar_t *windowName, const vx::uint2 &windowSize, bool bFullscreen, LinearAllocator* allocator, u32 maxKeyEvtCount)
 	{
 		ZeroMemory(&m_msg, sizeof(MSG));
-		m_coldData = std::make_unique<ColdData>();
+		m_coldData = new ColdData();
 
 		registerWindow(windowName, bFullscreen);
 
@@ -182,7 +187,7 @@ namespace vx
 			return false;
 		}
 
-		if (!RawInput::initialize(m_coldData->m_hwnd))
+		if (!RawInput::initialize(m_coldData->m_hwnd, allocator, maxKeyEvtCount))
 			return false;
 
 		return true;

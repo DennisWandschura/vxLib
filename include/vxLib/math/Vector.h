@@ -27,7 +27,6 @@ SOFTWARE.
 #pragma warning(disable : 4201)
 
 #include <vxLib/math/math.h>
-#include <algorithm>
 
 #define VX_PERMUTE_PS(V, U) _mm_shuffle_ps(V, V, U)
 #define _VX_DOT(M0, M1, M2, M3, X, Y, Z, W) M0 << 0 | M1 << 1 | M2 << 2 | M3 << 3 | X << 4 | Y << 5 | Z << 6 | W << 7
@@ -1267,24 +1266,24 @@ namespace vx
 	template<class T>
 	f32 length2(const detail::vec2<T> &v)
 	{
-		return sqrt(dot2(v, v));
+		return sqrtf(dot2(v, v));
 	}
 
 	template<class T>
 	f32 length3(const detail::vec3<T> &v)
 	{
-		return sqrt(dot3(v, v));
+		return sqrtf(dot3(v, v));
 	}
 
 	template<class T>
 	f32 length4(const detail::vec4<T> &v)
 	{
-		return sqrt(dot4(v, v));
+		return sqrtf(dot4(v, v));
 	}
 
 	inline float2 normalize2(const float2 &v1)
 	{
-		auto l = sqrt(dot2(v1, v1));
+		auto l = sqrtf(dot2(v1, v1));
 		float2 result(v1);
 		if (l > 0.0f)
 		{
@@ -1297,7 +1296,7 @@ namespace vx
 
 	inline float2a normalize2(const float2a &v1)
 	{
-		auto l = sqrt(dot2(v1, v1));
+		auto l = sqrtf(dot2(v1, v1));
 		float2a result(v1);
 		if (l > 0.0f)
 		{
@@ -1310,7 +1309,7 @@ namespace vx
 
 	inline float3 normalize3(const float3 &v1)
 	{
-		auto l = sqrt(vx::dot3(v1, v1));
+		auto l = sqrtf(vx::dot3(v1, v1));
 
 		float3 result(v1);
 		if (l > 0.0f)
@@ -1332,31 +1331,31 @@ namespace vx
 	template<>
 	inline float2 abs(const float2 &v)
 	{
-		return float2(fabs(v.x), fabs(v.y));
+		return float2(fabsf(v.x), fabsf(v.y));
 	}
 
 	template<class T>
 	inline detail::vec3<T> abs(const detail::vec3<T> &v)
 	{
-		return detail::vec3<T>(std::abs(v.x), std::abs(v.y), std::abs(v.z));
+		return detail::vec3<T>(abs(v.x), abs(v.y), abs(v.z));
 	}
 
 	template<>
 	inline float3 abs(const float3 &v)
 	{
-		return float3(fabs(v.x), fabs(v.y), fabs(v.z));
+		return float3(fabsf(v.x), fabsf(v.y), fabsf(v.z));
 	}
 
 	template<class T>
 	inline detail::vec4<T> abs(const detail::vec4<T> &v)
 	{
-		return detail::vec4<T>(std::abs(v.x), std::abs(v.y), std::abs(v.z), std::abs(v.w));
+		return detail::vec4<T>(abs(v.x), abs(v.y), abs(v.z), abs(v.w));
 	}
 
 	template<>
 	inline float4 abs(const float4 &v)
 	{
-		return float4(fabs(v.x), fabs(v.y), fabs(v.z), fabs(v.w));
+		return float4(fabsf(v.x), fabsf(v.y), fabsf(v.z), fabsf(v.w));
 	}
 
 	inline vx::float3 degToRad(const vx::float3 &degAngle)
@@ -1381,8 +1380,8 @@ namespace vx
 
 	inline void angleAxisToEuler(const vx::float4a &normalizedAxis, f32 angle, vx::float3* rollPitchYaw)
 	{
-		f32 s = sin(angle);
-		f32 c = cos(angle);
+		f32 s = sinf(angle);
+		f32 c = cosf(angle);
 		f32 t = 1.0f - c;
 
 		f32 pitch = 0, yaw = 0, roll = 0;
@@ -1390,21 +1389,21 @@ namespace vx
 		f32 tmp = (normalizedAxis.x * normalizedAxis.y * t + normalizedAxis.z * s);
 		if (tmp > 0.998f)
 		{ // north pole singularity detected
-			pitch = 2.0f * ::atan2(normalizedAxis.x * sin(angle / 2.0f), cos(angle / 2.0f));
+			pitch = 2.0f * ::atan2f(normalizedAxis.x * sinf(angle / 2.0f), cosf(angle / 2.0f));
 			yaw = vx::VX_PI / 2.0f;
 			roll = 0.0f;
 		}
 		else if (tmp < -0.998f)
 		{ // south pole singularity detected
-			pitch = -2.0f * ::atan2(normalizedAxis.x * sin(angle / 2.0f), cos(angle / 2.0f));
+			pitch = -2.0f * ::atan2f(normalizedAxis.x * sinf(angle / 2.0f), cosf(angle / 2.0f));
 			yaw = -vx::VX_PI / 2.0f;
 			roll = 0.0f;
 		}
 		else
 		{
-			pitch = ::atan2(normalizedAxis.y * s - normalizedAxis.x * normalizedAxis.z * t, 1.0f - (normalizedAxis.y * normalizedAxis.y + normalizedAxis.z * normalizedAxis.z) * t);
-			yaw = ::asin(normalizedAxis.x * normalizedAxis.y * t + normalizedAxis.z * s);
-			roll = ::atan2(normalizedAxis.x * s - normalizedAxis.y * normalizedAxis.z * t, 1.0f - (normalizedAxis.x * normalizedAxis.x + normalizedAxis.z * normalizedAxis.z) * t);
+			pitch = ::atan2f(normalizedAxis.y * s - normalizedAxis.x * normalizedAxis.z * t, 1.0f - (normalizedAxis.y * normalizedAxis.y + normalizedAxis.z * normalizedAxis.z) * t);
+			yaw = ::asinf(normalizedAxis.x * normalizedAxis.y * t + normalizedAxis.z * s);
+			roll = ::atan2f(normalizedAxis.x * s - normalizedAxis.y * normalizedAxis.z * t, 1.0f - (normalizedAxis.x * normalizedAxis.x + normalizedAxis.z * normalizedAxis.z) * t);
 		}
 
 		rollPitchYaw->x = radToDeg(roll);

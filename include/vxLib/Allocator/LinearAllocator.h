@@ -24,57 +24,65 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/types.h>
+#include <vxLib/Allocator/Allocator.h>
 
 namespace vx
 {
-	enum class FileAccess : u32
+	class LinearAllocator : public Allocator<LinearAllocator>
 	{
-		Read = 0x80000000L,
-		Write = 0x40000000L,
-		Read_Write = Read | Write
-	};
-
-	class File
-	{
-		void *m_pFile;
+		u8* m_data;
+		u8* m_head;
+		u8* m_last;
 
 	public:
-		File();
-		~File();
+		inline LinearAllocator() :m_data(), m_head(nullptr), m_last(nullptr) {}
 
-		bool create(const char* file, FileAccess access);
-		bool open(const char *file, FileAccess access);
-		bool close();
+		inline LinearAllocator(const AllocatedBlock &block) : m_data(block.ptr), m_head(block.ptr), m_last(block.ptr + block.size) {}
 
-		bool read(void *ptr, u32 size);
+		inline ~LinearAllocator() {}
 
-		template<typename T>
-		bool read(T &value)
+		void initialize(const AllocatedBlock &block)
 		{
-			return read(&value, sizeof(T));
+			m_data = m_head = block.ptr;
+			m_last = block.ptr + block.size;
 		}
 
-		bool write(const void *ptr, u32 size, u32 *pWrittenBytes);
-
-		template<typename T>
-		bool write(const T &value)
+		AllocatedBlock allocate(size_t size, size_t alignment)
 		{
-			return write(&value, sizeof(T), nullptr);
+			auto alignedPtr = getAlignedPtr(m_head, alignment);
+			auto alignedSize = getAlignedSize(size, alignment);
+
+			auto next = alignedPtr + alignedSize;
+			if (next > m_last)
+			{
+				return{ nullptr, 0 };
+			}
+
+			m_head = next;
+
+			return{ alignedPtr, alignedSize };
 		}
 
-		template<typename T>
-		bool write(const T *ptr, u32 count)
+		u32 deallocate(const AllocatedBlock &block)
 		{
-			return write(ptr, sizeof(T) * count, nullptr);
+			auto tmp = block.ptr + block.size;
+			if (m_head == tmp)
+			{
+				m_head = block.ptr;
+				return 1;
+			}
+
+			return 0;
 		}
 
-		bool setEof();
+		void deallocateAll()
+		{
+			m_head = m_data;
+		}
 
-		bool seek(s64 offset);
-
-		s64 getSize() const;
-
-		bool isOpen() const;
+		bool contains(const AllocatedBlock &block) const
+		{
+			return (block.ptr >= m_data) && (block.ptr < m_last);
+		}
 	};
 }

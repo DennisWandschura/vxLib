@@ -23,6 +23,8 @@ SOFTWARE.
 */
 #pragma once
 
+#include <vxLib/types.h>
+
 namespace vx
 {
 	union Variant

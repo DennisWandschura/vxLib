@@ -25,9 +25,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib\types.h>
+#include <vxLib/types.h>
 #include <cstdio>
-#include <Windows.h>
 
 namespace vx
 {
@@ -35,7 +34,7 @@ namespace vx
 	{
 		extern u16 g_filter;
 		extern u32 g_verbosity;
-		extern HANDLE g_hConsole;
+		extern void* g_hConsole;
 	};
 
 	static void activateChannel(u8 channel)

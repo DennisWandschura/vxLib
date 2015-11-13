@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include <vxLib/File/File.h>
-#include <Windows.h>
 #include <strsafe.h>
+#include <Windows.h>
 
-void printError(DWORD error)
+/*void printError(DWORD error)
 {
 	LPVOID lpMsgBuf;
 	LPVOID lpDisplayBuf;
@@ -40,7 +40,7 @@ void printError(DWORD error)
 		error, lpMsgBuf);
 
 	printf("%ws\n", (wchar_t*)lpDisplayBuf);
-}
+}*/
 
 namespace vx
 {

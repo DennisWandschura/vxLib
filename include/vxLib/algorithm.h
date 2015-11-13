@@ -25,7 +25,6 @@ SOFTWARE.
 */
 
 #include <vxLib/types.h>
-#include <algorithm>
 
 namespace vx
 {

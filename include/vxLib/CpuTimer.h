@@ -25,42 +25,19 @@ SOFTWARE.
 */
 
 #include <vxLib/types.h>
-#include <map>
-#include <string>
-#include <vxLib/StringID.h>
 
-namespace vx
+class CpuTimer
 {
-	class TextPreprocessor
-	{
-		struct CustomValueData
-		{
-			enum Type { Float, Int, Uint };
-			union
-			{
-				float f;
-				int i;
-				unsigned int u;
-			};
-			Type type;
-		};
+	static s64 s_frequency;
 
-		std::map<vx::StringID, std::string> m_includeFiles;
-		std::map<vx::StringID, int> m_globalDefines;
-		std::map<vx::StringID, CustomValueData> m_customValues;
+	s64 m_start;
 
-		void processText(std::string* text);
+public:
+	CpuTimer();
+	~CpuTimer();
 
-	public:
-		void setDefine(const char* id);
-		void removeDefine(const char* id);
+	void reset();
 
-		void setCustomValue(const char* id, s32 value);
-		void setCustomValue(const char* id, u32 value);
-		void setCustomValue(const char* id, f32 value);
-
-		void loadIncludeFile(const char* filename, const char* key);
-
-		std::string preprocessFile(const char* filename);
-	};
-}
+	f32 getTimeSeconds() const;
+	f32 getTimeMiliseconds() const;
+};

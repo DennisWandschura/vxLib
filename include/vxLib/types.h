@@ -27,8 +27,11 @@ SOFTWARE.
 #define _HAS_EXCEPTIONS 0
 #endif
 
+#if _VX_WINDOWS
+#define WIN32_LEAN_AND_MEAN
+#endif
+
 #include <assert.h>
-#include <type_traits>
 
 typedef char s8;
 typedef short s16;

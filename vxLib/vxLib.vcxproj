@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D330E3ED-9800-4935-8B07-3573F6668019}</ProjectGuid>
     <RootNamespace>vxLib</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -84,12 +84,15 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_VX_ASSERT;_VX_WINDOWS;_VX_NO_EXCEPTIONS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>false</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -124,22 +127,42 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\source\AllocationProfiler.cpp" />
-    <ClCompile Include="..\source\Allocator.cpp" />
-    <ClCompile Include="..\source\CityHash.cpp" />
-    <ClCompile Include="..\source\DebugPrint.cpp" />
-    <ClCompile Include="..\source\File.cpp" />
-    <ClCompile Include="..\source\Graphics\Camera.cpp" />
-    <ClCompile Include="..\source\Graphics\Mesh.cpp" />
-    <ClCompile Include="..\source\Keyboard.cpp" />
-    <ClCompile Include="..\source\math\half.cpp" />
-    <ClCompile Include="..\source\PoolAllocator.cpp" />
-    <ClCompile Include="..\source\RawInput.cpp" />
-    <ClCompile Include="..\source\StackAllocator.cpp" />
-    <ClCompile Include="..\source\stb_image.c" />
-    <ClCompile Include="..\source\stb_image_write.c" />
-    <ClCompile Include="..\source\TextPreprocessor.cpp" />
-    <ClCompile Include="..\source\Window.cpp" />
+    <ClCompile Include="..\source\CityHash.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\source\CpuTimer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\source\DebugPrint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\source\File.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\source\Graphics\Camera.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\source\Graphics\Mesh.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\source\Keyboard.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\source\math\half.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\source\RawInput.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\source\stb_image.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\source\stb_image_write.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\source\Window.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\include\vxLib\math\matrix.inl" />
@@ -151,18 +174,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\vxLib\algorithm.h" />
-    <ClInclude Include="..\include\vxLib\AlignedStorage.h" />
-    <ClInclude Include="..\include\vxLib\Allocator\AllocationProfiler.h" />
     <ClInclude Include="..\include\vxLib\Allocator\Allocator.h" />
-    <ClInclude Include="..\include\vxLib\Allocator\PoolAllocator.h" />
+    <ClInclude Include="..\include\vxLib\Allocator\BitmapBlock.h" />
+    <ClInclude Include="..\include\vxLib\Allocator\ChunkAllocator.h" />
+    <ClInclude Include="..\include\vxLib\Allocator\Freelist.h" />
+    <ClInclude Include="..\include\vxLib\Allocator\LinearAllocator.h" />
+    <ClInclude Include="..\include\vxLib\Allocator\Mallocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\StackAllocator.h" />
     <ClInclude Include="..\include\vxLib\Container\array.h" />
     <ClInclude Include="..\include\vxLib\Container\bitset.h" />
     <ClInclude Include="..\include\vxLib\Container\DoubleBuffer.h" />
-    <ClInclude Include="..\include\vxLib\Container\iterator.h" />
+    <ClInclude Include="..\include\vxLib\Container\slist.h" />
     <ClInclude Include="..\include\vxLib\Container\sorted_array.h" />
-    <ClInclude Include="..\include\vxLib\Container\sorted_vector.h" />
-    <ClInclude Include="..\include\vxLib\Container\vector.h" />
+    <ClInclude Include="..\include\vxLib\CpuTimer.h" />
     <ClInclude Include="..\include\vxLib\File\File.h" />
     <ClInclude Include="..\include\vxLib\File\FileHandle.h" />
     <ClInclude Include="..\include\vxLib\File\FileHeader.h" />
@@ -173,7 +197,6 @@
     <ClInclude Include="..\include\vxLib\math\math.h" />
     <ClInclude Include="..\include\vxLib\math\matrix.h" />
     <ClInclude Include="..\include\vxLib\math\Vector.h" />
-    <ClInclude Include="..\include\vxLib\memory.h" />
     <ClInclude Include="..\include\vxLib\RawInput.h" />
     <ClInclude Include="..\include\vxLib\ScopeGuard.h" />
     <ClInclude Include="..\include\vxLib\Singleton.h" />
@@ -181,7 +204,6 @@
     <ClInclude Include="..\include\vxLib\stb_image_write.h" />
     <ClInclude Include="..\include\vxLib\string.h" />
     <ClInclude Include="..\include\vxLib\StringID.h" />
-    <ClInclude Include="..\include\vxLib\TextPreprocessor.h" />
     <ClInclude Include="..\include\vxLib\types.h" />
     <ClInclude Include="..\include\vxLib\type_traits.h" />
     <ClInclude Include="..\include\vxLib\util\CityHash.h" />

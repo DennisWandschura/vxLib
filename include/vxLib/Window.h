@@ -23,9 +23,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+namespace vx
+{
+	class LinearAllocator;
+}
+
 #include <vxLib/math/Vector.h>
 #include <Windows.h>
-#include <memory>
 
 namespace vx
 {
@@ -37,17 +41,11 @@ namespace vx
 		typedef void(*WindowCloseCallback)();
 
 	private:
-#if UNICODE
-		typedef wchar_t char_type;
-#else
-		typedef char char_type;
-#endif
-
 		MSG m_msg;
 		WindowCloseCallback m_windowCloseCallback;
-		std::unique_ptr<ColdData> m_coldData;
+		ColdData* m_coldData;
 
-		void registerWindow(const char_type* windowName, bool bFullscreen);
+		void registerWindow(const wchar_t* windowName, bool bFullscreen);
 		bool createWindow(const vx::uint2 &windowSize);
 
 		void close();
@@ -63,7 +61,7 @@ namespace vx
 		Window& operator=(const Window&) = delete;
 		Window& operator=(Window &&rhs);
 
-		bool initialize(const char_type *windowName, const vx::uint2 &windowSize, bool bFullscreen);
+		bool initialize(const wchar_t *windowName, const vx::uint2 &windowSize, bool bFullscreen, LinearAllocator* allocator, u32 maxKeyEvtCount);
 
 		void shutdown();
 
@@ -71,7 +69,7 @@ namespace vx
 
 		HWND getHwnd() const;
 		HINSTANCE getHinstance() const;
-		const char_type* getClassName() const;
+		const wchar_t* getClassName() const;
 
 		const vx::uint2& getSize() const;
 

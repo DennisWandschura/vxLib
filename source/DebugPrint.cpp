@@ -21,13 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include <vxLib\util\DebugPrint.h>
+#include <vxLib/util/DebugPrint.h>
+#include <Windows.h>
 
 namespace vx
 {
 	u32 debugPrint::g_verbosity = 0;
 	u16 debugPrint::g_filter = 0;
-	HANDLE debugPrint::g_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	void* debugPrint::g_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	void debugPrintF(const char *format, va_list argList)
 	{

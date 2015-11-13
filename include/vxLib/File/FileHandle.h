@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 #include <vxLib/StringID.h>
-#include <string>
+#include <cctype>
 
 namespace vx
 {

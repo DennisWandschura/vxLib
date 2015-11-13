@@ -26,7 +26,6 @@ SOFTWARE.
 #include <vxLib/math/half.h>
 #include <intrin.h>
 #include <math.h>
-#include <cmath>
 
 namespace vx
 {
@@ -86,9 +85,27 @@ namespace vx
 	extern f32 VX_CALLCONV invsqrt(f32 number);
 
 	template<typename T>
+	inline const T& min(const T &l, const T &r) 
+	{
+		return (l < r) ? l : r;
+	}
+
+	template<typename T>
+	inline const T& max(const T &l, const T &r)
+	{
+		return (l < r) ? r : l;
+	}
+
+	template<typename T>
 	inline const T& clamp(const T &value, const T &vmin, const T &vmax)
 	{
 		return min(max(value, vmin), vmax);
+	}
+
+	template<typename T>
+	inline const T abs(const T &l)
+	{
+		return (0 < l) ? -l : l;
 	}
 
 	inline bool scalarNearEqual

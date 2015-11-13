@@ -1,4 +1,5 @@
 #pragma once
+
 /*
 The MIT License (MIT)
 
@@ -23,41 +24,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/type_traits.h>
+#include <vxLib/Allocator/Allocator.h>
 
 namespace vx
 {
-	template<class T>
-	struct AlignedStorage
+	template<size_t CHUNK_SIZE, size_t ALIGNMENT, typename Super>
+	class ChuckAllocator : public Super
 	{
-		union
-		{
-			u8 m_buffer[sizeof(T)];
-			typename typename detail::SelectAlign<T>::type _aligner;
-		};
+		static_assert(GetAlignedSize<CHUNK_SIZE, ALIGNMENT>::size == CHUNK_SIZE, "");
 
-	};
+	public:
+		ChuckAllocator() :Super() {}
 
-	template<class T, u32 N>
-	struct AlignedStorageN
-	{
-		union
-		{
-			u8 m_buffer[sizeof(T) * N];
-			typename typename detail::SelectAlign<T>::type _aligner;
-		};
+		explicit ChuckAllocator(const AllocatedBlock &block) :Super(block) {}
 
-		T& operator[](size_t i)
+		~ChuckAllocator() {}
+
+		AllocatedBlock allocate(size_t size, size_t alignment)
 		{
-			return ((T*)m_buffer)[i];
+			return Super::allocate(CHUNK_SIZE, ALIGNMENT);
 		}
 
-		const T& operator[](size_t i) const
+		u32 deallocate(const AllocatedBlock &block)
 		{
-			return ((T*)m_buffer)[i];
+			return Super::deallocate(block);
 		}
 
-		T* data(){ return (T*)m_buffer; }
-		const T* data() const { return (const T*)m_buffer; }
+		void deallocateAll()
+		{
+			Super::deallocateAll();
+		}
+
+		bool contains(const AllocatedBlock &block) const
+		{
+			return (block.size == CHUNK_SIZE) && Super::contains(block);
+		}
 	};
 }

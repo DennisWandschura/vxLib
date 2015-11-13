@@ -21,20 +21,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #include <vxLib/RawInput.h>
+#include <vxLib/Allocator/LinearAllocator.h>
 #include <Windows.h>
 
 namespace vx
 {
 	Keyboard RawInput::s_keyboard{};
 	Mouse RawInput::s_mouse{};
-	std::vector<KeyEvent> RawInput::s_keyEvents{};
+	vx::array<KeyEvent, LinearAllocator> RawInput::s_keyEvents{};
 	Input::KeyEventCallback RawInput::s_keyEventPressedCallback{ nullptr };
 	Input::KeyEventCallback RawInput::s_keyEventReleasedCallback{ nullptr };
 
 	struct InputHandler
 	{
-		static void handleKeyboard(const RAWKEYBOARD &rawKeyboard, Keyboard* keyboard, std::vector<KeyEvent>* keyEvents)
+		static void handleKeyboard(const RAWKEYBOARD &rawKeyboard, Keyboard* keyboard, vx::array<KeyEvent, LinearAllocator>* keyEvents)
 		{
 			auto flag = rawKeyboard.Flags;
 			auto key = rawKeyboard.VKey;
@@ -74,7 +76,7 @@ namespace vx
 		s_keyEvents.clear();
 	}
 
-	bool RawInput::initialize(void* window)
+	bool RawInput::initialize(void* window, LinearAllocator* allocator, u32 maxEventCount)
 	{
 		RAWINPUTDEVICE rid[2];
 
@@ -92,8 +94,7 @@ namespace vx
 
 		if (RegisterRawInputDevices(rid, 2, sizeof(rid[0])) == FALSE)
 		{
-			GetLastError();
-			puts("Could not register Raw input !");
+			//GetLastError();
 			return false;
 		}
 
@@ -102,7 +103,9 @@ namespace vx
 		s_mouse.m_relative.x = 0;
 		s_mouse.m_relative.y = 0;
 
-		puts("Registered raw input");
+		vx::array <KeyEvent, LinearAllocator> evtArray(allocator, maxEventCount);
+		s_keyEvents.swap(evtArray);
+
 		return true;
 	}
 

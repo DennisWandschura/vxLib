@@ -1,4 +1,3 @@
-#pragma once
 /*
 The MIT License (MIT)
 
@@ -23,28 +22,51 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/types.h>
-#include <memory>
+#include <vxlib/CpuTimer.h>
+#include <Windows.h>
 
-namespace vx
+s64 CpuTimer::s_frequency{0};
+
+CpuTimer::CpuTimer()
+	:m_start(0)
 {
-	template<class _Ty, class... _Types> 
-	inline typename std::enable_if<!std::is_array<_Ty>::value,
-		std::unique_ptr<_Ty> >::type make_unique(_Types&&... _Args)
-	{	// make a unique_ptr
-		return (std::unique_ptr<_Ty>(new _Ty(std::forward<_Types>(_Args)...)));
-	}
+	QueryPerformanceCounter((LARGE_INTEGER*)&m_start);
 
-	template<class _Ty> inline
-		typename std::enable_if<std::is_array<_Ty>::value && std::extent<_Ty>::value == 0,
-		std::unique_ptr<_Ty> >::type make_unique(size_t _Size)
-	{	// make a unique_ptr
-		typedef typename std::remove_extent<_Ty>::type _Elem;
-		return (std::unique_ptr<_Ty>(new _Elem[_Size]()));
+	if (s_frequency == 0)
+	{
+		QueryPerformanceFrequency((LARGE_INTEGER*)&s_frequency);
 	}
+}
 
-	template<class _Ty,
-	class... _Types>
-		typename std::enable_if<std::extent<_Ty>::value != 0,
-		void>::type make_unique(_Types&&...) = delete;
+CpuTimer::~CpuTimer()
+{
+
+}
+
+void CpuTimer::reset()
+{
+	LARGE_INTEGER start;
+	QueryPerformanceCounter(&start);
+
+	m_start = start.QuadPart;
+}
+
+f32 CpuTimer::getTimeSeconds() const
+{
+	LARGE_INTEGER end;
+	QueryPerformanceCounter(&end);
+
+	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
+
+	return f32(time * 1.0e-6);
+}
+
+f32 CpuTimer::getTimeMiliseconds() const
+{
+	LARGE_INTEGER end;
+	QueryPerformanceCounter(&end);
+
+	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
+
+	return f32(time * 0.001f);
 }

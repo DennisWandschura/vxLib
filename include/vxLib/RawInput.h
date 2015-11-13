@@ -23,10 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+namespace vx
+{
+	class LinearAllocator;
+}
+
+#include <vxLib/types.h>
 #include <vxLib/math/Vector.h>
-#include <vxLib/Container/vector.h>
 #include <vxLib/Keyboard.h>
-#include <vector>
+#include <vxLib/Container/array.h>
 
 namespace vx
 {
@@ -59,14 +64,14 @@ namespace vx
 
 		static Keyboard s_keyboard;
 		static Mouse s_mouse;
-		static std::vector<KeyEvent> s_keyEvents;
+		static vx::array<KeyEvent, LinearAllocator> s_keyEvents;
 		static Input::KeyEventCallback s_keyEventPressedCallback;
 		static Input::KeyEventCallback s_keyEventReleasedCallback;
 
 		RawInput();
 		~RawInput();
 
-		static bool initialize(void* window);
+		static bool initialize(void* window, LinearAllocator* allocator, u32 maxEventCount);
 		static void shutdown();
 
 		static void update(s64 lparam);
