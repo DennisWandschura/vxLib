@@ -68,11 +68,7 @@ namespace vx
 
 		~array()
 		{
-			if (m_allocator)
-			{
-				clear();
-				m_allocator->deallocate(AllocatedBlock{ (u8*)m_begin, m_blockSize });
-			}
+			release();
 		}
 
 		array& operator=(const array&) = delete;
@@ -127,6 +123,15 @@ namespace vx
 			}
 
 			m_end = begin();
+		}
+
+		void release()
+		{
+			if (m_allocator)
+			{
+				clear();
+				m_allocator->deallocate(AllocatedBlock{ (u8*)m_begin, m_blockSize });
+			}
 		}
 
 		inline value_type& operator[](size_t idx)
