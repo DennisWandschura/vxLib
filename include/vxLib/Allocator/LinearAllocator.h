@@ -25,6 +25,7 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/Allocator.h>
+#include <cstdio>
 
 namespace vx
 {
@@ -83,6 +84,20 @@ namespace vx
 		bool contains(const AllocatedBlock &block) const
 		{
 			return (block.ptr >= m_data) && (block.ptr < m_last);
+		}
+
+		AllocatedBlock release()
+		{
+			AllocatedBlock block{ m_data, (size_t)m_last - (size_t)m_data};
+
+			m_data = m_head = m_last = nullptr;
+
+			return block;
+		}
+
+		void print() const
+		{
+			printf("total size %llu\n", (size_t)m_last - (size_t)m_data);
 		}
 	};
 }

@@ -53,5 +53,10 @@ namespace vx
 		{
 			return (block.ptr >= m_data) && (block.ptr < m_last);
 		}
+
+		vx::AllocatedBlock release()
+		{
+			return{ nullptr, 0 };
+		}
 	};
 }

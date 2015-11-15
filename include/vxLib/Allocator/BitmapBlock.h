@@ -33,11 +33,22 @@ namespace vx
 	{
 		static_assert(GetAlignedSize<BLOCK_SIZE, ALIGNMENT>::size == BLOCK_SIZE, "");
 
+		enum : size_t { BitsSizeT = sizeof(size_t) * 8 };
+
 		u8* m_firstBlock;
-		u8* m_bits;
-		size_t m_size;
+		union
+		{
+			u8* m_bitsPtr;
+			size_t m_bits;
+		};
+		size_t m_remainingBlocks;
 		size_t m_blockCount;
 		Super m_parent;
+
+		u8* getBitsPtr()
+		{
+			return (m_blockCount <= BitsSizeT) ? (u8*)&m_bits : m_bitsPtr;
+		}
 
 		size_t countBlocks()
 		{
@@ -55,16 +66,15 @@ namespace vx
 			return blockCount;
 		}
 
-		bool findEmptyBit(size_t* resultBit)
+		bool findEmptyBit(u8* bitPtr, size_t* resultBit)
 		{
 			auto byte = 0;
-			auto bits = m_bits;
 
 			size_t block = 0;
 			auto remainingBlocks = m_blockCount;
 			while (remainingBlocks > 0)
 			{
-				auto p = bits[byte];
+				auto p = bitPtr[byte];
 				auto bitsToCheck = (remainingBlocks < 8) ? remainingBlocks : 8;
 
 				for (size_t bit = 0; bit < bitsToCheck; ++bit)
@@ -86,12 +96,12 @@ namespace vx
 			return false;
 		}
 
-		void setBit(size_t blockIndex)
+		void setBit(u8* bitPtr, size_t blockIndex)
 		{
 			auto byte = blockIndex / 8;
 			auto bit = blockIndex & 7;
 
-			m_bits[byte] |= (1 << bit);
+			bitPtr[byte] |= (1 << bit);
 		}
 
 		void clearBit(size_t blockIndex)
@@ -99,7 +109,8 @@ namespace vx
 			auto byte = blockIndex / 8;
 			auto bit = blockIndex & 7;
 
-			m_bits[byte] &= ~(1 << bit);
+			auto bitPtr = getBitsPtr();
+			bitPtr[byte] &= ~(1 << bit);
 		}
 
 		void initializeImpl()
@@ -109,31 +120,35 @@ namespace vx
 				return;
 
 			auto requiredBytes = (blockCount + 7 / 8);
-			auto requiredBlocksForBits = (requiredBytes + BLOCK_SIZE - 1) / BLOCK_SIZE;
-
-			blockCount -= requiredBlocksForBits;
-			if (blockCount <= 0)
-				return;
-
-			auto bitBlock = m_parent.allocate(BLOCK_SIZE * blockCount, ALIGNMENT);
-
-			m_firstBlock = m_parent.allocate(BLOCK_SIZE, ALIGNMENT).ptr;
-			for (size_t i = 1; i < blockCount; ++i)
+			if (requiredBytes <= sizeof(size_t))
 			{
-				m_parent.allocate(BLOCK_SIZE, ALIGNMENT);
+				// small string optimization
+				m_bits = 0;
+			}
+			else
+			{
+				auto requiredBlocksForBits = (requiredBytes + BLOCK_SIZE - 1) / BLOCK_SIZE;
+
+				if (blockCount <= requiredBlocksForBits)
+						return;
+
+				blockCount -= requiredBlocksForBits;
+
+				auto bitBlock = m_parent.allocate(BLOCK_SIZE * requiredBlocksForBits, ALIGNMENT);
+				m_bitsPtr = bitBlock.ptr;
+				memset(m_bitsPtr, 0, bitBlock.size);
 			}
 
-			m_bits = bitBlock.ptr;
-			memset(m_bits, 0, bitBlock.size);
+			m_firstBlock = m_parent.allocate(BLOCK_SIZE * blockCount, ALIGNMENT).ptr;
 
-			m_size = blockCount;
+			m_remainingBlocks = blockCount;
 			m_blockCount = blockCount;
 		}
 
 	public:
-		BitmapBlock() : m_firstBlock(nullptr), m_bits(nullptr), m_size(0), m_blockCount(0), m_parent() { initializeImpl(); }
+		BitmapBlock() : m_firstBlock(nullptr), m_bitsPtr(nullptr), m_remainingBlocks(0), m_blockCount(0), m_parent() { initializeImpl(); }
 
-		explicit BitmapBlock(const AllocatedBlock &block) : m_firstBlock(nullptr), m_bits(nullptr), m_size(0), m_blockCount(0), m_parent(block) { initializeImpl(); }
+		explicit BitmapBlock(const AllocatedBlock &block) : m_firstBlock(nullptr), m_bitsPtr(nullptr), m_remainingBlocks(0), m_blockCount(0), m_parent(block) { initializeImpl(); }
 
 		~BitmapBlock() {}
 
@@ -144,21 +159,31 @@ namespace vx
 			initializeImpl();
 		}
 
+		AllocatedBlock release()
+		{
+			m_firstBlock = m_bitsPtr = nullptr;
+			m_remainingBlocks = m_blockCount = 0;
+			return m_parent.release();
+		}
+
 		AllocatedBlock allocate(size_t size, size_t alignment)
 		{
-			if (size > BLOCK_SIZE || alignment > ALIGNMENT || m_size == 0)
+			if (size > BLOCK_SIZE || alignment > ALIGNMENT || m_remainingBlocks == 0)
 			{
 				return{ nullptr, 0 };
 			}
 
 			size_t blockIndex = 0;
-			if (!findEmptyBit(&blockIndex))
+
+			auto bitPtr = getBitsPtr();
+			if (!findEmptyBit(bitPtr, &blockIndex))
 			{
 				return{ nullptr, 0 };
 			}
 
-			setBit(blockIndex);
+			setBit(bitPtr, blockIndex);
 			auto offset = blockIndex * BLOCK_SIZE;
+			--m_remainingBlocks;
 
 			return{ m_firstBlock + offset, BLOCK_SIZE };
 		}
@@ -172,6 +197,9 @@ namespace vx
 
 			auto blockIndex = (block.ptr - m_firstBlock) / BLOCK_SIZE;
 			clearBit(blockIndex);
+
+			++m_remainingBlocks;
+
 			return 1;
 		}
 
@@ -183,6 +211,17 @@ namespace vx
 		bool contains(const AllocatedBlock &block) const
 		{
 			return (block.size == BLOCK_SIZE) && m_parent.contains(block);
+		}
+
+		void print() const
+		{
+			m_parent.print();
+			printf("blocksize: %llu, alignment: %llu\n", BLOCK_SIZE, ALIGNMENT);
+		}
+
+		static void printStatic()
+		{
+			printf("blocksize: %llu, alignment: %llu\n", BLOCK_SIZE, ALIGNMENT);
 		}
 	};
 }
