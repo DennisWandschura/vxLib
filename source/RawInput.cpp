@@ -111,7 +111,7 @@ namespace vx
 
 	void RawInput::shutdown()
 	{
-		s_keyEvents.clear();
+		s_keyEvents.release();
 	}
 
 	void RawInput::update(LPARAM lparam)
