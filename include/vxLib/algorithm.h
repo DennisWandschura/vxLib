@@ -71,4 +71,28 @@ namespace vx
 			cnvrt(dst[i], src[i]);
 		}
 	}
+
+	template<typename T, typename P>
+	auto stable_partition(T f, T l, P p) -> T
+	{
+		auto n = l - f;
+		if (n == 0) return f;
+		if (n == 1) return f + p(*f);
+
+		auto m = f + (n / 2);
+
+		return std::rotate(stable_partition(f, m, p), m, stable_partition(m, l, p));
+	}
+
+	template<typename T, typename P>
+	auto stable_partition_position(T f, T l, P p) -> T
+	{
+		auto n = l - f;
+		if (n == 0) return f;
+		if (n == 1) return f + p(f);
+
+		auto m = f + (n / 2);
+
+		return std::rotate(stable_partition_position(f, m, p), m, stable_partition_position(m, l, p));
+	}
 }
