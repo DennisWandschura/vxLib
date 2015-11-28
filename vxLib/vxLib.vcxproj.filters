@@ -40,6 +40,9 @@
     <Filter Include="Header Files\util">
       <UniqueIdentifier>{f9f3fd3b-102f-4092-a984-29de70993295}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\thread">
+      <UniqueIdentifier>{d1ef3b71-b935-4073-b706-93fb75fff134}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\CityHash.cpp">
@@ -78,22 +81,26 @@
     <ClCompile Include="..\source\CpuTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\Graphics\FontAtlas.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Graphics\Surface.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Graphics\Texture.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Graphics\Font.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\source\math\asm_include.inc">
-      <Filter>Source Files\math</Filter>
-    </None>
     <None Include="..\include\vxLib\math\matrix.inl">
       <Filter>Header Files\math</Filter>
     </None>
     <None Include="..\include\vxLib\math\Vector.inl">
       <Filter>Header Files\math</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <MASM Include="..\source\math\math.asm">
-      <Filter>Source Files\math</Filter>
-    </MASM>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\vxLib\algorithm.h">
@@ -209,6 +216,27 @@
     </ClInclude>
     <ClInclude Include="..\include\vxLib\Allocator\StackAllocator.h">
       <Filter>Header Files\Allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\thread\thread.h">
+      <Filter>Header Files\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\thread\spinlock.h">
+      <Filter>Header Files\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\Graphics\FontAtlas.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\Graphics\Surface.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\Graphics\Texture.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\Graphics\Font.h">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\Graphics\dds.h">
+      <Filter>Header Files\graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

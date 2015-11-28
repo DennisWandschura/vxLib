@@ -142,9 +142,13 @@
     <ClCompile Include="..\source\Graphics\Camera.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\source\Graphics\Font.cpp" />
+    <ClCompile Include="..\source\Graphics\FontAtlas.cpp" />
     <ClCompile Include="..\source\Graphics\Mesh.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\source\Graphics\Surface.cpp" />
+    <ClCompile Include="..\source\Graphics\Texture.cpp" />
     <ClCompile Include="..\source\Keyboard.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
@@ -167,10 +171,6 @@
   <ItemGroup>
     <None Include="..\include\vxLib\math\matrix.inl" />
     <None Include="..\include\vxLib\math\Vector.inl" />
-    <None Include="..\source\math\asm_include.inc" />
-  </ItemGroup>
-  <ItemGroup>
-    <MASM Include="..\source\math\math.asm" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\vxLib\algorithm.h" />
@@ -191,7 +191,12 @@
     <ClInclude Include="..\include\vxLib\File\FileHandle.h" />
     <ClInclude Include="..\include\vxLib\File\FileHeader.h" />
     <ClInclude Include="..\include\vxLib\Graphics\Camera.h" />
+    <ClInclude Include="..\include\vxLib\Graphics\dds.h" />
+    <ClInclude Include="..\include\vxLib\Graphics\Font.h" />
+    <ClInclude Include="..\include\vxLib\Graphics\FontAtlas.h" />
     <ClInclude Include="..\include\vxLib\Graphics\Mesh.h" />
+    <ClInclude Include="..\include\vxLib\Graphics\Surface.h" />
+    <ClInclude Include="..\include\vxLib\Graphics\Texture.h" />
     <ClInclude Include="..\include\vxLib\Keyboard.h" />
     <ClInclude Include="..\include\vxLib\math\half.h" />
     <ClInclude Include="..\include\vxLib\math\math.h" />
@@ -204,6 +209,8 @@
     <ClInclude Include="..\include\vxLib\stb_image_write.h" />
     <ClInclude Include="..\include\vxLib\string.h" />
     <ClInclude Include="..\include\vxLib\StringID.h" />
+    <ClInclude Include="..\include\vxLib\thread\spinlock.h" />
+    <ClInclude Include="..\include\vxLib\thread\thread.h" />
     <ClInclude Include="..\include\vxLib\types.h" />
     <ClInclude Include="..\include\vxLib\type_traits.h" />
     <ClInclude Include="..\include\vxLib\util\CityHash.h" />

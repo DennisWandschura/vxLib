@@ -47,6 +47,8 @@ namespace vx
 	const f64 VX_PIDIV2_D = 1.57079632679489661923;
 	const f64 VX_PIDIV4_D = 0.785398163397448309616;
 
+	VX_GLOBALCONST __m128 g_VXAbsMaskFloat = { -0.0f, -0.0f, -0.0f, -0.0f };
+
 	namespace detail
 	{
 		union FloatInt
@@ -77,12 +79,37 @@ namespace vx
 		return tmp.f + 1.0f;
 	}
 
-	extern f32 VX_CALLCONV abs(f32 a);
+	inline f32 VX_CALLCONV abs(f32 a)
+	{
+		__m128 fa = _mm_load_ss(&a);
+		fa = _mm_andnot_ps(g_VXAbsMaskFloat, fa);
+		return fa.m128_f32[0];
+	}
 
-	extern f32 VX_CALLCONV min(f32 a, f32 b);
-	extern f32 VX_CALLCONV max(f32 a, f32 b);
+	inline f32 VX_CALLCONV min(f32 a, f32 b)
+	{
+		__m128 fa = _mm_load_ss(&a);
+		__m128 fb = _mm_load_ss(&b);
 
-	extern f32 VX_CALLCONV invsqrt(f32 number);
+		fa = _mm_min_ss(fa, fb);
+		return fa.m128_f32[0];
+	}
+
+	inline f32 VX_CALLCONV max(f32 a, f32 b)
+	{
+		__m128 fa = _mm_load_ss(&a);
+		__m128 fb = _mm_load_ss(&b);
+
+		fa = _mm_max_ss(fa, fb);
+		return fa.m128_f32[0];
+	}
+
+	inline f32 VX_CALLCONV invsqrt(f32 number)
+	{
+		__m128 fn = _mm_load_ss(&number);
+		fn = _mm_rsqrt_ss(fn);
+		return fn.m128_f32[0];
+	}
 
 	template<typename T>
 	inline const T& min(const T &l, const T &r) 

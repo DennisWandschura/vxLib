@@ -26,68 +26,71 @@ SOFTWARE.
 
 namespace vx
 {
-	Camera::Camera()
-		:m_position(_mm_setzero_ps()),
-		m_qRotation({0, 0, 0, 1})
+	namespace Graphics
 	{
-	}
+		Camera::Camera()
+			:m_position(_mm_setzero_ps()),
+			m_qRotation({ 0, 0, 0, 1 })
+		{
+		}
 
-	void Camera::setPosition(f32 x, f32 y, f32 z)
-	{
-		__m128 position = {x, y, z, 0};
-		setPosition(position);
-	}
+		void Camera::setPosition(f32 x, f32 y, f32 z)
+		{
+			__m128 position = { x, y, z, 0 };
+			setPosition(position);
+		}
 
-	void VX_CALLCONV Camera::setPosition(const __m128 position)
-	{
-		m_position = position;
-	}
+		void VX_CALLCONV Camera::setPosition(const __m128 position)
+		{
+			m_position = position;
+		}
 
-	void VX_CALLCONV Camera::setRotation(const __m128 qRotation)
-	{
-		m_qRotation = qRotation;
-	}
+		void VX_CALLCONV Camera::setRotation(const __m128 qRotation)
+		{
+			m_qRotation = qRotation;
+		}
 
-	void VX_CALLCONV Camera::rotate(const __m128 qRotation)
-	{
-		m_qRotation = _mm_add_ps(m_qRotation, qRotation);
-	}
+		void VX_CALLCONV Camera::rotate(const __m128 qRotation)
+		{
+			m_qRotation = _mm_add_ps(m_qRotation, qRotation);
+		}
 
-	void VX_CALLCONV Camera::move(const __m128 direction, f32 speed)
-	{
-		__m128 vSpeed = {speed, speed, speed, 0.0};
+		void VX_CALLCONV Camera::move(const __m128 direction, f32 speed)
+		{
+			__m128 vSpeed = { speed, speed, speed, 0.0 };
 
-		auto offset = quaternionRotation(direction, m_qRotation);
+			auto offset = quaternionRotation(direction, m_qRotation);
 
-		offset = _mm_mul_ps(offset, vSpeed);
-		m_position = _mm_add_ps(offset, m_position);
-	}
+			offset = _mm_mul_ps(offset, vSpeed);
+			m_position = _mm_add_ps(offset, m_position);
+		}
 
-	void Camera::move(f32 x, f32 y, f32 z)
-	{
-		__m128 offset = { x, y, z, 0.0f };
-		m_position = _mm_add_ps(m_position, offset);
-	}
+		void Camera::move(f32 x, f32 y, f32 z)
+		{
+			__m128 offset = { x, y, z, 0.0f };
+			m_position = _mm_add_ps(m_position, offset);
+		}
 
-	void Camera::getViewMatrixRH(vx::mat4 *viewMatrix) const
-	{
-		const __m128 lookAt = { 0, 0, -1, 0 };
-		const __m128 up = { 0, 1, 0, 0 };
+		void Camera::getViewMatrixRH(vx::mat4 *viewMatrix) const
+		{
+			const __m128 lookAt = { 0, 0, -1, 0 };
+			const __m128 up = { 0, 1, 0, 0 };
 
-		auto viewDir = quaternionRotation(lookAt, m_qRotation);
-		auto upDir = quaternionRotation(up, m_qRotation);
+			auto viewDir = quaternionRotation(lookAt, m_qRotation);
+			auto upDir = quaternionRotation(up, m_qRotation);
 
-		*viewMatrix = vx::MatrixLookToRH(m_position, viewDir, upDir);
-	}
+			*viewMatrix = vx::MatrixLookToRH(m_position, viewDir, upDir);
+		}
 
-	void Camera::getViewMatrixLH(vx::mat4 *viewMatrix) const
-	{
-		const __m128 lookAt = { 0, 0, 1, 0 };
-		const __m128 up = { 0, 1, 0, 0 };
+		void Camera::getViewMatrixLH(vx::mat4 *viewMatrix) const
+		{
+			const __m128 lookAt = { 0, 0, 1, 0 };
+			const __m128 up = { 0, 1, 0, 0 };
 
-		auto viewDir = quaternionRotation(lookAt, m_qRotation);
-		auto upDir = quaternionRotation(up, m_qRotation);
+			auto viewDir = quaternionRotation(lookAt, m_qRotation);
+			auto upDir = quaternionRotation(up, m_qRotation);
 
-		*viewMatrix = vx::MatrixLookToLH(m_position, viewDir, upDir);
+			*viewMatrix = vx::MatrixLookToLH(m_position, viewDir, upDir);
+		}
 	}
 }

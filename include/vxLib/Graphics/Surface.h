@@ -1,3 +1,4 @@
+#pragma once
 /*
 The MIT License (MIT)
 
@@ -22,61 +23,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxlib/CpuTimer.h>
-#include <Windows.h>
+#include <vxLib/math/Vector.h>
+#include <vxLib/Allocator/Allocator.h>
 
-s64 CpuTimer::s_frequency{0};
-
-CpuTimer::CpuTimer()
-	:m_start(0)
+namespace vx
 {
-	QueryPerformanceCounter((LARGE_INTEGER*)&m_start);
-
-	if (s_frequency == 0)
+	namespace Graphics
 	{
-		QueryPerformanceFrequency((LARGE_INTEGER*)&s_frequency);
+		class Surface
+		{
+			vx::uint3 m_dimension;
+			u32 m_size;
+			vx::AllocatedBlock m_pixels;
+
+		public:
+			Surface();
+			Surface(const Surface&) = delete;
+			Surface(Surface &&rhs);
+			~Surface();
+
+			Surface& operator=(const Surface&) = delete;
+			Surface& operator=(Surface &&rhs);
+
+			void create(const vx::uint3 &dimension, u32 size, const vx::AllocatedBlock &pixels);
+
+			vx::AllocatedBlock release();
+
+			const vx::uint3& getDimension() const { return m_dimension; }
+			u32 getSize() const { return m_size; }
+
+			u8* getPixels() { return m_pixels.ptr; }
+			const u8* getPixels() const { return m_pixels.ptr; }
+		};
 	}
-}
-
-CpuTimer::~CpuTimer()
-{
-
-}
-
-void CpuTimer::reset()
-{
-	LARGE_INTEGER start;
-	QueryPerformanceCounter(&start);
-
-	m_start = start.QuadPart;
-}
-
-f32 CpuTimer::getTimeSeconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
-
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
-
-	return f32(time * 1.0e-6);
-}
-
-f32 CpuTimer::getTimeMiliseconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
-
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
-
-	return f32(time * 0.001f);
-}
-
-f32 CpuTimer::getTimeMicroseconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
-
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
-
-	return static_cast<f32>(time);
 }

@@ -21,62 +21,55 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+#include <vxlib/Graphics/font.h>
+#include <utility>
 
-#include <vxlib/CpuTimer.h>
-#include <Windows.h>
-
-s64 CpuTimer::s_frequency{0};
-
-CpuTimer::CpuTimer()
-	:m_start(0)
+namespace vx
 {
-	QueryPerformanceCounter((LARGE_INTEGER*)&m_start);
-
-	if (s_frequency == 0)
+	namespace Graphics
 	{
-		QueryPerformanceFrequency((LARGE_INTEGER*)&s_frequency);
+		Font::Font()
+			:m_texture(nullptr),
+			m_atlas()
+		{
+
+		}
+
+		Font::Font(const Texture* texture, FontAtlas &&fontAtlas)
+			: m_texture(texture),
+			m_atlas(std::move(fontAtlas))
+		{
+
+		}
+
+		Font::Font(Font &&rhs)
+			: m_texture(rhs.m_texture),
+			m_atlas(std::move(rhs.m_atlas))
+		{
+		}
+
+		Font::~Font()
+		{
+		}
+
+		Font& Font::operator=(Font &&rhs)
+		{
+			if (this != &rhs)
+			{
+				std::swap(m_texture, rhs.m_texture);
+				m_atlas = std::move(rhs.m_atlas);
+			}
+			return *this;
+		}
+
+		vx::AllocatedBlock Font::releaseAtlas()
+		{
+			return m_atlas.release();
+		}
+
+		const FontAtlasEntry* Font::getAtlasEntry(u32 code) const
+		{
+			return m_atlas.getEntry(code);
+		}
 	}
-}
-
-CpuTimer::~CpuTimer()
-{
-
-}
-
-void CpuTimer::reset()
-{
-	LARGE_INTEGER start;
-	QueryPerformanceCounter(&start);
-
-	m_start = start.QuadPart;
-}
-
-f32 CpuTimer::getTimeSeconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
-
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
-
-	return f32(time * 1.0e-6);
-}
-
-f32 CpuTimer::getTimeMiliseconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
-
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
-
-	return f32(time * 0.001f);
-}
-
-f32 CpuTimer::getTimeMicroseconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
-
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
-
-	return static_cast<f32>(time);
 }

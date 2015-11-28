@@ -45,6 +45,15 @@ namespace vx
 		return (u8*)getAlignedSize((size_t)ptr, alignment);
 	}
 
+	template<size_t PADDING_SIZE>
+	struct Padding
+	{
+		u8 m_padding[PADDING_SIZE];
+	};
+
+	template<>
+	struct Padding<0> {};
+
 	struct AllocatedBlock
 	{
 		u8* ptr;
@@ -78,4 +87,7 @@ namespace vx
 			return get().contains(block);
 		}
 	};
+
+	typedef vx::AllocatedBlock(*AllocationCallbackSignature)(size_t size, size_t alignment);
+	typedef u32 (*DeallocationCallbackSignature)(const vx::AllocatedBlock &block);
 }

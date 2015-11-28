@@ -27,25 +27,28 @@ SOFTWARE.
 
 namespace vx
 {
-	class Camera
+	namespace Graphics
 	{
-		__m128 m_position;
-		__m128 m_qRotation;
+		class Camera
+		{
+			__m128 m_position;
+			__m128 m_qRotation;
 
-	public:
-		Camera();
+		public:
+			Camera();
 
-		void setPosition(f32 x, f32 y, f32 z);
-		void VX_CALLCONV setPosition(const __m128 position);
-		void VX_CALLCONV setRotation(const __m128 qRotation);
+			void setPosition(f32 x, f32 y, f32 z);
+			void VX_CALLCONV setPosition(const __m128 position);
+			void VX_CALLCONV setRotation(const __m128 qRotation);
 
-		void VX_CALLCONV rotate(const __m128 qRotation);
-		void VX_CALLCONV move(const __m128 direction, f32 speed);
-		void move(f32 x, f32 y, f32 z);
+			void VX_CALLCONV rotate(const __m128 qRotation);
+			void VX_CALLCONV move(const __m128 direction, f32 speed);
+			void move(f32 x, f32 y, f32 z);
 
-		void getViewMatrixRH(vx::mat4 *viewMatrix) const;
-		void getViewMatrixLH(vx::mat4 *viewMatrix) const;
-		const __m128 VX_CALLCONV getPosition() const { return m_position; }
-		const __m128 VX_CALLCONV getRotation() const { return m_qRotation; }
-	};
+			void getViewMatrixRH(vx::mat4 *viewMatrix) const;
+			void getViewMatrixLH(vx::mat4 *viewMatrix) const;
+			const __m128 VX_CALLCONV getPosition() const { return m_position; }
+			const __m128 VX_CALLCONV getRotation() const { return m_qRotation; }
+		};
+	}
 }

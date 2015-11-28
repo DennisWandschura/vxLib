@@ -28,7 +28,7 @@ namespace vx
 		{
 		}
 
-		bool contains(const vx::AllocatedBlock &block) const
+		bool contains(const vx::AllocatedBlock&) const
 		{
 			return true;
 		}

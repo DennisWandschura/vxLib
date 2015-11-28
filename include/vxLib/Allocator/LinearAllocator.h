@@ -38,7 +38,7 @@ namespace vx
 	public:
 		inline LinearAllocator() :m_data(), m_head(nullptr), m_last(nullptr) {}
 
-		inline LinearAllocator(const AllocatedBlock &block) : m_data(block.ptr), m_head(block.ptr), m_last(block.ptr + block.size) {}
+		inline explicit LinearAllocator(const AllocatedBlock &block) : m_data(block.ptr), m_head(block.ptr), m_last(block.ptr + block.size) {}
 
 		inline ~LinearAllocator() {}
 

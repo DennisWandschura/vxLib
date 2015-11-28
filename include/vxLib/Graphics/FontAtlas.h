@@ -1,3 +1,4 @@
+#pragma once
 /*
 The MIT License (MIT)
 
@@ -22,61 +23,51 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxlib/CpuTimer.h>
-#include <Windows.h>
+#include <vxLib/Allocator/Allocator.h>
+#include <fstream>
 
-s64 CpuTimer::s_frequency{0};
-
-CpuTimer::CpuTimer()
-	:m_start(0)
+namespace vx
 {
-	QueryPerformanceCounter((LARGE_INTEGER*)&m_start);
-
-	if (s_frequency == 0)
+	namespace Graphics
 	{
-		QueryPerformanceFrequency((LARGE_INTEGER*)&s_frequency);
+		struct FontAtlasEntry
+		{
+			u32 code;
+			f32 x;
+			f32 y;
+			f32 width;
+			f32 height;
+			f32 offsetX;
+			f32 offsetY;
+			f32 advanceX;
+
+			FontAtlasEntry();
+		};
+
+		class FontAtlas
+		{
+			FontAtlasEntry* m_data;
+			FontAtlasEntry* m_end;
+			size_t m_allocatedSize;
+
+			FontAtlasEntry readEntry(std::ifstream &infile);
+			size_t readEntry(const char *ptr, FontAtlasEntry &entry);
+
+		public:
+			FontAtlas();
+			FontAtlas(const FontAtlas&) = delete;
+			FontAtlas(FontAtlas &&other);
+			~FontAtlas();
+
+			FontAtlas& operator=(const FontAtlas &rhs) = delete;
+			FontAtlas& operator=(FontAtlas &&rhs);
+
+			vx::AllocatedBlock release();
+
+			bool loadFromFile(const char *file, AllocationCallbackSignature allocFn);
+			bool loadFromMemory(const char *data, AllocationCallbackSignature allocFn);
+
+			const FontAtlasEntry* getEntry(u32 code) const;
+		};
 	}
-}
-
-CpuTimer::~CpuTimer()
-{
-
-}
-
-void CpuTimer::reset()
-{
-	LARGE_INTEGER start;
-	QueryPerformanceCounter(&start);
-
-	m_start = start.QuadPart;
-}
-
-f32 CpuTimer::getTimeSeconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
-
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
-
-	return f32(time * 1.0e-6);
-}
-
-f32 CpuTimer::getTimeMiliseconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
-
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
-
-	return f32(time * 0.001f);
-}
-
-f32 CpuTimer::getTimeMicroseconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
-
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
-
-	return static_cast<f32>(time);
 }

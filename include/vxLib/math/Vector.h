@@ -166,6 +166,11 @@ namespace vx
 				return *this;
 			}
 
+			friend vec2 operator+(const vec2 &lhs, const vec2 &rhs)
+			{
+				return vec2(lhs.x + rhs.x, lhs.y + rhs.y);
+			}
+
 			friend vec2 operator-(const vec2 &lhs, const vec2 &rhs)
 			{
 				return vec2(lhs.x - rhs.x, lhs.y - rhs.y);
@@ -823,6 +828,19 @@ namespace vx
 		return _mm_unpacklo_ps(x, y);
 	}
 
+	inline __m128 VX_CALLCONV loadFloat2a(const detail::vec2a<f32>* source)
+	{
+		auto tmp = _mm_loadl_epi64((__m128i*)source);
+
+		__m128 value;
+		value.m128_i32[0] = tmp.m128i_i32[0];
+		value.m128_i32[1] = tmp.m128i_i32[1];
+		value.m128_i32[2] = tmp.m128i_i32[2];
+		value.m128_i32[3] = tmp.m128i_i32[3];
+
+		return value;
+	}
+
 	inline __m128 VX_CALLCONV loadFloat3(const detail::vec3<f32>* source)
 	{
 		__m128 x = _mm_load_ss(&source->x);
@@ -842,6 +860,21 @@ namespace vx
 		auto T = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
 		_mm_store_ss(&pDestination->x, V);
 		_mm_store_ss(&pDestination->y, T);
+	}
+
+	inline void VX_CALLCONV storeFloat2a(detail::vec2a<f32>* pDestination, CVEC4 V)
+	{
+		__m128i tmp;
+		tmp.m128i_i32[0] = V.m128_i32[0];
+		tmp.m128i_i32[1] = V.m128_i32[1];
+		tmp.m128i_i32[2] = V.m128_i32[2];
+		tmp.m128i_i32[3] = V.m128_i32[3];
+		_mm_storel_epi64((__m128i*)pDestination, tmp);
+	}
+
+	inline void VX_CALLCONV streamFloat2a(detail::vec2a<f32>* pDestination, CVEC4 V)
+	{
+		_mm_stream_si64((__int64*)pDestination, V.m128_i64[0]);
 	}
 
 	inline void VX_CALLCONV storeFloat3(detail::vec3<f32>* pDestination, CVEC4 V)
@@ -1085,7 +1118,9 @@ namespace vx
 
 	inline __m128 VX_CALLCONV length3(CVEC4 V);
 
+	inline __m128 VX_CALLCONV normalize2(CVEC4 V);
 	inline __m128 VX_CALLCONV normalize3(CVEC4 V);
+	inline __m128 VX_CALLCONV normalize4(CVEC4 V);
 	inline __m256d VX_CALLCONV normalize3(__m256d V);
 
 	inline __m128 VX_CALLCONV quaternionRotation(CVEC4 V, CVEC4 RotationQuaternion);
@@ -1131,6 +1166,15 @@ namespace vx
 		return detail::vec2a<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
 	}
 
+	template<>
+	inline detail::vec2a<f32> min(const detail::vec2a<f32> &v1, const detail::vec2a<f32> &v2)
+	{
+		auto r = _mm_min_ps(vx::loadFloat2a(&v1), vx::loadFloat2a(&v2));
+		detail::vec2a<f32> result;
+		vx::storeFloat2a(&result, r);
+		return result;
+	}
+
 	template<class T>
 	inline detail::vec3<T> min(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
@@ -1155,10 +1199,25 @@ namespace vx
 		return detail::vec2<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
 	}
 
+	template<>
+	inline detail::vec2<f32> max(const detail::vec2<f32> &v1, const detail::vec2<f32> &v2)
+	{
+		return detail::vec2<f32>(fmaxf(v1.x, v2.x), fmaxf(v1.y, v2.y));
+	}
+
 	template<class T>
 	inline detail::vec2a<T> max(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
 	{
 		return detail::vec2a<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
+	}
+
+	template<>
+	inline detail::vec2a<f32> max(const detail::vec2a<f32> &v1, const detail::vec2a<f32> &v2)
+	{
+		auto r = _mm_max_ps(vx::loadFloat2a(&v1), vx::loadFloat2a(&v2));
+		detail::vec2a<f32> result;
+		vx::storeFloat2a(&result, r);
+		return result;
 	}
 
 	template<class T>
@@ -1335,6 +1394,21 @@ namespace vx
 	}
 
 	template<class T>
+	inline detail::vec2a<T> abs(const detail::vec2a<T> &v)
+	{
+		return detail::vec2a<T>(std::abs(v.x), std::abs(v.y));
+	}
+
+	template<>
+	inline float2a abs(const float2a &v)
+	{
+		auto r = vx::abs(vx::loadFloat2a(&v));
+		vx::float2a result;
+		vx::storeFloat2a(&result, r);
+		return result;
+	}
+
+	template<class T>
 	inline detail::vec3<T> abs(const detail::vec3<T> &v)
 	{
 		return detail::vec3<T>(abs(v.x), abs(v.y), abs(v.z));
@@ -1355,7 +1429,10 @@ namespace vx
 	template<>
 	inline float4 abs(const float4 &v)
 	{
-		return float4(fabsf(v.x), fabsf(v.y), fabsf(v.z), fabsf(v.w));
+		auto tmp = vx::loadFloat4(&v);
+		auto abs = vx::abs(tmp);
+		vx::float4 result;
+		vx::storeFloat4(&result, abs);
 	}
 
 	inline vx::float3 degToRad(const vx::float3 &degAngle)

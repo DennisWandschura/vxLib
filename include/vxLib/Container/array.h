@@ -69,6 +69,7 @@ namespace vx
 		~array()
 		{
 			release();
+			m_allocator = nullptr;
 		}
 
 		array& operator=(const array&) = delete;
@@ -130,7 +131,11 @@ namespace vx
 			if (m_allocator)
 			{
 				clear();
+
 				m_allocator->deallocate(AllocatedBlock{ (u8*)m_begin, m_blockSize });
+
+				m_begin = m_end = m_last = nullptr;
+				m_blockSize = 0;
 			}
 		}
 
@@ -141,7 +146,22 @@ namespace vx
 
 		inline const value_type& operator[](size_t idx) const
 		{
-			returnm_begin[idx];
+			return m_begin[idx];
+		}
+
+		value_type& back()
+		{
+			return *(m_end - 1);
+		}
+
+		const value_type& back() const
+		{
+			return *(m_end - 1);
+		}
+
+		inline const pointer data() const
+		{
+			return m_begin;
 		}
 
 		inline pointer begin()

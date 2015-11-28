@@ -33,7 +33,16 @@ namespace vx
 	{
 		static_assert(GetAlignedSize<BLOCK_SIZE, ALIGNMENT>::size == BLOCK_SIZE, "");
 
-		enum : size_t { BitsSizeT = sizeof(size_t) * 8 };
+		typedef BitmapBlock<Super, BLOCK_SIZE, ALIGNMENT> MyBitmapBlock;
+
+		enum : size_t 
+		{
+			BitsSizeT = sizeof(size_t) * 8,
+			ClassDataSize = sizeof(u8*) * 2 + sizeof(size_t) * 2,
+			ClassAlignment = __alignof(Super),
+			ClassAlignedDataSize = GetAlignedSize<ClassDataSize, ClassAlignment>::size,
+			PaddingSize = ClassAlignedDataSize - ClassDataSize
+		};
 
 		u8* m_firstBlock;
 		union
@@ -43,6 +52,7 @@ namespace vx
 		};
 		size_t m_remainingBlocks;
 		size_t m_blockCount;
+		Padding<PaddingSize> m_padding;
 		Super m_parent;
 
 		u8* getBitsPtr()

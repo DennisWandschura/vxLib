@@ -25,9 +25,28 @@ SOFTWARE.
 */
 
 #include <vxLib/types.h>
+#include <algorithm>
 
 namespace vx
 {
+	namespace detail
+	{
+		template<typename T>
+		struct AbsMask;
+
+		template<>
+		struct AbsMask<u32>
+		{
+			enum : u32 { mask = 0x7fffffff };
+		};
+
+		template<>
+		struct AbsMask<u64>
+		{
+			enum : u64 { mask = 0x7fffffff };
+		};
+	}
+
 	template<typename T>
 	inline void memcpy(u8* dst, const T &src)
 	{
@@ -72,6 +91,20 @@ namespace vx
 		}
 	}
 
+	template<typename T, typename Cmp>
+	inline void sort_subrange(T f, T l, T sf, T sl, Cmp cmp)
+	{
+		if (sf == sl) return;
+
+		if (sf != f)
+		{
+			std::nth_element(f, sf, l, cmp);
+			++sf;
+		}
+
+		std::partial_sort(sf, sl, l);
+	}
+
 	template<typename T, typename P>
 	auto stable_partition(T f, T l, P p) -> T
 	{
@@ -94,5 +127,13 @@ namespace vx
 		auto m = f + (n / 2);
 
 		return std::rotate(stable_partition_position(f, m, p), m, stable_partition_position(m, l, p));
+	}
+
+	template<typename T>
+	void swap(T &l, T &r)
+	{
+		T tmp{std::move(l)};
+		l = std::move(r);
+		r = std::move(tmp);
 	}
 }

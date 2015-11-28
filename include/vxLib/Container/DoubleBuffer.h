@@ -23,58 +23,105 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/types.h>
+#include <vxLib/Allocator/Allocator.h>
+#include <vxLib/algorithm.h>
 
 namespace vx
 {
-	template<typename T>
+	template<typename T, typename Allocator>
 	class DoubleBuffer
 	{
-		typedef u32 size_type;
+		typedef size_t size_type;
 		typedef T value_type;
 		typedef value_type& reference;
 		typedef const value_type& const_reference;
 		typedef value_type* pointer;
 
-		pointer m_frontBuffer{ nullptr };
-		pointer m_backBuffer{ nullptr };
-		size_type m_sizeFront{ 0 };
-		size_type m_sizeBack{ 0 };
-		size_type m_capacity{ 0 };
-
-		void destroyValue(pointer p)
+		template<bool isPOD>
+		struct Destructor
 		{
-			p->~value_type();
+			template<typename T>
+			void operator()(T*)
+			{
+			}
+		};
+
+		template<>
+		struct Destructor<false>
+		{
+			template<typename T>
+			void operator()(T* ptr)
+			{
+				ptr->~T();
+			}
+		};
+
+		typedef Destructor<std::is_pod<value_type>::value> MyDestructor;
+
+		pointer m_frontBuffer;
+		pointer m_backBuffer;
+		size_type m_sizeFront;
+		size_type m_sizeBack;
+		size_type m_capacity;
+		Allocator* m_allocator;
+		size_t m_allocSize;
+
+		void allocateMemory(size_type capacity)
+		{
+			auto block = m_allocator->allocate(sizeof(value_type) * capacity * 2, __alignof(value_type));
+			if (block.ptr)
+			{
+				m_frontBuffer = reinterpret_cast<pointer>(block.ptr);
+				m_backBuffer = m_frontBuffer + capacity;
+				m_capacity = capacity;
+				m_allocSize = block.size;
+			}
+		}
+
+		void clearBuffer(pointer ptr, size_type count)
+		{
+			for (size_type i = 0; i < count; ++i)
+			{
+				MyDestructor()(ptr + i);
+			}
 		}
 
 		void clearFrontBuffer()
 		{
-			for (size_type i = 0; i < m_sizeFront; ++i)
-			{
-				destroyValue(m_frontBuffer + i);
-			}
-
+			auto size = m_sizeFront;
+			auto ptr = m_frontBuffer;
+			clearBuffer(ptr, size);
 			m_sizeFront = 0;
 		}
 
 		void clearBackBuffer()
 		{
-			for (size_type i = 0; i < m_sizeBack; ++i)
-			{
-				destroyValue(m_backBuffer + i);
-			}
-
+			auto size = m_sizeBack;
+			auto ptr = m_backBuffer;
+			clearBuffer(ptr, size);
 			m_sizeBack = 0;
 		}
 
 	public:
-		DoubleBuffer(){}
+		DoubleBuffer()
+			:m_frontBuffer(nullptr),
+			m_backBuffer(nullptr),
+			m_sizeFront(0),
+			m_sizeBack(0),
+			m_capacity(0),
+			m_allocator(nullptr),
+			m_allocSize(0){}
 
-		DoubleBuffer(pointer p, size_type capacity)
-			:m_frontBuffer(p),
-			m_backBuffer(p + m_capacity),
-			m_capacity(capacity)
+		DoubleBuffer(Allocator* allocator, size_type capacity)
+			:m_frontBuffer(nullptr),
+			m_backBuffer(nullptr),
+			m_sizeFront(0),
+			m_sizeBack(0),
+			m_capacity(0),
+			m_allocator(allocator),
+			m_allocSize(0)
 		{
+			allocateMemory(capacity);
 		}
 
 		DoubleBuffer(const DoubleBuffer&) = delete;
@@ -83,56 +130,64 @@ namespace vx
 			:m_frontBuffer(rhs.m_frontBuffer),
 			m_backBuffer(rhs.m_backBuffer),
 			m_sizeFront(rhs.m_sizeFront),
-			m_sizeBack(rhs.m_sizeBack)
-			m_capacity(rhs.m_capacity)
+			m_sizeBack(rhs.m_sizeBack),
+			m_capacity(rhs.m_capacity),
+			m_allocator(rhs.m_allocator),
+			m_allocSize(rhs.m_allocSize)
 		{
-			rhs.m_frontBuffer = nullptr;
-			rhs.m_backBuffer = nullptr;
-			rhs.m_sizeFront = 0;
-			rhs.m_sizeBack = 0;
-			rhs.m_capacity = 0;
+			rhs.m_allocator = nullptr;
 		}
 
 		~DoubleBuffer()
 		{
-			clearFrontBuffer();
-			clearBackBuffer();
-			m_frontBuffer = nullptr;
-			m_backBuffer = nullptr;
+			release();
 		}
 
 		DoubleBuffer& operator=(const DoubleBuffer&) = delete;
 
 		DoubleBuffer& operator=(DoubleBuffer &&rhs) noexcept
 		{
-			std::swap(m_frontBuffer, rhs.m_frontBuffer);
-			std::swap(m_backBuffer, rhs.m_backBuffer);
-			std::swap(m_sizeFront, rhs.m_sizeFront);
-			std::swap(m_sizeBack, rhs.m_sizeBack);
-			std::swap(m_capacity, rhs.m_capacity);
+			if (this != &rhs)
+			{
+				swap(rhs);
+			}
 
 			return *this;
 		}
 
-		bool push(const value_type &value)
+		void swap(DoubleBuffer &other)
 		{
-			if (m_sizeFront >= m_capacity)
-				return false;
-
-			auto p = m_frontBuffer + m_sizeFront;
-			new (p) value_type(value);
-			++m_sizeFront;
-
-			return true;
+			vx::swap(m_frontBuffer, other.m_frontBuffer);
+			vx::swap(m_backBuffer, other.m_backBuffer);
+			vx::swap(m_sizeFront, other.m_sizeFront);
+			vx::swap(m_sizeBack, other.m_sizeBack);
+			vx::swap(m_capacity, other.m_capacity);
+			vx::swap(m_allocator, other.m_allocator);
+			vx::swap(m_allocSize, other.m_allocSize);
 		}
 
-		bool push(value_type &&value)
+		void release()
+		{
+			if (m_allocator)
+			{
+				clearFrontBuffer();
+				clearBackBuffer();
+
+				m_allocator->deallocate({ (u8*)m_frontBuffer, m_allocSize });
+				m_frontBuffer = nullptr;
+				m_allocator = nullptr;
+				m_allocSize = 0;
+			}
+		}
+
+		template<typename ...Args>
+		bool push(Args&& ...args)
 		{
 			if (m_sizeFront >= m_capacity)
 				return false;
 
 			auto p = m_frontBuffer + m_sizeFront;
-			new (p)value_type (std::move(value));
+			new (p)value_type{std::forward<Args>(args)...};
 			++m_sizeFront;
 
 			return true;
@@ -140,11 +195,20 @@ namespace vx
 
 		void pop(value_type &value)
 		{
-			auto lastElement = m_frontBuffer[m_sizeFront - 1];
+			auto &lastElement = m_frontBuffer[m_sizeFront - 1];
 			value = std::move(lastElement);
 
-			destroyValue(&lastElement);
+			MyDestructor()(&lastElement);
 			--m_sizeFront;
+		}
+
+		void pop_backBuffer(value_type &value)
+		{
+			auto &lastElement = m_backBuffer[m_sizeBack - 1];
+			value = std::move(lastElement);
+
+			MyDestructor()(&lastElement);
+			--m_sizeBack;
 		}
 
 		void swapBuffers()

@@ -78,10 +78,8 @@ namespace vx
 
 	inline __m128 VX_CALLCONV abs(CVEC4 v)
 	{
-		__m128 vResult = _mm_setzero_ps();
-		vResult = _mm_sub_ps(vResult, v);
-		vResult = _mm_max_ps(vResult, v);
-		return vResult;
+		auto mask = g_VXAbsMaskFloat;
+		return _mm_andnot_ps(mask, v);
 	}
 
 	inline __m128 VX_CALLCONV normalize(CVEC4 V)
@@ -284,11 +282,9 @@ namespace vx
 		return _mm_sqrt_ps(dot3(V, V));
 	}
 
-	inline __m128 VX_CALLCONV normalize3(CVEC4 V)
+	inline __m128 VX_CALLCONV normalizeImpl(CVEC4 VL, CVEC4 V)
 	{
-		// Perform the dot product on x,y and z only
-		auto vLengthSq = dot3(V, V);
-
+		auto vLengthSq = VL;
 		// Prepare for the division
 		auto vResult = _mm_sqrt_ps(vLengthSq);
 		// Create zero with a single instruction
@@ -307,6 +303,30 @@ namespace vx
 		auto vTemp2 = _mm_and_ps(vResult, vLengthSq);
 		vResult = _mm_or_ps(vTemp1, vTemp2);
 		return vResult;
+	}
+
+	inline __m128 VX_CALLCONV normalize2(CVEC4 V)
+	{
+		// Perform the dot product on x,y and z only
+		auto vLengthSq = dot2(V, V);
+
+		return normalizeImpl(vLengthSq, V);
+	}
+
+	inline __m128 VX_CALLCONV normalize3(CVEC4 V)
+	{
+		// Perform the dot product on x,y and z only
+		auto vLengthSq = dot3(V, V);
+
+		return normalizeImpl(vLengthSq, V);
+	}
+
+	inline __m128 VX_CALLCONV normalize4(CVEC4 V)
+	{
+		// Perform the dot product on x,y and z only
+		auto vLengthSq = dot4(V, V);
+
+		return normalizeImpl(vLengthSq, V);
 	}
 
 	inline __m256d VX_CALLCONV normalize3(const __m256d V)

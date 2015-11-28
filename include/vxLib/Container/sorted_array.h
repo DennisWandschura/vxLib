@@ -25,10 +25,11 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/Allocator.h>
+#include <algorithm>
 
 namespace vx
 {
-	template<typename T, typename K, typename Allocator, typename Cmp = std::less<>>
+	template<typename K, typename T, typename Allocator, typename Cmp = std::less<>>
 	class sorted_array
 	{
 		typedef K key_type;
@@ -65,13 +66,7 @@ namespace vx
 
 		~sorted_array()
 		{
-			if (m_allocator)
-			{
-				clear();
-
-				m_allocator->deallocate(m_keyBlock);
-				m_allocator->deallocate(m_dataBlock);
-			}
+			release();
 		}
 
 		sorted_array& operator=(const sorted_array&) = delete;
@@ -180,6 +175,18 @@ namespace vx
 			m_size = 0;
 		}
 
+		void release()
+		{
+			clear();
+
+			if (m_allocator)
+			{
+				m_allocator->deallocate(m_keyBlock);
+				m_allocator->deallocate(m_dataBlock);
+				m_allocator = nullptr;
+			}
+		}
+
 		inline value_type& operator[](size_t idx)
 		{
 			return begin()[idx];
@@ -227,4 +234,10 @@ namespace vx
 			return last - begin();
 		}
 	};
+
+	template<typename K, typename T, typename Allocator, typename Cmp>
+	void swap(sorted_array<K, T, Allocator, Cmp> &l, sorted_array<K, T, Allocator, Cmp> &r)
+	{
+		l.swap(r);
+	}
 }

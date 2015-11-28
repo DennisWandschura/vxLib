@@ -40,4 +40,5 @@ public:
 
 	f32 getTimeSeconds() const;
 	f32 getTimeMiliseconds() const;
+	f32 getTimeMicroseconds() const;
 };

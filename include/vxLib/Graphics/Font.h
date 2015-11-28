@@ -1,3 +1,4 @@
+#pragma once
 /*
 The MIT License (MIT)
 
@@ -22,61 +23,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxlib/CpuTimer.h>
-#include <Windows.h>
+#include "FontAtlas.h"
 
-s64 CpuTimer::s_frequency{0};
-
-CpuTimer::CpuTimer()
-	:m_start(0)
+namespace vx
 {
-	QueryPerformanceCounter((LARGE_INTEGER*)&m_start);
-
-	if (s_frequency == 0)
+	namespace Graphics
 	{
-		QueryPerformanceFrequency((LARGE_INTEGER*)&s_frequency);
+		class Texture;
+
+		class Font
+		{
+			const Texture* m_texture;
+			FontAtlas m_atlas;						// 32
+
+		public:
+			Font();
+			Font(const Texture* texture, FontAtlas &&fontAtlas);
+			Font(Font &&other);
+			Font(const Font&) = delete;
+			~Font();
+
+			Font& operator=(const Font&) = delete;
+			Font& operator=(Font &&rhs);
+
+			vx::AllocatedBlock releaseAtlas();
+
+			const FontAtlasEntry* getAtlasEntry(u32 code) const;
+
+			const Texture* getTexture() const { return m_texture; }
+		};
 	}
-}
-
-CpuTimer::~CpuTimer()
-{
-
-}
-
-void CpuTimer::reset()
-{
-	LARGE_INTEGER start;
-	QueryPerformanceCounter(&start);
-
-	m_start = start.QuadPart;
-}
-
-f32 CpuTimer::getTimeSeconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
-
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
-
-	return f32(time * 1.0e-6);
-}
-
-f32 CpuTimer::getTimeMiliseconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
-
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
-
-	return f32(time * 0.001f);
-}
-
-f32 CpuTimer::getTimeMicroseconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
-
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
-
-	return static_cast<f32>(time);
 }
