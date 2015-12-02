@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/Allocator/Allocator.h>
+#include <vxLib/Allocator/DefaultContainerAllocator.h>
 #include <utility>
 
 namespace vx
@@ -39,18 +39,21 @@ namespace vx
 		pointer m_end;
 		pointer m_last;
 		size_t m_blockSize;
-		Allocator* m_allocator;
+		Allocator m_allocator;
 
 	public:
-		array() : m_begin(nullptr), m_end(nullptr), m_last(nullptr), m_blockSize(0), m_allocator(nullptr) {}
+		array() : m_begin(nullptr), m_end(nullptr), m_last(nullptr), m_blockSize(0), m_allocator() {}
 
-		explicit array(Allocator* alloc, size_t capacity) : m_begin(nullptr), m_end(nullptr), m_last(nullptr), m_blockSize(0), m_allocator(alloc)
+		array(Allocator &&alloc, size_t capacity) : m_begin(nullptr), m_end(nullptr), m_last(nullptr), m_blockSize(0), m_allocator(std::move(alloc))
 		{
-			auto block = alloc->allocate(sizeof(value_type) * capacity, __alignof(value_type));
+			auto block = m_allocator.allocate(sizeof(value_type) * capacity, __alignof(value_type));
 			m_begin = m_end = (pointer)block.ptr;
 			m_last = m_begin + capacity;
 			m_blockSize = block.size;
 		}
+
+		template<typename T>
+		array(T* alloc, size_t capacity) : array(std::move(Allocator(alloc)), capacity) {}
 
 		array(const array&) = delete;
 
@@ -59,17 +62,15 @@ namespace vx
 			m_end(other.m_end),
 			m_last(other.m_last),
 			m_blockSize(other.m_blockSize),
-			m_allocator(other.m_allocator)
+			m_allocator(std::move(other.m_allocator))
 		{
 			other.m_begin = nullptr;
 			other.m_blockSize = 0;
-			other.m_allocator = nullptr;
 		}
 
 		~array()
 		{
 			release();
-			m_allocator = nullptr;
 		}
 
 		array& operator=(const array&) = delete;
@@ -89,7 +90,7 @@ namespace vx
 			std::swap(m_end, other.m_end);
 			std::swap(m_last, other.m_last);
 			std::swap(m_blockSize, other.m_blockSize);
-			std::swap(m_allocator, other.m_allocator);
+			m_allocator.swap(other.m_allocator);
 		}
 
 		template<typename ...Args>
@@ -128,11 +129,11 @@ namespace vx
 
 		void release()
 		{
-			if (m_allocator)
+			if (m_begin)
 			{
 				clear();
 
-				m_allocator->deallocate(AllocatedBlock{ (u8*)m_begin, m_blockSize });
+				m_allocator.deallocate(AllocatedBlock{ (u8*)m_begin, m_blockSize });
 
 				m_begin = m_end = m_last = nullptr;
 				m_blockSize = 0;

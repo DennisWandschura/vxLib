@@ -39,17 +39,20 @@ namespace vx
 		AllocatedBlock m_keyBlock;
 		AllocatedBlock m_dataBlock;
 		size_t m_size;
-		Allocator* m_allocator;
+		Allocator m_allocator;
 
 	public:
 		sorted_array() : m_keyBlock(), m_dataBlock(), m_size(0), m_allocator(nullptr) {}
 
-		explicit sorted_array(Allocator* alloc, size_t capacity)
-			: m_keyBlock(), m_dataBlock(), m_size(0), m_allocator(alloc)
+		sorted_array(Allocator &&alloc, size_t capacity)
+			: m_keyBlock(), m_dataBlock(), m_size(0), m_allocator(std::move(alloc))
 		{
-			m_keyBlock = alloc->allocate(sizeof(key_type) * capacity, __alignof(key_type));
-			m_dataBlock = alloc->allocate(sizeof(value_type) * capacity, __alignof(value_type));
+			m_keyBlock = m_allocator.allocate(sizeof(key_type) * capacity, __alignof(key_type));
+			m_dataBlock = m_allocator.allocate(sizeof(value_type) * capacity, __alignof(value_type));
 		}
+
+		template<typename T>
+		sorted_array(T* alloc, size_t capacity) : sorted_array(std::move(Allocator(alloc)), capacity) {}
 
 		sorted_array(const sorted_array&) = delete;
 
@@ -85,7 +88,7 @@ namespace vx
 			std::swap(m_keyBlock, other.m_keyBlock);
 			std::swap(m_dataBlock, other.m_dataBlock);
 			std::swap(m_size, other.m_size);
-			std::swap(m_allocator, other.m_allocator);
+			m_allocator.swap(other.m_allocator);
 		}
 
 		template<typename ...Args>
@@ -115,7 +118,7 @@ namespace vx
 				new (keyPtrEnd++) key_type{ key };
 				new (dataPtrEnd++) value_type{ std::forward<Args>(args)... };
 
-				std::rotate(keyPtrBegin + idx, keyPtrEnd - 1, keyPtrEnd);
+				std::rotate(it, keyPtrEnd - 1, keyPtrEnd);
 				std::rotate(dataPtr, dataPtrEnd - 1, dataPtrEnd);
 
 				++m_size;
@@ -177,13 +180,15 @@ namespace vx
 
 		void release()
 		{
-			clear();
-
-			if (m_allocator)
+			if (m_keyBlock.ptr)
 			{
-				m_allocator->deallocate(m_keyBlock);
-				m_allocator->deallocate(m_dataBlock);
-				m_allocator = nullptr;
+				clear();
+
+				m_allocator.deallocate(m_keyBlock);
+				m_allocator.deallocate(m_dataBlock);
+
+				m_keyBlock = { nullptr, 0 };
+				m_dataBlock = { nullptr, 0 };
 			}
 		}
 

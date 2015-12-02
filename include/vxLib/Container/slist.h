@@ -25,6 +25,7 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/Allocator.h>
+#include <algorithm>
 
 namespace vx
 {
@@ -60,6 +61,16 @@ namespace vx
 				rhs.m_next = nullptr;
 			}
 			return *this;
+		}
+
+		ListNodeSingleLinked* next()
+		{
+			return m_next;
+		}
+
+		const ListNodeSingleLinked* next() const
+		{
+			return m_next;
 		}
 	};
 
@@ -103,6 +114,9 @@ namespace vx
 		slist() :m_head(nullptr), m_tail(nullptr), m_size(0), m_allocator(nullptr) {}
 
 		explicit slist(Allocator* allocator) :m_head(nullptr), m_tail(nullptr), m_size(0), m_allocator(allocator) {}
+
+		template<typename T>
+		explicit slist(T* alloc) : slist(std::move(Allocator(alloc))) {}
 
 		slist(const slist&) = delete;
 
@@ -215,6 +229,11 @@ namespace vx
 		size_t size() const
 		{
 			return m_size;
+		}
+
+		bool empty() const
+		{
+			return (m_size == 0);
 		}
 	};
 }

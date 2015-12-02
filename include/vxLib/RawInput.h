@@ -32,6 +32,7 @@ namespace vx
 #include <vxLib/math/Vector.h>
 #include <vxLib/Keyboard.h>
 #include <vxLib/Container/array.h>
+#include <vxLib/Allocator/DefaultContainerAllocator.h>
 
 namespace vx
 {
@@ -64,14 +65,14 @@ namespace vx
 
 		static Keyboard s_keyboard;
 		static Mouse s_mouse;
-		static vx::array<KeyEvent, LinearAllocator> s_keyEvents;
+		static vx::array<KeyEvent, DefaultContainerAllocator<LinearAllocator>> s_keyEvents;
 		static Input::KeyEventCallback s_keyEventPressedCallback;
 		static Input::KeyEventCallback s_keyEventReleasedCallback;
 
 		RawInput();
 		~RawInput();
 
-		static bool initialize(void* window, LinearAllocator* allocator, u32 maxEventCount);
+		static bool initialize(void* window, DefaultContainerAllocator<LinearAllocator> &&allocator, u32 maxEventCount);
 		static void shutdown();
 
 		static void update(s64 lparam);

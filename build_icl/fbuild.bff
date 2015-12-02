@@ -236,7 +236,7 @@ ForEach( .Target in .Targets )
 		
 		.LibrarianOptions = '/OUT:"%2" "%1" /link /MACHINE:X64 /NOLOGO'
 		.LibrarianOutput = '$OutPath$\$FileName$.lib'
-		.LibrarianAdditionalInputs = {'Obj_C_$TargetName$', 'Obj_$TargetName$', 'Obj_ASM_$TargetName$'}
+		.LibrarianAdditionalInputs = {'Obj_C_$TargetName$', 'Obj_$TargetName$'}
 	}
 }
 

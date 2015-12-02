@@ -174,7 +174,7 @@ namespace vx
 		return true;
 	}
 
-	bool Window::initialize(const wchar_t *windowName, const vx::uint2 &windowSize, bool bFullscreen, LinearAllocator* allocator, u32 maxKeyEvtCount)
+	bool Window::initialize(const wchar_t *windowName, const vx::uint2 &windowSize, bool bFullscreen, DefaultContainerAllocator<LinearAllocator> &&allocator, u32 maxKeyEvtCount)
 	{
 		ZeroMemory(&m_msg, sizeof(MSG));
 		m_coldData = new ColdData();
@@ -187,7 +187,7 @@ namespace vx
 			return false;
 		}
 
-		if (!RawInput::initialize(m_coldData->m_hwnd, allocator, maxKeyEvtCount))
+		if (!RawInput::initialize(m_coldData->m_hwnd, std::move(allocator), maxKeyEvtCount))
 			return false;
 
 		return true;

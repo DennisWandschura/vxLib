@@ -30,13 +30,13 @@ namespace vx
 {
 	Keyboard RawInput::s_keyboard{};
 	Mouse RawInput::s_mouse{};
-	vx::array<KeyEvent, LinearAllocator> RawInput::s_keyEvents{};
+	vx::array<KeyEvent, DefaultContainerAllocator<LinearAllocator>> RawInput::s_keyEvents{};
 	Input::KeyEventCallback RawInput::s_keyEventPressedCallback{ nullptr };
 	Input::KeyEventCallback RawInput::s_keyEventReleasedCallback{ nullptr };
 
 	struct InputHandler
 	{
-		static void handleKeyboard(const RAWKEYBOARD &rawKeyboard, Keyboard* keyboard, vx::array<KeyEvent, LinearAllocator>* keyEvents)
+		static void handleKeyboard(const RAWKEYBOARD &rawKeyboard, Keyboard* keyboard, vx::array<KeyEvent, DefaultContainerAllocator<LinearAllocator>>* keyEvents)
 		{
 			auto flag = rawKeyboard.Flags;
 			auto key = rawKeyboard.VKey;
@@ -76,7 +76,7 @@ namespace vx
 		s_keyEvents.clear();
 	}
 
-	bool RawInput::initialize(void* window, LinearAllocator* allocator, u32 maxEventCount)
+	bool RawInput::initialize(void* window, DefaultContainerAllocator<LinearAllocator> &&allocator, u32 maxEventCount)
 	{
 		RAWINPUTDEVICE rid[2];
 
@@ -103,7 +103,7 @@ namespace vx
 		s_mouse.m_relative.x = 0;
 		s_mouse.m_relative.y = 0;
 
-		vx::array <KeyEvent, LinearAllocator> evtArray(allocator, maxEventCount);
+		vx::array <KeyEvent, DefaultContainerAllocator<LinearAllocator>> evtArray(std::move(allocator), maxEventCount);
 		s_keyEvents.swap(evtArray);
 
 		return true;

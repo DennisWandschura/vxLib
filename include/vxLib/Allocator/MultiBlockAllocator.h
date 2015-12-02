@@ -43,16 +43,16 @@ namespace vx
 		u8* m_firstBlock;
 		union
 		{
-			u8* m_bitsPtr;
+			u32* m_bitsPtr;
 			size_t m_bits;
 		};
 		size_t m_remainingBlocks;
 		size_t m_blockCount;
 		vx::AllocatedBlock m_block;
 
-		u8* getBitPtr()
+		u32* getBitPtr()
 		{
-			return (m_blockCount <= BitsSizeT) ? (u8*)&m_bits : m_bitsPtr;
+			return (m_blockCount <= BitsSizeT) ? (u32*)&m_bits : m_bitsPtr;
 		}
 
 		size_t countBlocks(const AllocatedBlock &block)
@@ -64,7 +64,7 @@ namespace vx
 			return remainingSize / BLOCK_SIZE;
 		}
 
-		bool findEmptyBit(u8* bitsPtr, size_t* resultBit, size_t blockCount)
+		bool findEmptyBit(u32* bitsPtr, size_t* resultBit, size_t blockCount)
 		{
 			auto byte = 0;
 
@@ -76,9 +76,9 @@ namespace vx
 			while (remainingBlocks >= blockCount)
 			{
 				auto p = bitsPtr[byte];
-				auto bitsToCheck = (remainingBlocks < 8) ? remainingBlocks : 8;
-				if (bitsToCheck < blockCount)
-					break;
+				auto bitsToCheck = (remainingBlocks < 32) ? remainingBlocks : 32;
+				//if (bitsToCheck < blockCount)
+				//	break;
 
 				for (size_t bit = 0; bit < bitsToCheck; ++bit)
 				{
@@ -109,14 +109,14 @@ namespace vx
 			return false;
 		}
 
-		void setBits(u8* bitsPtr, size_t blockIndex, size_t blockCount)
+		void setBits(u32* bitsPtr, size_t blockIndex, size_t blockCount)
 		{
 			for (size_t i = 0; i < blockCount; ++i)
 			{
 				auto blockIdx = blockIndex + i;
 
-				auto byte = blockIdx / 8;
-				auto bit = blockIdx & 7;
+				auto byte = blockIdx / 32;
+				auto bit = blockIdx & 31;
 
 				bitsPtr[byte] |= (1 << bit);
 			}
@@ -130,8 +130,8 @@ namespace vx
 			{
 				auto blockIdx = blockIndex + i;
 
-				auto byte = blockIdx / 8;
-				auto bit = blockIdx & 7;
+				auto byte = blockIdx / 32;
+				auto bit = blockIdx & 31;
 
 				bitsPtr[byte] &= ~(1 << bit);
 			}
@@ -157,7 +157,8 @@ namespace vx
 			}
 			else
 			{
-				auto requiredBytes = (blockCount + 7 / 8);
+				auto requiredBytes = (blockCount + 7) / 8;
+				requiredBytes = vx::getAlignedSize(requiredBytes, __alignof(u32));
 				auto requiredBlocksForBits = (requiredBytes + BLOCK_SIZE - 1) / BLOCK_SIZE;
 				if (requiredBlocksForBits >= blockCount)
 					return;
@@ -165,10 +166,10 @@ namespace vx
 				blockCount -= requiredBlocksForBits;
 
 				auto bitblockSize = requiredBlocksForBits * BLOCK_SIZE;
-				m_bitsPtr = getAlignedPtr(block.ptr, ALIGNMENT);
+				m_bitsPtr = (u32*)getAlignedPtr(block.ptr, ALIGNMENT);
 				memset(m_bitsPtr, 0, bitblockSize);
 
-				m_firstBlock = m_bitsPtr + bitblockSize;
+				m_firstBlock = reinterpret_cast<u8*>(m_bitsPtr) + bitblockSize;
 			}
 
 			m_remainingBlocks = blockCount;
@@ -178,7 +179,8 @@ namespace vx
 
 		AllocatedBlock release()
 		{
-			m_firstBlock = m_bitsPtr = nullptr;
+			m_firstBlock = nullptr;
+			m_bitsPtr = nullptr;
 			m_remainingBlocks = 0;
 			
 			auto blck = m_block;

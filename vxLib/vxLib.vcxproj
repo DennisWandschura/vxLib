@@ -177,9 +177,11 @@
     <ClInclude Include="..\include\vxLib\Allocator\Allocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\BitmapBlock.h" />
     <ClInclude Include="..\include\vxLib\Allocator\ChunkAllocator.h" />
+    <ClInclude Include="..\include\vxLib\Allocator\DefaultContainerAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\Freelist.h" />
     <ClInclude Include="..\include\vxLib\Allocator\LinearAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\Mallocator.h" />
+    <ClInclude Include="..\include\vxLib\Allocator\MultiBlockAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\StackAllocator.h" />
     <ClInclude Include="..\include\vxLib\Container\array.h" />
     <ClInclude Include="..\include\vxLib\Container\bitset.h" />

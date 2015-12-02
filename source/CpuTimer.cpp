@@ -25,58 +25,61 @@ SOFTWARE.
 #include <vxlib/CpuTimer.h>
 #include <Windows.h>
 
-s64 CpuTimer::s_frequency{0};
-
-CpuTimer::CpuTimer()
-	:m_start(0)
+namespace vx
 {
-	QueryPerformanceCounter((LARGE_INTEGER*)&m_start);
+	s64 CpuTimer::s_frequency{ 0 };
 
-	if (s_frequency == 0)
+	CpuTimer::CpuTimer()
+		:m_start(0)
 	{
-		QueryPerformanceFrequency((LARGE_INTEGER*)&s_frequency);
+		QueryPerformanceCounter((LARGE_INTEGER*)&m_start);
+
+		if (s_frequency == 0)
+		{
+			QueryPerformanceFrequency((LARGE_INTEGER*)&s_frequency);
+		}
 	}
-}
 
-CpuTimer::~CpuTimer()
-{
+	CpuTimer::~CpuTimer()
+	{
 
-}
+	}
 
-void CpuTimer::reset()
-{
-	LARGE_INTEGER start;
-	QueryPerformanceCounter(&start);
+	void CpuTimer::reset()
+	{
+		LARGE_INTEGER start;
+		QueryPerformanceCounter(&start);
 
-	m_start = start.QuadPart;
-}
+		m_start = start.QuadPart;
+	}
 
-f32 CpuTimer::getTimeSeconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
+	f32 CpuTimer::getTimeSeconds() const
+	{
+		LARGE_INTEGER end;
+		QueryPerformanceCounter(&end);
 
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
+		f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
 
-	return f32(time * 1.0e-6);
-}
+		return f32(time * 1.0e-6);
+	}
 
-f32 CpuTimer::getTimeMiliseconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
+	f32 CpuTimer::getTimeMiliseconds() const
+	{
+		LARGE_INTEGER end;
+		QueryPerformanceCounter(&end);
 
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
+		f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
 
-	return f32(time * 0.001f);
-}
+		return f32(time * 0.001f);
+	}
 
-f32 CpuTimer::getTimeMicroseconds() const
-{
-	LARGE_INTEGER end;
-	QueryPerformanceCounter(&end);
+	f32 CpuTimer::getTimeMicroseconds() const
+	{
+		LARGE_INTEGER end;
+		QueryPerformanceCounter(&end);
 
-	f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
+		f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
 
-	return static_cast<f32>(time);
+		return static_cast<f32>(time);
+	}
 }

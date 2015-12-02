@@ -26,19 +26,22 @@ SOFTWARE.
 
 #include <vxLib/types.h>
 
-class CpuTimer
+namespace vx
 {
-	static s64 s_frequency;
+	class CpuTimer
+	{
+		static s64 s_frequency;
 
-	s64 m_start;
+		s64 m_start;
 
-public:
-	CpuTimer();
-	~CpuTimer();
+	public:
+		CpuTimer();
+		~CpuTimer();
 
-	void reset();
+		void reset();
 
-	f32 getTimeSeconds() const;
-	f32 getTimeMiliseconds() const;
-	f32 getTimeMicroseconds() const;
-};
+		f32 getTimeSeconds() const;
+		f32 getTimeMiliseconds() const;
+		f32 getTimeMicroseconds() const;
+	};
+}

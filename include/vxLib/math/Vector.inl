@@ -27,9 +27,12 @@ namespace vx
 {
 	inline __m128 VX_CALLCONV fma(CVEC4 a, CVEC4 b, CVEC4 c)
 	{
-		//return _mm_fmadd_ps(a, b, c);
+#if _VX_FMA
+		return _mm_fmadd_ps(a, b, c);
+#else
 		auto tmp = _mm_mul_ps(a, b);
 		return _mm_add_ps(tmp, c);
+#endif
 	}
 
 	inline __m128 VX_CALLCONV VectorNegativeMultiplySubtract(CVEC4 a, CVEC4 b, CVEC4 c)
@@ -40,12 +43,35 @@ namespace vx
 
 	inline __m128 VX_CALLCONV dot2(CVEC4 v1, CVEC4 v2)
 	{
+#if _VX_SSE41
 		return _mm_dp_ps(v1, v2, _VX_DOT(1, 1, 1, 1, 1, 1, 0, 0));
+#else
+		auto tmp = _mm_mul_ps(v1, v2);
+		// y, x, w, z
+		auto tmp1 = VX_PERMUTE_PS(tmp, _MM_SHUFFLE(2, 3, 0, 1));
+		// x+y, y+x, ...
+		tmp = _mm_add_ps(tmp, tmp1);
+		// splat result
+		return VX_PERMUTE_PS(tmp, _MM_SHUFFLE(0, 0, 0, 0));
+#endif
 	}
 
 	inline __m128 VX_CALLCONV dot3(CVEC4 v1, CVEC4 v2)
 	{
+#if _VX_SSE41
 		return _mm_dp_ps(v1, v2, _VX_DOT(1, 1, 1, 1, 1, 1, 1, 0));
+#else
+		auto tmp = _mm_mul_ps(v1, v2);
+		// y, x, w, z
+		auto tmp1 = VX_PERMUTE_PS(tmp, _MM_SHUFFLE(2, 3, 0, 1));
+		// z z z z
+		auto tmp2 = VX_PERMUTE_PS(tmp, _MM_SHUFFLE(2, 2, 2, 2));
+		// x+y, y+x, ...
+		tmp1 = _mm_add_ps(tmp, tmp1);
+		tmp1 = _mm_add_ps(tmp1, tmp2);
+
+		return VX_PERMUTE_PS(tmp1, _MM_SHUFFLE(0, 0, 0, 0));
+#endif
 	}
 
 	inline __m256d VX_CALLCONV dot3(__m256d v1, __m256d v2)
@@ -63,7 +89,19 @@ namespace vx
 
 	inline __m128 VX_CALLCONV dot4(CVEC4 v1, CVEC4 v2)
 	{
+#if _VX_SSE41
 		return _mm_dp_ps(v1, v2, 255);
+#else
+		auto tmp = _mm_mul_ps(v1, v2);
+		// y, x, w, z
+		auto tmp1 = VX_PERMUTE_PS(tmp, _MM_SHUFFLE(2, 3, 0, 1));
+		// x+y, y+x, z + w
+		tmp1 = _mm_add_ps(tmp, tmp1);
+		auto tmp2 = VX_PERMUTE_PS(tmp1, _MM_SHUFFLE(1, 0, 3, 2));
+		tmp1 = _mm_add_ps(tmp1, tmp2);
+
+		return VX_PERMUTE_PS(tmp1, _MM_SHUFFLE(0, 0, 0, 0));
+#endif
 	}
 
 	inline __m128 VX_CALLCONV min(CVEC4 a, CVEC4 b)

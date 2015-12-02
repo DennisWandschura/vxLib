@@ -63,12 +63,12 @@ namespace vx
 		size_type m_sizeFront;
 		size_type m_sizeBack;
 		size_type m_capacity;
-		Allocator* m_allocator;
+		Allocator m_allocator;
 		size_t m_allocSize;
 
 		void allocateMemory(size_type capacity)
 		{
-			auto block = m_allocator->allocate(sizeof(value_type) * capacity * 2, __alignof(value_type));
+			auto block = m_allocator.allocate(sizeof(value_type) * capacity * 2, __alignof(value_type));
 			if (block.ptr)
 			{
 				m_frontBuffer = reinterpret_cast<pointer>(block.ptr);
@@ -112,16 +112,22 @@ namespace vx
 			m_allocator(nullptr),
 			m_allocSize(0){}
 
-		DoubleBuffer(Allocator* allocator, size_type capacity)
+		DoubleBuffer(Allocator &&allocator, size_type capacity)
 			:m_frontBuffer(nullptr),
 			m_backBuffer(nullptr),
 			m_sizeFront(0),
 			m_sizeBack(0),
 			m_capacity(0),
-			m_allocator(allocator),
+			m_allocator(std::move(allocator)),
 			m_allocSize(0)
 		{
 			allocateMemory(capacity);
+		}
+
+		template<typename U>
+		DoubleBuffer(U* ptr, size_type capacity)
+			:DoubleBuffer(std::move(Allocator(ptr)), capacity)
+		{
 		}
 
 		DoubleBuffer(const DoubleBuffer&) = delete;
@@ -132,10 +138,9 @@ namespace vx
 			m_sizeFront(rhs.m_sizeFront),
 			m_sizeBack(rhs.m_sizeBack),
 			m_capacity(rhs.m_capacity),
-			m_allocator(rhs.m_allocator),
+			m_allocator(std::move(rhs.m_allocator)),
 			m_allocSize(rhs.m_allocSize)
 		{
-			rhs.m_allocator = nullptr;
 		}
 
 		~DoubleBuffer()
@@ -162,20 +167,19 @@ namespace vx
 			vx::swap(m_sizeFront, other.m_sizeFront);
 			vx::swap(m_sizeBack, other.m_sizeBack);
 			vx::swap(m_capacity, other.m_capacity);
-			vx::swap(m_allocator, other.m_allocator);
+			m_allocator.swap(other.m_allocator);
 			vx::swap(m_allocSize, other.m_allocSize);
 		}
 
 		void release()
 		{
-			if (m_allocator)
+			if (m_frontBuffer)
 			{
 				clearFrontBuffer();
 				clearBackBuffer();
 
-				m_allocator->deallocate({ (u8*)m_frontBuffer, m_allocSize });
+				m_allocator.deallocate({ (u8*)m_frontBuffer, m_allocSize });
 				m_frontBuffer = nullptr;
-				m_allocator = nullptr;
 				m_allocSize = 0;
 			}
 		}
