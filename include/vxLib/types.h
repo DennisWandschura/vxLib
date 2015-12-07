@@ -58,6 +58,18 @@ static_assert(sizeof(u64) == 8, "Wrong type size");
 static_assert(sizeof(f32) == 4, "Wrong type size");
 static_assert(sizeof(f64) == 8, "Wrong type size");
 
+namespace vx
+{
+	static const s8 s8_max = 0x7f;
+	static const u8 u8_max = 0xff;
+	static const s16 s16_max = 0x7fff;
+	static const u16 u16_max = 0xffff;
+	static const s32 s32_max = 0x7fffffff;
+	static const u32 u32_max = 0xffffffff;
+	static const s64 s64_max = 0x7fffffffffffffff;
+	static const u64 u64_max = 0xffffffffffffffff;
+}
+
 #if _VX_ASSERT
 #ifdef  NDEBUG
 #ifdef __cplusplus

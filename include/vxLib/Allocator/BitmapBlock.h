@@ -153,7 +153,7 @@ namespace vx
 			if (requiredBytes <= sizeof(size_t))
 			{
 				// small string optimization
-				m_bits = 0;
+				m_bits = size_t(-1);
 			}
 			else
 			{

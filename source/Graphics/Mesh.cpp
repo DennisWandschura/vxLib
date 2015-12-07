@@ -141,7 +141,7 @@ namespace vx
 			}
 
 			auto totalSize = sizeof(MeshVertex) * m_vertexCount + sizeof(u32) * m_indexCount;
-			if (!file->write((u8*)m_pVertices, totalSize))
+			if (!file->write((u8*)m_pVertices, (s32)totalSize))
 			{
 				puts("Mesh::saveToFile(): Error writing to file");
 				return false;

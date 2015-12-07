@@ -138,6 +138,8 @@ namespace vx
 		}
 
 	public:
+		enum : size_t {MaxAllocSize = BLOCK_SIZE * MAX_BLOCK_COUNT};
+
 		MultiBlockAllocator() : m_firstBlock(nullptr), m_bitsPtr(nullptr), m_remainingBlocks(0), m_blockCount(0), m_block() { }
 
 		explicit MultiBlockAllocator(const AllocatedBlock &block) : m_firstBlock(nullptr), m_bitsPtr(nullptr), m_remainingBlocks(0), m_blockCount(0), m_block(block){ initialize(block); }
@@ -203,7 +205,7 @@ namespace vx
 
 			auto bitsPtr = getBitPtr();
 			size_t resultBlock = 0;
-			if(!findEmptyBit(bitsPtr,&resultBlock, blockCount))
+			if(!findEmptyBit(bitsPtr, &resultBlock, blockCount))
 				return{ nullptr, 0 };
 
 			setBits(bitsPtr, resultBlock, blockCount);
@@ -211,11 +213,14 @@ namespace vx
 
 			auto offset = BLOCK_SIZE * resultBlock;
 
-			return{ m_firstBlock + offset, alignedSize };
+			return{ m_firstBlock + offset, blockCount * BLOCK_SIZE };
 		}
 
 		u32 deallocate(const AllocatedBlock &block)
 		{
+			if (block.ptr == nullptr || block.size == 0)
+				return 1;
+
 			VX_ASSERT(block.ptr >= m_firstBlock);
 
 			auto blockIndex = (block.ptr - m_firstBlock) / BLOCK_SIZE;

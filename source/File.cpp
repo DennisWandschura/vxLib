@@ -91,12 +91,12 @@ namespace vx
 		return result;
 	}
 
-	bool File::read(void *ptr, u32 size)
+	bool File::read(void *ptr, s32 size)
 	{
 		return (ReadFile(m_pFile, ptr, size, nullptr, nullptr) != 0);
 	}
 
-	bool File::write(const void *ptr, u32 size, u32 *pWrittenBytes)
+	bool File::write(const u8 *ptr, s32 size, s32 *pWrittenBytes)
 	{
 		return (WriteFile(m_pFile, ptr, size, (DWORD*)pWrittenBytes, nullptr) != 0);
 	}
@@ -106,11 +106,11 @@ namespace vx
 		return (SetEndOfFile(m_pFile) != 0);
 	}
 
-	bool File::seek(s64 offset)
+	bool File::seek(s64 offset, FileSeekPosition from)
 	{
 		LARGE_INTEGER tmp;
 		tmp.QuadPart = offset;
-		return (SetFilePointerEx(m_pFile, tmp, nullptr, FILE_CURRENT) != 0);
+		return (SetFilePointerEx(m_pFile, tmp, nullptr, (u32)from) != 0);
 	}
 
 	s64 File::getSize() const

@@ -28,7 +28,7 @@ namespace vx
 	class LinearAllocator;
 
 	template<typename Allocator>
-	class DefaultContainerAllocator;
+	class DelegateAllocator;
 }
 
 #include <vxLib/math/Vector.h>
@@ -64,7 +64,7 @@ namespace vx
 		Window& operator=(const Window&) = delete;
 		Window& operator=(Window &&rhs);
 
-		bool initialize(const wchar_t *windowName, const vx::uint2 &windowSize, bool bFullscreen, DefaultContainerAllocator<LinearAllocator> &&allocator, u32 maxKeyEvtCount);
+		bool initialize(const wchar_t *windowName, const vx::uint2 &windowSize, bool bFullscreen, DelegateAllocator<LinearAllocator> &&allocator, u32 maxKeyEvtCount);
 
 		void shutdown();
 

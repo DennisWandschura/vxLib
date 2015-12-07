@@ -44,7 +44,7 @@
 .DefinesCommon   = '/D "_UNICODE" /D "UNICODE" /D "_VX_WINDOWS" /D "NOMINMAX" /D "_CRT_SECURE_NO_WARNINGS" /D "_VX_NO_EXCEPTIONS"'	
 .DefinesDebug = '/D "_DEBUG" /D "_VX_ASSERT"'
 .DefinesRelease = '/D "NDEBUG"'
-.Includes = '/I..\include\'
+.Includes = '/I..\include\ /I..\..\double-conversion\include\'
 .IncludesASM = '/I..\source\'
 
 // Build type

@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/Allocator/DefaultContainerAllocator.h>
+#include <vxLib/Allocator/DelegateAllocator.h>
 #include <utility>
 
 namespace vx
@@ -94,17 +94,19 @@ namespace vx
 		}
 
 		template<typename ...Args>
-		void push_back(Args&&... args)
+		u32 push_back(Args&&... args)
 		{
 			auto last = m_last;
 			auto end = m_end;
 			if (end >= last)
 			{
-				return;
+				return 0;
 			}
 
 			new(m_end) value_type{ std::forward<Args>(args)... };
 			++m_end;
+
+			return 1;
 		}
 
 		void pop_back()

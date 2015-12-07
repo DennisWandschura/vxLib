@@ -84,12 +84,12 @@ namespace vx
 		MyNode* m_head;
 		MyNode* m_tail;
 		size_t m_size;
-		Allocator* m_allocator;
+		Allocator m_allocator;
 
 		template <class... Args>
 		MyNode* createNode(Args&& ...args)
 		{
-			AllocatedBlock block = m_allocator->allocate(sizeof(MyNode), __alignof(MyNode));
+			AllocatedBlock block = m_allocator.allocate(sizeof(MyNode), __alignof(MyNode));
 
 			MyNode* node = (MyNode*)block.ptr;
 			if (block.ptr != nullptr)
@@ -107,13 +107,13 @@ namespace vx
 			node->~MyNode();
 
 			AllocatedBlock block{ (u8*)node, sizeof(MyNode) };
-			m_allocator->deallocate(block);
+			m_allocator.deallocate(block);
 		}
 
 	public:
-		slist() :m_head(nullptr), m_tail(nullptr), m_size(0), m_allocator(nullptr) {}
+		slist() :m_head(nullptr), m_tail(nullptr), m_size(0), m_allocator() {}
 
-		explicit slist(Allocator* allocator) :m_head(nullptr), m_tail(nullptr), m_size(0), m_allocator(allocator) {}
+		explicit slist(Allocator &&allocator) :m_head(nullptr), m_tail(nullptr), m_size(0), m_allocator(std::move(allocator)) {}
 
 		template<typename T>
 		explicit slist(T* alloc) : slist(std::move(Allocator(alloc))) {}
@@ -124,19 +124,15 @@ namespace vx
 			: m_head(other.m_head),
 			m_tail(other.m_tail),
 			m_size(other.m_size),
-			m_allocator(other.m_allocator)
+			m_allocator(std::move(other.m_allocator))
 		{
 			other.m_head = nullptr;
 			other.m_tail = nullptr;
-			other.m_allocator = nullptr;
 		}
 
 		~slist()
 		{
-			if (m_allocator)
-			{
-				clear();
-			}
+			clear();
 		}
 
 		slist& operator=(const slist&) = delete;
@@ -155,7 +151,7 @@ namespace vx
 			std::swap(m_head, other.m_head);
 			std::swap(m_tail, other.m_tail);
 			std::swap(m_size, other.m_size);
-			std::swap(m_allocator, other.m_allocator);
+			m_allocator.swap(other.m_allocator);
 		}
 
 		void clear()
@@ -174,11 +170,11 @@ namespace vx
 		}
 
 		template <class... Args>
-		void push_back(Args&& ...args)
+		bool push_back(Args&& ...args)
 		{
 			auto node = createNode(std::forward<Args>(args)...);
 			if (node == nullptr)
-				return;
+				return false;
 
 			if (m_head)
 			{
@@ -191,6 +187,7 @@ namespace vx
 			}
 
 			++m_size;
+			return true;
 		}
 
 		void pop_front()
@@ -204,6 +201,16 @@ namespace vx
 			m_head = nextNode;
 
 			--m_size;
+		}
+
+		inline T& front()
+		{
+			return m_head->m_data;
+		}
+
+		inline const T& front() const
+		{
+			return m_head->m_data;
 		}
 
 		inline MyNode* begin()

@@ -35,6 +35,13 @@ namespace vx
 		Read_Write = Read | Write
 	};
 
+	enum class FileSeekPosition : u32
+	{
+		Begin = 0,
+		Current = 1,
+		End = 2
+	};
+
 	class File
 	{
 		void *m_pFile;
@@ -47,7 +54,7 @@ namespace vx
 		bool open(const char *file, FileAccess access);
 		bool close();
 
-		bool read(void *ptr, u32 size);
+		bool read(void *ptr, s32 size);
 
 		template<typename T>
 		bool read(T &value)
@@ -55,23 +62,18 @@ namespace vx
 			return read(&value, sizeof(T));
 		}
 
-		bool write(const void *ptr, u32 size, u32 *pWrittenBytes);
+		bool write(const u8 *ptr, s32 size, s32* pWrittenBytes = nullptr);
 
 		template<typename T>
 		bool write(const T &value)
 		{
-			return write(&value, sizeof(T), nullptr);
-		}
-
-		template<typename T>
-		bool write(const T *ptr, u32 count)
-		{
-			return write(ptr, sizeof(T) * count, nullptr);
+			static_assert( sizeof(T) <= vx::s32_max, "value too large");
+			return write((const u8*)&value, (s32)sizeof(T), nullptr);
 		}
 
 		bool setEof();
 
-		bool seek(s64 offset);
+		bool seek(s64 offset, FileSeekPosition from);
 
 		s64 getSize() const;
 

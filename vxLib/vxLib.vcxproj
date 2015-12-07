@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>d:\Users\dennis\Documents\Visual Studio 2015\Projects\vxLib\include;$(IncludePath)</IncludePath>
+    <IncludePath>d:\Users\dennis\Documents\Visual Studio 2015\Projects\double-conversion-master\include;d:\Users\dennis\Documents\Visual Studio 2015\Projects\vxLib\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -149,12 +149,14 @@
     </ClCompile>
     <ClCompile Include="..\source\Graphics\Surface.cpp" />
     <ClCompile Include="..\source\Graphics\Texture.cpp" />
+    <ClCompile Include="..\source\int_to_string.cpp" />
     <ClCompile Include="..\source\Keyboard.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\source\math\half.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\source\print.cpp" />
     <ClCompile Include="..\source\RawInput.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
@@ -177,7 +179,7 @@
     <ClInclude Include="..\include\vxLib\Allocator\Allocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\BitmapBlock.h" />
     <ClInclude Include="..\include\vxLib\Allocator\ChunkAllocator.h" />
-    <ClInclude Include="..\include\vxLib\Allocator\DefaultContainerAllocator.h" />
+    <ClInclude Include="..\include\vxLib\Allocator\DelegateAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\Freelist.h" />
     <ClInclude Include="..\include\vxLib\Allocator\LinearAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\Mallocator.h" />
@@ -204,6 +206,7 @@
     <ClInclude Include="..\include\vxLib\math\math.h" />
     <ClInclude Include="..\include\vxLib\math\matrix.h" />
     <ClInclude Include="..\include\vxLib\math\Vector.h" />
+    <ClInclude Include="..\include\vxLib\print.h" />
     <ClInclude Include="..\include\vxLib\RawInput.h" />
     <ClInclude Include="..\include\vxLib\ScopeGuard.h" />
     <ClInclude Include="..\include\vxLib\Singleton.h" />
