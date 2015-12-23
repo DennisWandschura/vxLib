@@ -15,9 +15,9 @@ namespace vx
 			extern bool int_to_string(s64 val, char** buffer, int* remainingBufferSize, int* size);
 			extern bool int_to_string(u64 val, char** buffer, int* remainingBufferSize, int* size);
 
-			extern int g_bufferSize;
-			extern char* g_buffer;
-			extern HANDLE g_consoleHandle;
+			extern thread_local int g_bufferSize;
+			extern thread_local char* g_buffer;
+			extern thread_local HANDLE g_consoleHandle;
 
 			inline bool copy_string_until_var(char** dst_inout, const char** src_inout, int dstSize, int* written)
 			{

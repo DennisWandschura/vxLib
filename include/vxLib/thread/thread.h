@@ -26,10 +26,8 @@ namespace vx
 
 		bool create(ThreadProcSignature tp, void* param)
 		{
-			const auto stackSize = 1 MBYTE;
-
 			DWORD tid;
-			auto handle = CreateThread(nullptr, stackSize, tp, param, THREAD_SUSPEND_RESUME, &tid);
+			auto handle = CreateThread(nullptr, 0, tp, param, THREAD_SUSPEND_RESUME, &tid);
 			if (handle != nullptr)
 			{
 				m_handle = handle;

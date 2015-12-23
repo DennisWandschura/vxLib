@@ -79,46 +79,23 @@ namespace vx
 
 		bool findEmptyBit(u32* bitPtr, size_t* resultBit)
 		{
-			auto byte = 0;
-
 			size_t block = 0;
 			auto remainingBlocks = m_blockCount;
 			while (remainingBlocks > 0)
 			{
 				auto bitsToCheck = (remainingBlocks < 32) ? remainingBlocks : 32;
 
-				auto p = bitPtr[byte];
+				auto p = *bitPtr++;
 				unsigned long bit = 0;
 				auto result = _BitScanForward(&bit, p);
 				if (result != 0)
 				{
-					if (bit < bitsToCheck)
-					{
-						*resultBit = block + bit;
-						return true;
-					}
+					*resultBit = block + bit;
 
-					return false;
+					return bit < bitsToCheck;
 				}
-				else
-				{
-					block += 32;
-				}
-				/*auto bitsToCheck = (remainingBlocks < 8) ? remainingBlocks : 8;
 
-				for (size_t bit = 0; bit < bitsToCheck; ++bit)
-				{
-					auto mask = 1 << bit;
-					auto tmp = (p & mask);
-					if (tmp == 0)
-					{
-						*resultBit = block;
-						return true;
-					}
-
-					++block;
-				}*/
-
+				block += 32;
 				remainingBlocks -= bitsToCheck;
 			}
 

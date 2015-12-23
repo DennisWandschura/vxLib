@@ -88,6 +88,18 @@ namespace vx
 		}
 	};
 
+	class AllocatorBase
+	{
+	public:
+		AllocatorBase() {}
+		virtual ~AllocatorBase() {}
+
+		virtual AllocatedBlock allocate(size_t size, size_t alignment) = 0;
+		virtual void deallocate(const AllocatedBlock &block) = 0;
+
+		virtual bool contains(const AllocatedBlock &block) const = 0;
+	};
+
 	typedef vx::AllocatedBlock(*AllocationCallbackSignature)(size_t size, size_t alignment);
 	typedef u32 (*DeallocationCallbackSignature)(const vx::AllocatedBlock &block);
 }

@@ -25,6 +25,7 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/StackAllocator.h>
+#include <vxLib/util/bitops.h>
 
 namespace vx
 {
@@ -66,42 +67,46 @@ namespace vx
 
 		bool findEmptyBit(u32* bitsPtr, size_t* resultBit, size_t blockCount)
 		{
-			auto byte = 0;
-
 			size_t freeConiguousBlocks = 0;
 
 			size_t resultBlock = 0;
 			size_t block = 0;
+
+			auto blocksNeeded = blockCount;
 			auto remainingBlocks = m_blockCount;
 			while (remainingBlocks >= blockCount)
 			{
-				auto p = bitsPtr[byte];
+				auto p = *bitsPtr++;;
 				auto bitsToCheck = (remainingBlocks < 32) ? remainingBlocks : 32;
-				//if (bitsToCheck < blockCount)
-				//	break;
 
-				for (size_t bit = 0; bit < bitsToCheck; ++bit)
+				int offset = (freeConiguousBlocks == 0) ? ntz(p) : 0;
+				auto blocks = bitsToCheck - offset;
+				blocks = (blocksNeeded < blocks) ? blocksNeeded : blocks;
+
+				auto index = ffstrl(rev(p >> offset), (int)blocks);
+				if (index != 32)
 				{
-					auto mask = 1 << bit;
-					auto tmp = (p & mask);
-					if (tmp == 0)
+					if (freeConiguousBlocks == 0)
 					{
-						++freeConiguousBlocks;
-
-						if (freeConiguousBlocks >= blockCount)
-						{
-							*resultBit = resultBlock;
-							return true;
-						}
-					}
-					else
-					{
-						resultBlock = block + 1;
-						freeConiguousBlocks = 0;
+						resultBlock = block + offset;
 					}
 
-					++block;
+					freeConiguousBlocks += blocks;
+					blocksNeeded -= blocks;
 				}
+				else
+				{
+					freeConiguousBlocks = 0;
+					blocksNeeded = blockCount;
+				}
+
+				if (freeConiguousBlocks >= blockCount)
+				{
+					*resultBit = resultBlock;
+					return true;
+				}
+
+				block += 32;
 
 				remainingBlocks -= bitsToCheck;
 			}
@@ -122,7 +127,7 @@ namespace vx
 			}
 		}
 
-		void clearBit(size_t blockIndex, size_t blockCount)
+		void clearBits(size_t blockIndex, size_t blockCount)
 		{
 			auto bitsPtr = getBitPtr();
 
@@ -154,7 +159,7 @@ namespace vx
 
 			if (blockCount <= BitsSizeT)
 			{
-				m_bits = 0;
+				m_bits = 0xffffffffffffffff;
 				m_firstBlock = getAlignedPtr(block.ptr, ALIGNMENT);
 			}
 			else
@@ -169,7 +174,7 @@ namespace vx
 
 				auto bitblockSize = requiredBlocksForBits * BLOCK_SIZE;
 				m_bitsPtr = (u32*)getAlignedPtr(block.ptr, ALIGNMENT);
-				memset(m_bitsPtr, 0, bitblockSize);
+				memset(m_bitsPtr, 0xff, bitblockSize);
 
 				m_firstBlock = reinterpret_cast<u8*>(m_bitsPtr) + bitblockSize;
 			}
@@ -208,7 +213,7 @@ namespace vx
 			if(!findEmptyBit(bitsPtr, &resultBlock, blockCount))
 				return{ nullptr, 0 };
 
-			setBits(bitsPtr, resultBlock, blockCount);
+			clearBits(resultBlock, blockCount);
 			m_remainingBlocks -= blockCount;
 
 			auto offset = BLOCK_SIZE * resultBlock;
@@ -227,7 +232,7 @@ namespace vx
 			VX_ASSERT(blockIndex < m_blockCount);
 
 			auto blockCount = (block.size + BLOCK_SIZE - 1) / BLOCK_SIZE;
-			clearBit(blockIndex, blockCount);
+			setBits(getBitPtr(), blockIndex, blockCount);
 
 			m_remainingBlocks += blockCount;;
 

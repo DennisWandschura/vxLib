@@ -114,6 +114,19 @@
 	.CompilerSettingsT = '$CompilerSettingsB$ /MTd'
 ]
 
+.Target_Debug_x64_Dynamic_vs14 =
+[
+	Using(.VS14)
+	Using(.DefaultCompilerSettingsVS)
+	Using(.BuildDebug)
+	
+	.FileName = '$ProjectName$_d'
+	.OutPath = '../lib/vs14'
+	.TargetName = '$FileName$_vs14'
+	.DefinesTarget = ''
+	.CompilerSettingsT = '$CompilerSettingsB$ /MDd'
+]
+
 .Target_Debug_x64_Static_intel_vs14 =
 [
 	Using(.IntelX64)
@@ -153,6 +166,19 @@
 	.DefinesTarget = ''
 ]
 
+.Target_Release_Dynamic_x64_vs14 =
+[
+	Using(.VS14)
+	Using(.DefaultCompilerSettingsVS)
+	Using(.BuildReleaseVS)
+	
+	.CompilerSettingsT = '$CompilerSettingsB$ /MD'
+	.FileName = '$ProjectName$'
+	.OutPath = '../lib/vs14'
+	.TargetName = '$FileName$_vs14'
+	.DefinesTarget = ''
+]
+
 .Target_Release_Static_x64_intel_vs12 =
 [
 	Using(.IntelX64)
@@ -182,7 +208,8 @@
 .Targets = { .Target_Debug_x64_Static_intel_vs12, .Target_Release_Static_x64_intel_vs12,
 			.Target_Debug_x64_Static_intel_vs14, .Target_Release_Static_x64_intel_vs14, 
 			.Target_Debug_x64_Static_vs12, .Target_Release_Static_x64_vs12,
-			.Target_Debug_x64_Static_vs14, .Target_Release_Static_x64_vs14
+			.Target_Debug_x64_Static_vs14, .Target_Release_Static_x64_vs14,
+			.Target_Debug_x64_Dynamic_vs14, .Target_Release_Dynamic_x64_vs14
 			}
 
 ForEach( .Target in .Targets )
@@ -231,7 +258,7 @@ ForEach( .Target in .Targets )
 	 
 	Library("Lib_$TargetName$")
 	{
-		.CompilerOptions = '"%1" "%2"'
+		.CompilerOptions = '/c "%1" "%2"'
 		.CompilerOutputPath = '$OutputPathF$\'
 		
 		.LibrarianOptions = '/OUT:"%2" "%1" /link /MACHINE:X64 /NOLOGO'
@@ -247,7 +274,7 @@ Alias('vs12')
 
 Alias('vs14')
 {
-	.Targets = { 'Lib_vxLib_sd_vs14', 'Lib_vxLib_s_vs14' }
+	.Targets = { 'Lib_vxLib_sd_vs14', 'Lib_vxLib_s_vs14', 'Lib_vxLib_d_vs14', 'Lib_vxLib_vs14' }
 }
 
 Alias('intel_vs12')

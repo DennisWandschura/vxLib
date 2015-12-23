@@ -162,13 +162,13 @@ namespace vx
 
 		void swap(DoubleBuffer &other)
 		{
-			vx::swap(m_frontBuffer, other.m_frontBuffer);
-			vx::swap(m_backBuffer, other.m_backBuffer);
-			vx::swap(m_sizeFront, other.m_sizeFront);
-			vx::swap(m_sizeBack, other.m_sizeBack);
-			vx::swap(m_capacity, other.m_capacity);
+			std::swap(m_frontBuffer, other.m_frontBuffer);
+			std::swap(m_backBuffer, other.m_backBuffer);
+			std::swap(m_sizeFront, other.m_sizeFront);
+			std::swap(m_sizeBack, other.m_sizeBack);
+			std::swap(m_capacity, other.m_capacity);
 			m_allocator.swap(other.m_allocator);
-			vx::swap(m_allocSize, other.m_allocSize);
+			std::swap(m_allocSize, other.m_allocSize);
 		}
 
 		void release()

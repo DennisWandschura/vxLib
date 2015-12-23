@@ -6,9 +6,9 @@ namespace vx
 	{
 		namespace print
 		{
-			int g_bufferSize{ 0 };
-			char* g_buffer{ nullptr };
-			HANDLE g_consoleHandle{ nullptr };
+			thread_local int g_bufferSize{ 0 };
+			thread_local char* g_buffer{ nullptr };
+			thread_local HANDLE g_consoleHandle{ nullptr };
 		}
 	}
 

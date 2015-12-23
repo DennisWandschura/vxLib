@@ -128,4 +128,9 @@ namespace vx
 	{
 		return (m_pFile != nullptr);
 	}
+
+	bool File::flush()
+	{
+		return FlushFileBuffers(m_pFile);
+	}
 }

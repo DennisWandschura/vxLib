@@ -128,12 +128,4 @@ namespace vx
 
 		return std::rotate(stable_partition_position(f, m, p), m, stable_partition_position(m, l, p));
 	}
-
-	template<typename T>
-	void swap(T &l, T &r)
-	{
-		T tmp{std::move(l)};
-		l = std::move(r);
-		r = std::move(tmp);
-	}
 }

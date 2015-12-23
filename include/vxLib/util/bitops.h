@@ -26,16 +26,56 @@ SOFTWARE.
 
 #include <vxLib/types.h>
 
-struct f16
+namespace vx
 {
-private:
-	u16 m_value;
+	inline u32 rev(u32 x)
+	{
+		x = (x & 0x55555555) << 1 | (x >> 1) & 0x55555555;
+		x = (x & 0x33333333) << 2 | (x >> 2) & 0x33333333;
+		x = (x & 0x0f0f0f0f) << 4 | (x >> 4) & 0x0f0f0f0f;
+		x = (x << 24) | ((x & 0xff00) << 8) |
+			((x >> 8) & 0xff00) | (x >> 24);
+		return x;
+	}
 
-	static u16 toF16(f32 f);
+	inline int nlz(u32 x)
+	{
+		u32 y;
+		int n = 32;
 
-public:
-	f16() :m_value(0) {}
-	explicit f16(f32 f) :m_value(toF16(f)) {}
+		y = x >> 16; if (y != 0) { n = n - 16; x = y; }
+		y = x >> 8; if (y != 0) { n = n - 8; x = y; }
+		y = x >> 4; if (y != 0) { n = n - 4; x = y; }
+		y = x >> 2; if (y != 0) { n = n - 2; x = y; }
+		y = x >> 1; if (y != 0) { n = n - 1; x = y; }
+		return n - x;
+	}
 
-	f32 toF32() const;
-};
+	inline int ntz(u32 x)
+	{
+		const char table[64] =
+		{
+			32, 0, 1, 12, 2, 6, 0, 13, 3, 0, 7, 0, 0, 0, 0, 14,
+			10, 4, 0, 0, 8, 0, 0, 25, 0, 0, 0, 0, 0, 21, 27, 15,
+			31, 11, 5, 0, 0, 0, 0, 0, 9, 0, 0, 24, 0, 0, 20, 26,
+			30, 0, 0, 0, 0, 23, 0, 19, 29, 0, 22, 18, 28, 17, 16, 0
+		};
+
+		x = (x & -int(x)) * 0x0450fbaf;
+		return table[x >> 26];
+	}
+
+	inline int ffstrl(u32 x, int n)
+	{
+		int s;
+
+		while (n > 1)
+		{
+			s = n >> 1;
+			x = x & (x << s);
+			n = n - s;
+		}
+
+		return nlz(x);
+	}
+}
