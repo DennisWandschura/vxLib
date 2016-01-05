@@ -174,7 +174,7 @@ namespace vx
 
 				auto bitblockSize = requiredBlocksForBits * BLOCK_SIZE;
 				m_bitsPtr = (u32*)getAlignedPtr(block.ptr, ALIGNMENT);
-				memset(m_bitsPtr, 0xff, bitblockSize);
+				std::memset(m_bitsPtr, 0xff, bitblockSize);
 
 				m_firstBlock = reinterpret_cast<u8*>(m_bitsPtr) + bitblockSize;
 			}

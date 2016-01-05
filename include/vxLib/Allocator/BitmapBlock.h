@@ -144,7 +144,7 @@ namespace vx
 
 				auto bitBlock = m_parent.allocate(BLOCK_SIZE * requiredBlocksForBits, ALIGNMENT);
 				m_bitsPtr = (u32*)bitBlock.ptr;
-				memset(m_bitsPtr, 0xff, bitBlock.size);
+				std::memset(m_bitsPtr, 0xff, bitBlock.size);
 			}
 
 			m_firstBlock = m_parent.allocate(BLOCK_SIZE * blockCount, ALIGNMENT).ptr;

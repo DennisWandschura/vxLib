@@ -315,9 +315,19 @@ namespace vx
 		return _mm256_sub_pd(c1, c2);
 	}
 
+	inline __m128 VX_CALLCONV length2(CVEC4 V)
+	{
+		return _mm_sqrt_ps(dot2(V, V));
+	}
+
 	inline __m128 VX_CALLCONV length3(CVEC4 V)
 	{
 		return _mm_sqrt_ps(dot3(V, V));
+	}
+
+	inline __m128 VX_CALLCONV length4(CVEC4 V)
+	{
+		return _mm_sqrt_ps(dot4(V, V));
 	}
 
 	inline __m128 VX_CALLCONV normalizeImpl(CVEC4 VL, CVEC4 V)

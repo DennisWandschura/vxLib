@@ -115,6 +115,14 @@ namespace vx
 			--m_end;
 		}
 
+		void assign(const u8* p, size_t count)
+		{
+			clear();
+
+			std::memcpy(m_begin, p, sizeof(value_type) * count);
+			m_end = m_begin + count;
+		}
+
 		void clear()
 		{
 			auto p = begin();
@@ -195,6 +203,11 @@ namespace vx
 		inline size_t size() const
 		{
 			return end() - begin();
+		}
+
+		inline size_t sizeInBytes() const
+		{
+			return size() * sizeof(value_type);
 		}
 
 		inline size_t capacity() const

@@ -1116,7 +1116,9 @@ namespace vx
 	inline __m128 VX_CALLCONV cross3(CVEC4 v1, CVEC4 v2);
 	inline __m256d VX_CALLCONV cross3(__m256d v1, const __m256d &v2);
 
+	inline __m128 VX_CALLCONV length2(CVEC4 V);
 	inline __m128 VX_CALLCONV length3(CVEC4 V);
+	inline __m128 VX_CALLCONV length4(CVEC4 V);
 
 	inline __m128 VX_CALLCONV normalize2(CVEC4 V);
 	inline __m128 VX_CALLCONV normalize3(CVEC4 V);
