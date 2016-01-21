@@ -30,13 +30,16 @@ namespace vx
 {
 	Keyboard RawInput::s_keyboard{};
 	Mouse RawInput::s_mouse{};
-	vx::array<KeyEvent, DelegateAllocator<LinearAllocator>> RawInput::s_keyEvents{};
+	vx::array<KeyEvent, DelegateAllocator<AllocatorBase>> RawInput::s_keyEvents{};
+	vx::array<MouseEvent, DelegateAllocator<AllocatorBase>> RawInput::s_mouseEvents{};
 	Input::KeyEventCallback RawInput::s_keyEventPressedCallback{ nullptr };
 	Input::KeyEventCallback RawInput::s_keyEventReleasedCallback{ nullptr };
+	Input::MouseEventCallback RawInput::s_mouseEventPressedCallback{nullptr};
+	Input::MouseEventCallback RawInput::s_mouseEventReleasedCallback{nullptr};
 
 	struct InputHandler
 	{
-		static void handleKeyboard(const RAWKEYBOARD &rawKeyboard, Keyboard* keyboard, vx::array<KeyEvent, DelegateAllocator<LinearAllocator>>* keyEvents)
+		static void handleKeyboard(const RAWKEYBOARD &rawKeyboard, Keyboard* keyboard, vx::array<KeyEvent, DelegateAllocator<AllocatorBase>>* keyEvents)
 		{
 			auto flag = rawKeyboard.Flags;
 			auto key = rawKeyboard.VKey;
@@ -54,15 +57,73 @@ namespace vx
 			}
 		}
 
-		static void handleMouse(const RAWMOUSE &rawMouse, Mouse* mouse)
+		static void handleMouse(const RAWMOUSE &rawMouse, Mouse* mouse, const vx::int2 &halfSize, vx::array<MouseEvent, DelegateAllocator<AllocatorBase>>* mouseEvents)
 		{
-			if (rawMouse.usFlags == MOUSE_MOVE_RELATIVE)
+			if ((rawMouse.usFlags & MOUSE_MOVE_RELATIVE) == MOUSE_MOVE_RELATIVE)
 			{
-				mouse->m_relative.x = rawMouse.lLastX;
-				mouse->m_relative.y = rawMouse.lLastY;
+				auto offset = vx::int2(rawMouse.lLastX, rawMouse.lLastY);
+				auto newPosition = mouse->m_position + offset;
 
-				mouse->m_position.x += rawMouse.lLastX;
-				mouse->m_position.y += rawMouse.lLastY;
+				auto newOffset = offset;
+				if (newPosition.x >= halfSize.x || newPosition.x <= -halfSize.x)
+					newOffset.x = 0;
+
+				if (newPosition.y >= halfSize.y || newPosition.y <= -halfSize.y)
+					newOffset.y = 0;
+
+				mouse->m_relative = offset;
+				mouse->m_position += newOffset;
+			}
+
+			auto buttonFlags = rawMouse.usButtonFlags;
+			if ((buttonFlags & RI_MOUSE_WHEEL) == RI_MOUSE_WHEEL)
+			{
+				mouse->m_mouseWheel = *reinterpret_cast<const SHORT*>(&rawMouse.usButtonData);
+			}
+
+			if ((buttonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) == RI_MOUSE_LEFT_BUTTON_DOWN)
+			{
+				if (mouse->m_keys[0] == 0)
+					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Left, vx::MouseEvent::Pressed));
+
+				mouse->m_keys[0] = 1;
+			}
+			else if ((buttonFlags & RI_MOUSE_LEFT_BUTTON_UP) == RI_MOUSE_LEFT_BUTTON_UP)
+			{
+				if (mouse->m_keys[0] != 0)
+				mouseEvents->push_back(MouseEvent(vx::MouseButtons::Left, vx::MouseEvent::Released));
+
+				mouse->m_keys[0] = 0;
+			}
+
+			if ((buttonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN) == RI_MOUSE_RIGHT_BUTTON_DOWN)
+			{
+				if(mouse->m_keys[1] == 0)
+					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Right, vx::MouseEvent::Pressed));
+
+				mouse->m_keys[1] = 1;
+			}
+			else if ((buttonFlags & RI_MOUSE_RIGHT_BUTTON_UP) == RI_MOUSE_RIGHT_BUTTON_UP)
+			{
+				if (mouse->m_keys[1] != 0)
+				mouseEvents->push_back(MouseEvent(vx::MouseButtons::Right, vx::MouseEvent::Released));
+
+				mouse->m_keys[1] = 0;
+			}
+
+			if ((buttonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN) == RI_MOUSE_MIDDLE_BUTTON_DOWN)
+			{
+				if (mouse->m_keys[2] == 0)
+					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Middle, vx::MouseEvent::Pressed));
+
+				mouse->m_keys[2] = 1;
+			}
+			else if ((buttonFlags & RI_MOUSE_MIDDLE_BUTTON_UP) == RI_MOUSE_MIDDLE_BUTTON_UP)
+			{
+				if (mouse->m_keys[2] != 0)
+					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Middle, vx::MouseEvent::Released));
+
+				mouse->m_keys[2] = 0;
 			}
 		}
 	};
@@ -73,10 +134,11 @@ namespace vx
 
 	RawInput::~RawInput()
 	{
-		s_keyEvents.clear();
+		s_mouseEvents.release();
+		s_keyEvents.release();
 	}
 
-	bool RawInput::initialize(void* window, DelegateAllocator<LinearAllocator> &&allocator, u32 maxEventCount)
+	bool RawInput::initialize(void* window, AllocatorBase* allocator, u32 maxEventCount, u32 maxMouseEventCount)
 	{
 		RAWINPUTDEVICE rid[2];
 
@@ -103,37 +165,28 @@ namespace vx
 		s_mouse.m_relative.x = 0;
 		s_mouse.m_relative.y = 0;
 
-		vx::array <KeyEvent, DelegateAllocator<LinearAllocator>> evtArray(std::move(allocator), maxEventCount);
+		vx::array <KeyEvent, DelegateAllocator<AllocatorBase>> evtArray(allocator, maxEventCount);
 		s_keyEvents.swap(evtArray);
+		
+		s_mouseEvents = vx::array<MouseEvent, DelegateAllocator<AllocatorBase>>(allocator, maxMouseEventCount);
 
 		return true;
 	}
 
 	void RawInput::shutdown()
 	{
+		s_mouseEvents.release();
 		s_keyEvents.release();
 	}
 
-	void RawInput::update(LPARAM lparam)
+	void RawInput::update(LPARAM lparam, const vx::int2 &halfSize)
 	{
-		UINT dwSize;
-		// get size of structure
-		GetRawInputData((HRAWINPUT)lparam, RID_INPUT, NULL, &dwSize, sizeof(RAWINPUTHEADER));
+		UINT dwSize = 64;
+		BYTE lpb[64];
 
-		const auto bufferSize = 64u;
+		GetRawInputData((HRAWINPUT)lparam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER));
 
-		assert(dwSize <= bufferSize);
-
-		BYTE buffer[bufferSize];
-
-		// get input
-		if (GetRawInputData((HRAWINPUT)lparam, RID_INPUT, buffer, &dwSize, sizeof(RAWINPUTHEADER)) != dwSize)
-		{
-			OutputDebugString(TEXT("GetRawInputData does not return correct size !\n"));
-			return;
-		}
-
-		auto *raw = (RAWINPUT*)buffer;
+		RAWINPUT* raw = (RAWINPUT*)lpb;
 
 		if (raw->header.dwType == RIM_TYPEKEYBOARD)
 		{
@@ -142,7 +195,7 @@ namespace vx
 		else if (raw->header.dwType == RIM_TYPEMOUSE)
 		{
 			// handle mouse input
-			InputHandler::handleMouse(raw->data.mouse, &s_mouse);
+			InputHandler::handleMouse(raw->data.mouse, &s_mouse, halfSize, &s_mouseEvents);
 		}
 	}
 
@@ -151,6 +204,7 @@ namespace vx
 		// reset relative mouse movement
 		s_mouse.m_relative.x = 0;
 		s_mouse.m_relative.y = 0;
+		s_mouse.m_mouseWheel = 0;
 	}
 
 	void RawInput::endFrame()
@@ -173,6 +227,25 @@ namespace vx
 		}
 
 		s_keyEvents.clear();
+
+		for (auto &it : s_mouseEvents)
+		{
+			switch (it.evt)
+			{
+			case KeyEvent::Pressed:
+			{
+				if (s_mouseEventPressedCallback)
+					s_mouseEventPressedCallback(it.button);
+			}break;
+			case KeyEvent::Released:
+			{
+				if (s_mouseEventReleasedCallback)
+					s_mouseEventReleasedCallback(it.button);
+			}break;
+			}
+		}
+
+		s_mouseEvents.clear();
 	}
 
 	u8 RawInput::isKeyPressed(u16 keyCode)
@@ -198,5 +271,15 @@ namespace vx
 	void RawInput::setCallbackKeyReleased(Input::KeyEventCallback callback)
 	{
 		s_keyEventReleasedCallback = callback;
+	}
+
+	void RawInput::setCallbackMouseButtonPressed(Input::MouseEventCallback callback)
+	{
+		s_mouseEventPressedCallback = callback;
+	}
+
+	void RawInput::setCallbackMouseButtonReleased(Input::MouseEventCallback callback)
+	{
+		s_mouseEventReleasedCallback = callback;
 	}
 }

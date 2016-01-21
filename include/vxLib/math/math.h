@@ -124,7 +124,7 @@ namespace vx
 	}
 
 	template<typename T>
-	inline const T& clamp(const T &value, const T &vmin, const T &vmax)
+	inline const T clamp(const T &value, const T &vmin, const T &vmax)
 	{
 		return min(max(value, vmin), vmax);
 	}

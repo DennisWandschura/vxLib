@@ -39,16 +39,22 @@ namespace vx
 		AllocatedBlock m_keyBlock;
 		AllocatedBlock m_dataBlock;
 		size_t m_size;
+		size_t m_capacity;
 		Allocator m_allocator;
 
 	public:
-		sorted_array() : m_keyBlock(), m_dataBlock(), m_size(0), m_allocator(nullptr) {}
+		sorted_array() : m_keyBlock(), m_dataBlock(), m_size(0), m_allocator() {}
 
 		sorted_array(Allocator &&alloc, size_t capacity)
-			: m_keyBlock(), m_dataBlock(), m_size(0), m_allocator(std::move(alloc))
+			: m_keyBlock(), m_dataBlock(), m_size(0), m_capacity(0), m_allocator(std::move(alloc))
 		{
 			m_keyBlock = m_allocator.allocate(sizeof(key_type) * capacity, __alignof(key_type));
 			m_dataBlock = m_allocator.allocate(sizeof(value_type) * capacity, __alignof(value_type));
+
+			if (m_keyBlock.ptr != nullptr && m_dataBlock.ptr != nullptr)
+			{
+				m_capacity = capacity;
+			}
 		}
 
 		template<typename T>
@@ -60,11 +66,13 @@ namespace vx
 			: m_keyBlock(other.m_keyBlock),
 			m_dataBlock(other.m_dataBlock),
 			m_size(other.m_size),
-			m_allocator(other.m_allocator)
+			m_capacity(other.m_capacity),
+			m_allocator(std::move(other.m_allocator))
 		{
 			other.m_keyBlock = { nullptr, 0 };
 			other.m_dataBlock = { nullptr, 0 };
-			other.m_allocator = nullptr;
+			other.m_size = 0;
+			other.m_capacity = 0;
 		}
 
 		~sorted_array()
@@ -88,6 +96,7 @@ namespace vx
 			std::swap(m_keyBlock, other.m_keyBlock);
 			std::swap(m_dataBlock, other.m_dataBlock);
 			std::swap(m_size, other.m_size);
+			std::swap(m_capacity, other.m_capacity);
 			m_allocator.swap(other.m_allocator);
 		}
 
@@ -95,15 +104,13 @@ namespace vx
 		pointer insert(const key_type &key, Args&&... args)
 		{
 			auto currentSize = m_size;
-
-			auto keyPtrBegin = ((key_type*)m_keyBlock.ptr);
-			auto keyPtrEnd = keyPtrBegin + currentSize;
-			auto keyPtrLast = (key_type*)(m_keyBlock.ptr + m_keyBlock.size);
-
-			if (keyPtrEnd >= keyPtrLast)
+			if (currentSize >= m_capacity)
 			{
 				return end();
 			}
+
+			auto keyPtrBegin = ((key_type*)m_keyBlock.ptr);
+			auto keyPtrEnd = keyPtrBegin + currentSize;
 
 			auto it = std::lower_bound(keyPtrBegin, keyPtrEnd, key, Cmp());
 			auto idx = it - keyPtrBegin;
@@ -189,6 +196,7 @@ namespace vx
 
 				m_keyBlock = { nullptr, 0 };
 				m_dataBlock = { nullptr, 0 };
+				m_capacity = 0;
 			}
 		}
 
@@ -234,9 +242,7 @@ namespace vx
 
 		inline size_t capacity() const
 		{
-			auto last = (pointer)(m_dataBlock.ptr + m_dataBlock.size);
-
-			return last - begin();
+			return m_capacity;
 		}
 	};
 

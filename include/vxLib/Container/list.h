@@ -29,60 +29,78 @@ SOFTWARE.
 
 namespace vx
 {
-	template<typename T>
-	struct ListNodeSingleLinked
+	namespace detail
 	{
-		T m_data;
-		ListNodeSingleLinked* m_next;
-
-		template <class... Args>
-		ListNodeSingleLinked(Args&& ...args) : m_data(std::forward<Args>(args)...), m_next(nullptr) {}
-
-		ListNodeSingleLinked(const ListNodeSingleLinked&) = delete;
-
-		ListNodeSingleLinked(ListNodeSingleLinked &&rhs)
-			:m_data(std::move(rhs.m_data)),
-			m_next(rhs.m_next)
+		struct NodeBase
 		{
-			rhs.m_next = nullptr;
-		}
+			NodeBase* m_next;
+			NodeBase* m_prev;
 
-		~ListNodeSingleLinked() {}
+			NodeBase() : m_next(nullptr), m_prev(nullptr) {}
+			NodeBase(const NodeBase&) = delete;
+			NodeBase(NodeBase &&rhs) : m_next(rhs.m_next), m_prev(rhs.m_prev) { rhs.m_next = nullptr;rhs.m_prev = nullptr; }
 
-		ListNodeSingleLinked& operator=(const ListNodeSingleLinked&) = delete;
-
-		ListNodeSingleLinked& operator=(ListNodeSingleLinked &&rhs)
-		{
-			if (this != &rhs)
+			NodeBase& operator=(const NodeBase&) = delete;
+			NodeBase& operator=(NodeBase &&rhs)
 			{
-				m_data = std::move(rhs.m_data);
-				m_next = rhs.m_next;
+				if (this != &rhs)
+				{
+					std::swap(m_next, rhs.m_next);
+					std::swap(m_prev, rhs.m_prev);
+				}
+				return *this;
+			}
+		};
 
+		template<typename T>
+		struct Node : public NodeBase
+		{
+			T m_data;
+
+			Node() :NodeBase(), k() {}
+
+			template <class... Args>
+			Node(Args&& ...args) : NodeBase(), m_data(std::forward<Args>(args)...) {}
+
+			Node(const Node&) = delete;
+
+			Node(Node &&rhs)
+				:m_data(std::move(rhs.m_data)),
+				m_next(rhs.m_next)
+			{
 				rhs.m_next = nullptr;
 			}
-			return *this;
-		}
 
-		ListNodeSingleLinked* next()
-		{
-			return m_next;
-		}
+			~Node() {}
 
-		const ListNodeSingleLinked* next() const
-		{
-			return m_next;
-		}
-	};
+			Node& operator=(const Node&) = delete;
+
+			Node& operator=(Node &&rhs)
+			{
+				Node::operator=(std::move(rhs));
+
+				if (this != &rhs)
+				{
+					m_data = std::move(rhs.m_data);
+
+					rhs.m_next = nullptr;
+				}
+				return *this;
+			}
+
+			Node* next() { return (Node*)m_next; }
+			const Node* next() const { return (Node*)m_next; }
+		};
+	}
 
 	template<typename T, typename Allocator>
-	class slist
+	class list
 	{
 		typedef T value_type;
 		typedef value_type* pointer;
-		typedef ListNodeSingleLinked<value_type> MyNode;
+		typedef detail::Node<value_type> MyNode;
 
-		MyNode* m_head;
-		MyNode* m_tail;
+		detail::NodeBase m_root;
 		size_t m_size;
 		Allocator m_allocator;
 
@@ -111,33 +129,29 @@ namespace vx
 		}
 
 	public:
-		slist() :m_head(nullptr), m_tail(nullptr), m_size(0), m_allocator() {}
+		list() :m_root(), m_size(0), m_allocator() {}
 
-		explicit slist(Allocator &&allocator) :m_head(nullptr), m_tail(nullptr), m_size(0), m_allocator(std::move(allocator)) {}
+		explicit list(Allocator &&allocator) :m_root(), m_size(0), m_allocator(std::move(allocator)) {}
 
 		template<typename T>
-		explicit slist(T* alloc) : slist(std::move(Allocator(alloc))) {}
+		explicit list(T* alloc) : slist(std::move(Allocator(alloc))) {}
 
-		slist(const slist&) = delete;
+		list(const list&) = delete;
 
-		slist(slist &&other)
-			: m_head(other.m_head),
-			m_tail(other.m_tail),
+		list(list &&other)
+			: m_root(std::move(other.m_root)),
 			m_size(other.m_size),
 			m_allocator(std::move(other.m_allocator))
-		{
-			other.m_head = nullptr;
-			other.m_tail = nullptr;
-		}
+		{}
 
-		~slist()
+		~list()
 		{
 			clear();
 		}
 
-		slist& operator=(const slist&) = delete;
+		list& operator=(const list&) = delete;
 
-		slist& operator=(slist &&rhs)
+		list& operator=(list &&rhs)
 		{
 			if (this != &rhs)
 			{
@@ -146,17 +160,16 @@ namespace vx
 			return *this;
 		}
 
-		void swap(slist &other)
+		void swap(list &other)
 		{
-			std::swap(m_head, other.m_head);
-			std::swap(m_tail, other.m_tail);
+			std::swap(m_root, other.m_root);
 			std::swap(m_size, other.m_size);
 			m_allocator.swap(other.m_allocator);
 		}
 
 		void clear()
 		{
-			auto node = m_head;
+			auto node = begin();
 
 			while (node != nullptr)
 			{
@@ -166,7 +179,7 @@ namespace vx
 				deleteNode(p);
 			}
 
-			m_head = m_tail = nullptr;
+			m_root.m_next = m_root.m_prev = nullptr;
 		}
 
 		template <class... Args>
@@ -176,15 +189,13 @@ namespace vx
 			if (node == nullptr)
 				return false;
 
-			if (m_head)
-			{
-				m_tail->m_next = node;
-				m_tail = node;
-			}
-			else
-			{
-				m_head = m_tail = node;
-			}
+			auto prevNode = m_root.m_prev;
+			prevNode->m_next = node;
+
+			node->m_prev = prevNode;
+			node->m_next = &m_root;
+
+			m_root.m_prev = node;
 
 			++m_size;
 			return true;
@@ -192,46 +203,53 @@ namespace vx
 
 		void pop_front()
 		{
-			auto nodeToDelete = m_head;
-
+			auto nodeToDelete = begin();
 			auto nextNode = nodeToDelete->m_next;
 
 			deleteNode(nodeToDelete);
 
-			m_head = nextNode;
+			nextNode->m_prev = &m_root;
+			m_root.m_next = nextNode;
 
 			--m_size;
 		}
 
-		inline T& front()
+		void pop_back()
 		{
-			return m_head->m_data;
+			auto nodeToDelete = m_root.m_prev;
+			auto prevNode = nodeToDelete->m_prev;
+
+			deleteNode(nodeToDelete);
+
+			m_root.m_prev = prevNode;
+			prevNode->m_next = &m_root;
 		}
 
-		inline const T& front() const
+		inline value_type& front()
 		{
-			return m_head->m_data;
+			return begin()->m_data;
 		}
 
-		inline MyNode* begin()
+		inline const value_type& front() const
 		{
-			return m_head;
+			return begin()->m_data;
 		}
 
-		inline MyNode* end()
+		inline value_type& back()
 		{
-			return nullptr;
+			return m_root.m_prev->m_data;
 		}
 
-		inline const MyNode* begin() const
+		inline const value_type& back() const
 		{
-			return m_head;
+			return m_root.m_prev->m_data;
 		}
 
-		inline const MyNode* end() const
-		{
-			return nullptr;
-		}
+		inline MyNode* begin() { return m_root.m_next; }
+		inline const MyNode* begin() const { return m_root.m_next; }
+
+		inline MyNode* end() { return (Node*)&m_root; }
+		inline const MyNode* end() const { return (Node*)&m_root; }
 
 		size_t size() const
 		{

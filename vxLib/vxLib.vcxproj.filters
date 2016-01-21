@@ -199,9 +199,6 @@
     <ClInclude Include="..\include\vxLib\string.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vxLib\Container\slist.h">
-      <Filter>Header Files\container</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\vxLib\Allocator\BitmapBlock.h">
       <Filter>Header Files\Allocator</Filter>
     </ClInclude>
@@ -258,6 +255,9 @@
     </ClInclude>
     <ClInclude Include="..\include\vxLib\util\bitops.h">
       <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\Container\list.h">
+      <Filter>Header Files\container</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>d:\Users\dennis\Documents\Visual Studio 2015\Projects\double-conversion\include;d:\Users\dennis\Documents\Visual Studio 2015\Projects\vxLib\include;$(IncludePath)</IncludePath>
+    <IncludePath>d:\Users\dennis\Documents\Visual Studio 2015\Projects\double-conversion\include;F:\Visual Studio 2015\Projects\vxLib\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -188,7 +188,7 @@
     <ClInclude Include="..\include\vxLib\Container\array.h" />
     <ClInclude Include="..\include\vxLib\Container\bitset.h" />
     <ClInclude Include="..\include\vxLib\Container\DoubleBuffer.h" />
-    <ClInclude Include="..\include\vxLib\Container\slist.h" />
+    <ClInclude Include="..\include\vxLib\Container\list.h" />
     <ClInclude Include="..\include\vxLib\Container\sorted_array.h" />
     <ClInclude Include="..\include\vxLib\CpuTimer.h" />
     <ClInclude Include="..\include\vxLib\File\File.h" />

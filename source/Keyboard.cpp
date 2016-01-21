@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include <vxLib/Keyboard.h>
+#include <Windows.h>
 
 namespace vx
 {
@@ -82,7 +83,7 @@ namespace vx
 	u8 Keyboard::Key_Alt = 0x12;
 	u8 Keyboard::Key_Space = 0x20;
 	u8 Keyboard::Key_Tab = 0x09;
-	u8 Keyboard::Key_Escape = 0x1B;
+	u8 Keyboard::Key_Escape = VK_ESCAPE;
 
 	u8 Keyboard::Key_Num0 = 0x60;
 	u8 Keyboard::Key_Num1 = 0x61;

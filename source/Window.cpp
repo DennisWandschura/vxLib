@@ -41,6 +41,7 @@ namespace vx
 	Window::Window()
 		:m_msg(),
 		m_windowCloseCallback(nullptr),
+		m_halfSize(0),
 		m_coldData()
 	{
 	}
@@ -48,6 +49,7 @@ namespace vx
 	Window::Window(Window &&rhs)
 		: m_msg(rhs.m_msg),
 		m_windowCloseCallback(rhs.m_windowCloseCallback),
+		m_halfSize(rhs.m_halfSize),
 		m_coldData(rhs.m_coldData)
 	{
 		rhs.m_coldData = nullptr;
@@ -68,7 +70,8 @@ namespace vx
 		{
 			m_msg = rhs.m_msg;
 			m_windowCloseCallback = rhs.m_windowCloseCallback;
-			m_coldData =rhs.m_coldData;
+			m_halfSize = rhs.m_halfSize;
+			m_coldData = rhs.m_coldData;
 			rhs.m_coldData = nullptr;
 		}
 
@@ -174,7 +177,7 @@ namespace vx
 		return true;
 	}
 
-	bool Window::initialize(const wchar_t *windowName, const vx::uint2 &windowSize, bool bFullscreen, DelegateAllocator<LinearAllocator> &&allocator, u32 maxKeyEvtCount)
+	bool Window::initialize(const wchar_t *windowName, const vx::uint2 &windowSize, bool bFullscreen, AllocatorBase* allocator, u32 maxKeyEvtCount, u32 maxMouseEvtCount)
 	{
 		ZeroMemory(&m_msg, sizeof(MSG));
 		m_coldData = new ColdData();
@@ -187,7 +190,9 @@ namespace vx
 			return false;
 		}
 
-		if (!RawInput::initialize(m_coldData->m_hwnd, std::move(allocator), maxKeyEvtCount))
+		m_halfSize = vx::int2(windowSize) / vx::int2(2);
+
+		if (!RawInput::initialize(m_coldData->m_hwnd, allocator, maxKeyEvtCount, maxMouseEvtCount))
 			return false;
 
 		return true;
@@ -287,7 +292,7 @@ namespace vx
 
 	void Window::handleInput(LPARAM lParam)
 	{
-		vx::RawInput::update(lParam);
+		vx::RawInput::update(lParam, m_halfSize);
 	}
 
 	HWND Window::getHwnd() const

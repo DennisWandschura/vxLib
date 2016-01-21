@@ -25,10 +25,7 @@ SOFTWARE.
 
 namespace vx
 {
-	class LinearAllocator;
-
-	template<typename Allocator>
-	class DelegateAllocator;
+	class AllocatorBase;
 }
 
 #include <vxLib/math/Vector.h>
@@ -46,6 +43,7 @@ namespace vx
 	private:
 		MSG m_msg;
 		WindowCloseCallback m_windowCloseCallback;
+		vx::int2 m_halfSize;
 		ColdData* m_coldData;
 
 		void registerWindow(const wchar_t* windowName, bool bFullscreen);
@@ -64,7 +62,7 @@ namespace vx
 		Window& operator=(const Window&) = delete;
 		Window& operator=(Window &&rhs);
 
-		bool initialize(const wchar_t *windowName, const vx::uint2 &windowSize, bool bFullscreen, DelegateAllocator<LinearAllocator> &&allocator, u32 maxKeyEvtCount);
+		bool initialize(const wchar_t *windowName, const vx::uint2 &windowSize, bool bFullscreen, AllocatorBase* allocator, u32 maxKeyEvtCount, u32 maxMouseEvtCount);
 
 		void shutdown();
 

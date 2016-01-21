@@ -32,5 +32,7 @@ namespace vx
 		{
 			return true;
 		}
+
+		void swap(Mallocator&) {}
 	};
 }

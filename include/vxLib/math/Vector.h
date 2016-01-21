@@ -682,6 +682,26 @@ namespace vx
 			{
 				return vec4(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w);
 			}
+
+			inline friend vec4 operator + (const vec4 &lhs, const value_type rhs)
+			{
+				return vec4(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs, lhs.w + rhs);
+			}
+
+			inline friend vec4 operator - (const vec4 &lhs, const value_type rhs)
+			{
+				return vec4(lhs.x - rhs, lhs.y - rhs, lhs.z - rhs, lhs.w - rhs);
+			}
+
+			inline friend vec4 operator * (const vec4 &lhs, const value_type rhs)
+			{
+				return vec4(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs, lhs.w * rhs);
+			}
+
+			inline friend vec4 operator / (const vec4 &lhs, const value_type rhs)
+			{
+				return vec4(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w / rhs);
+			}
 		};
 
 		template<>

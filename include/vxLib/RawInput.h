@@ -36,12 +36,30 @@ namespace vx
 
 namespace vx
 {
+	enum class MouseButtons : u8
+	{
+		Left,
+		Right,
+		Middle,
+		Button1,
+		Button2,
+		Button3,
+		Button4
+	};
+
 	struct Mouse
 	{
 		vx::int2 m_position;
 		vx::int2 m_relative;
-		u8 m_keys[4];
+		s16 m_mouseWheel;
+		u8 m_keys[6];
 	};
+
+	namespace Input
+	{
+		using KeyEventCallback = void(*)(u16 key);
+		using MouseEventCallback = void(*)(MouseButtons button);
+	}
 
 	struct KeyEvent
 	{
@@ -50,14 +68,20 @@ namespace vx
 		u16 key;
 		Event evt;
 
-		KeyEvent(){}
+		KeyEvent() {}
 		KeyEvent(u16 _key, Event type) :key(_key), evt(type) {}
 	};
 
-	namespace Input
+	struct MouseEvent
 	{
-		using KeyEventCallback = void(*)(u16 key);
-	}
+		enum Event : u8 { Pressed, Released };
+
+		MouseButtons button;
+		Event evt;
+
+		MouseEvent() {}
+		MouseEvent(MouseButtons b, Event type) :button(b), evt(type) {}
+	};
 
 	class RawInput
 	{
@@ -65,17 +89,20 @@ namespace vx
 
 		static Keyboard s_keyboard;
 		static Mouse s_mouse;
-		static vx::array<KeyEvent, DelegateAllocator<LinearAllocator>> s_keyEvents;
+		static vx::array<KeyEvent, DelegateAllocator<AllocatorBase>> s_keyEvents;
+		static vx::array<MouseEvent, DelegateAllocator<AllocatorBase>> s_mouseEvents;
 		static Input::KeyEventCallback s_keyEventPressedCallback;
 		static Input::KeyEventCallback s_keyEventReleasedCallback;
+		static Input::MouseEventCallback s_mouseEventPressedCallback;
+		static Input::MouseEventCallback s_mouseEventReleasedCallback;
 
 		RawInput();
 		~RawInput();
 
-		static bool initialize(void* window, DelegateAllocator<LinearAllocator> &&allocator, u32 maxEventCount);
+		static bool initialize(void* window, AllocatorBase* allocator, u32 maxKeyEventCount, u32 maxMouseEventCount);
 		static void shutdown();
 
-		static void update(s64 lparam);
+		static void update(s64 lparam, const vx::int2 &halfSize);
 		// call before updating input
 		static void beginFrame();
 		// call after gathering input events
@@ -84,6 +111,9 @@ namespace vx
 	public:
 		static void setCallbackKeyPressed(Input::KeyEventCallback callback);
 		static void setCallbackKeyReleased(Input::KeyEventCallback callback);
+
+		static void setCallbackMouseButtonPressed(Input::MouseEventCallback callback);
+		static void setCallbackMouseButtonReleased(Input::MouseEventCallback callback);
 
 		static u8 isKeyPressed(u16 keyCode);
 		static void getKeyboard(Keyboard &keyboard);
