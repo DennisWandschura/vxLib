@@ -65,10 +65,10 @@ namespace vx
 				auto newPosition = mouse->m_position + offset;
 
 				auto newOffset = offset;
-				if (newPosition.x >= halfSize.x || newPosition.x <= -halfSize.x)
+				if (newPosition.x > halfSize.x || newPosition.x < -halfSize.x)
 					newOffset.x = 0;
 
-				if (newPosition.y >= halfSize.y || newPosition.y <= -halfSize.y)
+				if (newPosition.y > halfSize.y || newPosition.y < -halfSize.y)
 					newOffset.y = 0;
 
 				mouse->m_relative = offset;
@@ -84,14 +84,14 @@ namespace vx
 			if ((buttonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) == RI_MOUSE_LEFT_BUTTON_DOWN)
 			{
 				if (mouse->m_keys[0] == 0)
-					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Left, vx::MouseEvent::Pressed));
+					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Left, vx::MouseEvent::Pressed, mouse->m_position));
 
 				mouse->m_keys[0] = 1;
 			}
 			else if ((buttonFlags & RI_MOUSE_LEFT_BUTTON_UP) == RI_MOUSE_LEFT_BUTTON_UP)
 			{
 				if (mouse->m_keys[0] != 0)
-				mouseEvents->push_back(MouseEvent(vx::MouseButtons::Left, vx::MouseEvent::Released));
+					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Left, vx::MouseEvent::Released, mouse->m_position));
 
 				mouse->m_keys[0] = 0;
 			}
@@ -99,14 +99,14 @@ namespace vx
 			if ((buttonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN) == RI_MOUSE_RIGHT_BUTTON_DOWN)
 			{
 				if(mouse->m_keys[1] == 0)
-					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Right, vx::MouseEvent::Pressed));
+					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Right, vx::MouseEvent::Pressed, mouse->m_position));
 
 				mouse->m_keys[1] = 1;
 			}
 			else if ((buttonFlags & RI_MOUSE_RIGHT_BUTTON_UP) == RI_MOUSE_RIGHT_BUTTON_UP)
 			{
 				if (mouse->m_keys[1] != 0)
-				mouseEvents->push_back(MouseEvent(vx::MouseButtons::Right, vx::MouseEvent::Released));
+				mouseEvents->push_back(MouseEvent(vx::MouseButtons::Right, vx::MouseEvent::Released, mouse->m_position));
 
 				mouse->m_keys[1] = 0;
 			}
@@ -114,14 +114,14 @@ namespace vx
 			if ((buttonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN) == RI_MOUSE_MIDDLE_BUTTON_DOWN)
 			{
 				if (mouse->m_keys[2] == 0)
-					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Middle, vx::MouseEvent::Pressed));
+					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Middle, vx::MouseEvent::Pressed, mouse->m_position));
 
 				mouse->m_keys[2] = 1;
 			}
 			else if ((buttonFlags & RI_MOUSE_MIDDLE_BUTTON_UP) == RI_MOUSE_MIDDLE_BUTTON_UP)
 			{
 				if (mouse->m_keys[2] != 0)
-					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Middle, vx::MouseEvent::Released));
+					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Middle, vx::MouseEvent::Released, mouse->m_position));
 
 				mouse->m_keys[2] = 0;
 			}
@@ -235,12 +235,12 @@ namespace vx
 			case KeyEvent::Pressed:
 			{
 				if (s_mouseEventPressedCallback)
-					s_mouseEventPressedCallback(it.button);
+					s_mouseEventPressedCallback(it.button, it.position);
 			}break;
 			case KeyEvent::Released:
 			{
 				if (s_mouseEventReleasedCallback)
-					s_mouseEventReleasedCallback(it.button);
+					s_mouseEventReleasedCallback(it.button, it.position);
 			}break;
 			}
 		}

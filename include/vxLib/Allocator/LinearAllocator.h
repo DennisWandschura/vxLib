@@ -26,6 +26,7 @@ SOFTWARE.
 
 #include <vxLib/Allocator/Allocator.h>
 #include <cstdio>
+#include <utility>
 
 namespace vx
 {
@@ -40,7 +41,30 @@ namespace vx
 
 		inline explicit LinearAllocator(const AllocatedBlock &block) : m_data(block.ptr), m_head(block.ptr), m_last(block.ptr + block.size) {}
 
+		LinearAllocator(const LinearAllocator&) = delete;
+
+		LinearAllocator(LinearAllocator &&rhs)
+			:m_data(rhs.m_data), m_head(rhs.m_head), m_last(rhs.m_last) {}
+
 		inline ~LinearAllocator() {}
+
+		LinearAllocator& operator=(const LinearAllocator&) = delete;
+
+		LinearAllocator& operator=(LinearAllocator &&rhs)
+		{
+			if (this != &rhs)
+			{
+				this->swap(rhs);
+			}
+			return *this;
+		}
+
+		void swap(LinearAllocator &rhs)
+		{
+			std::swap(m_data, rhs.m_data);
+			std::swap(m_head, rhs.m_head);
+			std::swap(m_last, rhs.m_last);
+		}
 
 		void initialize(const AllocatedBlock &block)
 		{
@@ -99,5 +123,7 @@ namespace vx
 		{
 			printf("total size %llu\n", (size_t)m_last - (size_t)m_data);
 		}
+
+		size_t capacity() const { return m_last - m_data; }
 	};
 }

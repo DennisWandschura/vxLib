@@ -58,7 +58,7 @@ namespace vx
 	namespace Input
 	{
 		using KeyEventCallback = void(*)(u16 key);
-		using MouseEventCallback = void(*)(MouseButtons button);
+		using MouseEventCallback = void(*)(MouseButtons button, const vx::int2 &position);
 	}
 
 	struct KeyEvent
@@ -78,9 +78,10 @@ namespace vx
 
 		MouseButtons button;
 		Event evt;
+		vx::int2 position;
 
 		MouseEvent() {}
-		MouseEvent(MouseButtons b, Event type) :button(b), evt(type) {}
+		MouseEvent(MouseButtons b, Event type, const vx::int2 &p) :button(b), evt(type), position(p){}
 	};
 
 	class RawInput
