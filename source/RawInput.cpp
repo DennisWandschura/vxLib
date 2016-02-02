@@ -61,7 +61,7 @@ namespace vx
 		{
 			if ((rawMouse.usFlags & MOUSE_MOVE_RELATIVE) == MOUSE_MOVE_RELATIVE)
 			{
-				auto offset = vx::int2(rawMouse.lLastX, rawMouse.lLastY);
+				auto offset = vx::int2(rawMouse.lLastX, -rawMouse.lLastY);
 				auto newPosition = mouse->m_position + offset;
 
 				auto newOffset = offset;

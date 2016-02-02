@@ -28,52 +28,55 @@ SOFTWARE.
 
 namespace vx
 {
-	template<typename Allocator>
-	class DelegateAllocator
+	template<typename Large, typename Small, size_t SMALL_LIMIT>
+	class Segregator : public Large, public Small
 	{
-		Allocator* m_ptr;
-
 	public:
-		DelegateAllocator() :m_ptr(nullptr) {}
-		explicit DelegateAllocator(Allocator* ptr) :m_ptr(ptr) {}
-		DelegateAllocator(const DelegateAllocator &rhs) :m_ptr(rhs.m_ptr) {}
-		DelegateAllocator(DelegateAllocator &&rhs) :m_ptr(rhs.m_ptr) { rhs.m_ptr = nullptr; }
+		Segregator() :Large(), Small() {}
 
-		~DelegateAllocator() {}
+		template<typename Arg0, typename Arg1>
+		Segregator(Arg0 &&arg0, Arg1 &&arg1) : Large(std::forward<Args0>(arg0)), Small(std::forward<Arg1>(arg1)) {}
 
-		DelegateAllocator& operator=(const DelegateAllocator &rhs)
+		template<typename Arg0, typename ...Arg1>
+		void initialize(Arg0 &&arg0, Arg1 && ...arg1)
 		{
-			if (this != &rhs)
-			{
-				m_ptr = rhs.m_ptr;
-			}
-			return *this;
-		}
-
-		DelegateAllocator& operator=(DelegateAllocator &&rhs)
-		{
-			if (this != &rhs)
-			{
-				swap(rhs);
-			}
-			return *this;
-		}
-
-		void swap(DelegateAllocator &other)
-		{
-			auto tmp = m_ptr;
-			m_ptr = other.m_ptr;
-			other.m_ptr = tmp;
+			Large::initialize(std::forward<Arg0>(arg0));
+			Small::initialize(std::forward<Arg1>(arg1)...);
 		}
 
 		vx::AllocatedBlock allocate(size_t size, size_t alignment)
 		{
-			return m_ptr->allocate(size, alignment);
+			if (size <= SMALL_LIMIT)
+				return Small::allocate(size, alignment);
+
+			return Large::allocate(size, alignment);
 		}
 
-		void deallocate(const vx::AllocatedBlock &block)
+		u32 deallocate(const vx::AllocatedBlock &block)
 		{
-			m_ptr->deallocate(block);
+			if (block.size <= SMALL_LIMIT)
+			{
+				return Small::deallocate(block);
+			}
+
+			return Large::deallocate(block);
+		}
+
+		bool contains(const vx::AllocatedBlock &block) const
+		{
+			return Large::contains(block) || Small::contains(block);
+		}
+
+		decltype(auto) release()
+		{
+			return std::make_pair(Large::release(),
+				Small::release());
+		}
+
+		void print() const
+		{
+			Large::print();
+			Small::print();
 		}
 	};
 }

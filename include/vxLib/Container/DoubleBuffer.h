@@ -37,27 +37,6 @@ namespace vx
 		typedef const value_type& const_reference;
 		typedef value_type* pointer;
 
-		template<bool isPOD>
-		struct Destructor
-		{
-			template<typename T>
-			void operator()(T*)
-			{
-			}
-		};
-
-		template<>
-		struct Destructor<false>
-		{
-			template<typename T>
-			void operator()(T* ptr)
-			{
-				ptr->~T();
-			}
-		};
-
-		typedef Destructor<std::is_pod<value_type>::value> MyDestructor;
-
 		pointer m_frontBuffer;
 		pointer m_backBuffer;
 		size_type m_sizeFront;
@@ -82,7 +61,8 @@ namespace vx
 		{
 			for (size_type i = 0; i < count; ++i)
 			{
-				MyDestructor()(ptr + i);
+				ptr->~value_type();
+				++ptr;
 			}
 		}
 
@@ -118,7 +98,7 @@ namespace vx
 			m_sizeFront(0),
 			m_sizeBack(0),
 			m_capacity(0),
-			m_allocator(std::move(allocator)),
+			m_allocator(vx::move(allocator)),
 			m_allocSize(0)
 		{
 			allocateMemory(capacity);
@@ -126,7 +106,7 @@ namespace vx
 
 		template<typename U>
 		DoubleBuffer(U* ptr, size_type capacity)
-			:DoubleBuffer(std::move(Allocator(ptr)), capacity)
+			:DoubleBuffer(vx::move(Allocator(ptr)), capacity)
 		{
 		}
 
@@ -138,7 +118,7 @@ namespace vx
 			m_sizeFront(rhs.m_sizeFront),
 			m_sizeBack(rhs.m_sizeBack),
 			m_capacity(rhs.m_capacity),
-			m_allocator(std::move(rhs.m_allocator)),
+			m_allocator(vx::move(rhs.m_allocator)),
 			m_allocSize(rhs.m_allocSize)
 		{
 		}
@@ -162,13 +142,13 @@ namespace vx
 
 		void swap(DoubleBuffer &other)
 		{
-			std::swap(m_frontBuffer, other.m_frontBuffer);
-			std::swap(m_backBuffer, other.m_backBuffer);
-			std::swap(m_sizeFront, other.m_sizeFront);
-			std::swap(m_sizeBack, other.m_sizeBack);
-			std::swap(m_capacity, other.m_capacity);
+			vx::swap(m_frontBuffer, other.m_frontBuffer);
+			vx::swap(m_backBuffer, other.m_backBuffer);
+			vx::swap(m_sizeFront, other.m_sizeFront);
+			vx::swap(m_sizeBack, other.m_sizeBack);
+			vx::swap(m_capacity, other.m_capacity);
 			m_allocator.swap(other.m_allocator);
-			std::swap(m_allocSize, other.m_allocSize);
+			vx::swap(m_allocSize, other.m_allocSize);
 		}
 
 		void release()
@@ -191,7 +171,7 @@ namespace vx
 				return false;
 
 			auto p = m_frontBuffer + m_sizeFront;
-			new (p)value_type{std::forward<Args>(args)...};
+			new (p)value_type{ vx::forward<Args>(args)...};
 			++m_sizeFront;
 
 			return true;
@@ -200,7 +180,7 @@ namespace vx
 		void pop(value_type &value)
 		{
 			auto &lastElement = m_frontBuffer[m_sizeFront - 1];
-			value = std::move(lastElement);
+			value = vx::move(lastElement);
 
 			MyDestructor()(&lastElement);
 			--m_sizeFront;
@@ -209,7 +189,7 @@ namespace vx
 		void pop_backBuffer(value_type &value)
 		{
 			auto &lastElement = m_backBuffer[m_sizeBack - 1];
-			value = std::move(lastElement);
+			value = vx::move(lastElement);
 
 			MyDestructor()(&lastElement);
 			--m_sizeBack;
@@ -217,8 +197,8 @@ namespace vx
 
 		void swapBuffers()
 		{
-			std::swap(m_frontBuffer, m_backBuffer);
-			std::swap(m_sizeFront, m_sizeBack);
+			vx::swap(m_frontBuffer, m_backBuffer);
+			vx::swap(m_sizeFront, m_sizeBack);
 
 			clearFrontBuffer();
 		}

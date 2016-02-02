@@ -42,16 +42,62 @@ namespace vx
 	{
 		typedef detail::FreelistNode Node;
 
-		static_assert(sizeof(Node) <= MIN_SIZE, "");
+		template<size_t MIN, size_t MAX>
+		struct SizeCheck
+		{
+			static_assert(sizeof(Node) <= MIN, "");
+
+			inline bool operator()(size_t size)
+			{
+				return size >= MIN && size <= MAX;
+			}
+		};
+
+		template<size_t SZ>
+		struct SizeCheck<SZ, SZ>
+		{
+			static_assert(sizeof(Node) <= SZ, "");
+
+			inline bool operator()(size_t size)
+			{
+				return size == SZ;
+			}
+		};
+
+		template<>
+		struct SizeCheck<0, 0>
+		{
+			inline bool operator()(size_t)
+			{
+				return true;
+			}
+		};
+
+		template<size_t MAX_COUNT>
+		struct NodeCountCheck
+		{
+			bool operator()(size_t count)
+			{
+				return count < MAX_COUNT
+			}
+		};
+
+		template<>
+		struct NodeCountCheck<0>
+		{
+			bool operator()(size_t)
+			{
+				return true;
+			}
+		};
+
+		typedef SizeCheck<MIN_SIZE, MAX_SIZE> MySizeCheck;
+		typedef NodeCountCheck<MAX_NODE_COUNT> MyNodeCountCheck;
+
 		static_assert(MIN_SIZE <= MAX_SIZE, "");
 
 		Node* m_head;
 		size_t m_nodeCount;
-
-		inline bool isWithinSizeRange(size_t size)
-		{
-			return size >= MIN_SIZE && size <= MAX_SIZE;
-		}
 
 	public:
 		Freelist()
@@ -73,7 +119,7 @@ namespace vx
 		AllocatedBlock allocate(size_t size, size_t alignment)
 		{
 			auto alignedSize = getAlignedSize(size, alignment);
-			if (m_head && isWithinSizeRange(alignedSize) &&
+			if (m_head && MySizeCheck()(alignedSize) &&
 				getAlignedPtr((u8*)m_head, alignment) == (u8*)m_head &&
 				m_head->size <= alignedSize)
 			{
@@ -90,8 +136,8 @@ namespace vx
 
 		u32 deallocate(const AllocatedBlock &block)
 		{
-			if (!isWithinSizeRange(block.size) ||
-				m_nodeCount >= MAX_NODE_COUNT)
+			if (!MySizeCheck()(block.size) ||
+				!MyNodeCountCheck()(m_nodeCount))
 			{
 				return Super::deallocate(block);
 			}
@@ -112,7 +158,7 @@ namespace vx
 
 		bool contains(const AllocatedBlock &block) const
 		{
-			Super::contains(block);
+			return Super::contains(block);
 		}
 	};
 }

@@ -25,7 +25,6 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/DelegateAllocator.h>
-#include <utility>
 
 namespace vx
 {
@@ -47,9 +46,12 @@ namespace vx
 		array(Allocator &&alloc, size_t capacity) : m_begin(nullptr), m_end(nullptr), m_last(nullptr), m_blockSize(0), m_allocator(std::move(alloc))
 		{
 			auto block = m_allocator.allocate(sizeof(value_type) * capacity, __alignof(value_type));
-			m_begin = m_end = (pointer)block.ptr;
-			m_last = m_begin + capacity;
-			m_blockSize = block.size;
+			if (block.ptr)
+			{
+				m_begin = m_end = (pointer)block.ptr;
+				m_last = m_begin + capacity;
+				m_blockSize = block.size;
+			}
 		}
 
 		template<typename T>
@@ -119,8 +121,48 @@ namespace vx
 		{
 			clear();
 
-			std::memcpy(m_begin, p, sizeof(value_type) * count);
+			::memcpy(m_begin, p, sizeof(value_type) * count);
 			m_end = m_begin + count;
+		}
+
+		template<typename OtherAllocator>
+		bool copyTo(array<T, OtherAllocator>* dst)
+		{
+			auto remainingCapacity = dst->capacity() - dst->size();
+			auto sz = this->size();
+			if (remainingCapacity >= sz)
+			{
+				auto dta = data();
+
+				for (size_t i = 0; i < sz; ++i)
+				{
+					dst->push_back(dta[i]);
+				}
+
+				return true;
+			}
+
+			return false;
+		}
+
+		template<typename OtherAllocator>
+		bool moveTo(array<T, OtherAllocator>* dst)
+		{
+			auto remainingCapacity = dst->capacity() - dst->size();
+			auto sz = this->size();
+			if (remainingCapacity >= sz)
+			{
+				auto dta = data();
+
+				for (size_t i = 0; i < sz; ++i)
+				{
+					dst->push_back(std::move(dta[i]));
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 
 		void clear()

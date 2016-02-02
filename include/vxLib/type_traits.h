@@ -24,6 +24,7 @@ SOFTWARE.
 */
 
 #include <vxLib/types.h>
+#include <type_traits>
 
 namespace vx
 {

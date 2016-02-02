@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/Allocator.h>
-#include <algorithm>
+#include <vxLib/algorithm.h>
 
 namespace vx
 {
@@ -41,6 +41,26 @@ namespace vx
 		size_t m_size;
 		size_t m_capacity;
 		Allocator m_allocator;
+
+		key_type* beginKey()
+		{
+			return ((key_type*)m_keyBlock.ptr);
+		}
+
+		key_type* endKey()
+		{
+			return beginKey() + m_size;
+		}
+
+		const key_type* beginKey() const
+		{
+			return ((key_type*)m_keyBlock.ptr);
+		}
+
+		const key_type* endKey() const
+		{
+			return beginKey() + m_size;
+		}
 
 	public:
 		sorted_array() : m_keyBlock(), m_dataBlock(), m_size(0), m_allocator() {}
@@ -109,8 +129,8 @@ namespace vx
 				return end();
 			}
 
-			auto keyPtrBegin = ((key_type*)m_keyBlock.ptr);
-			auto keyPtrEnd = keyPtrBegin + currentSize;
+			auto keyPtrBegin = beginKey();
+			auto keyPtrEnd = endKey();
 
 			auto it = std::lower_bound(keyPtrBegin, keyPtrEnd, key, Cmp());
 			auto idx = it - keyPtrBegin;
@@ -136,8 +156,8 @@ namespace vx
 
 		pointer find(const key_type &key)
 		{
-			auto keyPtrBegin = ((key_type*)m_keyBlock.ptr);
-			auto keyPtrEnd = keyPtrBegin + m_size;
+			auto keyPtrBegin = beginKey();
+			auto keyPtrEnd = endKey();
 
 			auto it = std::lower_bound(keyPtrBegin, keyPtrEnd, key, Cmp());
 			auto idx = it - keyPtrBegin;
@@ -152,8 +172,8 @@ namespace vx
 
 		const pointer find(const key_type &key) const
 		{
-			auto keyPtrBegin = ((key_type*)m_keyBlock.ptr);
-			auto keyPtrEnd = keyPtrBegin + m_size;
+			auto keyPtrBegin = beginKey();
+			auto keyPtrEnd = endKey();
 
 			auto it = std::lower_bound(keyPtrBegin, keyPtrEnd, key, Cmp());
 			auto idx = it - keyPtrBegin;
@@ -164,6 +184,48 @@ namespace vx
 				result = end();
 
 			return result;
+		}
+
+		template<typename OtherAllocator>
+		bool insertTo(sorted_array<K, T, OtherAllocator, Cmp>* dst)
+		{
+			auto remainingCapacity = dst->capacity() - dst->size();
+			auto sz = this->size();
+			if (remainingCapacity >= sz)
+			{
+				auto keys = (key_type*)m_keyBlock.ptr;
+				auto data = (pointer)m_dataBlock.ptr;
+
+				for (size_t i = 0; i < sz; ++i)
+				{
+					dst->insert(keys[i], data[i]);
+				}
+
+				return true;
+			}
+
+			return false;
+		}
+
+		template<typename OtherAllocator>
+		bool moveTo(sorted_array<K, T, OtherAllocator, Cmp>* dst)
+		{
+			auto remainingCapacity = dst->capacity() - dst->size();
+			auto sz = this->size();
+			if (remainingCapacity >= sz)
+			{
+				auto keys = (key_type*)m_keyBlock.ptr;
+				auto data = (pointer)m_dataBlock.ptr;
+
+				for (size_t i = 0; i < sz; ++i)
+				{
+					dst->insert(std::move(keys[i]), std::move(data[i]));
+				}
+
+				return true;
+			}
+
+			return false;
 		}
 
 		void clear()

@@ -1308,6 +1308,17 @@ namespace vx
 	}
 
 	template<class T>
+	f32 distance2(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
+	{
+		auto a = vx::loadFloat2a(&v1);
+		auto b = vx::loadFloat2a(&v2);
+		auto d = _mm_sub_ps(b, a);
+		d = vx::length2(d);
+
+		return d.m128_f32[0];
+	}
+
+	template<class T>
 	f32 distance3(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
 		auto tmp = v2 - v1;
@@ -1332,6 +1343,7 @@ namespace vx
 		auto tmp = v2 - v1;
 		return ::sqrtf(dot(tmp, tmp));
 	}
+
 	template<>
 	inline f32 distance4(const detail::vec4<f32> &v1, const detail::vec4<f32> &v2)
 	{
@@ -1348,6 +1360,13 @@ namespace vx
 	f32 length2(const detail::vec2<T> &v)
 	{
 		return sqrtf(dot2(v, v));
+	}
+
+	template<class T>
+	f32 length2(const detail::vec2a<T> &v)
+	{
+		auto a = vx::loadFloat2a(&v);
+		return length2(a).m128_f32[0];
 	}
 
 	template<class T>

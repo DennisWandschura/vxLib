@@ -25,7 +25,7 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/Allocator.h>
-#include <algorithm>
+#include <vxLib/algorithm.h>
 
 namespace vx
 {
@@ -37,18 +37,23 @@ namespace vx
 			NodeBase* m_prev;
 
 			NodeBase() : m_next(nullptr), m_prev(nullptr) {}
-			NodeBase(const NodeBase&) = delete;
-			NodeBase(NodeBase &&rhs) : m_next(rhs.m_next), m_prev(rhs.m_prev) { rhs.m_next = nullptr;rhs.m_prev = nullptr; }
+			NodeBase(const NodeBase& rhs) : m_next(rhs.m_next), m_prev(rhs.m_prev) {}
+			NodeBase(NodeBase &&rhs) :m_next(rhs.m_next), m_prev(rhs.m_prev) { rhs.m_next = nullptr;rhs.m_prev = nullptr; }
 
 			NodeBase& operator=(const NodeBase&) = delete;
 			NodeBase& operator=(NodeBase &&rhs)
 			{
 				if (this != &rhs)
 				{
-					std::swap(m_next, rhs.m_next);
-					std::swap(m_prev, rhs.m_prev);
+					swap(rhs);
 				}
 				return *this;
+			}
+
+			void swap(NodeBase &rhs)
+			{
+				std::swap(m_next, rhs.m_next);
+				std::swap(m_prev, rhs.m_prev);
 			}
 		};
 
@@ -128,21 +133,71 @@ namespace vx
 			m_allocator.deallocate(block);
 		}
 
+		inline MyNode* getLastNode()
+		{
+			return (MyNode*)m_root.m_prev;
+		}
+
+		inline MyNode* getFirstNode()
+		{
+			return (MyNode*)m_root.m_next;
+		}
+
+		void swapRoot(list &rhs)
+		{
+			auto thisEmpty = empty();
+			auto otherEmpty = rhs.empty();
+
+			auto oldRoot = m_root;
+			if (!otherEmpty)
+			{
+				m_root.m_next = rhs.m_root.m_next;
+				m_root.m_prev = rhs.m_root.m_prev;
+			}
+
+			if (!thisEmpty)
+			{
+				rhs.m_root.m_next = oldRoot.m_next;
+				rhs.m_root.m_prev = oldRoot.m_prev;
+			}
+			else
+			{
+				rhs.resetRoot();
+			}
+		}
+
+		void resetRoot()
+		{
+			m_root.m_next = &m_root;
+			m_root.m_prev = &m_root;
+		}
+
 	public:
-		list() :m_root(), m_size(0), m_allocator() {}
+		list() :m_root(), m_size(0), m_allocator() 
+		{
+			resetRoot();
+		}
 
-		explicit list(Allocator &&allocator) :m_root(), m_size(0), m_allocator(std::move(allocator)) {}
+		explicit list(Allocator &&allocator) :m_root(), m_size(0), m_allocator(std::move(allocator)) 
+		{
+			resetRoot();
+		}
 
-		template<typename T>
-		explicit list(T* alloc) : slist(std::move(Allocator(alloc))) {}
+		template<typename ...Args>
+		explicit list(Args&& ...args) : m_root(), m_size(0), m_allocator(std::forward<Args>(args)...) 
+		{
+			resetRoot();
+		}
 
 		list(const list&) = delete;
 
 		list(list &&other)
-			: m_root(std::move(other.m_root)),
+			: m_root(),
 			m_size(other.m_size),
 			m_allocator(std::move(other.m_allocator))
-		{}
+		{
+			swapRoot(other);
+		}
 
 		~list()
 		{
@@ -162,7 +217,7 @@ namespace vx
 
 		void swap(list &other)
 		{
-			std::swap(m_root, other.m_root);
+			swapRoot(other);
 			std::swap(m_size, other.m_size);
 			m_allocator.swap(other.m_allocator);
 		}
@@ -170,16 +225,17 @@ namespace vx
 		void clear()
 		{
 			auto node = begin();
+			auto endNode = end();
 
-			while (node != nullptr)
+			while (node != endNode)
 			{
 				auto p = node;
-				node = p->m_next;
+				node = (MyNode*)p->m_next;
 
 				deleteNode(p);
 			}
 
-			m_root.m_next = m_root.m_prev = nullptr;
+			resetRoot();
 		}
 
 		template <class... Args>
@@ -189,7 +245,7 @@ namespace vx
 			if (node == nullptr)
 				return false;
 
-			auto prevNode = m_root.m_prev;
+			auto prevNode = getLastNode();
 			prevNode->m_next = node;
 
 			node->m_prev = prevNode;
@@ -216,10 +272,10 @@ namespace vx
 
 		void pop_back()
 		{
-			auto nodeToDelete = m_root.m_prev;
+			auto nodeToDelete = getLastNode();
 			auto prevNode = nodeToDelete->m_prev;
 
-			deleteNode(nodeToDelete);
+			deleteNode((MyNode*)nodeToDelete);
 
 			m_root.m_prev = prevNode;
 			prevNode->m_next = &m_root;
@@ -237,19 +293,19 @@ namespace vx
 
 		inline value_type& back()
 		{
-			return m_root.m_prev->m_data;
+			return getLastNode()->m_data;
 		}
 
 		inline const value_type& back() const
 		{
-			return m_root.m_prev->m_data;
+			return getLastNode()->m_data;
 		}
 
-		inline MyNode* begin() { return m_root.m_next; }
-		inline const MyNode* begin() const { return m_root.m_next; }
+		inline MyNode* begin() { return getFirstNode(); }
+		inline const MyNode* begin() const { return getFirstNode(); }
 
-		inline MyNode* end() { return (Node*)&m_root; }
-		inline const MyNode* end() const { return (Node*)&m_root; }
+		inline MyNode* end() { return (MyNode*)&m_root; }
+		inline const MyNode* end() const { return (MyNode*)&m_root; }
 
 		size_t size() const
 		{

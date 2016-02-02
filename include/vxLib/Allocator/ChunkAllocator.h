@@ -40,7 +40,7 @@ namespace vx
 
 		~ChuckAllocator() {}
 
-		AllocatedBlock allocate(size_t size, size_t alignment)
+		AllocatedBlock allocate(size_t, size_t)
 		{
 			return Super::allocate(CHUNK_SIZE, ALIGNMENT);
 		}

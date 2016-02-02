@@ -25,8 +25,7 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/Allocator.h>
-#include <cstdio>
-#include <utility>
+#include <vxLib/algorithm.h>
 
 namespace vx
 {
@@ -117,11 +116,6 @@ namespace vx
 			m_data = m_head = m_last = nullptr;
 
 			return block;
-		}
-
-		void print() const
-		{
-			printf("total size %llu\n", (size_t)m_last - (size_t)m_data);
 		}
 
 		size_t capacity() const { return m_last - m_data; }

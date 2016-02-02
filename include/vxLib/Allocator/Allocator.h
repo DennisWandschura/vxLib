@@ -26,6 +26,7 @@ SOFTWARE.
 
 #include <vxLib/types.h>
 #include <malloc.h>
+#include <utility>
 
 namespace vx
 {
