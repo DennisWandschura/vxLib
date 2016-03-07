@@ -53,33 +53,33 @@ namespace vx
 		m_start = start.QuadPart;
 	}
 
-	f32 CpuTimer::getTimeSeconds() const
+	f64 CpuTimer::getTimeSeconds() const
 	{
 		LARGE_INTEGER end;
 		QueryPerformanceCounter(&end);
 
 		f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
 
-		return f32(time * 1.0e-6);
+		return time * 1.0e-6;
 	}
 
-	f32 CpuTimer::getTimeMiliseconds() const
+	f64 CpuTimer::getTimeMiliseconds() const
 	{
 		LARGE_INTEGER end;
 		QueryPerformanceCounter(&end);
 
 		f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
 
-		return f32(time * 0.001f);
+		return (time * 0.001);
 	}
 
-	f32 CpuTimer::getTimeMicroseconds() const
+	f64 CpuTimer::getTimeMicroseconds() const
 	{
 		LARGE_INTEGER end;
 		QueryPerformanceCounter(&end);
 
 		f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
 
-		return static_cast<f32>(time);
+		return time;
 	}
 }

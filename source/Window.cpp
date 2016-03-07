@@ -41,6 +41,8 @@ namespace vx
 	Window::Window()
 		:m_msg(),
 		m_windowCloseCallback(nullptr),
+		m_windowActivateCallback(nullptr),
+		m_windowDeactivateCallback(nullptr),
 		m_halfSize(0),
 		m_coldData()
 	{
@@ -49,6 +51,8 @@ namespace vx
 	Window::Window(Window &&rhs)
 		: m_msg(rhs.m_msg),
 		m_windowCloseCallback(rhs.m_windowCloseCallback),
+		m_windowActivateCallback(rhs.m_windowActivateCallback),
+		m_windowDeactivateCallback(rhs.m_windowDeactivateCallback),
 		m_halfSize(rhs.m_halfSize),
 		m_coldData(rhs.m_coldData)
 	{
@@ -70,6 +74,8 @@ namespace vx
 		{
 			m_msg = rhs.m_msg;
 			m_windowCloseCallback = rhs.m_windowCloseCallback;
+			m_windowActivateCallback = rhs.m_windowActivateCallback;
+			m_windowDeactivateCallback = rhs.m_windowDeactivateCallback;
 			m_halfSize = rhs.m_halfSize;
 			m_coldData = rhs.m_coldData;
 			rhs.m_coldData = nullptr;
@@ -233,6 +239,7 @@ namespace vx
 	{
 		RawInput::beginFrame();
 
+		printf("frame\n");
 		MSG msg;
 		// Handle the windows messages.
 		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -242,45 +249,18 @@ namespace vx
 
 			/*switch (msg.message)
 			{
-			case WM_INPUT:
-			{
-				//m_inputCallback(msg.hwnd, msg.message, msg.wParam, msg.lParam);
-				handleInput(msg.lParam);
-				//return 0;
-			}
 			case WM_ACTIVATE:
 			{
-				if (msg.wParam == 1)
-				{
-					puts("WM_ACTIVATE");
-					SetCursorPos(0, 0);
-				}
+				printf("activate\n");
 			}
+			case WM_SETFOCUS:
+			{
+				printf("set focus\n");
+			}break;
 			case WM_ACTIVATEAPP:
 			{
 				//
 				puts("WM_ACTIVATEAPP");
-				if (msg.wParam == 1)
-				{
-					SetFocus(m_hwnd);
-
-					RECT windowRect;
-					GetWindowRect(m_hwnd, &windowRect);
-					auto halfExtend = m_windowSize / 2u;
-
-					auto mouse = RawInput::getMouse();
-					SetCursorPos(0, 0);
-				}
-
-				//return 0;
-			};
-			case WM_CLOSE:
-			{
-				if (m_windowCloseCallback)
-				{
-					m_windowCloseCallback();
-					//return 0;
-				}
 			}break;
 			default:
 				break;
@@ -338,8 +318,17 @@ namespace vx
 		SetCursorPos(windowRect.left + m_coldData->m_windowSize.x / 2 + x, windowRect.top + m_coldData->m_windowSize.y / 2 + y);
 	}
 
+	void Window::setWindowActivateCallback(WindowCallback fn)
+	{
+		m_windowActivateCallback = fn;
+	}
 
-	void Window::setWindowCloseCallback(WindowCloseCallback fn)
+	void Window::setWindowDeactivateCallback(WindowCallback fn)
+	{
+		m_windowDeactivateCallback = fn;
+	}
+
+	void Window::setWindowCloseCallback(WindowCallback fn)
 	{
 		m_windowCloseCallback = fn;
 	}
@@ -363,18 +352,6 @@ namespace vx
 			handleInput(lParam);
 			return 0;
 		}
-		case WM_ACTIVATE:
-		{
-			auto lo = LOWORD(wParam);
-			if (lo == 1)
-			{
-				auto mouse = RawInput::getMouse();
-				setCursorPos(mouse.m_position.x, mouse.m_position.y);
-				focus();
-
-				return 0;
-			}
-		}
 		case WM_CLOSE:
 		{
 			if (m_windowCloseCallback)
@@ -383,6 +360,33 @@ namespace vx
 				return 0;
 			}
 		}
+		case WM_ACTIVATE:
+		{
+			if (wParam != 0)
+			{
+				if (m_windowActivateCallback)
+				{
+					m_windowActivateCallback();
+					return 0;
+				}
+			}
+			else
+			{
+				if (m_windowDeactivateCallback)
+				{
+					m_windowDeactivateCallback();
+					return 0;
+				}
+			}
+		}
+		/*case WM_SETFOCUS:
+		{
+			if (m_windowCallback)
+			{
+				m_windowCallback();
+				return 0;
+			}
+		}break;*/
 		default:
 		{
 			return DefWindowProc(hwnd, umsg, wParam, lParam);

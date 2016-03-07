@@ -67,9 +67,33 @@ namespace vx
 		return true;
 	}
 
+	bool File::create(const wchar_t* file, FileAccess access)
+	{
+		auto r = CreateFileW(file, static_cast<u32>(access), 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+		if (r == INVALID_HANDLE_VALUE)
+		{
+			return false;
+		}
+
+		m_pFile = r;
+		return true;
+	}
+
 	bool File::open(const char *file, FileAccess access)
 	{
 		auto r = CreateFileA(file, static_cast<u32>(access), 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+		if (r == INVALID_HANDLE_VALUE)
+		{
+			return false;
+		}
+
+		m_pFile = r;
+		return true;
+	}
+
+	bool File::open(const wchar_t *file, FileAccess access)
+	{
+		auto r = CreateFileW(file, static_cast<u32>(access), 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 		if (r == INVALID_HANDLE_VALUE)
 		{
 			return false;

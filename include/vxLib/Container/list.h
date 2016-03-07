@@ -127,7 +127,7 @@ namespace vx
 
 		void deleteNode(MyNode* node)
 		{
-			node->~MyNode();
+			vx::destruct(node);
 
 			AllocatedBlock block{ (u8*)node, sizeof(MyNode) };
 			m_allocator.deallocate(block);
@@ -279,6 +279,21 @@ namespace vx
 
 			m_root.m_prev = prevNode;
 			prevNode->m_next = &m_root;
+		}
+
+		MyNode* erase(MyNode* iter)
+		{
+			auto prevNode = iter->m_prev;
+			auto nextNode = iter->m_next;
+
+			prevNode->m_next = nextNode;
+			nextNode->m_prev = prevNode;
+
+			deleteNode(iter);
+
+			--m_size;
+
+			return (MyNode*)nextNode;
 		}
 
 		inline value_type& front()

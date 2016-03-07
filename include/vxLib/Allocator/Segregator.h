@@ -31,6 +31,24 @@ namespace vx
 	template<typename Large, typename Small, size_t SMALL_LIMIT>
 	class Segregator : public Large, public Small
 	{
+		template<typename T, typename U>
+		decltype(auto) tuple_cat(T &&value, U&& arg)
+		{
+			return std::tuple_cat(std::make_tuple(std::move(value)), std::make_tuple(std::move(arg)));
+		}
+
+		template<typename T, typename ...Args>
+		decltype(auto) tuple_cat(T &&value, std::tuple<Args...> &&tuple)
+		{
+			return std::tuple_cat(std::make_tuple(std::move(value)), std::move(tuple));
+		}
+
+		template<typename T, typename ...Args>
+		decltype(auto) tuple_cat(std::tuple<Args...> &&tuple, T &&value)
+		{
+			return std::tuple_cat(std::move(tuple), std::make_tuple(std::move(value)));
+		}
+
 	public:
 		Segregator() :Large(), Small() {}
 
@@ -69,8 +87,7 @@ namespace vx
 
 		decltype(auto) release()
 		{
-			return std::make_pair(Large::release(),
-				Small::release());
+			return tuple_cat(Large::release(), Small::release());
 		}
 
 		void print() const

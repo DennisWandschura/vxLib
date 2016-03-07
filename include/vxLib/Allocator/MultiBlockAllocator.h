@@ -114,6 +114,29 @@ namespace vx
 			return false;
 		}
 
+		bool hasFreeBits(u32* bitsPtr, size_t blockIndex, size_t blockCount)
+		{
+			auto needToCheck = blockCount;
+			for (size_t i = 0; i < blockCount; ++i)
+			{
+				auto blockIdx = blockIndex + i;
+
+				auto byte = blockIdx / 32;
+				auto bit = blockIdx & 31;
+
+				if (bitsPtr[byte] != 0)
+				{
+					--needToCheck;
+				}
+				else
+				{
+					break;
+				}
+			}
+
+			return (needToCheck == 0);
+		}
+
 		void setBits(u32* bitsPtr, size_t blockIndex, size_t blockCount)
 		{
 			for (size_t i = 0; i < blockCount; ++i)
@@ -221,6 +244,43 @@ namespace vx
 			return{ m_firstBlock + offset, blockCount * BLOCK_SIZE };
 		}
 
+		AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment)
+		{
+			bool isAligned = (getAlignedPtr(block.ptr, alignment) == block.ptr);
+			auto alignedSize = getAlignedSize(size, alignment);
+			if ((block.size >= alignedSize) && isAligned)
+				return block;
+
+			if (isAligned)
+			{
+				auto blockIndex = (block.ptr - m_firstBlock) / BLOCK_SIZE;
+				auto oldBlockCount = (block.size + BLOCK_SIZE - 1) / BLOCK_SIZE;
+				auto newBlockCount = (alignedSize + BLOCK_SIZE - 1) / BLOCK_SIZE;
+
+				auto checkIndex = blockIndex + oldBlockCount;
+				auto diff = newBlockCount - oldBlockCount;
+				VX_ASSERT(diff != 0);
+
+				if (hasFreeBits(getBitPtr(), checkIndex, diff))
+				{
+					m_remainingBlocks -= diff;
+					clearBits(checkIndex, diff);
+					return{block.ptr, alignedSize };
+				}
+			}
+
+			auto newBlock = allocate(size, alignment);
+			if (newBlock.ptr)
+			{
+				memcpy(newBlock.ptr, block.ptr, block.size);
+				memset(block.ptr, 0, block.size);
+			}
+
+			deallocate(block);
+
+			return newBlock;
+		}
+
 		u32 deallocate(const AllocatedBlock &block)
 		{
 			if (block.ptr == nullptr || block.size == 0)
@@ -234,7 +294,7 @@ namespace vx
 			auto blockCount = (block.size + BLOCK_SIZE - 1) / BLOCK_SIZE;
 			setBits(getBitPtr(), blockIndex, blockCount);
 
-			m_remainingBlocks += blockCount;;
+			m_remainingBlocks += blockCount;
 
 			return 1;
 		}

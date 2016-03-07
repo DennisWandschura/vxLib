@@ -197,6 +197,14 @@ namespace vx
 			return{ m_firstBlock + offset, BLOCK_SIZE };
 		}
 
+		AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment)
+		{
+			if (size > BLOCK_SIZE || alignment > ALIGNMENT)
+				return{nullptr, 0};
+
+			return block;
+		}
+
 		u32 deallocate(const AllocatedBlock &block)
 		{
 			if (block.size != BLOCK_SIZE)

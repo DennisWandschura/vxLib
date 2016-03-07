@@ -25,6 +25,7 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/DelegateAllocator.h>
+#include <vxLib/algorithm.h>
 
 namespace vx
 {
@@ -113,52 +114,17 @@ namespace vx
 
 		void pop_back()
 		{
-			(m_end - 1)->~value_type();
-			--m_end;
+			vx::destruct(--m_end);
 		}
 
-		void assign(const u8* p, size_t count)
+		bool assign(const value_type* p, size_t count)
 		{
-			clear();
-
-			::memcpy(m_begin, p, sizeof(value_type) * count);
-			m_end = m_begin + count;
-		}
-
-		template<typename OtherAllocator>
-		bool copyTo(array<T, OtherAllocator>* dst)
-		{
-			auto remainingCapacity = dst->capacity() - dst->size();
-			auto sz = this->size();
-			if (remainingCapacity >= sz)
+			if (capacity() >= count)
 			{
-				auto dta = data();
+				clear();
 
-				for (size_t i = 0; i < sz; ++i)
-				{
-					dst->push_back(dta[i]);
-				}
-
-				return true;
-			}
-
-			return false;
-		}
-
-		template<typename OtherAllocator>
-		bool moveTo(array<T, OtherAllocator>* dst)
-		{
-			auto remainingCapacity = dst->capacity() - dst->size();
-			auto sz = this->size();
-			if (remainingCapacity >= sz)
-			{
-				auto dta = data();
-
-				for (size_t i = 0; i < sz; ++i)
-				{
-					dst->push_back(std::move(dta[i]));
-				}
-
+				vx::copy(p, p + count, m_begin);
+				m_end = m_begin + count;
 				return true;
 			}
 
@@ -167,16 +133,9 @@ namespace vx
 
 		void clear()
 		{
-			auto p = begin();
-			auto e = end();
+			vx::destruct(begin(), end());
 
-			while (p != e)
-			{
-				p->~value_type();
-				++p;
-			}
-
-			m_end = begin();
+			m_end = m_begin;
 		}
 
 		void release()

@@ -63,7 +63,7 @@ namespace vx
 		}
 
 	public:
-		sorted_array() : m_keyBlock(), m_dataBlock(), m_size(0), m_allocator() {}
+		sorted_array() : m_keyBlock(), m_dataBlock(), m_size(0), m_capacity(0), m_allocator() {}
 
 		sorted_array(Allocator &&alloc, size_t capacity)
 			: m_keyBlock(), m_dataBlock(), m_size(0), m_capacity(0), m_allocator(std::move(alloc))
@@ -186,63 +186,26 @@ namespace vx
 			return result;
 		}
 
-		template<typename OtherAllocator>
-		bool insertTo(sorted_array<K, T, OtherAllocator, Cmp>* dst)
+		void erase(const pointer p)
 		{
-			auto remainingCapacity = dst->capacity() - dst->size();
-			auto sz = this->size();
-			if (remainingCapacity >= sz)
-			{
-				auto keys = (key_type*)m_keyBlock.ptr;
-				auto data = (pointer)m_dataBlock.ptr;
+			auto idx = p - begin();
 
-				for (size_t i = 0; i < sz; ++i)
-				{
-					dst->insert(keys[i], data[i]);
-				}
+			auto currentValue = &begin()[idx];
+			auto currentKey = &beginKey()[idx];
 
-				return true;
-			}
+			vx::destruct(currentValue);
+			vx::destruct(currentKey);
 
-			return false;
-		}
+			vx::move(currentValue + 1, end(), currentValue);
+			vx::move(currentKey + 1, endKey(), currentKey);
 
-		template<typename OtherAllocator>
-		bool moveTo(sorted_array<K, T, OtherAllocator, Cmp>* dst)
-		{
-			auto remainingCapacity = dst->capacity() - dst->size();
-			auto sz = this->size();
-			if (remainingCapacity >= sz)
-			{
-				auto keys = (key_type*)m_keyBlock.ptr;
-				auto data = (pointer)m_dataBlock.ptr;
-
-				for (size_t i = 0; i < sz; ++i)
-				{
-					dst->insert(std::move(keys[i]), std::move(data[i]));
-				}
-
-				return true;
-			}
-
-			return false;
+			--m_size;
 		}
 
 		void clear()
 		{
-			auto p = begin();
-			auto e = p + m_size;
-
-			auto keyPtr = (key_type*)m_keyBlock.ptr;
-
-			while (p != e)
-			{
-				keyPtr->~key_type();
-				++keyPtr;
-
-				p->~value_type();
-				++p;
-			}
+			vx::destruct(begin(), end());
+			vx::destruct(beginKey(), endKey());
 
 			m_size = 0;
 		}

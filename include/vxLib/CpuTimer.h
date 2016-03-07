@@ -40,8 +40,8 @@ namespace vx
 
 		void reset();
 
-		f32 getTimeSeconds() const;
-		f32 getTimeMiliseconds() const;
-		f32 getTimeMicroseconds() const;
+		f64 getTimeSeconds() const;
+		f64 getTimeMiliseconds() const;
+		f64 getTimeMicroseconds() const;
 	};
 }

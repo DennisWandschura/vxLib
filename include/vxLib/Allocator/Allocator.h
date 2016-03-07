@@ -73,6 +73,11 @@ namespace vx
 			return get().allocate(size, alignment);
 		}
 
+		AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment)
+		{
+			return get().allocate(size, alignment);
+		}
+
 		void deallocate(const AllocatedBlock &block)
 		{
 			return get().deallocate(block);
@@ -96,6 +101,7 @@ namespace vx
 		virtual ~AllocatorBase() {}
 
 		virtual AllocatedBlock allocate(size_t size, size_t alignment) = 0;
+		virtual AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment) = 0;
 		virtual void deallocate(const AllocatedBlock &block) = 0;
 
 		virtual bool contains(const AllocatedBlock &block) const = 0;

@@ -38,11 +38,13 @@ namespace vx
 		struct ColdData;
 
 	public:
-		typedef void(*WindowCloseCallback)();
+		typedef void(*WindowCallback)();
 
 	private:
 		MSG m_msg;
-		WindowCloseCallback m_windowCloseCallback;
+		WindowCallback m_windowCloseCallback;
+		WindowCallback m_windowActivateCallback;
+		WindowCallback m_windowDeactivateCallback;
 		vx::int2 m_halfSize;
 		ColdData* m_coldData;
 
@@ -81,7 +83,9 @@ namespace vx
 		void setCursorPos(const vx::int2 &pos);
 		void setCursorPos(s32 x, s32 y);
 
-		void setWindowCloseCallback(WindowCloseCallback fn);
+		void setWindowActivateCallback(WindowCallback fn);
+		void setWindowDeactivateCallback(WindowCallback fn);
+		void setWindowCloseCallback(WindowCallback fn);
 		void setForeground();
 
 		void focus();

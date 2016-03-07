@@ -37,6 +37,25 @@ namespace vx
 	Input::MouseEventCallback RawInput::s_mouseEventPressedCallback{nullptr};
 	Input::MouseEventCallback RawInput::s_mouseEventReleasedCallback{nullptr};
 
+	template<USHORT BUTTON_MASK_DOWN, USHORT BUTTON_MASK_UP>
+	inline void handleMouseButton(vx::MouseButtons button, USHORT buttonFlags, u8 &mouseKey, const vx::int2 &mousePosition, vx::array<MouseEvent, DelegateAllocator<AllocatorBase>>* mouseEvents)
+	{
+		if ((buttonFlags & BUTTON_MASK_DOWN) == BUTTON_MASK_DOWN)
+		{
+			if (mouseKey == 0)
+				mouseEvents->push_back(MouseEvent(button, vx::MouseEvent::Pressed, mousePosition));
+
+			mouseKey = 1;
+		}
+		else if ((buttonFlags & BUTTON_MASK_UP) == BUTTON_MASK_UP)
+		{
+			if (mouseKey != 0)
+				mouseEvents->push_back(MouseEvent(button, vx::MouseEvent::Released, mousePosition));
+
+			mouseKey = 0;
+		}
+	}
+
 	struct InputHandler
 	{
 		static void handleKeyboard(const RAWKEYBOARD &rawKeyboard, Keyboard* keyboard, vx::array<KeyEvent, DelegateAllocator<AllocatorBase>>* keyEvents)
@@ -81,50 +100,13 @@ namespace vx
 				mouse->m_mouseWheel = *reinterpret_cast<const SHORT*>(&rawMouse.usButtonData);
 			}
 
-			if ((buttonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) == RI_MOUSE_LEFT_BUTTON_DOWN)
-			{
-				if (mouse->m_keys[0] == 0)
-					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Left, vx::MouseEvent::Pressed, mouse->m_position));
-
-				mouse->m_keys[0] = 1;
-			}
-			else if ((buttonFlags & RI_MOUSE_LEFT_BUTTON_UP) == RI_MOUSE_LEFT_BUTTON_UP)
-			{
-				if (mouse->m_keys[0] != 0)
-					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Left, vx::MouseEvent::Released, mouse->m_position));
-
-				mouse->m_keys[0] = 0;
-			}
-
-			if ((buttonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN) == RI_MOUSE_RIGHT_BUTTON_DOWN)
-			{
-				if(mouse->m_keys[1] == 0)
-					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Right, vx::MouseEvent::Pressed, mouse->m_position));
-
-				mouse->m_keys[1] = 1;
-			}
-			else if ((buttonFlags & RI_MOUSE_RIGHT_BUTTON_UP) == RI_MOUSE_RIGHT_BUTTON_UP)
-			{
-				if (mouse->m_keys[1] != 0)
-				mouseEvents->push_back(MouseEvent(vx::MouseButtons::Right, vx::MouseEvent::Released, mouse->m_position));
-
-				mouse->m_keys[1] = 0;
-			}
-
-			if ((buttonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN) == RI_MOUSE_MIDDLE_BUTTON_DOWN)
-			{
-				if (mouse->m_keys[2] == 0)
-					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Middle, vx::MouseEvent::Pressed, mouse->m_position));
-
-				mouse->m_keys[2] = 1;
-			}
-			else if ((buttonFlags & RI_MOUSE_MIDDLE_BUTTON_UP) == RI_MOUSE_MIDDLE_BUTTON_UP)
-			{
-				if (mouse->m_keys[2] != 0)
-					mouseEvents->push_back(MouseEvent(vx::MouseButtons::Middle, vx::MouseEvent::Released, mouse->m_position));
-
-				mouse->m_keys[2] = 0;
-			}
+			auto mousePosition = mouse->m_position;
+			handleMouseButton<RI_MOUSE_LEFT_BUTTON_DOWN, RI_MOUSE_LEFT_BUTTON_UP>(vx::MouseButtons::Left, buttonFlags, mouse->m_keys[0], mousePosition, mouseEvents);
+			handleMouseButton<RI_MOUSE_RIGHT_BUTTON_DOWN, RI_MOUSE_RIGHT_BUTTON_UP>(vx::MouseButtons::Right, buttonFlags, mouse->m_keys[1], mousePosition, mouseEvents);
+			handleMouseButton<RI_MOUSE_MIDDLE_BUTTON_DOWN, RI_MOUSE_MIDDLE_BUTTON_UP>(vx::MouseButtons::Middle, buttonFlags, mouse->m_keys[2], mousePosition, mouseEvents);
+			handleMouseButton<RI_MOUSE_BUTTON_1_DOWN, RI_MOUSE_BUTTON_1_UP>(vx::MouseButtons::Button1, buttonFlags, mouse->m_keys[3], mousePosition, mouseEvents);
+			handleMouseButton<RI_MOUSE_BUTTON_2_DOWN, RI_MOUSE_BUTTON_2_UP>(vx::MouseButtons::Button2, buttonFlags, mouse->m_keys[4], mousePosition, mouseEvents);
+			handleMouseButton<RI_MOUSE_BUTTON_3_DOWN, RI_MOUSE_BUTTON_3_UP>(vx::MouseButtons::Button3, buttonFlags, mouse->m_keys[5], mousePosition, mouseEvents);
 		}
 	};
 

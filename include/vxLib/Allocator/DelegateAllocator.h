@@ -71,6 +71,11 @@ namespace vx
 			return m_ptr->allocate(size, alignment);
 		}
 
+		AllocatedBlock reallocate(const vx::AllocatedBlock &block, size_t size, size_t alignment)
+		{
+			return m_ptr->reallocate(block, size, alignment);
+		}
+
 		void deallocate(const vx::AllocatedBlock &block)
 		{
 			m_ptr->deallocate(block);

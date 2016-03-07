@@ -87,6 +87,25 @@ namespace vx
 			return{ alignedPtr, alignedSize };
 		}
 
+		AllocatedBlock reallocate(const vx::AllocatedBlock &block, size_t size, size_t alignment)
+		{
+			auto tmp = block.ptr + block.size;
+			if (m_head == tmp)
+			{
+				m_head = block.ptr;
+				auto newBlock = allocate(size, alignment);
+
+				if (newBlock.ptr != block.ptr)
+				{
+					memmove(newBlock.ptr, block.ptr, block.size);
+				}
+
+				return newBlock;
+			}
+
+			return{ nullptr, 0 };
+		}
+
 		u32 deallocate(const AllocatedBlock &block)
 		{
 			auto tmp = block.ptr + block.size;
@@ -119,5 +138,10 @@ namespace vx
 		}
 
 		size_t capacity() const { return m_last - m_data; }
+
+		void zeroMemory()
+		{
+			memset(m_data, 0, capacity());
+		}
 	};
 }

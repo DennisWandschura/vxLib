@@ -126,12 +126,29 @@ namespace vx
 				AllocatedBlock block = { (u8*)m_head, m_head->size };
 
 				m_head = m_head->next;
-				++m_nodeCount;
+				--m_nodeCount;
 
 				return block;
 			}
 
 			return Super::allocate(size, alignment);
+		}
+
+		AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment)
+		{
+			if ((block.size >= size) && (getAlignedPtr(block.ptr, alignment) == block.ptr))
+				return block;
+
+			auto newBlock = allocate(size, alignment);
+			if (newBlock.ptr)
+			{
+				memcpy(newBlock.ptr, block.ptr, block.size);
+				memset(block.ptr, 0, block.size);
+			}
+
+			deallocate(block);
+
+			return newBlock;
 		}
 
 		u32 deallocate(const AllocatedBlock &block)

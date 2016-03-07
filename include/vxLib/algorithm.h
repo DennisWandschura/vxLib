@@ -74,21 +74,81 @@ namespace vx
 	}
 
 	template<typename T>
-	void copy(T* dst, T* src, u32 count)
+	std::enable_if_t<
+		std::is_trivially_copyable<T>::value, 
+		void>
+	copy(T* first, T* last, T* dst)
 	{
-		for (u32 i = 0; i < count; ++i)
+		::memmove(dst, first, sizeof(T) * (last - first));
+	}
+
+	template<typename T>
+	std::enable_if_t<
+		!std::is_trivially_copyable<T>::value,
+		void>
+	copy(T* first, T* last, T* dst)
+	{
+		for (; first != last; ++dst, ++first)
+			*dst = *first;
+	}
+
+	template<typename T>
+	std::enable_if_t<
+		std::is_trivially_move_assignable<T>::value,
+		void>
+	move(T* first, T* last, T* dst)
+	{
+		::memmove(dst, first, sizeof(T) * (last - first));
+	}
+
+	template<typename T>
+	std::enable_if_t<
+		!std::is_trivially_move_assignable<T>::value,
+		void>
+	move(T* first, T* last, T* dst)
+	{
+		for (; first != last; ++dst, ++first)
+			*dst = std::move(*first);
+	}
+
+	template<typename T>
+	std::enable_if_t<
+		std::is_trivially_destructible<T>::value,
+		void>
+	destruct(T* begin, T* end)
+	{
+		VX_UNREFERENCED_PARAMETER(begin);
+		VX_UNREFERENCED_PARAMETER(end);
+	}
+
+	template<typename T>
+	std::enable_if_t<
+		std::is_trivially_destructible<T>::value,
+		void>
+		destruct(T* p)
+	{
+		VX_UNREFERENCED_PARAMETER(p);
+	}
+
+	template<typename T>
+	std::enable_if_t<
+		!std::is_trivially_destructible<T>::value,
+		void>
+		destruct(T* begin, T* end)
+	{
+		while (begin != end)
 		{
-			dst[i] = src[i];
+			(begin++)->~T();
 		}
 	}
 
-	template<typename T, typename U, typename Converter>
-	void copy(T* dst, U* src, u32 count, Converter cnvrt)
+	template<typename T>
+	std::enable_if_t<
+		!std::is_trivially_destructible<T>::value,
+		void>
+		destruct(T* p)
 	{
-		for (u32 i = 0; i < count; ++i)
-		{
-			cnvrt(dst[i], src[i]);
-		}
+		p->~T();
 	}
 
 	template<typename T, typename Cmp>

@@ -42,6 +42,12 @@ namespace vx
 			return{ (u8*)_aligned_malloc(alignedSize, alignment), alignedSize };
 		}
 
+		vx::AllocatedBlock reallocate(const vx::AllocatedBlock &block, size_t size, size_t alignment)
+		{
+			auto alignedSize = getAlignedSize(size, alignment);
+			return{ (u8*)_aligned_realloc(block.ptr, alignedSize, alignment), alignedSize };
+		}
+
 		u32 deallocate(const vx::AllocatedBlock &block)
 		{
 			_aligned_free(block.ptr);

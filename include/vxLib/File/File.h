@@ -51,7 +51,9 @@ namespace vx
 		~File();
 
 		bool create(const char* file, FileAccess access);
+		bool create(const wchar_t* file, FileAccess access);
 		bool open(const char *file, FileAccess access);
+		bool open(const wchar_t *file, FileAccess access);
 		bool close();
 
 		bool read(void *ptr, s32 size);
