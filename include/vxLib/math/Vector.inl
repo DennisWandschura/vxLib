@@ -74,19 +74,6 @@ namespace vx
 #endif
 	}
 
-	inline __m256d VX_CALLCONV dot3(__m256d v1, __m256d v2)
-	{
-		auto mul = _mm256_mul_pd(v1, v2);
-
-		auto m0 = _mm256_hadd_pd(mul, mul);
-
-		__m256d m1 = { mul.m256d_f64[2], 0, 0, 0 };
-		m1 = _mm256_add_pd(m0, m1);
-
-		__m256d result = {m1.m256d_f64[0], m1.m256d_f64[0], m1.m256d_f64[0],m1.m256d_f64[0] };
-		return result;
-	}
-
 	inline __m128 VX_CALLCONV dot4(CVEC4 v1, CVEC4 v2)
 	{
 #if _VX_SSE41
@@ -226,27 +213,11 @@ namespace vx
 		return _mm_or_ps(vTemp1, vTemp2);
 	}
 
-	inline __m256d VX_CALLCONV VectorSelect(__m256d V1, __m256d V2, const __m256d &Control)
-	{
-		auto ctrl = Control;
-
-		auto vTemp1 = _mm256_andnot_pd(ctrl, V1);
-		auto vTemp2 = _mm256_and_pd(V2, ctrl);
-		return _mm256_or_pd(vTemp1, vTemp2);
-	}
-
 	inline __m128 VX_CALLCONV negate(CVEC4 V)
 	{
 		auto zero = _mm_setzero_ps();
 
 		return _mm_sub_ps(zero, V);
-	}
-
-	inline __m256d VX_CALLCONV negate(__m256d V)
-	{
-		auto zero = _mm256_setzero_pd();
-
-		return _mm256_sub_pd(zero, V);
 	}
 
 	inline __m128 VX_CALLCONV round
@@ -281,38 +252,6 @@ namespace vx
 		c2 = _mm_mul_ps(tmp, c2);
 
 		return _mm_sub_ps(c1, c2);
-	}
-
-	inline __m256d VX_CALLCONV cross3(__m256d v1, const __m256d &v2)
-	{
-		__m256d tmp;
-		tmp.m256d_f64[0] = v1.m256d_f64[1];
-		tmp.m256d_f64[1] = v1.m256d_f64[2];
-		tmp.m256d_f64[2] = v1.m256d_f64[0];
-		tmp.m256d_f64[3] = v1.m256d_f64[3];
-
-		__m256d c1;
-		c1.m256d_f64[0] = v2.m256d_f64[2];
-		c1.m256d_f64[1] = v2.m256d_f64[0];
-		c1.m256d_f64[2] = v2.m256d_f64[1];
-		c1.m256d_f64[3] = v2.m256d_f64[3];
-
-		c1 = _mm256_mul_pd(tmp, c1);
-
-		tmp.m256d_f64[0] = v1.m256d_f64[2];
-		tmp.m256d_f64[1] = v1.m256d_f64[0];
-		tmp.m256d_f64[2] = v1.m256d_f64[1];
-		tmp.m256d_f64[3] = v1.m256d_f64[3];
-
-		__m256d c2;
-		c2.m256d_f64[0] = v2.m256d_f64[1];
-		c2.m256d_f64[1] = v2.m256d_f64[2];
-		c2.m256d_f64[2] = v2.m256d_f64[0];
-		c2.m256d_f64[3] = v2.m256d_f64[3];
-
-		c2 = _mm256_mul_pd(tmp, c2);
-
-		return _mm256_sub_pd(c1, c2);
 	}
 
 	inline __m128 VX_CALLCONV length2(CVEC4 V)
@@ -377,37 +316,6 @@ namespace vx
 		return normalizeImpl(vLengthSq, V);
 	}
 
-	inline __m256d VX_CALLCONV normalize3(const __m256d V)
-	{
-		auto value = _mm256_and_pd(V, g_VXSelect1110_d.v);
-		// Perform the dot product on x,y and z only
-		auto vLengthSq = dot3(value, value);
-
-		// Prepare for the division
-		auto vResult = _mm256_sqrt_pd(vLengthSq);
-		// Create zero with a single instruction
-		auto vZeroMask = _mm256_setzero_pd();
-		// Test for a divide by zero (Must be FP to detect -0.0)
-		vZeroMask = _mm256_cmp_pd(vZeroMask, vResult, _CMP_NEQ_OS);
-		//vZeroMask = _mm_cmpneq_ps(vZeroMask, vResult);
-
-		// Failsafe on zero (Or epsilon) length planes
-		// If the length is infinity, set the elements to zero
-		//vLengthSq = _mm_cmpneq_ps(vLengthSq, g_VXInfinity);
-		vLengthSq = _mm256_cmp_pd(vLengthSq, g_VXInfinity_d.v, _CMP_NEQ_OS);
-
-		// Divide to perform the normalization
-		vResult = _mm256_div_pd(value, vResult);
-		// Any that are infinity, set to zero
-		vResult = _mm256_and_pd(vResult, vZeroMask);
-
-		// Select qnan or result based on infinite length
-		auto vTemp1 = _mm256_andnot_pd(vLengthSq, g_VXQNaN_d.v);
-		auto vTemp2 = _mm256_and_pd(vResult, vLengthSq);
-		vResult = _mm256_or_pd(vTemp1, vTemp2);
-		return vResult;
-	}
-
 	inline __m128 VX_CALLCONV quaternionRotation
 		(
 		CVEC4 V,
@@ -417,14 +325,6 @@ namespace vx
 		__m128 A = VectorSelect(g_VXSelect1110.v, V, g_VXSelect1110.v);
 		__m128 Q = quaternionConjugate(RotationQuaternion);
 		__m128 Result = quaternionMultiply(Q, A);
-		return quaternionMultiply(Result, RotationQuaternion);
-	}
-
-	inline __m256d VX_CALLCONV quaternionRotation(__m256d V, __m256d RotationQuaternion)
-	{
-		__m256d A = VectorSelect(g_VXSelect1110_d.v, V, g_VXSelect1110_d.v);
-		__m256d Q = quaternionConjugate(RotationQuaternion);
-		__m256d Result = quaternionMultiply(Q, A);
 		return quaternionMultiply(Result, RotationQuaternion);
 	}
 
@@ -468,63 +368,10 @@ namespace vx
 		return vResult;
 	}
 
-	inline __m256d VX_CALLCONV quaternionMultiply(__m256d Q1, __m256d Q2)
-	{
-		static const __m256d ControlWZYX = { 1.0, -1.0, 1.0, -1.0 };
-		static const __m256d ControlZWXY = { 1.0, 1.0, -1.0, -1.0 };
-		static const __m256d ControlYXWZ = { -1.0, 1.0, 1.0, -1.0 };
-		// Copy to SSE registers and use as few as possible for x86
-		auto Q2X = Q2;
-		auto Q2Y = Q2;
-		auto Q2Z = Q2;
-		auto vResult = Q2;
-		// Splat with one instruction
-		//vResult = VX_PERMUTE_PD(vResult, _MM_SHUFFLE(3, 3, 3, 3));
-		vResult = { vResult.m256d_f64[3], vResult.m256d_f64[3], vResult.m256d_f64[3], vResult.m256d_f64[3] };
-		//Q2X = VX_PERMUTE_PD(Q2X, _MM_SHUFFLE(0, 0, 0, 0));
-		Q2X = { Q2X.m256d_f64[0], Q2X.m256d_f64[0], Q2X.m256d_f64[0], Q2X.m256d_f64[0] };
-		//Q2Y = VX_PERMUTE_PD(Q2Y, _MM_SHUFFLE(1, 1, 1, 1));
-		Q2Y = { Q2Y.m256d_f64[1], Q2Y.m256d_f64[1], Q2Y.m256d_f64[1], Q2Y.m256d_f64[1] };
-		//Q2Z = VX_PERMUTE_PD(Q2Z, _MM_SHUFFLE(2, 2, 2, 2));
-		Q2Z = { Q2Z.m256d_f64[2], Q2Z.m256d_f64[2], Q2Z.m256d_f64[2], Q2Z.m256d_f64[2] };
-		// Retire Q1 and perform Q1*Q2W
-		vResult = _mm256_mul_pd(vResult, Q1);
-		auto Q1Shuffle = Q1;
-		// Shuffle the copies of Q1
-		//Q1Shuffle = VX_PERMUTE_PD(Q1Shuffle, _MM_SHUFFLE(0, 1, 2, 3));
-		Q1Shuffle = { Q1Shuffle.m256d_f64[3], Q1Shuffle.m256d_f64[2], Q1Shuffle.m256d_f64[1], Q1Shuffle.m256d_f64[0] };
-		// Mul by Q1WZYX
-		Q2X = _mm256_mul_pd(Q2X, Q1Shuffle);
-		//Q1Shuffle = VX_PERMUTE_PD(Q1Shuffle, _MM_SHUFFLE(2, 3, 0, 1));
-		Q1Shuffle = { Q1Shuffle.m256d_f64[1], Q1Shuffle.m256d_f64[0], Q1Shuffle.m256d_f64[3], Q1Shuffle.m256d_f64[2] };
-		// Flip the signs on y and z
-		Q2X = _mm256_mul_pd(Q2X, ControlWZYX);
-		// Mul by Q1ZWXY
-		Q2Y = _mm256_mul_pd(Q2Y, Q1Shuffle);
-		//Q1Shuffle = VX_PERMUTE_PD(Q1Shuffle, _MM_SHUFFLE(0, 1, 2, 3));
-		Q1Shuffle = { Q1Shuffle.m256d_f64[3], Q1Shuffle.m256d_f64[2], Q1Shuffle.m256d_f64[1], Q1Shuffle.m256d_f64[0] };
-		// Flip the signs on z and w
-		Q2Y = _mm256_mul_pd(Q2Y, ControlZWXY);
-		// Mul by Q1YXWZ
-		Q2Z = _mm256_mul_pd(Q2Z, Q1Shuffle);
-		vResult = _mm256_add_pd(vResult, Q2X);
-		// Flip the signs on x and w
-		Q2Z = _mm256_mul_pd(Q2Z, ControlYXWZ);
-		Q2Y = _mm256_add_pd(Q2Y, Q2Z);
-		vResult = _mm256_add_pd(vResult, Q2Y);
-		return vResult;
-	}
-
 	inline __m128 VX_CALLCONV quaternionConjugate(CVEC4 Q)
 	{
 		static const __m128 NegativeOne3 = { -1.0f, -1.0f, -1.0f, 1.0f };
 		return _mm_mul_ps(Q, NegativeOne3);
-	}
-
-	inline __m256d VX_CALLCONV quaternionConjugate(__m256d Q)
-	{
-		static const __m256d NegativeOne3 = { -1.0, -1.0, -1.0, 1.0 };
-		return _mm256_mul_pd(Q, NegativeOne3);
 	}
 
 	inline __m128 VX_CALLCONV quaternionRotationRollPitchYawFromVector(CVEC4 Angles)

@@ -83,7 +83,7 @@ namespace vx
 	{
 		__m128 fa = _mm_load_ss(&a);
 		fa = _mm_andnot_ps(g_VXAbsMaskFloat, fa);
-		return fa.m128_f32[0];
+		return *reinterpret_cast<f32*>(&fa);
 	}
 
 	inline f32 VX_CALLCONV min(f32 a, f32 b)
@@ -92,7 +92,7 @@ namespace vx
 		__m128 fb = _mm_load_ss(&b);
 
 		fa = _mm_min_ss(fa, fb);
-		return fa.m128_f32[0];
+		return *reinterpret_cast<f32*>(&fa);
 	}
 
 	inline f32 VX_CALLCONV max(f32 a, f32 b)
@@ -101,14 +101,14 @@ namespace vx
 		__m128 fb = _mm_load_ss(&b);
 
 		fa = _mm_max_ss(fa, fb);
-		return fa.m128_f32[0];
+		return *reinterpret_cast<f32*>(&fa);
 	}
 
 	inline f32 VX_CALLCONV invsqrt(f32 number)
 	{
 		__m128 fn = _mm_load_ss(&number);
 		fn = _mm_rsqrt_ss(fn);
-		return fn.m128_f32[0];
+		return *reinterpret_cast<f32*>(&fn);
 	}
 
 	template<typename T>

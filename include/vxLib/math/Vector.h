@@ -23,8 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#pragma warning( push )
-#pragma warning(disable : 4201)
+#ifndef _VX_GCC
+#pragma warning(push)
+#pragma ignore( 4201)
+#endif
 
 #include <vxLib/math/math.h>
 
@@ -70,12 +72,12 @@ namespace vx
 
 			value_type v[2];
 
-			vec2() :x(), y(){}
-			explicit vec2(value_type v) :x(v), y(v){}
-			vec2(value_type vx, value_type vy) : x(vx), y(vy){}
+			vec2() :x(), y() {}
+			explicit vec2(value_type v) :x(v), y(v) {}
+			vec2(value_type vx, value_type vy) : x(vx), y(vy) {}
 
 			template<typename U>
-			vec2(const vec2<U> &v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)){}
+			vec2(const vec2<U> &v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)) {}
 
 			operator value_type*()
 			{
@@ -165,67 +167,79 @@ namespace vx
 
 				return *this;
 			}
-
-			friend vec2 operator+(const vec2 &lhs, const vec2 &rhs)
-			{
-				return vec2(lhs.x + rhs.x, lhs.y + rhs.y);
-			}
-
-			friend vec2 operator-(const vec2 &lhs, const vec2 &rhs)
-			{
-				return vec2(lhs.x - rhs.x, lhs.y - rhs.y);
-			}
-
-			friend vec2 operator*(const vec2 &lhs, const vec2 &rhs)
-			{
-				return vec2(lhs.x * rhs.x, lhs.y * rhs.y);
-			}
-
-			friend vec2 operator/(const vec2 &lhs, const vec2 &rhs)
-			{
-				return vec2(lhs.x / rhs.x, lhs.y / rhs.y);
-			}
-
-			friend vec2 operator+(const vec2 &lhs, T rhs)
-			{
-				return vec2(lhs.x + rhs, lhs.y + rhs);
-			}
-
-			friend vec2 operator-(const vec2 &lhs, T rhs)
-			{
-				return vec2(lhs.x - rhs, lhs.y - rhs);
-			}
-
-			friend vec2 operator*(const vec2 &lhs, T rhs)
-			{
-				return vec2(lhs.x * rhs, lhs.y * rhs);
-			}
-
-			friend vec2 operator/(const vec2 &lhs, T rhs)
-			{
-				return vec2(lhs.x / rhs, lhs.y / rhs);
-			}
-
-			friend vec2 operator+(T lhs, const vec2 &rhs)
-			{
-				return vec2(lhs + rhs.x, lhs + rhs.y);
-			}
-
-			friend vec2 operator-(T lhs, const vec2 &rhs)
-			{
-				return vec2(lhs - rhs.x, lhs - rhs.y);
-			}
-
-			friend vec2 operator*(T lhs, const vec2 &rhs)
-			{
-				return vec2(lhs * rhs.x, lhs * rhs.y);
-			}
-
-			friend vec2 operator/(T lhs, const vec2 &rhs)
-			{
-				return vec2(lhs / rhs.x, lhs / rhs.y);
-			}
 		};
+
+		template<typename U>
+		inline vec2<U> operator+(const vec2<U> &lhs, const vec2<U> &rhs)
+		{
+			return vec2<U>(lhs.x + rhs.x, lhs.y + rhs.y);
+		}
+
+		template<typename U>
+		inline vec2<U> operator-(const vec2<U> &lhs, const vec2<U> &rhs)
+		{
+			return vec2<U>(lhs.x - rhs.x, lhs.y - rhs.y);
+		}
+
+		template<typename U>
+		inline vec2<U> operator*(const vec2<U> &lhs, const vec2<U> &rhs)
+		{
+			return vec2<U>(lhs.x * rhs.x, lhs.y * rhs.y);
+		}
+
+		template<typename U>
+		inline vec2<U> operator/(const vec2<U> &lhs, const vec2<U> &rhs)
+		{
+			return vec2<U>(lhs.x / rhs.x, lhs.y / rhs.y);
+		}
+
+		template<typename U>
+		inline vec2<U> operator+(const vec2<U> &lhs, U rhs)
+		{
+			return vec2<U>(lhs.x + rhs, lhs.y + rhs);
+		}
+
+		template<typename U>
+		inline vec2<U> operator-(const vec2<U> &lhs, U rhs)
+		{
+			return vec2<U>(lhs.x - rhs, lhs.y - rhs);
+		}
+
+		template<typename U>
+		inline vec2<U> operator*(const vec2<U> &lhs, U rhs)
+		{
+			return vec2<U>(lhs.x * rhs, lhs.y * rhs);
+		}
+
+		template<typename U>
+		inline vec2<U> operator/(const vec2<U> &lhs, U rhs)
+		{
+			return vec2<U>(lhs.x / rhs, lhs.y / rhs);
+		}
+
+		template<typename U>
+		inline vec2<U> operator+(U lhs, const vec2<U> &rhs)
+		{
+			return vec2<U>(lhs + rhs.x, lhs + rhs.y);
+		}
+
+		template<typename U>
+		inline vec2<U> operator-(U lhs, const vec2<U> &rhs)
+		{
+			return vec2<U>(lhs - rhs.x, lhs - rhs.y);
+		}
+
+		template<typename U>
+		inline vec2<U> operator*(U lhs, const vec2<U> &rhs)
+		{
+			return vec2<U>(lhs * rhs.x, lhs * rhs.y);
+		}
+
+		template<typename U>
+		inline vec2<U> operator/(U lhs, const vec2<U> &rhs)
+		{
+			return vec2<U>(lhs / rhs.x, lhs / rhs.y);
+		}
 
 		template<class T>
 		union VX_ALIGN(8) vec2a
@@ -239,13 +253,13 @@ namespace vx
 
 			value_type v[2];
 
-			vec2a() :x(), y(){}
-			explicit vec2a(value_type v) :x(v), y(v){}
-			vec2a(value_type vx, value_type vy) : x(vx), y(vy){}
-			vec2a(const vec2<T> &v) :x(v.x), y(v.y){}
+			vec2a() :x(), y() {}
+			explicit vec2a(value_type v) :x(v), y(v) {}
+			vec2a(value_type vx, value_type vy) : x(vx), y(vy) {}
+			vec2a(const vec2<T> &v) :x(v.x), y(v.y) {}
 
 			template<typename U>
-			vec2a(const vec2a<U> &v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)){}
+			vec2a(const vec2a<U> &v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)) {}
 
 			operator value_type*()
 			{
@@ -335,67 +349,79 @@ namespace vx
 
 				return *this;
 			}
-
-			friend vec2a operator+(const vec2a &lhs, const vec2a &rhs)
-			{
-				return vec2a(lhs.x + rhs.x, lhs.y + rhs.y);
-			}
-
-			friend vec2a operator-(const vec2a &lhs, const vec2a &rhs)
-			{
-				return vec2a(lhs.x - rhs.x, lhs.y - rhs.y);
-			}
-
-			friend vec2a operator*(const vec2a &lhs, const vec2a &rhs)
-			{
-				return vec2a(lhs.x * rhs.x, lhs.y * rhs.y);
-			}
-
-			friend vec2a operator/(const vec2a &lhs, const vec2a &rhs)
-			{
-				return vec2a(lhs.x / rhs.x, lhs.y / rhs.y);
-			}
-
-			friend vec2a operator+(const vec2a &lhs, value_type rhs)
-			{
-				return vec2a(lhs.x + rhs, lhs.y + rhs);
-			}
-
-			friend vec2a operator-(const vec2a &lhs, value_type rhs)
-			{
-				return vec2a(lhs.x - rhs, lhs.y - rhs);
-			}
-
-			friend vec2a operator*(const vec2a &lhs, value_type rhs)
-			{
-				return vec2a(lhs.x * rhs, lhs.y * rhs);
-			}
-
-			friend vec2a operator/(const vec2a &lhs, value_type rhs)
-			{
-				return vec2a(lhs.x / rhs, lhs.y / rhs);
-			}
-
-			friend vec2a operator+(value_type lhs, const vec2a &rhs)
-			{
-				return vec2a(lhs + rhs.x, lhs + rhs.y);
-			}
-
-			friend vec2a operator-(value_type lhs, const vec2a &rhs)
-			{
-				return vec2a(lhs - rhs.x, lhs - rhs.y);
-			}
-
-			friend vec2a operator*(value_type lhs, const vec2a &rhs)
-			{
-				return vec2a(lhs * rhs.x, lhs * rhs.y);
-			}
-
-			friend vec2a operator/(value_type lhs, const vec2a &rhs)
-			{
-				return vec2a(lhs / rhs.x, lhs / rhs.y);
-			}
 		};
+
+		template<typename U>
+		inline vec2a<U> operator+(const vec2a<U> &lhs, const vec2a<U> &rhs)
+		{
+			return vec2a<U>(lhs.x + rhs.x, lhs.y + rhs.y);
+		}
+
+		template<typename U>
+		inline vec2a<U> operator-(const vec2a<U> &lhs, const vec2a<U> &rhs)
+		{
+			return vec2a<U>(lhs.x - rhs.x, lhs.y - rhs.y);
+		}
+
+		template<typename U>
+		inline vec2a<U> operator*(const vec2a<U> &lhs, const vec2a<U> &rhs)
+		{
+			return vec2a<U>(lhs.x * rhs.x, lhs.y * rhs.y);
+		}
+
+		template<typename U>
+		inline vec2a<U> operator/(const vec2a<U> &lhs, const vec2a<U> &rhs)
+		{
+			return vec2a<U>(lhs.x / rhs.x, lhs.y / rhs.y);
+		}
+
+		template<typename U>
+		inline vec2a<U> operator+(const vec2a<U> &lhs, U rhs)
+		{
+			return vec2a<U>(lhs.x + rhs, lhs.y + rhs);
+		}
+
+		template<typename U>
+		inline vec2a<U> operator-(const vec2a<U> &lhs, U rhs)
+		{
+			return vec2a<U>(lhs.x - rhs, lhs.y - rhs);
+		}
+
+		template<typename U>
+		inline vec2a<U> operator*(const vec2a<U> &lhs, U rhs)
+		{
+			return vec2a<U>(lhs.x * rhs, lhs.y * rhs);
+		}
+
+		template<typename U>
+		inline vec2a<U> operator/(const vec2a<U> &lhs, U rhs)
+		{
+			return vec2a<U>(lhs.x / rhs, lhs.y / rhs);
+		}
+
+		template<typename U>
+		inline vec2a<U> operator+(U lhs, const vec2a<U> &rhs)
+		{
+			return vec2a<U>(lhs + rhs.x, lhs + rhs.y);
+		}
+
+		template<typename U>
+		inline vec2a<U> operator-(U lhs, const vec2a<U> &rhs)
+		{
+			return vec2a<U>(lhs - rhs.x, lhs - rhs.y);
+		}
+
+		template<typename U>
+		inline vec2a<U> operator*(U lhs, const vec2a<U> &rhs)
+		{
+			return vec2a<U>(lhs * rhs.x, lhs * rhs.y);
+		}
+
+		template<typename U>
+		inline vec2a<U> operator/(U lhs, const vec2a<U> &rhs)
+		{
+			return vec2a<U>(lhs / rhs.x, lhs / rhs.y);
+		}
 
 		template<class T>
 		union vec3
@@ -409,14 +435,14 @@ namespace vx
 
 			value_type v[3];
 
-			vec3() :x(), y(), z(){}
-			explicit vec3(value_type v) :x(v), y(v), z(v){}
-			vec3(value_type vx, value_type vy, value_type vz) : x(vx), y(vy), z(vz){}
-			vec3(const vec2<T> &v, value_type vz) : x(v.x), y(v.y), z(vz){}
-			vec3(const vec2a<T> &v, value_type vz) : x(v.x), y(v.y), z(vz){}
+			vec3() :x(), y(), z() {}
+			explicit vec3(value_type v) :x(v), y(v), z(v) {}
+			vec3(value_type vx, value_type vy, value_type vz) : x(vx), y(vy), z(vz) {}
+			vec3(const vec2<T> &v, value_type vz) : x(v.x), y(v.y), z(vz) {}
+			vec3(const vec2a<T> &v, value_type vz) : x(v.x), y(v.y), z(vz) {}
 
 			template<typename U>
-			vec3(const vec3<U> &v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)), z(static_cast<T>(v.z)){}
+			vec3(const vec3<U> &v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)), z(static_cast<T>(v.z)) {}
 
 			vec3 operator-() const
 			{
@@ -514,67 +540,79 @@ namespace vx
 
 				return *this;
 			}
-
-			friend vec3 operator+(const vec3 &lhs, const vec3 &rhs)
-			{
-				return vec3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
-			}
-
-			friend vec3 operator-(const vec3 &lhs, const vec3 &rhs)
-			{
-				return vec3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
-			}
-
-			friend vec3 operator*(const vec3 &lhs, const vec3 &rhs)
-			{
-				return vec3(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z);
-			}
-
-			friend vec3 operator/(const vec3 &lhs, const vec3 &rhs)
-			{
-				return vec3(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z);
-			}
-
-			friend vec3 operator+(const vec3 &lhs, T rhs)
-			{
-				return vec3(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs);
-			}
-
-			friend vec3 operator-(const vec3 &lhs, T rhs)
-			{
-				return vec3(lhs.x - rhs, lhs.y - rhs, lhs.z - rhs);
-			}
-
-			friend vec3 operator*(const vec3 &lhs, T rhs)
-			{
-				return vec3(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs);
-			}
-
-			friend vec3 operator/(const vec3 &lhs, T rhs)
-			{
-				return vec3(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
-			}
-
-			friend vec3 operator+(T lhs, const vec3 &rhs)
-			{
-				return vec3(lhs + rhs.x, lhs + rhs.y, lhs + rhs.z);
-			}
-
-			friend vec3 operator-(T lhs, const vec3 &rhs)
-			{
-				return vec3(lhs - rhs.x, lhs - rhs.y, lhs - rhs.z);
-			}
-
-			friend vec3 operator*(T lhs, const vec3 &rhs)
-			{
-				return vec3(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z);
-			}
-
-			friend vec3 operator/(T lhs, const vec3 &rhs)
-			{
-				return vec3(lhs / rhs.x, lhs / rhs.y, lhs / rhs.z);
-			}
 		};
+
+		template<typename U>
+		inline vec3<U> operator+(const vec3<U> &lhs, const vec3<U> &rhs)
+		{
+			return vec3<U>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
+		}
+
+		template<typename U>
+		inline vec3<U> operator-(const vec3<U> &lhs, const vec3<U> &rhs)
+		{
+			return vec3<U>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
+		}
+
+		template<typename U>
+		inline vec3<U> operator*(const vec3<U> &lhs, const vec3<U> &rhs)
+		{
+			return vec3<U>(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z);
+		}
+
+		template<typename U>
+		inline vec3<U> operator/(const vec3<U> &lhs, const vec3<U> &rhs)
+		{
+			return vec3<U>(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z);
+		}
+
+		template<typename U>
+		inline vec3<U> operator+(const vec3<U> &lhs, U rhs)
+		{
+			return vec3<U>(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs);
+		}
+
+		template<typename U>
+		inline vec3<U> operator-(const vec3<U> &lhs, U rhs)
+		{
+			return vec3<U>(lhs.x - rhs, lhs.y - rhs, lhs.z - rhs);
+		}
+
+		template<typename U>
+		inline vec3<U> operator*(const vec3<U> &lhs, U rhs)
+		{
+			return vec3<U>(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs);
+		}
+
+		template<typename U>
+		inline vec3<U> operator/(const vec3<U> &lhs, U rhs)
+		{
+			return vec3<U>(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
+		}
+
+		template<typename U>
+		inline vec3<U> operator+(U lhs, const vec3<U> &rhs)
+		{
+			return vec3<U>(lhs + rhs.x, lhs + rhs.y, lhs + rhs.z);
+		}
+
+		template<typename U>
+		inline vec3<U> operator-(U lhs, const vec3<U> &rhs)
+		{
+			return vec3<U>(lhs - rhs.x, lhs - rhs.y, lhs - rhs.z);
+		}
+
+		template<typename U>
+		inline vec3<U> operator*(U lhs, const vec3<U> &rhs)
+		{
+			return vec3<U>(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z);
+		}
+
+		template<typename U>
+		inline vec3<U> operator/(U lhs, const vec3<U> &rhs)
+		{
+			return vec3<U>(lhs / rhs.x, lhs / rhs.y, lhs / rhs.z);
+		}
 
 		template<class T>
 		union vec4
@@ -588,15 +626,15 @@ namespace vx
 
 			value_type v[4];
 
-			vec4() :x(), y(), z(), w(){}
-			explicit vec4(value_type v) :x(v), y(v), z(v), w(){}
-			vec4(value_type vx, value_type vy, value_type vz, value_type vw) : x(vx), y(vy), z(vz), w(vw){}
-			vec4(const vec2<T> &v, value_type vz, value_type vw) : x(v.x), y(v.y), z(vz), w(vw){}
-			vec4(const vec2<T> &v1, const vec2<T> &v2) : x(v1.x), y(v1.y), z(v2.x), w(v2.y){}
-			vec4(const vec3<T> &v, value_type vw) : x(v.x), y(v.y), z(v.z), w(vw){}
+			vec4() :x(), y(), z(), w() {}
+			explicit vec4(value_type v) :x(v), y(v), z(v), w() {}
+			vec4(value_type vx, value_type vy, value_type vz, value_type vw) : x(vx), y(vy), z(vz), w(vw) {}
+			vec4(const vec2<T> &v, value_type vz, value_type vw) : x(v.x), y(v.y), z(vz), w(vw) {}
+			vec4(const vec2<T> &v1, const vec2<T> &v2) : x(v1.x), y(v1.y), z(v2.x), w(v2.y) {}
+			vec4(const vec3<T> &v, value_type vw) : x(v.x), y(v.y), z(v.z), w(vw) {}
 
 			template<typename U>
-			vec4(const vec4<U> &v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)), z(static_cast<T>(v.z)),w(static_cast<T>(v.w)){}
+			vec4(const vec4<U> &v) : x(static_cast<T>(v.x)), y(static_cast<T>(v.y)), z(static_cast<T>(v.z)), w(static_cast<T>(v.w)) {}
 
 			vec4 operator-() const
 			{
@@ -662,47 +700,79 @@ namespace vx
 
 				return *this;
 			}
-
-			inline friend vec4 operator + (const vec4 &lhs, const vec4 &rhs)
-			{
-				return vec4(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w);
-			}
-
-			inline friend vec4 operator - (const vec4 &lhs, const vec4 &rhs)
-			{
-				return vec4(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w);
-			}
-
-			inline friend vec4 operator * (const vec4 &lhs, const vec4 &rhs)
-			{
-				return vec4(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w);
-			}
-
-			inline friend vec4 operator / (const vec4 &lhs, const vec4 &rhs)
-			{
-				return vec4(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w);
-			}
-
-			inline friend vec4 operator + (const vec4 &lhs, const value_type rhs)
-			{
-				return vec4(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs, lhs.w + rhs);
-			}
-
-			inline friend vec4 operator - (const vec4 &lhs, const value_type rhs)
-			{
-				return vec4(lhs.x - rhs, lhs.y - rhs, lhs.z - rhs, lhs.w - rhs);
-			}
-
-			inline friend vec4 operator * (const vec4 &lhs, const value_type rhs)
-			{
-				return vec4(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs, lhs.w * rhs);
-			}
-
-			inline friend vec4 operator / (const vec4 &lhs, const value_type rhs)
-			{
-				return vec4(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w / rhs);
-			}
 		};
+
+		template<typename U>
+		inline vec4<U> operator + (const vec4<U> &lhs, const vec4<U> &rhs)
+		{
+			return vec4<U>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w);
+		}
+
+		template<typename U>
+		inline vec4<U> operator - (const vec4<U> &lhs, const vec4<U> &rhs)
+		{
+			return vec4<U>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w);
+		}
+
+		template<typename U>
+		inline vec4<U> operator * (const vec4<U> &lhs, const vec4<U> &rhs)
+		{
+			return vec4<U>(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z, lhs.w * rhs.w);
+		}
+
+		template<typename U>
+		inline vec4<U> operator / (const vec4<U> &lhs, const vec4<U> &rhs)
+		{
+			return vec4<U>(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w);
+		}
+
+		template<typename U>
+		inline vec4<U> operator + (const vec4<U> &lhs, const U rhs)
+		{
+			return vec4<U>(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs, lhs.w + rhs);
+		}
+
+		template<typename U>
+		inline vec4<U> operator - (const vec4<U> &lhs, const U rhs)
+		{
+			return vec4<U>(lhs.x - rhs, lhs.y - rhs, lhs.z - rhs, lhs.w - rhs);
+		}
+
+		template<typename U>
+		inline vec4<U> operator * (const vec4<U> &lhs, const U rhs)
+		{
+			return vec4<U>(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs, lhs.w * rhs);
+		}
+
+		template<typename U>
+		inline vec4<U> operator / (const vec4<U> &lhs, const U rhs)
+		{
+			return vec4<U>(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w / rhs);
+		}
+
+		template<typename U>
+		inline vec4<U> operator + (U lhs, const vec4<U> &rhs)
+		{
+			return vec4<U>(lhs + rhs.x, lhs + rhs.x, lhs + rhs.z, lhs + rhs.w);
+		}
+
+		template<typename U>
+		inline vec4<U> operator - (U lhs, const vec4<U> &rhs)
+		{
+			return vec4<U>(lhs - rhs.x, lhs - rhs.x, lhs - rhs.z, lhs - rhs.w);
+		}
+
+		template<typename U>
+		inline vec4<U> operator * (U lhs, const vec4<U> &rhs)
+		{
+			return vec4<U>(lhs * rhs.x, lhs * rhs.x, lhs * rhs.z, lhs * rhs.w);
+		}
+
+		template<typename U>
+		inline vec4<U> operator / (U lhs, const vec4<U> &rhs)
+		{
+			return vec4<U>(lhs / rhs.x, lhs / rhs.x, lhs / rhs.z, lhs / rhs.w);
+		}
 
 		template<>
 		struct XMM_TYPE<f32>
@@ -749,8 +819,8 @@ namespace vx
 				value_type x, y, z;
 			};
 
-			vec3a():v(){}
-			vec3a(const xmm_type &m):v(m){}
+			vec3a() :v() {}
+			vec3a(const xmm_type &m) :v(m) {}
 
 			inline operator xmm_type&()
 			{
@@ -775,10 +845,10 @@ namespace vx
 				value_type x, y, z, w;
 			};
 
-			vec4a() :v(){}
-			vec4a(value_type vx, value_type vy, value_type vz, value_type vw) :x(vx),y(vy),z(vz),w(vw){}
-			vec4a(const vec4<T> &vu) :v(XMM_TYPE<value_type>::load(vu)){}
-			vec4a(const xmm_type &m) :v(m){}
+			vec4a() :v() {}
+			vec4a(value_type vx, value_type vy, value_type vz, value_type vw) :x(vx), y(vy), z(vz), w(vw) {}
+			vec4a(const vec4<T> &vu) :v(XMM_TYPE<value_type>::load(vu)) {}
+			vec4a(const xmm_type &m) :v(m) {}
 
 			vec4a& operator=(const vec4a &m)
 			{
@@ -835,10 +905,10 @@ namespace vx
 	{
 		return detail::vec3<T>
 			(
-			v1.y*v2.z - v1.z*v2.y,
-			v1.z*v2.x - v1.x*v2.z,
-			v1.x*v2.y - v1.y*v2.x
-			);
+				v1.y*v2.z - v1.z*v2.y,
+				v1.z*v2.x - v1.x*v2.z,
+				v1.x*v2.y - v1.y*v2.x
+				);
 	}
 
 	inline __m128 VX_CALLCONV loadFloat2(const detail::vec2<f32>* source)
@@ -852,13 +922,7 @@ namespace vx
 	{
 		auto tmp = _mm_loadl_epi64((__m128i*)source);
 
-		__m128 value;
-		value.m128_i32[0] = tmp.m128i_i32[0];
-		value.m128_i32[1] = tmp.m128i_i32[1];
-		value.m128_i32[2] = tmp.m128i_i32[2];
-		value.m128_i32[3] = tmp.m128i_i32[3];
-
-		return value;
+		return *reinterpret_cast<__m128*>(&tmp);
 	}
 
 	inline __m128 VX_CALLCONV loadFloat3(const detail::vec3<f32>* source)
@@ -884,17 +948,12 @@ namespace vx
 
 	inline void VX_CALLCONV storeFloat2a(detail::vec2a<f32>* pDestination, CVEC4 V)
 	{
-		__m128i tmp;
-		tmp.m128i_i32[0] = V.m128_i32[0];
-		tmp.m128i_i32[1] = V.m128_i32[1];
-		tmp.m128i_i32[2] = V.m128_i32[2];
-		tmp.m128i_i32[3] = V.m128_i32[3];
-		_mm_storel_epi64((__m128i*)pDestination, tmp);
+		_mm_storel_epi64((__m128i*)pDestination, *((__m128i*)&V));
 	}
 
 	inline void VX_CALLCONV streamFloat2a(detail::vec2a<f32>* pDestination, CVEC4 V)
 	{
-		_mm_stream_si64((__int64*)pDestination, V.m128_i64[0]);
+		_mm_stream_si64((__int64*)pDestination, *((__int64*)&V));
 	}
 
 	inline void VX_CALLCONV storeFloat3(detail::vec3<f32>* pDestination, CVEC4 V)
@@ -920,7 +979,7 @@ namespace vx
 	////////////////////////
 
 	////////////////////////
-	
+
 	////////////////////////
 
 	inline __m128 VX_CALLCONV intToFloat(CIVEC4 V)
@@ -1020,8 +1079,6 @@ namespace vx
 	VX_GLOBALCONST ivec4 g_VXMask3 = { (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, 0x00000000 };
 	VX_GLOBALCONST ivec4 g_VXMask4 = { (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF };
 
-	VX_GLOBALCONST __m256d g_VXNegIdentityR3_d = { 0.0, 0.0, 0.0, -1.0 };
-
 	VX_GLOBALCONST ivec4l g_VXInfinity_d = { 0x7FF0000000000000, 0x7FF0000000000000, 0x7FF0000000000000, 0x7FF0000000000000 };
 	VX_GLOBALCONST ivec4l g_VXQNaN_d = { 0x7FF8000000000000, 0x7FF8000000000000, 0x7FF8000000000000, 0x7FF8000000000000 };
 	VX_GLOBALCONST ivec4l g_VXSelect1110_d = { (s64)0xFFFFFFFFFFFFFFFF, (s64)0xFFFFFFFFFFFFFFFF, (s64)0xFFFFFFFFFFFFFFFF, 0 };
@@ -1055,21 +1112,21 @@ namespace vx
 		};
 
 		// Fast path for permutes that only read from the first vector.
-		template<u32 Shuffle> 
+		template<u32 Shuffle>
 		struct PermuteHelper<Shuffle, false, false, false, false>
 		{
 			static __m128     VX_CALLCONV     Permute(CVEC4 v1, CVEC4 v2) { (v2); return VX_PERMUTE_PS(v1, Shuffle); }
 		};
 
 		// Fast path for permutes that only read from the second vector.
-		template<u32 Shuffle> 
+		template<u32 Shuffle>
 		struct PermuteHelper<Shuffle, true, true, true, true>
 		{
-			static __m128     VX_CALLCONV     Permute(CVEC4 v1, CVEC4 v2){ (v1); return VX_PERMUTE_PS(v2, Shuffle); }
+			static __m128     VX_CALLCONV     Permute(CVEC4 v1, CVEC4 v2) { (v1); return VX_PERMUTE_PS(v2, Shuffle); }
 		};
 
 		// Fast path for permutes that read XY from the first vector, ZW from the second.
-		template<u32 Shuffle> 
+		template<u32 Shuffle>
 		struct PermuteHelper<Shuffle, false, false, true, true>
 		{
 			static __m128     VX_CALLCONV     Permute(CVEC4 v1, CVEC4 v2) { return _mm_shuffle_ps(v1, v2, Shuffle); }
@@ -1109,7 +1166,6 @@ namespace vx
 	inline __m128 VX_CALLCONV VectorNegativeMultiplySubtract(CVEC4 a, CVEC4 b, CVEC4 c);
 	inline __m128 VX_CALLCONV dot2(CVEC4 v1, CVEC4 v2);
 	inline __m128 VX_CALLCONV dot3(CVEC4 v1, CVEC4 v2);
-	inline __m256d VX_CALLCONV dot3(__m256d v1, __m256d v2);
 	inline __m128 VX_CALLCONV dot4(CVEC4 v1, CVEC4 v2);
 
 	inline __m128 VX_CALLCONV min(CVEC4 a, CVEC4 b);
@@ -1123,18 +1179,15 @@ namespace vx
 
 	inline __m128 VX_CALLCONV VectorTrueInt();
 	inline __m128 VX_CALLCONV VectorAndInt(CVEC4 V1, CVEC4 V2);
-	inline __m128 VX_CALLCONV VectorEqualInt(CVEC4 V1,CVEC4 V2);
+	inline __m128 VX_CALLCONV VectorEqualInt(CVEC4 V1, CVEC4 V2);
 	inline __m128 VX_CALLCONV VectorOrInt(CVEC4 V1, CVEC4 V2);
 	inline __m128 VX_CALLCONV VectorIsInfinite(CVEC4 V);
 
 	inline __m128 VX_CALLCONV VectorSelect(CVEC4 V1, CVEC4 V2, CVEC4 Control);
-	inline __m256d VX_CALLCONV VectorSelect(__m256d V1, __m256d V2, const __m256d &Control);
 	inline __m128 VX_CALLCONV negate(CVEC4 V);
-	inline __m256d VX_CALLCONV negate(__m256d V);
 	inline __m128 VX_CALLCONV round(CVEC4 V);
 
 	inline __m128 VX_CALLCONV cross3(CVEC4 v1, CVEC4 v2);
-	inline __m256d VX_CALLCONV cross3(__m256d v1, const __m256d &v2);
 
 	inline __m128 VX_CALLCONV length2(CVEC4 V);
 	inline __m128 VX_CALLCONV length3(CVEC4 V);
@@ -1143,15 +1196,11 @@ namespace vx
 	inline __m128 VX_CALLCONV normalize2(CVEC4 V);
 	inline __m128 VX_CALLCONV normalize3(CVEC4 V);
 	inline __m128 VX_CALLCONV normalize4(CVEC4 V);
-	inline __m256d VX_CALLCONV normalize3(__m256d V);
 
 	inline __m128 VX_CALLCONV quaternionRotation(CVEC4 V, CVEC4 RotationQuaternion);
-	inline __m256d VX_CALLCONV quaternionRotation(__m256d V, __m256d RotationQuaternion);
 
 	inline __m128 VX_CALLCONV quaternionMultiply(CVEC4 Q1, CVEC4 Q2);
-	inline __m256d VX_CALLCONV quaternionMultiply(__m256d Q1, __m256d Q2);
 	inline __m128 VX_CALLCONV quaternionConjugate(CVEC4 Q);
-	inline __m256d VX_CALLCONV quaternionConjugate(__m256d Q);
 	inline __m128 VX_CALLCONV quaternionRotationRollPitchYawFromVector(CVEC4 vector);
 	inline void VX_CALLCONV quaternionToAxisAngle(CVEC4 Q, __m128* pAxis, f32* pAngle);
 
@@ -1173,7 +1222,7 @@ namespace vx
 	template<class T>
 	inline detail::vec2<T> min(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
 	{
-		return detail::vec2<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
+		return detail::vec2<T>(vx::min(v1.x, v2.x), vx::min(v1.y, v2.y));
 	}
 
 	template<>
@@ -1185,7 +1234,7 @@ namespace vx
 	template<class T>
 	inline detail::vec2a<T> min(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
 	{
-		return detail::vec2a<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
+		return detail::vec2a<T>(vx::min(v1.x, v2.x), vx::min(v1.y, v2.y));
 	}
 
 	template<>
@@ -1200,7 +1249,7 @@ namespace vx
 	template<class T>
 	inline detail::vec3<T> min(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
-		return detail::vec3<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z));
+		return detail::vec3<T>(vx::min(v1.x, v2.x), vx::min(v1.y, v2.y), vx::min(v1.z, v2.z));
 	}
 
 	template<>
@@ -1212,13 +1261,13 @@ namespace vx
 	template<class T>
 	inline detail::vec4<T> min(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
 	{
-		return detail::vec4<T>(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z), std::min(v1.w, v2.w));
+		return detail::vec4<T>(vx::min(v1.x, v2.x), vx::min(v1.y, v2.y), vx::min(v1.z, v2.z), vx::min(v1.w, v2.w));
 	}
 
 	template<class T>
 	inline detail::vec2<T> max(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
 	{
-		return detail::vec2<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
+		return detail::vec2<T>(vx::max(v1.x, v2.x), vx::max(v1.y, v2.y));
 	}
 
 	template<>
@@ -1230,7 +1279,7 @@ namespace vx
 	template<class T>
 	inline detail::vec2a<T> max(const detail::vec2a<T> &v1, const detail::vec2a<T> &v2)
 	{
-		return detail::vec2a<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
+		return detail::vec2a<T>(vx::max(v1.x, v2.x), vx::max(v1.y, v2.y));
 	}
 
 	template<>
@@ -1245,13 +1294,13 @@ namespace vx
 	template<class T>
 	inline detail::vec3<T> max(const detail::vec3<T> &v1, const detail::vec3<T> &v2)
 	{
-		return detail::vec3<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z));
+		return detail::vec3<T>(vx::max(v1.x, v2.x), vx::max(v1.y, v2.y), vx::max(v1.z, v2.z));
 	}
 
 	template<class T>
 	inline detail::vec4<T> max(const detail::vec4<T> &v1, const detail::vec4<T> &v2)
 	{
-		return detail::vec4<T>(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z), std::max(v1.w, v2.w));
+		return detail::vec4<T>(vx::max(v1.x, v2.x), vx::max(v1.y, v2.y), vx::max(v1.z, v2.z), vx::max(v1.w, v2.w));
 	}
 
 	template<class T>
@@ -1304,7 +1353,7 @@ namespace vx
 	f32 distance2(const detail::vec2<T> &v1, const detail::vec2<T> &v2)
 	{
 		auto tmp = v2 - v1;
-		return ::sqrtf(dot(tmp, tmp));
+		return ::sqrtf(dot2(tmp, tmp));
 	}
 
 	template<class T>
@@ -1334,7 +1383,7 @@ namespace vx
 		d = _mm_dp_ps(d, d, 255);
 		d = _mm_sqrt_ps(d);
 
-		return d.m128_f32[0];
+                return *reinterpret_cast<f32*>(&d);
 	}
 
 	template<class T>
@@ -1353,7 +1402,7 @@ namespace vx
 		d = _mm_dp_ps(d, d, 255);
 		d = _mm_sqrt_ps(d);
 
-		return d.m128_f32[0];
+                return *reinterpret_cast<f32*>(&d);
 	}
 
 	template<class T>
@@ -1425,19 +1474,19 @@ namespace vx
 	template<class T>
 	inline detail::vec2<T> abs(const detail::vec2<T> &v)
 	{
-		return detail::vec2<T>(std::abs(v.x), std::abs(v.y));
+                return detail::vec2<T>(vx::abs(v.x), vx::abs(v.y));
 	}
 
 	template<>
 	inline float2 abs(const float2 &v)
 	{
-		return float2(fabsf(v.x), fabsf(v.y));
+                return float2(vx::abs(v.x), vx::abs(v.y));
 	}
 
 	template<class T>
 	inline detail::vec2a<T> abs(const detail::vec2a<T> &v)
 	{
-		return detail::vec2a<T>(std::abs(v.x), std::abs(v.y));
+                return detail::vec2a<T>(vx::abs(v.x), vx::abs(v.y));
 	}
 
 	template<>
@@ -1556,4 +1605,6 @@ namespace vx
 
 #include "Vector.inl"
 
+#ifndef _VX_GCC
 #pragma warning( pop )
+#endif

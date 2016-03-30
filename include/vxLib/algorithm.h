@@ -188,4 +188,141 @@ namespace vx
 
 		return std::rotate(stable_partition_position(f, m, p), m, stable_partition_position(m, l, p));
 	}
+
+	namespace detail
+	{
+		template<bool b, size_t LHS, size_t RHS>
+		struct MAX_T
+		{
+			enum { value = LHS };
+		};
+
+		template<size_t LHS, size_t RHS>
+		struct MAX_T<false, LHS, RHS>
+		{
+			enum { value = RHS };
+		};
+
+		template<size_t LHS, size_t ...Args>
+		struct MAX
+		{
+			enum { value = MAX<LHS, MAX<Args...>::value>::value };
+		};
+
+		template<size_t SIZE>
+		struct MAX<SIZE>
+		{
+			enum { value = SIZE };
+		};
+
+		template<size_t LHS, size_t RHS>
+		struct MAX<LHS, RHS>
+		{
+			enum {
+				value = MAX_T<
+				Is_Greater<LHS, RHS>::value,
+				LHS, RHS>::value
+			};
+		};
+
+		template<bool b, size_t LHS, size_t RHS>
+		struct MIN_T
+		{
+			enum { value = LHS };
+		};
+
+		template<size_t LHS, size_t RHS>
+		struct MIN_T<false, LHS, RHS>
+		{
+			enum { value = RHS };
+		};
+
+		template<size_t LHS, size_t ...Args>
+		struct MIN
+		{
+			enum { value = MIN<LHS, MIN<Args...>::value>::value };
+		};
+
+		template<size_t LHS>
+		struct MIN<LHS>
+		{
+			enum { value = LHS };
+		};
+
+		template<size_t LHS, size_t RHS>
+		struct MIN<LHS, RHS>
+		{
+			enum {
+				value = MIN_T<
+				Is_Less<LHS, RHS>::value,
+				LHS, RHS>::value
+			};
+		};
+
+		template<typename LHS, typename ...Args>
+		struct MAX_SIZE
+		{
+			enum { value = MAX<sizeof(LHS), MAX_SIZE<Args...>::value>::value };
+		};
+
+		template<typename LHS>
+		struct MAX_SIZE<LHS>
+		{
+			enum { value = sizeof(LHS) };
+		};
+
+		template<typename LHS, typename RHS>
+		struct MAX_SIZE<LHS, RHS>
+		{
+			enum { value = MAX<sizeof(LHS), sizeof(RHS)>::value };
+		};
+	}
+
+	template<size_t LHS, size_t RHS>
+	struct Is_Greater
+	{
+		enum { value = (LHS > RHS) };
+	};
+
+	template<size_t LHS, size_t RHS>
+	struct Is_Less
+	{
+		enum { value = (LHS < RHS) };
+	};
+
+	template<size_t ...Args>
+	struct MAX
+	{
+		enum { value = detail::MAX<Args...>::value };
+	};
+
+	template<>
+	struct MAX<>
+	{
+		enum { value = 0 };
+	};
+
+	template<size_t ...Args>
+	struct MIN
+	{
+		enum { value = detail::MIN<Args...>::value };
+	};
+
+	template<>
+	struct MIN<>
+	{
+		enum { value = 0 };
+	};
+
+	template<typename ...Args>
+	struct MAX_SIZE
+	{
+		enum { value = detail::MAX_SIZE<Args...>::value };
+	};
+
+	template<>
+	struct MAX_SIZE<>
+	{
+		enum { value = 0 };
+	};
 }

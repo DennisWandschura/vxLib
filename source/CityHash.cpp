@@ -28,7 +28,7 @@
 // compromising on hash quality.
 
 //#include "config.h"
-#include <vxLib\util\CityHash.h>
+#include <vxLib/util/CityHash.h>
 
 #include <algorithm>
 #include <string.h>  // for memcpy and memset

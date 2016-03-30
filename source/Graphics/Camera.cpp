@@ -30,7 +30,7 @@ namespace vx
 	{
 		Camera::Camera()
 			:m_position(_mm_setzero_ps()),
-			m_qRotation({ 0, 0, 0, 1 })
+            m_qRotation(g_VXIdentityR3)
 		{
 		}
 
