@@ -40,6 +40,8 @@ namespace vx
 	template<typename Super, size_t MAX_NODE_COUNT, size_t MIN_SIZE, size_t MAX_SIZE>
 	class Freelist : public Super
 	{
+		const static u32 MAGIC_NUMBER = 0x1337b0b;
+
 		typedef detail::FreelistNode Node;
 
 		template<size_t MIN, size_t MAX>
@@ -60,7 +62,7 @@ namespace vx
 
 			inline bool operator()(size_t size)
 			{
-				return size == SZ;
+				return size <= SZ;
 			}
 		};
 
@@ -95,6 +97,7 @@ namespace vx
 		typedef NodeCountCheck<MAX_NODE_COUNT> MyNodeCountCheck;
 
 		static_assert(MIN_SIZE <= MAX_SIZE, "");
+		static_assert(sizeof(Node) <= MIN_SIZE, "");
 
 		Node* m_head;
 		size_t m_nodeCount;
@@ -112,16 +115,41 @@ namespace vx
 			m_nodeCount(0)
 		{}
 
+		Freelist(const Freelist&) = delete;
+
+		Freelist(Freelist &&rhs)
+			:Super(std::move(rhs)),
+			m_head(rhs.m_head),
+			m_nodeCount(rhs.m_nodeCount)
+		{
+			rhs.m_head = nullptr;
+			rhs.m_nodeCount = 0;
+		}
+
 		~Freelist()
 		{
+		}
+
+		Freelist& operator=(const Freelist&) = delete;
+
+		Freelist& operator=(Freelist &&rhs)
+		{
+			if (this != &rhs)
+			{
+				Super::operator=(std::move(rhs));
+				std::swap(m_head, rhs.m_head);
+				std::swap(m_nodeCount, rhs.m_nodeCount);
+			}
+			return *this;
 		}
 
 		AllocatedBlock allocate(size_t size, size_t alignment)
 		{
 			auto alignedSize = getAlignedSize(size, alignment);
-			if (m_head && MySizeCheck()(alignedSize) &&
-				getAlignedPtr((u8*)m_head, alignment) == (u8*)m_head &&
-				m_head->size <= alignedSize)
+			if (m_head &&
+				MySizeCheck()(alignedSize) &&
+				(getAlignedPtr((u8*)m_head, alignment) == (u8*)m_head) &&
+				(m_head->size >= alignedSize))
 			{
 				AllocatedBlock block = { (u8*)m_head, m_head->size };
 
@@ -131,7 +159,7 @@ namespace vx
 				return block;
 			}
 
-			return Super::allocate(size, alignment);
+			return Super::allocate(size, alignment);;
 		}
 
 		AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment)

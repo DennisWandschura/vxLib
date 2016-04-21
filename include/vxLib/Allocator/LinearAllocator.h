@@ -141,7 +141,7 @@ namespace vx
 
 		void zeroMemory()
 		{
-			memset(m_data, 0, capacity());
+			::memset(m_data, 0, capacity());
 		}
 	};
 }

@@ -38,20 +38,18 @@ namespace vx
 		pointer m_begin;
 		pointer m_end;
 		pointer m_last;
-		size_t m_blockSize;
 		Allocator m_allocator;
 
 	public:
-		array() : m_begin(nullptr), m_end(nullptr), m_last(nullptr), m_blockSize(0), m_allocator() {}
+		array() : m_begin(nullptr), m_end(nullptr), m_last(nullptr), m_allocator() {}
 
-		array(Allocator &&alloc, size_t capacity) : m_begin(nullptr), m_end(nullptr), m_last(nullptr), m_blockSize(0), m_allocator(std::move(alloc))
+		array(Allocator &&alloc, size_t capacity) : m_begin(nullptr), m_end(nullptr), m_last(nullptr), m_allocator(std::move(alloc))
 		{
 			auto block = m_allocator.allocate(sizeof(value_type) * capacity, __alignof(value_type));
 			if (block.ptr)
 			{
 				m_begin = m_end = (pointer)block.ptr;
-				m_last = m_begin + capacity;
-				m_blockSize = block.size;
+				m_last = (pointer)(block.ptr + block.size);
 			}
 		}
 
@@ -64,11 +62,10 @@ namespace vx
 			: m_begin(other.m_begin),
 			m_end(other.m_end),
 			m_last(other.m_last),
-			m_blockSize(other.m_blockSize),
 			m_allocator(std::move(other.m_allocator))
 		{
 			other.m_begin = nullptr;
-			other.m_blockSize = 0;
+			other.m_last = nullptr;
 		}
 
 		~array()
@@ -92,7 +89,6 @@ namespace vx
 			std::swap(m_begin, other.m_begin);
 			std::swap(m_end, other.m_end);
 			std::swap(m_last, other.m_last);
-			std::swap(m_blockSize, other.m_blockSize);
 			m_allocator.swap(other.m_allocator);
 		}
 
@@ -144,10 +140,10 @@ namespace vx
 			{
 				clear();
 
-				m_allocator.deallocate(AllocatedBlock{ (u8*)m_begin, m_blockSize });
+				auto blockSize = (u8*)m_last - (u8*)m_begin;
+				m_allocator.deallocate(AllocatedBlock{ (u8*)m_begin, (size_t)blockSize });
 
 				m_begin = m_end = m_last = nullptr;
-				m_blockSize = 0;
 			}
 		}
 

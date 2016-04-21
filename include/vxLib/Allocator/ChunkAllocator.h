@@ -38,7 +38,23 @@ namespace vx
 
 		explicit ChuckAllocator(const AllocatedBlock &block) :Super(block) {}
 
+		ChuckAllocator(const ChuckAllocator&) = delete;
+
+		ChuckAllocator(ChuckAllocator &&rhs)
+			:Super(std::move(rhs))
+		{
+
+		}
+
 		~ChuckAllocator() {}
+
+		ChuckAllocator& operator=(const ChuckAllocator&) = delete;
+
+		ChuckAllocator& operator=(ChuckAllocator &&rhs)
+		{
+			Super::operator=(std::move(rhs));
+			return *this;
+		}
 
 		AllocatedBlock allocate(size_t, size_t)
 		{

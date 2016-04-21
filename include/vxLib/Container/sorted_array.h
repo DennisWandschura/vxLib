@@ -260,6 +260,11 @@ namespace vx
 			return (m_size == 0);
 		}
 
+		pointer data() { return (pointer)m_dataBlock.ptr; }
+		const pointer data() const { return (const pointer)m_dataBlock.ptr; }
+
+		const key_type* keys() const { return (const key_type*)m_keyBlock.ptr; }
+
 		inline size_t size() const
 		{
 			return m_size;

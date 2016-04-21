@@ -32,17 +32,6 @@ namespace vx
 	{
 		u64 value;
 
-		StringID() :value(0) {}
-		explicit StringID(u64 u) :value(u){}
-
-		~StringID() {}
-
-		StringID& operator=(u64 u)
-		{
-			value = u;
-			return *this;
-		}
-
 		friend bool operator==(const StringID &lhs, const StringID &rhs)
 		{
 			return lhs.value == rhs.value;
@@ -76,14 +65,12 @@ namespace vx
 
 	inline StringID make_sid(const char *str)
 	{
-		StringID sid = StringID(CITYHASH64(str));
-		return sid;
+		return{ CITYHASH64(str) };
 	}
 
 	inline StringID make_sid(const char *str, u32 size)
 	{
-		StringID sid = StringID(CityHash64(str, size));
-		return sid;
+		return{ CityHash64(str, size) };
 	}
 
 	template<u64 SIZE>
@@ -95,7 +82,6 @@ namespace vx
 
 	inline StringID make_sid(const wchar_t *str)
 	{
-		StringID sid = StringID(CityHash64((char*)str, sizeof(wchar_t) * std::char_traits<wchar_t>::length(str)));
-		return sid;
+		return{ CityHash64((char*)str, sizeof(wchar_t) * std::char_traits<wchar_t>::length(str)) };
 	}
 }

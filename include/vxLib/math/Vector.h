@@ -24,8 +24,8 @@ SOFTWARE.
 */
 
 #ifndef _VX_GCC
-#pragma warning(push)
-#pragma ignore( 4201)
+#pragma warning( push )
+#pragma warning(disable : 4201)
 #endif
 
 #include <vxLib/math/math.h>
@@ -848,6 +848,8 @@ namespace vx
 			vec4a() :v() {}
 			vec4a(value_type vx, value_type vy, value_type vz, value_type vw) :x(vx), y(vy), z(vz), w(vw) {}
 			vec4a(const vec4<T> &vu) :v(XMM_TYPE<value_type>::load(vu)) {}
+			vec4a(const vec2a<T> &xy, const vec2a<T> &zw) :x(xy.x), y(xy.y), z(zw.x), w(zw.y) {}
+			vec4a(const vec2a<T> &xy, value_type vz, value_type vw) :x(xy.x), y(xy.y), z(vz), w(vw) {}
 			vec4a(const xmm_type &m) :v(m) {}
 
 			vec4a& operator=(const vec4a &m)
