@@ -34,21 +34,21 @@ namespace vx
 	ALIGNMENT: alignment of blocks
 	MAX_BLOCK_COUNT: maximum amount of blocks used by an allocation
 	*/
-	template<size_t BLOCK_SIZE, size_t ALIGNMENT, size_t MAX_BLOCK_COUNT>
+	template<u64 BLOCK_SIZE, u64 ALIGNMENT, u64 MAX_BLOCK_COUNT>
 	class MultiBlockAllocator
 	{
 		static_assert(GetAlignedSize<BLOCK_SIZE, ALIGNMENT>::size == BLOCK_SIZE, "");
 
-		enum :size_t {BitsSizeT = sizeof(size_t) * 8};
+		enum :u64 {BitsSizeT = sizeof(u64) * 8};
 
 		u8* m_firstBlock;
 		union
 		{
 			u32* m_bitsPtr;
-			size_t m_bits;
+			u64 m_bits;
 		};
-		size_t m_remainingBlocks;
-		size_t m_blockCount;
+		u64 m_remainingBlocks;
+		u64 m_blockCount;
 		vx::AllocatedBlock m_block;
 
 		u32* getBitPtr()
@@ -56,21 +56,21 @@ namespace vx
 			return (m_blockCount <= BitsSizeT) ? (u32*)&m_bits : m_bitsPtr;
 		}
 
-		size_t countBlocks(const AllocatedBlock &block)
+		u64 countBlocks(const AllocatedBlock &block)
 		{
 			auto alignedPtr = getAlignedPtr(block.ptr, ALIGNMENT);
-			auto offset = (size_t)(alignedPtr - block.ptr);
+			auto offset = (u64)(alignedPtr - block.ptr);
 			auto remainingSize = block.size - offset;
 
 			return remainingSize / BLOCK_SIZE;
 		}
 
-		bool findEmptyBit(u32* bitsPtr, size_t* resultBit, size_t blockCount)
+		bool findEmptyBit(u32* bitsPtr, u64* resultBit, u64 blockCount)
 		{
-			size_t freeConiguousBlocks = 0;
+			u64 freeConiguousBlocks = 0;
 
-			size_t resultBlock = 0;
-			size_t block = 0;
+			u64 resultBlock = 0;
+			u64 block = 0;
 
 			auto blocksNeeded = blockCount;
 			auto remainingBlocks = m_blockCount;
@@ -114,10 +114,10 @@ namespace vx
 			return false;
 		}
 
-		bool hasFreeBits(u32* bitsPtr, size_t blockIndex, size_t blockCount)
+		bool hasFreeBits(u32* bitsPtr, u64 blockIndex, u64 blockCount)
 		{
 			auto needToCheck = blockCount;
-			for (size_t i = 0; i < blockCount; ++i)
+			for (u64 i = 0; i < blockCount; ++i)
 			{
 				auto blockIdx = blockIndex + i;
 
@@ -137,9 +137,9 @@ namespace vx
 			return (needToCheck == 0);
 		}
 
-		void setBits(u32* bitsPtr, size_t blockIndex, size_t blockCount)
+		void setBits(u32* bitsPtr, u64 blockIndex, u64 blockCount)
 		{
-			for (size_t i = 0; i < blockCount; ++i)
+			for (u64 i = 0; i < blockCount; ++i)
 			{
 				auto blockIdx = blockIndex + i;
 
@@ -150,11 +150,11 @@ namespace vx
 			}
 		}
 
-		void clearBits(size_t blockIndex, size_t blockCount)
+		void clearBits(u64 blockIndex, u64 blockCount)
 		{
 			auto bitsPtr = getBitPtr();
 
-			for (size_t i = 0; i < blockCount; ++i)
+			for (u64 i = 0; i < blockCount; ++i)
 			{
 				auto blockIdx = blockIndex + i;
 
@@ -166,7 +166,7 @@ namespace vx
 		}
 
 	public:
-		enum : size_t {MaxAllocSize = BLOCK_SIZE * MAX_BLOCK_COUNT};
+		enum : u64 {MaxAllocSize = BLOCK_SIZE * MAX_BLOCK_COUNT};
 
 		MultiBlockAllocator() : m_firstBlock(nullptr), m_bitsPtr(nullptr), m_remainingBlocks(0), m_blockCount(0), m_block() { }
 
@@ -220,9 +220,9 @@ namespace vx
 			return blck;
 		}
 
-		AllocatedBlock allocate(size_t size, size_t alignment)
+		AllocatedBlock allocate(u64 size, u64 alignment)
 		{
-			if(alignment > ALIGNMENT)
+			if(size == 0 || alignment > ALIGNMENT)
 				return{ nullptr, 0 };
 
 			auto alignedSize = getAlignedSize(size, alignment);
@@ -232,7 +232,7 @@ namespace vx
 				return{ nullptr, 0 };
 
 			auto bitsPtr = getBitPtr();
-			size_t resultBlock = 0;
+			u64 resultBlock = 0;
 			if(!findEmptyBit(bitsPtr, &resultBlock, blockCount))
 				return{ nullptr, 0 };
 
@@ -244,7 +244,7 @@ namespace vx
 			return{ m_firstBlock + offset, blockCount * BLOCK_SIZE };
 		}
 
-		AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment)
+		AllocatedBlock reallocate(const AllocatedBlock &block, u64 size, u64 alignment)
 		{
 			bool isAligned = (getAlignedPtr(block.ptr, alignment) == block.ptr);
 			auto alignedSize = getAlignedSize(size, alignment);

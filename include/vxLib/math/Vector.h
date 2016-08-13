@@ -1527,6 +1527,46 @@ namespace vx
 		vx::storeFloat4(&result, abs);
 	}
 
+	inline float2 round(const float2 &v)
+	{
+		auto tmp = vx::loadFloat2(&v);
+		tmp = round(tmp);
+
+		vx::float2 result;
+		vx::storeFloat2(&result, tmp);
+		return result;
+	}
+
+	inline float2a round(const float2a &v)
+	{
+		auto tmp = vx::loadFloat2a(&v);
+		tmp = round(tmp);
+
+		vx::float2a result;
+		vx::storeFloat2a(&result, tmp);
+		return result;
+	}
+
+	inline float3 round(const float3 &v)
+	{
+		return float3(roundf(v.x), roundf(v.y), roundf(v.z));
+	}
+
+	inline float4 round(const float4 &v)
+	{
+		auto tmp = vx::loadFloat4(&v);
+		tmp = round(tmp);
+
+		vx::float4 result;
+		vx::storeFloat4(&result, tmp);
+		return result;
+	}
+
+	inline float4a round(const float4a &v)
+	{
+		return round(v.v);
+	}
+
 	inline vx::float3 degToRad(const vx::float3 &degAngle)
 	{
 		return vx::float3(degAngle.x * VX_DEGTORAD, degAngle.y * VX_DEGTORAD, degAngle.z * VX_DEGTORAD);

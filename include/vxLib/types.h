@@ -131,47 +131,50 @@ extern "C" {
 #define noexcept
 #endif
 
-namespace detail
+namespace vx
 {
-	template<size_t>
-	struct EnumDataType;
-
-	template<>
-	struct EnumDataType<1>
+	namespace detail
 	{
-		typedef u8 type;
-	};
+		template<size_t>
+		struct EnumDataType;
 
-	template<>
-	struct EnumDataType<2>
-	{
-		typedef u16 type;
-	};
+		template<>
+		struct EnumDataType<1>
+		{
+			typedef u8 type;
+		};
 
-	template<>
-	struct EnumDataType<4>
-	{
-		typedef u32 type;
-	};
+		template<>
+		struct EnumDataType<2>
+		{
+			typedef u16 type;
+		};
 
-	template<>
-	struct EnumDataType<8>
-	{
-		typedef u64 type;
-	};
+		template<>
+		struct EnumDataType<4>
+		{
+			typedef u32 type;
+		};
 
-	template<typename T>
-	struct EnumType
-	{
-		typedef typename EnumDataType<sizeof(T)>::type type;
-	};
+		template<>
+		struct EnumDataType<8>
+		{
+			typedef u64 type;
+		};
+
+		template<typename T>
+		struct EnumType
+		{
+			typedef typename EnumDataType<sizeof(T)>::type type;
+		};
+	}
 }
 
 #define VX_ENUM_OPERATIONS(ENUM) \
-inline ENUM operator|(ENUM l, ENUM r) { return static_cast<ENUM>(static_cast<detail::EnumType<ENUM>::type>(l) | static_cast<detail::EnumType<ENUM>::type>(r)); } \
-inline ENUM operator&(ENUM l, ENUM r) { return static_cast<ENUM>(static_cast<detail::EnumType<ENUM>::type>(l) & static_cast<detail::EnumType<ENUM>::type>(r)); } \
-inline ENUM operator^(ENUM l, ENUM r) { return static_cast<ENUM>(static_cast<detail::EnumType<ENUM>::type>(l) ^ static_cast<detail::EnumType<ENUM>::type>(r)); } \
-inline ENUM operator~(ENUM l) { return static_cast<ENUM>( ~static_cast<detail::EnumType<ENUM>::type>(l) ); } \
-inline ENUM &operator |= (ENUM &l, ENUM r) { return reinterpret_cast<ENUM&>(reinterpret_cast<detail::EnumType<ENUM>::type&>(l) |= static_cast<detail::EnumType<ENUM>::type>(r)); } \
-inline ENUM &operator &= (ENUM &l, ENUM r) { return reinterpret_cast<ENUM&>(reinterpret_cast<detail::EnumType<ENUM>::type&>(l) &= static_cast<detail::EnumType<ENUM>::type>(r)); } \
-inline ENUM &operator ^= (ENUM &l, ENUM r) { return reinterpret_cast<ENUM&>(reinterpret_cast<detail::EnumType<ENUM>::type&>(l) ^= static_cast<detail::EnumType<ENUM>::type>(r)); }
+inline ENUM operator|(ENUM l, ENUM r) { return static_cast<ENUM>(static_cast<vx::detail::EnumType<ENUM>::type>(l) | static_cast<vx::detail::EnumType<ENUM>::type>(r)); } \
+inline ENUM operator&(ENUM l, ENUM r) { return static_cast<ENUM>(static_cast<vx::detail::EnumType<ENUM>::type>(l) & static_cast<vx::detail::EnumType<ENUM>::type>(r)); } \
+inline ENUM operator^(ENUM l, ENUM r) { return static_cast<ENUM>(static_cast<vx::detail::EnumType<ENUM>::type>(l) ^ static_cast<vx::detail::EnumType<ENUM>::type>(r)); } \
+inline ENUM operator~(ENUM l) { return static_cast<ENUM>( ~static_cast<vx::detail::EnumType<ENUM>::type>(l) ); } \
+inline ENUM &operator |= (ENUM &l, ENUM r) { return reinterpret_cast<ENUM&>(reinterpret_cast<vx::detail::EnumType<ENUM>::type&>(l) |= static_cast<vx::detail::EnumType<ENUM>::type>(r)); } \
+inline ENUM &operator &= (ENUM &l, ENUM r) { return reinterpret_cast<ENUM&>(reinterpret_cast<vx::detail::EnumType<ENUM>::type&>(l) &= static_cast<vx::detail::EnumType<ENUM>::type>(r)); } \
+inline ENUM &operator ^= (ENUM &l, ENUM r) { return reinterpret_cast<ENUM&>(reinterpret_cast<vx::detail::EnumType<ENUM>::type&>(l) ^= static_cast<vx::detail::EnumType<ENUM>::type>(r)); }

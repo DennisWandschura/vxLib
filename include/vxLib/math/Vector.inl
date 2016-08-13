@@ -225,6 +225,9 @@ namespace vx
 			CVEC4 V
 			)
 	{
+#if _VX_SSE41
+		return _mm_round_ps(V, _MM_FROUND_TO_NEAREST_INT);
+#else
 		__m128 sign = _mm_and_ps(V, vx::g_VXNegativeZero);
 
 		__m128 sMagic = _mm_or_ps(vx::g_VXNoFraction, sign);
@@ -239,6 +242,7 @@ namespace vx
 
 		__m128 vResult = _mm_xor_ps(R1, R2);
 		return vResult;
+#endif
 	}
 
 	inline __m128 VX_CALLCONV cross3(CVEC4 v1, CVEC4 v2)
@@ -671,7 +675,7 @@ namespace vx
 		auto vResult = _mm_mul_ps(Angles, g_VXReciprocalTwoPi);
 		// Use the inline function due to complexity for rounding
 
-		vResult = _mm_round_ps(vResult, _MM_FROUND_TO_NEAREST_INT);
+		vResult = round(vResult);
 		//vResult = XMVectorRound(vResult);
 
 		vResult = _mm_mul_ps(vResult, g_VXTwoPi);

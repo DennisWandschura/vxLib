@@ -33,34 +33,34 @@ namespace vx
 		struct FreelistNode
 		{
 			FreelistNode* next;
-			size_t size;
+			u64 size;
 		};
 	};
 
-	template<typename Super, size_t MAX_NODE_COUNT, size_t MIN_SIZE, size_t MAX_SIZE>
+	template<typename Super, u64 MAX_NODE_COUNT, u64 MIN_SIZE, u64 MAX_SIZE>
 	class Freelist : public Super
 	{
 		const static u32 MAGIC_NUMBER = 0x1337b0b;
 
 		typedef detail::FreelistNode Node;
 
-		template<size_t MIN, size_t MAX>
+		template<u64 MIN, u64 MAX>
 		struct SizeCheck
 		{
 			static_assert(sizeof(Node) <= MIN, "");
 
-			inline bool operator()(size_t size)
+			inline bool operator()(u64 size)
 			{
 				return size >= MIN && size <= MAX;
 			}
 		};
 
-		template<size_t SZ>
+		template<u64 SZ>
 		struct SizeCheck<SZ, SZ>
 		{
 			static_assert(sizeof(Node) <= SZ, "");
 
-			inline bool operator()(size_t size)
+			inline bool operator()(u64 size)
 			{
 				return size <= SZ;
 			}
@@ -69,16 +69,16 @@ namespace vx
 		template<>
 		struct SizeCheck<0, 0>
 		{
-			inline bool operator()(size_t)
+			inline bool operator()(u64)
 			{
 				return true;
 			}
 		};
 
-		template<size_t MAX_COUNT>
+		template<u64 MAX_COUNT>
 		struct NodeCountCheck
 		{
-			bool operator()(size_t count)
+			bool operator()(u64 count)
 			{
 				return count < MAX_COUNT
 			}
@@ -87,7 +87,7 @@ namespace vx
 		template<>
 		struct NodeCountCheck<0>
 		{
-			bool operator()(size_t)
+			bool operator()(u64)
 			{
 				return true;
 			}
@@ -100,7 +100,7 @@ namespace vx
 		static_assert(sizeof(Node) <= MIN_SIZE, "");
 
 		Node* m_head;
-		size_t m_nodeCount;
+		u64 m_nodeCount;
 
 	public:
 		Freelist()
@@ -143,7 +143,7 @@ namespace vx
 			return *this;
 		}
 
-		AllocatedBlock allocate(size_t size, size_t alignment)
+		AllocatedBlock allocate(u64 size, u64 alignment)
 		{
 			auto alignedSize = getAlignedSize(size, alignment);
 			if (m_head &&
@@ -162,7 +162,7 @@ namespace vx
 			return Super::allocate(size, alignment);;
 		}
 
-		AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment)
+		AllocatedBlock reallocate(const AllocatedBlock &block, u64 size, u64 alignment)
 		{
 			if ((block.size >= size) && (getAlignedPtr(block.ptr, alignment) == block.ptr))
 				return block;

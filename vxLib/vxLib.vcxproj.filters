@@ -54,12 +54,6 @@
     <ClCompile Include="..\source\File.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\Keyboard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\RawInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\stb_image.c">
       <Filter>Source Files</Filter>
     </ClCompile>

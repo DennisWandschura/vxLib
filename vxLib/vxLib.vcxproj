@@ -150,16 +150,10 @@
     <ClCompile Include="..\source\Graphics\Surface.cpp" />
     <ClCompile Include="..\source\Graphics\Texture.cpp" />
     <ClCompile Include="..\source\int_to_string.cpp" />
-    <ClCompile Include="..\source\Keyboard.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\source\math\half.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\source\print.cpp" />
-    <ClCompile Include="..\source\RawInput.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\source\stb_image.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>

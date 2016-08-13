@@ -35,14 +35,14 @@ namespace vx
 
 		inline ~Mallocator() {}
 
-		vx::AllocatedBlock allocate(size_t size, size_t alignment)
+		vx::AllocatedBlock allocate(u64 size, u64 alignment)
 		{
 			auto alignedSize = getAlignedSize(size, alignment);
 
 			return{ (u8*)_aligned_malloc(alignedSize, alignment), alignedSize };
 		}
 
-		vx::AllocatedBlock reallocate(const vx::AllocatedBlock &block, size_t size, size_t alignment)
+		vx::AllocatedBlock reallocate(const vx::AllocatedBlock &block, u64 size, u64 alignment)
 		{
 			auto alignedSize = getAlignedSize(size, alignment);
 			return{ (u8*)_aligned_realloc(block.ptr, alignedSize, alignment), alignedSize };

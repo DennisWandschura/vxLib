@@ -73,6 +73,11 @@ namespace vx
 		return{ CityHash64(str, size) };
 	}
 
+	inline StringID make_sid(const char *str, u64 size)
+	{
+		return{ CityHash64(str, size) };
+	}
+
 	template<u64 SIZE>
 	inline StringID make_sid(const char(&str)[SIZE])
 	{
