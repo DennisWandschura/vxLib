@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#if (_VX_GCC != 0) && (_VX_ANDROID != 0)
+#if !defined _VX_GCC && !defined _VX_ANDROID
 #pragma warning( push )
 #pragma warning(disable : 4201)
 #endif
@@ -1653,6 +1653,6 @@ namespace vx
 
 #include "Vector.inl"
 
-#if (_VX_GCC != 0 && _VX_ANDROID != 0)
+#if !defined _VX_GCC && !defined _VX_ANDROID
 #pragma warning( pop )
 #endif
