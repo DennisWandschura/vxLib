@@ -3,7 +3,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2015 Dennis Wandschura
+Copyright (c) 2016 Dennis Wandschura
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -89,11 +89,7 @@ namespace vx
 
 		~dynamic_array()
 		{
-			if (m_begin)
-			{
-				clear();
-				m_allocator.deallocate({ m_begin, m_blockSize });
-			}
+			release();
 		}
 
 		dynamic_array& operator=(const dynamic_array &rhs)
@@ -148,6 +144,17 @@ namespace vx
 			m_size = 0;
 		}
 
+		void release()
+		{
+			if (m_begin)
+			{
+				clear();
+				m_allocator.deallocate({ m_begin, m_blockSize });
+				m_begin = nullptr;
+				m_capacity = 0;
+			}
+		}
+
 		void resize(u32 sz)
 		{
 			auto currentSize = size();
@@ -171,9 +178,15 @@ namespace vx
 			if (c <= currentCapacity)
 				return;
 
-			vx::AllocatedBlock oldBlock{ m_begin, m_blockSize };
+			auto new_block = m_allocator.allocate(sizeof(value_type) * c, __alignof(value_type));
 
-			auto new_block = m_allocator.reallocate(oldBlock, sizeof(value_type) * c, __alignof(value_type));
+			if (m_begin)
+			{
+				vx::moveConstruct<value_type>(begin(), end(), reinterpret_cast<pointer>(new_block.ptr));
+
+				m_allocator.deallocate({m_begin, m_blockSize});
+			}
+
 			m_begin = new_block.ptr;
 			m_capacity = static_cast<u32>(new_block.size / sizeof(value_type));
 			m_blockSize = new_block.size;

@@ -97,7 +97,7 @@ namespace vx
 		typedef NodeCountCheck<MAX_NODE_COUNT> MyNodeCountCheck;
 
 		static_assert(MIN_SIZE <= MAX_SIZE, "");
-		static_assert(sizeof(Node) <= MIN_SIZE, "");
+		//static_assert(sizeof(Node) <= MIN_SIZE, "");
 
 		Node* m_head;
 		u64 m_nodeCount;

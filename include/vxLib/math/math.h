@@ -24,7 +24,11 @@ SOFTWARE.
 */
 
 #include <vxLib/math/half.h>
+#ifdef _VX_ANDROID
+#include <x86intrin.h>
+#else
 #include <intrin.h>
+#endif
 #include <math.h>
 
 namespace vx
@@ -294,16 +298,20 @@ namespace vx
 	Trigonometry
 	*/
 
-	inline float degToRad(float degAngle)
+	inline f32 degToRad(f32 degAngle)
 	{
 		return degAngle * VX_DEGTORAD;
 	}
 
-	inline float radToDeg(float radAngle)
+	inline f32 radToDeg(f32 radAngle)
 	{
 		return radAngle * VX_RADTODEG;
 	}
 
+#if _VX_ANDROID
+#define bsf32 __builtin_ctz
+#define bsr32 __builtin_clz
+#else
 	inline u32 bsf32(const u32 x)
 	{
 		unsigned long leading_zero = 0;
@@ -339,4 +347,5 @@ namespace vx
 
 		return leading_zero;
 	}
+#endif
 }

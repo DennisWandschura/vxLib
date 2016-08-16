@@ -31,17 +31,17 @@ SOFTWARE.
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-#include <assert.h>
+#include <stdint.h>
 
-typedef char s8;
-typedef short s16;
-typedef int s32;
-typedef long long int s64;
+typedef int8_t s8;
+typedef int16_t s16;
+typedef int32_t s32;
+typedef int64_t s64;
 
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-typedef unsigned long long u64;
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
 
 typedef float f32;
 typedef double f64;
@@ -58,6 +58,9 @@ static_assert(sizeof(u64) == 8, "Wrong type size");
 static_assert(sizeof(f32) == 4, "Wrong type size");
 static_assert(sizeof(f64) == 8, "Wrong type size");
 
+#define CONCATENATE_IMPL(s1, s2) s1##s2
+#define CONCATENATE(s1, s2) CONCATENATE_IMPL(s1, s2)
+
 namespace vx
 {
 	static const s8 s8_max = 0x7f;
@@ -71,6 +74,11 @@ namespace vx
 }
 
 #if _VX_ASSERT
+#include <assert.h>
+#if _VX_ANDROID
+#define VX_ASSERT(_Expression) _assert(_Expression)
+#else // _VX_ANDROID
+
 #ifdef  NDEBUG
 #ifdef __cplusplus
 extern "C" {
@@ -83,11 +91,15 @@ extern "C" {
 #endif  /* __cplusplus */
 #endif
 #define VX_ASSERT(_Expression) (void)( (!!(_Expression)) || (_wassert(_CRT_WIDE(#_Expression), _CRT_WIDE(__FILE__), __LINE__), 0) )
-#else
-#define VX_ASSERT(_Expression) ((void)0)
-#endif
+#endif // _VX_ANDROID
 
-#if defined(_VX_GCC) || defined(_VX_CLANG) || (_MSC_VER > 1800)
+#else // _VX_ASSERT
+#define VX_ASSERT(_Expression) ((void)0)
+#endif // _VX_ASSERT
+
+#if _VX_ANDROID
+#define VX_ALIGN(X) __attribute__((aligned(X)))
+#elif defined(_VX_GCC) || defined(_VX_CLANG) || (_MSC_VER > 1800)
 #define VX_ALIGN(X) alignas(X)
 #else
 #define VX_ALIGN(X) __declspec( align( X ) )
@@ -96,13 +108,16 @@ extern "C" {
 #define VX_GLOBAL extern __declspec(selectany)
 #if defined (_VX_GCC)
 #define VX_GLOBALCONST extern const __attribute__((selectany))
-#elif defined (_VX_CLANG)
+#elif defined (_VX_CLANG) || defined(_VX_ANDROID)
 #define VX_GLOBALCONST static const
 #else
 #define VX_GLOBALCONST extern const __declspec(selectany)
 #endif
 
-#if defined(_VX_CUDA) || defined (_VX_GCC)
+#if defined _VX_ANDROID
+#define VX_CALLCONV 
+#define _VX_CALLCONV_TYPE 0
+#elif defined(_VX_CUDA) || defined (_VX_GCC)
 #define VX_CALLCONV __fastcall
 #define _VX_CALLCONV_TYPE 0
 #else
@@ -119,9 +134,6 @@ extern "C" {
 # define VX_LIKELY(x)
 # define VX_UNLIKELY(x)
 #endif
-
-#define CONCATENATE_IMPL(s1, s2) s1##s2
-#define CONCATENATE(s1, s2) CONCATENATE_IMPL(s1, s2)
 
 #define KBYTE *1024
 #define MBYTE KBYTE *1024

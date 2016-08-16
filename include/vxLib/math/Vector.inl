@@ -30,14 +30,14 @@ namespace vx
 #if _VX_FMA
 		return _mm_fmadd_ps(a, b, c);
 #else
-		auto tmp = _mm_mul_ps(a, b);
+		__m128 tmp = _mm_mul_ps(a, b);
 		return _mm_add_ps(tmp, c);
 #endif
 	}
 
 	inline __m128 VX_CALLCONV VectorNegativeMultiplySubtract(CVEC4 a, CVEC4 b, CVEC4 c)
 	{
-		auto R = _mm_mul_ps(a, b);
+		__m128 R = _mm_mul_ps(a, b);
 		return _mm_sub_ps(c, R);
 	}
 
@@ -46,9 +46,9 @@ namespace vx
 #if _VX_SSE41
 		return _mm_dp_ps(v1, v2, _VX_DOT(1, 1, 1, 1, 1, 1, 0, 0));
 #else
-		auto tmp = _mm_mul_ps(v1, v2);
+		__m128 tmp = _mm_mul_ps(v1, v2);
 		// y, x, w, z
-		auto tmp1 = VX_PERMUTE_PS(tmp, _MM_SHUFFLE(2, 3, 0, 1));
+		__m128 tmp1 = VX_PERMUTE_PS(tmp, _MM_SHUFFLE(2, 3, 0, 1));
 		// x+y, y+x, ...
 		tmp = _mm_add_ps(tmp, tmp1);
 		// splat result
@@ -61,11 +61,11 @@ namespace vx
 #if _VX_SSE41
 		return _mm_dp_ps(v1, v2, _VX_DOT(1, 1, 1, 1, 1, 1, 1, 0));
 #else
-		auto tmp = _mm_mul_ps(v1, v2);
+		__m128 tmp = _mm_mul_ps(v1, v2);
 		// y, x, w, z
-		auto tmp1 = VX_PERMUTE_PS(tmp, _MM_SHUFFLE(2, 3, 0, 1));
+		__m128 tmp1 = VX_PERMUTE_PS(tmp, _MM_SHUFFLE(2, 3, 0, 1));
 		// z z z z
-		auto tmp2 = VX_PERMUTE_PS(tmp, _MM_SHUFFLE(2, 2, 2, 2));
+		__m128 tmp2 = VX_PERMUTE_PS(tmp, _MM_SHUFFLE(2, 2, 2, 2));
 		// x+y, y+x, ...
 		tmp1 = _mm_add_ps(tmp, tmp1);
 		tmp1 = _mm_add_ps(tmp1, tmp2);
@@ -79,12 +79,12 @@ namespace vx
 #if _VX_SSE41
 		return _mm_dp_ps(v1, v2, 255);
 #else
-		auto tmp = _mm_mul_ps(v1, v2);
+		__m128 tmp = _mm_mul_ps(v1, v2);
 		// y, x, w, z
-		auto tmp1 = VX_PERMUTE_PS(tmp, _MM_SHUFFLE(2, 3, 0, 1));
+		__m128 tmp1 = VX_PERMUTE_PS(tmp, _MM_SHUFFLE(2, 3, 0, 1));
 		// x+y, y+x, z + w
 		tmp1 = _mm_add_ps(tmp, tmp1);
-		auto tmp2 = VX_PERMUTE_PS(tmp1, _MM_SHUFFLE(1, 0, 3, 2));
+		__m128 tmp2 = VX_PERMUTE_PS(tmp1, _MM_SHUFFLE(1, 0, 3, 2));
 		tmp1 = _mm_add_ps(tmp1, tmp2);
 
 		return VX_PERMUTE_PS(tmp1, _MM_SHUFFLE(0, 0, 0, 0));
@@ -103,18 +103,18 @@ namespace vx
 
 	inline __m128 VX_CALLCONV abs(CVEC4 v)
 	{
-		auto mask = g_VXAbsMaskFloat;
+		__m128 mask = g_VXAbsMaskFloat;
 		return _mm_andnot_ps(mask, v);
 	}
 
 	inline __m128 VX_CALLCONV normalize(CVEC4 V)
 	{
-		auto vLengthSq = dot4(V, V);
+		__m128 vLengthSq = dot4(V, V);
 
 		// Prepare for the division
-		auto vResult = _mm_sqrt_ps(vLengthSq);
+		__m128 vResult = _mm_sqrt_ps(vLengthSq);
 		// Create zero with a single instruction
-		auto vZeroMask = _mm_setzero_ps();
+		__m128 vZeroMask = _mm_setzero_ps();
 		// Test for a divide by zero (Must be FP to detect -0.0)
 		vZeroMask = _mm_cmpneq_ps(vZeroMask, vResult);
 		// Failsafe on zero (Or epsilon) length planes
@@ -125,8 +125,8 @@ namespace vx
 		// Any that are infinity, set to zero
 		vResult = _mm_and_ps(vResult, vZeroMask);
 		// Select qnan or result based on infinite length
-		auto vTemp1 = _mm_andnot_ps(vLengthSq, g_VXQNaN);
-		auto vTemp2 = _mm_and_ps(vResult, vLengthSq);
+		__m128 vTemp1 = _mm_andnot_ps(vLengthSq, g_VXQNaN);
+		__m128 vTemp2 = _mm_and_ps(vResult, vLengthSq);
 		vResult = _mm_or_ps(vTemp1, vTemp2);
 
 		return vResult;
@@ -144,16 +144,16 @@ namespace vx
 
 	inline bool VX_CALLCONV Vector3Equal(CVEC4 V1, CVEC4 V2)
 	{
-		auto vTemp = _mm_cmpeq_ps(V1, V2);
+		__m128 vTemp = _mm_cmpeq_ps(V1, V2);
 		return (((_mm_movemask_ps(vTemp) & 7) == 7) != 0);
 	}
 
 	inline __m128 VX_CALLCONV VectorInBounds(CVEC4 V, CVEC4 Bounds)
 	{
 		// Test if less than or equal
-		auto vTemp1 = _mm_cmple_ps(V, Bounds);
+		__m128 vTemp1 = _mm_cmple_ps(V, Bounds);
 		// Negate the bounds
-		auto vTemp2 = _mm_mul_ps(Bounds, vx::g_VXNegativeOne);
+		__m128 vTemp2 = _mm_mul_ps(Bounds, vx::g_VXNegativeOne);
 		// Test if greater or equal (Reversed)
 		vTemp2 = _mm_cmple_ps(vTemp2, V);
 		// Blend answers
@@ -208,14 +208,14 @@ namespace vx
 
 	inline __m128 VX_CALLCONV VectorSelect(CVEC4 V1, CVEC4 V2, CVEC4 Control)
 	{
-		auto vTemp1 = _mm_andnot_ps(Control, V1);
-		auto vTemp2 = _mm_and_ps(V2, Control);
+		__m128 vTemp1 = _mm_andnot_ps(Control, V1);
+		__m128 vTemp2 = _mm_and_ps(V2, Control);
 		return _mm_or_ps(vTemp1, vTemp2);
 	}
 
 	inline __m128 VX_CALLCONV negate(CVEC4 V)
 	{
-		auto zero = _mm_setzero_ps();
+		__m128 zero = _mm_setzero_ps();
 
 		return _mm_sub_ps(zero, V);
 	}
@@ -247,12 +247,12 @@ namespace vx
 
 	inline __m128 VX_CALLCONV cross3(CVEC4 v1, CVEC4 v2)
 	{
-		auto tmp = _mm_shuffle_ps(v1, v1, _MM_SHUFFLE(3, 0, 2, 1));
-		auto c1 = _mm_shuffle_ps(v2, v2, _MM_SHUFFLE(3, 1, 0, 2));
+		__m128 tmp = _mm_shuffle_ps(v1, v1, _MM_SHUFFLE(3, 0, 2, 1));
+		__m128 c1 = _mm_shuffle_ps(v2, v2, _MM_SHUFFLE(3, 1, 0, 2));
 		c1 = _mm_mul_ps(tmp, c1);
 
 		tmp = _mm_shuffle_ps(v1, v1, _MM_SHUFFLE(3, 1, 0, 2));
-		auto c2 = _mm_shuffle_ps(v2, v2, _MM_SHUFFLE(3, 0, 2, 1));
+		__m128 c2 = _mm_shuffle_ps(v2, v2, _MM_SHUFFLE(3, 0, 2, 1));
 		c2 = _mm_mul_ps(tmp, c2);
 
 		return _mm_sub_ps(c1, c2);
@@ -275,11 +275,11 @@ namespace vx
 
 	inline __m128 VX_CALLCONV normalizeImpl(CVEC4 VL, CVEC4 V)
 	{
-		auto vLengthSq = VL;
+		__m128 vLengthSq = VL;
 		// Prepare for the division
-		auto vResult = _mm_sqrt_ps(vLengthSq);
+		__m128 vResult = _mm_sqrt_ps(vLengthSq);
 		// Create zero with a single instruction
-		auto vZeroMask = _mm_setzero_ps();
+		__m128 vZeroMask = _mm_setzero_ps();
 		// Test for a divide by zero (Must be FP to detect -0.0)
 		vZeroMask = _mm_cmpneq_ps(vZeroMask, vResult);
 		// Failsafe on zero (Or epsilon) length planes
@@ -290,8 +290,8 @@ namespace vx
 		// Any that are infinity, set to zero
 		vResult = _mm_and_ps(vResult, vZeroMask);
 		// Select qnan or result based on infinite length
-		auto vTemp1 = _mm_andnot_ps(vLengthSq, g_VXQNaN);
-		auto vTemp2 = _mm_and_ps(vResult, vLengthSq);
+		__m128 vTemp1 = _mm_andnot_ps(vLengthSq, g_VXQNaN);
+		__m128 vTemp2 = _mm_and_ps(vResult, vLengthSq);
 		vResult = _mm_or_ps(vTemp1, vTemp2);
 		return vResult;
 	}
@@ -299,7 +299,7 @@ namespace vx
 	inline __m128 VX_CALLCONV normalize2(CVEC4 V)
 	{
 		// Perform the dot product on x,y and z only
-		auto vLengthSq = dot2(V, V);
+		__m128 vLengthSq = dot2(V, V);
 
 		return normalizeImpl(vLengthSq, V);
 	}
@@ -307,7 +307,7 @@ namespace vx
 	inline __m128 VX_CALLCONV normalize3(CVEC4 V)
 	{
 		// Perform the dot product on x,y and z only
-		auto vLengthSq = dot3(V, V);
+		__m128 vLengthSq = dot3(V, V);
 
 		return normalizeImpl(vLengthSq, V);
 	}
@@ -315,7 +315,7 @@ namespace vx
 	inline __m128 VX_CALLCONV normalize4(CVEC4 V)
 	{
 		// Perform the dot product on x,y and z only
-		auto vLengthSq = dot4(V, V);
+		__m128 vLengthSq = dot4(V, V);
 
 		return normalizeImpl(vLengthSq, V);
 	}
@@ -338,10 +338,10 @@ namespace vx
 		static const __m128 ControlZWXY = { 1.0f, 1.0f, -1.0f, -1.0f };
 		static const __m128 ControlYXWZ = { -1.0f, 1.0f, 1.0f, -1.0f };
 		// Copy to SSE registers and use as few as possible for x86
-		auto Q2X = Q2;
-		auto Q2Y = Q2;
-		auto Q2Z = Q2;
-		auto vResult = Q2;
+		__m128 Q2X = Q2;
+		__m128 Q2Y = Q2;
+		__m128 Q2Z = Q2;
+		__m128 vResult = Q2;
 		// Splat with one instruction
 		vResult = VX_PERMUTE_PS(vResult, _MM_SHUFFLE(3, 3, 3, 3));
 		Q2X = VX_PERMUTE_PS(Q2X, _MM_SHUFFLE(0, 0, 0, 0));
@@ -349,7 +349,7 @@ namespace vx
 		Q2Z = VX_PERMUTE_PS(Q2Z, _MM_SHUFFLE(2, 2, 2, 2));
 		// Retire Q1 and perform Q1*Q2W
 		vResult = _mm_mul_ps(vResult, Q1);
-		auto Q1Shuffle = Q1;
+		__m128 Q1Shuffle = Q1;
 		// Shuffle the copies of Q1
 		Q1Shuffle = VX_PERMUTE_PS(Q1Shuffle, _MM_SHUFFLE(0, 1, 2, 3));
 		// Mul by Q1WZYX
@@ -382,24 +382,24 @@ namespace vx
 	{
 		static const __m128  Sign = { 1.0f, -1.0f, -1.0f, 1.0f };
 
-		auto HalfAngles = _mm_mul_ps(Angles, g_VXOneHalf);
+		__m128 HalfAngles = _mm_mul_ps(Angles, g_VXOneHalf);
 
 		__m128 SinAngles, CosAngles;
 		sinCos(&SinAngles, &CosAngles, HalfAngles);
 
-		auto P0 = VectorPermute<VX_PERMUTE_0X, VX_PERMUTE_1X, VX_PERMUTE_1X, VX_PERMUTE_1X>(SinAngles, CosAngles);
-		auto Y0 = VectorPermute<VX_PERMUTE_1Y, VX_PERMUTE_0Y, VX_PERMUTE_1Y, VX_PERMUTE_1Y>(SinAngles, CosAngles);
-		auto R0 = VectorPermute<VX_PERMUTE_1Z, VX_PERMUTE_1Z, VX_PERMUTE_0Z, VX_PERMUTE_1Z>(SinAngles, CosAngles);
-		auto P1 = VectorPermute<VX_PERMUTE_0X, VX_PERMUTE_1X, VX_PERMUTE_1X, VX_PERMUTE_1X>(CosAngles, SinAngles);
-		auto Y1 = VectorPermute<VX_PERMUTE_1Y, VX_PERMUTE_0Y, VX_PERMUTE_1Y, VX_PERMUTE_1Y>(CosAngles, SinAngles);
-		auto R1 = VectorPermute<VX_PERMUTE_1Z, VX_PERMUTE_1Z, VX_PERMUTE_0Z, VX_PERMUTE_1Z>(CosAngles, SinAngles);
+		__m128 P0 = VectorPermute<VX_PERMUTE_0X, VX_PERMUTE_1X, VX_PERMUTE_1X, VX_PERMUTE_1X>(SinAngles, CosAngles);
+		__m128 Y0 = VectorPermute<VX_PERMUTE_1Y, VX_PERMUTE_0Y, VX_PERMUTE_1Y, VX_PERMUTE_1Y>(SinAngles, CosAngles);
+		__m128 R0 = VectorPermute<VX_PERMUTE_1Z, VX_PERMUTE_1Z, VX_PERMUTE_0Z, VX_PERMUTE_1Z>(SinAngles, CosAngles);
+		__m128 P1 = VectorPermute<VX_PERMUTE_0X, VX_PERMUTE_1X, VX_PERMUTE_1X, VX_PERMUTE_1X>(CosAngles, SinAngles);
+		__m128 Y1 = VectorPermute<VX_PERMUTE_1Y, VX_PERMUTE_0Y, VX_PERMUTE_1Y, VX_PERMUTE_1Y>(CosAngles, SinAngles);
+		__m128 R1 = VectorPermute<VX_PERMUTE_1Z, VX_PERMUTE_1Z, VX_PERMUTE_0Z, VX_PERMUTE_1Z>(CosAngles, SinAngles);
 
-		auto Q1 = _mm_mul_ps(P1, Sign);
-		auto Q0 = _mm_mul_ps(P0, Y0);
+		__m128 Q1 = _mm_mul_ps(P1, Sign);
+		__m128 Q0 = _mm_mul_ps(P0, Y0);
 		Q1 = _mm_mul_ps(Q1, Y1);
 		Q0 = _mm_mul_ps(Q0, R0);
 
-		auto Q = fma(Q1, R1, Q0);
+		__m128 Q = fma(Q1, R1, Q0);
 
 		return Q;
 	}
@@ -460,11 +460,11 @@ namespace vx
 		*pSin = Result;
 
 		// Compute polynomial approximation of cosine
-		const auto CC1 = g_VXCosCoefficients1;
+		const __m128 CC1 = g_VXCosCoefficients1;
 		vConstants = VX_PERMUTE_PS(CC1, _MM_SHUFFLE(0, 0, 0, 0));
 		Result = _mm_mul_ps(vConstants, x2);
 
-		const auto CC0 = g_VXCosCoefficients0;
+		const __m128 CC0 = g_VXCosCoefficients0;
 		vConstants = VX_PERMUTE_PS(CC0, _MM_SHUFFLE(3, 3, 3, 3));
 		Result = _mm_add_ps(Result, vConstants);
 		Result = _mm_mul_ps(Result, x2);
@@ -490,7 +490,7 @@ namespace vx
 		static const __m128 TanCoefficients0 = { 1.0f, -4.667168334e-1f, 2.566383229e-2f, -3.118153191e-4f };
 		static const __m128 TanCoefficients1 = { 4.981943399e-7f, -1.333835001e-1f, 3.424887824e-3f, -1.786170734e-5f };
 		static const __m128 TanConstants = { 1.570796371f, 6.077100628e-11f, 0.000244140625f, 0.63661977228f /*2 / Pi*/ };
-		static const vx::uvec4 Mask = { 0x1, 0x1, 0x1, 0x1 };
+		static const vx::vector_type_uint Mask = { { 0x1, 0x1, 0x1, 0x1 } };
 		__m128 TwoDivPi = VectorSplatW(TanConstants);
 
 		__m128 Zero = _mm_setzero_ps();
@@ -672,7 +672,7 @@ namespace vx
 	inline __m128 VX_CALLCONV modAngles(CVEC4 Angles)
 	{
 		// Modulo the range of the given angles such that -XM_PI <= Angles < XM_PI
-		auto vResult = _mm_mul_ps(Angles, g_VXReciprocalTwoPi);
+		__m128 vResult = _mm_mul_ps(Angles, g_VXReciprocalTwoPi);
 		// Use the inline function due to complexity for rounding
 
 		vResult = round(vResult);
@@ -685,7 +685,7 @@ namespace vx
 
 	inline f32 VX_CALLCONV VectorGetW(CVEC4 V)
 	{
-		auto vTemp = VX_PERMUTE_PS(V, _MM_SHUFFLE(3, 3, 3, 3));
+		__m128 vTemp = VX_PERMUTE_PS(V, _MM_SHUFFLE(3, 3, 3, 3));
 		return _mm_cvtss_f32(vTemp);
 	}
 

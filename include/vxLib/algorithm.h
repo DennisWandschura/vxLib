@@ -113,6 +113,25 @@ namespace vx
 
 	template<typename T>
 	std::enable_if_t<
+		std::is_trivially_move_assignable<T>::value,
+		void>
+		moveConstruct(T* first, T* last, T* dst)
+	{
+		::memmove(dst, first, sizeof(T) * (last - first));
+	}
+
+	template<typename T>
+	std::enable_if_t<
+		!std::is_trivially_move_assignable<T>::value,
+		void>
+		moveConstruct(T* first, T* last, T* dst)
+	{
+		for (; first != last; ++dst, ++first)
+			new (dst) T{ std::move(*first) };
+	}
+
+	template<typename T>
+	std::enable_if_t<
 		std::is_trivially_destructible<T>::value,
 		void>
 	destruct(T* begin, T* end)

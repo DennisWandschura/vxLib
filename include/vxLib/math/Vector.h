@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _VX_GCC
+#if (_VX_GCC != 0) && (_VX_ANDROID != 0)
 #pragma warning( push )
 #pragma warning(disable : 4201)
 #endif
@@ -876,7 +876,15 @@ namespace vx
 		};
 	}
 
-	union ivec4
+#ifndef _VX_ANDROID
+	union ivec4l
+	{
+		long long i[4];
+		__m256d v;
+	};
+#endif
+
+	union vector_type_int
 	{
 		s32 i[4];
 		__m128 v;
@@ -886,13 +894,7 @@ namespace vx
 		inline operator __m128d() const { return _mm_castps_pd(v); }
 	};
 
-	union ivec4l
-	{
-		long long i[4];
-		__m256d v;
-	};
-
-	union uvec4
+	union vector_type_uint
 	{
 		u32 i[4];
 		__m128 v;
@@ -922,7 +924,7 @@ namespace vx
 
 	inline __m128 VX_CALLCONV loadFloat2a(const detail::vec2a<f32>* source)
 	{
-		auto tmp = _mm_loadl_epi64((__m128i*)source);
+		__m128i tmp = _mm_loadl_epi64((__m128i*)source);
 
 		return *reinterpret_cast<__m128*>(&tmp);
 	}
@@ -943,7 +945,7 @@ namespace vx
 
 	inline void VX_CALLCONV storeFloat2(detail::vec2<f32>* pDestination, CVEC4 V)
 	{
-		auto T = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
+		__m128 T = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
 		_mm_store_ss(&pDestination->x, V);
 		_mm_store_ss(&pDestination->y, T);
 	}
@@ -955,13 +957,13 @@ namespace vx
 
 	inline void VX_CALLCONV streamFloat2a(detail::vec2a<f32>* pDestination, CVEC4 V)
 	{
-		_mm_stream_si64((__int64*)pDestination, *((__int64*)&V));
+		_mm_stream_pd(reinterpret_cast<f64*>(pDestination), *reinterpret_cast<const __m128d*>(&V));
 	}
 
 	inline void VX_CALLCONV storeFloat3(detail::vec3<f32>* pDestination, CVEC4 V)
 	{
-		auto T1 = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
-		auto T2 = _mm_shuffle_ps(V, V, _MM_SHUFFLE(2, 2, 2, 2));
+		__m128 T1 = _mm_shuffle_ps(V, V, _MM_SHUFFLE(1, 1, 1, 1));
+		__m128 T2 = _mm_shuffle_ps(V, V, _MM_SHUFFLE(2, 2, 2, 2));
 		_mm_store_ss(&pDestination->x, V);
 		_mm_store_ss(&pDestination->y, T1);
 		_mm_store_ss(&pDestination->z, T2);
@@ -1031,7 +1033,7 @@ namespace vx
 	typedef detail::vec4 < f32 > float4;
 	typedef detail::vec4a < f32 > float4a;
 
-	VX_GLOBALCONST __m128 g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD };
+	VX_GLOBALCONST __m128 g_VXDegToRad = { VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD, VX_DEGTORAD};
 	VX_GLOBALCONST __m128 g_VXRadToDeg = { VX_RADTODEG, VX_RADTODEG, VX_RADTODEG, VX_RADTODEG };
 	VX_GLOBALCONST __m128 g_VXIdentityR0 = { 1.0f, 0.0f, 0.0f, 0.0f };
 	VX_GLOBALCONST __m128 g_VXIdentityR1 = { 0.0f, 1.0f, 0.0f, 0.0f };
@@ -1064,28 +1066,30 @@ namespace vx
 	VX_GLOBALCONST __m128 g_VXATanCoefficients0 = { -0.3333314528f, +0.1999355085f, -0.1420889944f, +0.1065626393f };
 	VX_GLOBALCONST __m128 g_VXATanCoefficients1 = { -0.0752896400f, +0.0429096138f, -0.0161657367f, +0.0028662257f };
 	VX_GLOBALCONST __m128 g_VXNoFraction = { 8388608.0f,8388608.0f,8388608.0f,8388608.0f };
-	VX_GLOBALCONST ivec4 g_VXInfinity = { 0x7F800000, 0x7F800000, 0x7F800000, 0x7F800000 };
-	VX_GLOBALCONST ivec4 g_VXQNaN = { 0x7FC00000, 0x7FC00000, 0x7FC00000, 0x7FC00000 };
-	VX_GLOBALCONST ivec4 g_VXQNaNTest = { 0x007FFFFF, 0x007FFFFF, 0x007FFFFF, 0x007FFFFF };
-	VX_GLOBALCONST ivec4 g_VXAbsMask = { 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF };
-	VX_GLOBALCONST ivec4 g_VXSelect1000 = { g_SELECT_1, g_SELECT_0, g_SELECT_0, g_SELECT_0 };
-	VX_GLOBALCONST ivec4 g_VXSelect1100 = { g_SELECT_1, g_SELECT_1, g_SELECT_0, g_SELECT_0 };
-	VX_GLOBALCONST ivec4 g_VXSelect1110 = { g_SELECT_1, g_SELECT_1, g_SELECT_1, g_SELECT_0 };
-	VX_GLOBALCONST ivec4 g_VXSelect1011 = { g_SELECT_1, g_SELECT_0, g_SELECT_1, g_SELECT_1 };
-	VX_GLOBALCONST ivec4 g_VXMaskX = { (s32)0xFFFFFFFF, 0x00000000, 0x00000000, 0x00000000 };
-	VX_GLOBALCONST ivec4 g_VXMaskY = { 0x00000000, (s32)0xFFFFFFFF, 0x00000000, 0x00000000 };
-	VX_GLOBALCONST ivec4 g_VXMaskZ = { 0x00000000, 0x00000000, (s32)0xFFFFFFFF, 0x00000000 };
-	VX_GLOBALCONST ivec4 g_VXMaskW = { 0x00000000, 0x00000000, 0x00000000, (s32)0xFFFFFFFF };
-	VX_GLOBALCONST ivec4 g_VXNegativeZero = { (s32)0x80000000, (s32)0x80000000, (s32)0x80000000, (s32)0x80000000 };
-	VX_GLOBALCONST ivec4 g_VXNegate3 = { (s32)0x80000000, (s32)0x80000000, (s32)0x80000000, 0x00000000 };
-	VX_GLOBALCONST ivec4 g_VXMask3 = { (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, 0x00000000 };
-	VX_GLOBALCONST ivec4 g_VXMask4 = { (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF };
+	VX_GLOBALCONST vector_type_int g_VXInfinity = { { 0x7F800000, 0x7F800000, 0x7F800000, 0x7F800000 } };
+	VX_GLOBALCONST vector_type_int g_VXQNaN = { { 0x7FC00000, 0x7FC00000, 0x7FC00000, 0x7FC00000 } };
+	VX_GLOBALCONST vector_type_int g_VXQNaNTest = { { 0x007FFFFF, 0x007FFFFF, 0x007FFFFF, 0x007FFFFF } };
+	VX_GLOBALCONST vector_type_int g_VXAbsMask = { { 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF } };
+	VX_GLOBALCONST vector_type_int g_VXSelect1000 = { { g_SELECT_1, g_SELECT_0, g_SELECT_0, g_SELECT_0 } };
+	VX_GLOBALCONST vector_type_int g_VXSelect1100 = { { g_SELECT_1, g_SELECT_1, g_SELECT_0, g_SELECT_0 } };
+	VX_GLOBALCONST vector_type_int g_VXSelect1110 = { { g_SELECT_1, g_SELECT_1, g_SELECT_1, g_SELECT_0 } };
+	VX_GLOBALCONST vector_type_int g_VXSelect1011 = { { g_SELECT_1, g_SELECT_0, g_SELECT_1, g_SELECT_1 } };
+	VX_GLOBALCONST vector_type_int g_VXMaskX = { { (s32)0xFFFFFFFF, 0x00000000, 0x00000000, 0x00000000 } };
+	VX_GLOBALCONST vector_type_int g_VXMaskY = { { 0x00000000, (s32)0xFFFFFFFF, 0x00000000, 0x00000000 } };
+	VX_GLOBALCONST vector_type_int g_VXMaskZ = { { 0x00000000, 0x00000000, (s32)0xFFFFFFFF, 0x00000000 } };
+	VX_GLOBALCONST vector_type_int g_VXMaskW = { { 0x00000000, 0x00000000, 0x00000000, (s32)0xFFFFFFFF } };
+	VX_GLOBALCONST vector_type_int g_VXNegativeZero = { { (s32)0x80000000, (s32)0x80000000, (s32)0x80000000, (s32)0x80000000 } };
+	VX_GLOBALCONST vector_type_int g_VXNegate3 = { { (s32)0x80000000, (s32)0x80000000, (s32)0x80000000, 0x00000000 } };
+	VX_GLOBALCONST vector_type_int g_VXMask3 = { { (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, 0x00000000 } };
+	VX_GLOBALCONST vector_type_int g_VXMask4 = { { (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF } };
 
+#ifndef _VX_ANDROID
 	VX_GLOBALCONST ivec4l g_VXInfinity_d = { 0x7FF0000000000000, 0x7FF0000000000000, 0x7FF0000000000000, 0x7FF0000000000000 };
 	VX_GLOBALCONST ivec4l g_VXQNaN_d = { 0x7FF8000000000000, 0x7FF8000000000000, 0x7FF8000000000000, 0x7FF8000000000000 };
 	VX_GLOBALCONST ivec4l g_VXSelect1110_d = { (s64)0xFFFFFFFFFFFFFFFF, (s64)0xFFFFFFFFFFFFFFFF, (s64)0xFFFFFFFFFFFFFFFF, 0 };
 	VX_GLOBALCONST ivec4l g_VXMask3_d = { (s64)0xFFFFFFFFFFFFFFFF, (s64)0xFFFFFFFFFFFFFFFF, (s64)0xFFFFFFFFFFFFFFFF, 0x0000000000000000 };
 	VX_GLOBALCONST ivec4l g_VXMaskY_d = { 0, (s64)0xffffffffffffffff, 0, 0 };
+#endif
 
 	// PermuteHelper internal template (SSE only)
 	namespace Internal
@@ -1095,13 +1099,13 @@ namespace vx
 		{
 			static __m128     VX_CALLCONV     Permute(CVEC4 v1, CVEC4 v2)
 			{
-				static const uvec4 selectMask =
-				{
+				static const vector_type_uint selectMask =
+				{ {
 					WhichX ? 0xFFFFFFFF : 0,
 					WhichY ? 0xFFFFFFFF : 0,
 					WhichZ ? 0xFFFFFFFF : 0,
 					WhichW ? 0xFFFFFFFF : 0,
-				};
+				} };
 
 				__m128 shuffled1 = VX_PERMUTE_PS(v1, Shuffle);
 				__m128 shuffled2 = VX_PERMUTE_PS(v2, Shuffle);
@@ -1117,14 +1121,14 @@ namespace vx
 		template<u32 Shuffle>
 		struct PermuteHelper<Shuffle, false, false, false, false>
 		{
-			static __m128     VX_CALLCONV     Permute(CVEC4 v1, CVEC4 v2) { (v2); return VX_PERMUTE_PS(v1, Shuffle); }
+			static __m128     VX_CALLCONV     Permute(CVEC4 v1, CVEC4) { return VX_PERMUTE_PS(v1, Shuffle); }
 		};
 
 		// Fast path for permutes that only read from the second vector.
 		template<u32 Shuffle>
 		struct PermuteHelper<Shuffle, true, true, true, true>
 		{
-			static __m128     VX_CALLCONV     Permute(CVEC4 v1, CVEC4 v2) { (v1); return VX_PERMUTE_PS(v2, Shuffle); }
+			static __m128     VX_CALLCONV     Permute(CVEC4, CVEC4 v2) { return VX_PERMUTE_PS(v2, Shuffle); }
 		};
 
 		// Fast path for permutes that read XY from the first vector, ZW from the second.
@@ -1242,7 +1246,7 @@ namespace vx
 	template<>
 	inline detail::vec2a<f32> min(const detail::vec2a<f32> &v1, const detail::vec2a<f32> &v2)
 	{
-		auto r = _mm_min_ps(vx::loadFloat2a(&v1), vx::loadFloat2a(&v2));
+		__m128 r = _mm_min_ps(vx::loadFloat2a(&v1), vx::loadFloat2a(&v2));
 		detail::vec2a<f32> result;
 		vx::storeFloat2a(&result, r);
 		return result;
@@ -1287,7 +1291,7 @@ namespace vx
 	template<>
 	inline detail::vec2a<f32> max(const detail::vec2a<f32> &v1, const detail::vec2a<f32> &v2)
 	{
-		auto r = _mm_max_ps(vx::loadFloat2a(&v1), vx::loadFloat2a(&v2));
+		__m128 r = _mm_max_ps(vx::loadFloat2a(&v1), vx::loadFloat2a(&v2));
 		detail::vec2a<f32> result;
 		vx::storeFloat2a(&result, r);
 		return result;
@@ -1332,10 +1336,10 @@ namespace vx
 	template<>
 	inline f32 dot4<f32>(const float4 &v1, const float4 &v2)
 	{
-		auto a = _mm_loadu_ps(v1);
-		auto b = _mm_loadu_ps(v2);
+		__m128 a = _mm_loadu_ps(v1);
+		__m128 b = _mm_loadu_ps(v2);
 
-		auto tmp = dot4(a, b);
+		__m128 tmp = dot4(a, b);
 
 		f32 result;
 		_mm_store_ss(&result, tmp);
@@ -1344,7 +1348,7 @@ namespace vx
 
 	inline f32 VX_CALLCONV dot4(const float4a &v1, const float4a &v2)
 	{
-		auto tmp = dot4(v1.v, v2.v);
+		__m128 tmp = dot4(v1.v, v2.v);
 
 		f32 result;
 		_mm_store_ss(&result, tmp);
@@ -1379,10 +1383,10 @@ namespace vx
 	template<>
 	inline f32 distance3(const detail::vec3<f32> &v1, const detail::vec3<f32> &v2)
 	{
-		auto a = vx::loadFloat3(&v1);
-		auto b = vx::loadFloat3(&v2);
-		auto d = _mm_sub_ps(b, a);
-		d = _mm_dp_ps(d, d, 255);
+		__m128 a = vx::loadFloat3(&v1);
+		__m128 b = vx::loadFloat3(&v2);
+		__m128 d = _mm_sub_ps(b, a);
+		d = dot3(d, d);
 		d = _mm_sqrt_ps(d);
 
                 return *reinterpret_cast<f32*>(&d);
@@ -1398,10 +1402,10 @@ namespace vx
 	template<>
 	inline f32 distance4(const detail::vec4<f32> &v1, const detail::vec4<f32> &v2)
 	{
-		auto a = vx::loadFloat4(&v1);
-		auto b = vx::loadFloat4(&v2);
-		auto d = _mm_sub_ps(b, a);
-		d = _mm_dp_ps(d, d, 255);
+		__m128 a = vx::loadFloat4(&v1);
+		__m128 b = vx::loadFloat4(&v2);
+		__m128 d = _mm_sub_ps(b, a);
+		d = dot4(d, d);
 		d = _mm_sqrt_ps(d);
 
                 return *reinterpret_cast<f32*>(&d);
@@ -1447,7 +1451,7 @@ namespace vx
 
 	inline float2a normalize2(const float2a &v1)
 	{
-		auto l = sqrtf(dot2(v1, v1));
+		f32 l = sqrtf(dot2(v1, v1));
 		float2a result(v1);
 		if (l > 0.0f)
 		{
@@ -1460,7 +1464,7 @@ namespace vx
 
 	inline float3 normalize3(const float3 &v1)
 	{
-		auto l = sqrtf(vx::dot3(v1, v1));
+		f32 l = sqrtf(vx::dot3(v1, v1));
 
 		float3 result(v1);
 		if (l > 0.0f)
@@ -1482,7 +1486,7 @@ namespace vx
 	template<>
 	inline float2 abs(const float2 &v)
 	{
-                return float2(vx::abs(v.x), vx::abs(v.y));
+		return float2(vx::abs(v.x), vx::abs(v.y));
 	}
 
 	template<class T>
@@ -1494,7 +1498,7 @@ namespace vx
 	template<>
 	inline float2a abs(const float2a &v)
 	{
-		auto r = vx::abs(vx::loadFloat2a(&v));
+		__m128 r = vx::abs(vx::loadFloat2a(&v));
 		vx::float2a result;
 		vx::storeFloat2a(&result, r);
 		return result;
@@ -1521,15 +1525,17 @@ namespace vx
 	template<>
 	inline float4 abs(const float4 &v)
 	{
-		auto tmp = vx::loadFloat4(&v);
-		auto abs = vx::abs(tmp);
+		__m128 tmp = vx::loadFloat4(&v);
+		__m128 abs = vx::abs(tmp);
+
 		vx::float4 result;
 		vx::storeFloat4(&result, abs);
+		return result;
 	}
 
 	inline float2 round(const float2 &v)
 	{
-		auto tmp = vx::loadFloat2(&v);
+		__m128 tmp = vx::loadFloat2(&v);
 		tmp = round(tmp);
 
 		vx::float2 result;
@@ -1539,7 +1545,7 @@ namespace vx
 
 	inline float2a round(const float2a &v)
 	{
-		auto tmp = vx::loadFloat2a(&v);
+		__m128 tmp = vx::loadFloat2a(&v);
 		tmp = round(tmp);
 
 		vx::float2a result;
@@ -1554,7 +1560,7 @@ namespace vx
 
 	inline float4 round(const float4 &v)
 	{
-		auto tmp = vx::loadFloat4(&v);
+		__m128 tmp = vx::loadFloat4(&v);
 		tmp = round(tmp);
 
 		vx::float4 result;
@@ -1647,6 +1653,6 @@ namespace vx
 
 #include "Vector.inl"
 
-#ifndef _VX_GCC
+#if (_VX_GCC != 0 && _VX_ANDROID != 0)
 #pragma warning( pop )
 #endif
