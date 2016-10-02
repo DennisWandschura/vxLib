@@ -24,12 +24,11 @@ SOFTWARE.
 
 #include <vxlib/Graphics/Texture.h>
 #include <algorithm>
-//#include <vxEngineLib/Graphics/TextureFactory.h>
 #include <vxlib/Graphics/dds.h>
 
 namespace vx
 {
-	namespace Graphics
+	namespace graphics
 	{
 		namespace detail
 		{
@@ -231,12 +230,15 @@ namespace vx
 			:Surface(),
 			m_mipmaps(nullptr),
 			m_mipmapCount(0),
+#ifdef _VX_X64
+			m_padding(0),
+#endif
 			m_allocatedSize(0)
 		{
 		}
 
 		Face::Face(Face &&rhs)
-			: Graphics::Surface(std::move(rhs)),
+			: graphics::Surface(std::move(rhs)),
 			m_mipmaps(rhs.m_mipmaps),
 			m_mipmapCount(rhs.m_mipmapCount),
 			m_allocatedSize(rhs.m_allocatedSize)
@@ -254,7 +256,7 @@ namespace vx
 		{
 			if (this != &rhs)
 			{
-				Graphics::Surface::operator=(std::move(rhs));
+				graphics::Surface::operator=(std::move(rhs));
 				std::swap(m_mipmaps, rhs.m_mipmaps);
 				std::swap(m_mipmapCount, rhs.m_mipmapCount);
 				std::swap(m_allocatedSize, rhs.m_allocatedSize);
@@ -264,7 +266,7 @@ namespace vx
 
 		void Face::create(const vx::uint3 &dimension, u32 size, const vx::AllocatedBlock &pixels)
 		{
-			Graphics::Surface::create(dimension, size, pixels);
+			graphics::Surface::create(dimension, size, pixels);
 
 			m_mipmapCount = 0;
 		}

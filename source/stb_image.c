@@ -179,7 +179,7 @@ const char *stbi_failure_reason(void)
 	return failure_reason;
 }
 
-static int e(const char *str)
+static int __e(const char *str)
 {
 	failure_reason = str;
 	return 0;
@@ -192,9 +192,9 @@ static int e(const char *str)
 #ifdef STBI_NO_FAILURE_STRINGS
 #define e(x,y) 0
 #elif defined(STBI_FAILURE_USERMSG)
-#define e(x,y) e(y)
+#define e(x,y) __e(y)
 #else
-#define e(x,y) e(x)
+#define e(x,y) __e(x)
 #endif
 
 #define epf(x,y) ((float *) (e(x,y)?NULL:NULL))
@@ -1049,7 +1049,7 @@ static int parse_entropy_coded_data(jpeg *z)
 	if (z->scan_n == 1) {
 		int i, j;
 #ifdef STBI_SIMD
-		__declspec(align(16))
+		VX_ALIGN(16)
 #endif
 			short data[64];
 		int n = z->order[0];

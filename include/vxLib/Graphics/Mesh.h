@@ -29,7 +29,7 @@ namespace vx
 {
 	class File;
 
-	namespace Graphics
+	namespace graphics
 	{
 		struct MeshVertex
 		{

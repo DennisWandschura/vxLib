@@ -47,7 +47,7 @@ static uint32 UNALIGNED_LOAD32(const char *p) {
 	return result;
 }
 
-#if defined(_MSC_VER) || defined(_VX_WINDOWS)
+#if defined(_MSC_VER) || defined(_VX_PLATFORM_WINDOWS)
 
 #include <stdlib.h>
 #define bswap_32(x) _byteswap_ulong(x)

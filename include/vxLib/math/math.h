@@ -24,7 +24,7 @@ SOFTWARE.
 */
 
 #include <vxLib/math/half.h>
-#ifdef _VX_ANDROID
+#ifdef _VX_PLATFORM_ANDROID
 #include <x86intrin.h>
 #else
 #include <intrin.h>
@@ -308,7 +308,7 @@ namespace vx
 		return radAngle * VX_RADTODEG;
 	}
 
-#if _VX_ANDROID
+#if _VX_PLATFORM_ANDROID
 #define bsf32 __builtin_ctz
 #define bsr32 __builtin_clz
 #else

@@ -22,20 +22,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include <vxLib/util/DebugPrint.h>
+#ifdef  _VX_PLATFORM_ANDROID
+#include <cstdio>
+#else
 #include <Windows.h>
+#endif
 
 namespace vx
 {
 	u32 debugPrint::g_verbosity = 0;
 	u16 debugPrint::g_filter = 0;
+#ifdef  _VX_PLATFORM_ANDROID
+	void* debugPrint::g_hConsole = nullptr;
+#else
 	void* debugPrint::g_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
 
 	void debugPrintF(const char *format, va_list argList)
 	{
 		const u32 max = 1023;
 		static char sBuffer[max + 1];
 
+#ifdef  _VX_PLATFORM_ANDROID
+		vsnprintf(sBuffer, max, format, argList);
+#else
 		vsnprintf_s(sBuffer, max, format, argList);
+#endif
 		sBuffer[max] = '\0';
 
 		puts(sBuffer);
@@ -45,8 +57,11 @@ namespace vx
 	{
 		const u32 max = 1023;
 		static char sBuffer[max + 2];
-
+#ifdef  _VX_PLATFORM_ANDROID
+		int size = vsnprintf(sBuffer, max, format, argList);
+#else
 		int size = vsnprintf_s(sBuffer, max, format, argList);
+#endif
 		sBuffer[size] = '\n';
 		sBuffer[size + 1] = '\0';
 
@@ -81,6 +96,37 @@ namespace vx
 
 	void setConsoleFormat(u8 channel)
 	{
+#ifdef _VX_PLATFORM_ANDROID
+		const char* color = "";
+		switch (channel)
+		{
+		case(CHANNEL_ONE):
+			color = "\033[34;1m";
+			break;
+		case(CHANNEL_TWO):
+			color = "\033[32;1m";
+			break;
+		case(CHANNEL_THREE):
+			color = "\033[36;1m";
+			break;
+		case(CHANNEL_FOUR):
+			color = "\033[31;1m";
+			break;
+		case(CHANNEL_FIVE):
+			color = "\033[35;1m";
+			break;
+		case(CHANNEL_SIX):
+			color = "\033[33;1m";
+			break;
+		case(CHANNEL_SEVEN):
+			color = "\033[37;1m";
+			break;
+		case(CHANNEL_ERROR):
+			color = "\033[37;1;41m";
+			break;
+		}
+		::printf("%s", color);
+#else
 		switch (channel)
 		{
 		case(CHANNEL_ONE) :
@@ -108,6 +154,7 @@ namespace vx
 			SetConsoleTextAttribute(vx::debugPrint::g_hConsole, 15 | BACKGROUND_RED | BACKGROUND_INTENSITY);
 			break;
 		}
+#endif
 	}
 
 	void verboseChannelPrintF(u32 verbosity, u8 channel, const char *format, ...)
@@ -123,7 +170,11 @@ namespace vx
 
 			va_end(argList);
 
+#ifdef _VX_PLATFORM_ANDROID
+			printf("\033[37;40m");
+#else
 			SetConsoleTextAttribute(vx::debugPrint::g_hConsole, 7);
+#endif
 		}
 	}
 
@@ -140,7 +191,11 @@ namespace vx
 
 			va_end(argList);
 
+#ifdef _VX_PLATFORM_ANDROID
+			printf("\033[37;40m");
+#else
 			SetConsoleTextAttribute(vx::debugPrint::g_hConsole, 7);
+#endif
 		}
 	}
 }

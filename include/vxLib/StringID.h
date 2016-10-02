@@ -65,7 +65,7 @@ namespace vx
 
 	inline StringID make_sid(const char *str)
 	{
-		return{ CITYHASH64(str) };
+		return{ CityHash64(str, strlen(str)) };
 	}
 
 	inline StringID make_sid(const char *str, u32 size)
@@ -81,12 +81,13 @@ namespace vx
 	template<u64 SIZE>
 	inline StringID make_sid(const char(&str)[SIZE])
 	{
-		StringID sid = CityHash64((char*)str, SIZE);
-		return sid;
+		return{ CityHash64((char*)str, SIZE) };
 	}
 
+#ifdef _VX_PLATFORM_WINDOWS
 	inline StringID make_sid(const wchar_t *str)
 	{
 		return{ CityHash64((char*)str, sizeof(wchar_t) * std::char_traits<wchar_t>::length(str)) };
 	}
+#endif
 }

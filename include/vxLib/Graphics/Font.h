@@ -23,11 +23,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "FontAtlas.h"
+#include <vxlib/graphics/FontAtlas.h>
 
 namespace vx
 {
-	namespace Graphics
+	namespace graphics
 	{
 		class Texture;
 

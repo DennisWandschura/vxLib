@@ -3,7 +3,7 @@
 
 namespace vx
 {
-	namespace Graphics
+	namespace graphics
 	{
 		Surface::Surface()
 			: m_dimension(0, 0, 0),

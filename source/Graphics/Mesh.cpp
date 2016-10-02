@@ -28,7 +28,7 @@ SOFTWARE.
 
 namespace vx
 {
-	namespace Graphics
+	namespace graphics
 	{
 		Mesh::Mesh()
 			:m_pVertices(nullptr),

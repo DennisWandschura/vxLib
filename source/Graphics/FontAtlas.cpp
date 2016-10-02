@@ -26,7 +26,7 @@ SOFTWARE.
 
 namespace vx
 {
-	namespace Graphics
+	namespace graphics
 	{
 		inline const char* getCharacter(const char *str, char in)
 		{

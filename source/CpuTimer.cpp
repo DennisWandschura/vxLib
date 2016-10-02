@@ -23,20 +23,51 @@ SOFTWARE.
 */
 
 #include <vxlib/CpuTimer.h>
+#ifdef  _VX_PLATFORM_ANDROID
+#include <time.h>
+#else
 #include <Windows.h>
+#endif
 
 namespace vx
 {
-	s64 CpuTimer::s_frequency{ 0 };
+	namespace CpuTimerCpp
+	{
+		u64 queryPerformanceCounter()
+		{
+			u64 ticks;
+#ifdef  _VX_PLATFORM_ANDROID
+			struct timespec now;
+			clock_gettime(CLOCK_MONOTONIC, &now);
+			ticks = now.tv_sec;
+			ticks *= 1000000000;
+			ticks += now.tv_nsec;
+#else
+			QueryPerformanceCounter((LARGE_INTEGER*)&ticks);
+#endif
+			return ticks;
+		}
+
+		u64 queryPerformanceFrequency()
+		{
+#ifdef  _VX_PLATFORM_ANDROID
+			return 1000000000llu;
+#else
+			u64 frequency;
+			QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
+			return frequency;
+#endif
+		}
+	}
+
+	u64 CpuTimer::s_frequency{ 0 };
 
 	CpuTimer::CpuTimer()
-		:m_start(0)
+		:m_start(CpuTimerCpp::queryPerformanceCounter())
 	{
-		QueryPerformanceCounter((LARGE_INTEGER*)&m_start);
-
 		if (s_frequency == 0)
 		{
-			QueryPerformanceFrequency((LARGE_INTEGER*)&s_frequency);
+			s_frequency = CpuTimerCpp::queryPerformanceFrequency();
 		}
 	}
 
@@ -47,38 +78,32 @@ namespace vx
 
 	void CpuTimer::reset()
 	{
-		LARGE_INTEGER start;
-		QueryPerformanceCounter(&start);
-
-		m_start = start.QuadPart;
+		m_start = CpuTimerCpp::queryPerformanceCounter();
 	}
 
 	f64 CpuTimer::getTimeSeconds() const
 	{
-		LARGE_INTEGER end;
-		QueryPerformanceCounter(&end);
+		auto end = CpuTimerCpp::queryPerformanceCounter();
 
-		f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
+		f64 time = (end - m_start) * 1000000.0 / s_frequency;
 
 		return time * 1.0e-6;
 	}
 
 	f64 CpuTimer::getTimeMiliseconds() const
 	{
-		LARGE_INTEGER end;
-		QueryPerformanceCounter(&end);
+		auto end = CpuTimerCpp::queryPerformanceCounter();
 
-		f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
+		f64 time = (end - m_start) * 1000000.0 / s_frequency;
 
 		return (time * 0.001);
 	}
 
 	f64 CpuTimer::getTimeMicroseconds() const
 	{
-		LARGE_INTEGER end;
-		QueryPerformanceCounter(&end);
+		auto end = CpuTimerCpp::queryPerformanceCounter();
 
-		f64 time = (end.QuadPart - m_start) * 1000000.0 / s_frequency;
+		f64 time = (end - m_start) * 1000000.0 / s_frequency;
 
 		return time;
 	}

@@ -22,8 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include <vxLib/File/File.h>
+#ifdef _VX_PLATFORM_ANDROID
+#include <fcntl.h>
+#include <sys/stat.h>
+#else
 #include <strsafe.h>
 #include <Windows.h>
+#endif
 
 /*void printError(DWORD error)
 {
@@ -44,10 +49,46 @@ SOFTWARE.
 
 namespace vx
 {
-	File::File()
-		:m_pFile(nullptr)
+	namespace FileCpp
 	{
-		const int k = 1 << 0 | 1 << 1 | 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 | 1 << 6 | 1 << 7;
+		bool createFile(const char* file, FileAccess access, File::FileHandle* handle)
+		{
+#ifdef _VX_PLATFORM_ANDROID
+			auto tmp = creat(file, static_cast<s32>(access));
+			if (tmp < 0)
+				return false;
+#else
+			auto tmp = CreateFileA(file, static_cast<u32>(access), 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+			if (tmp == INVALID_HANDLE_VALUE)
+			{
+				return false;
+			}
+#endif
+			*handle = tmp;
+			return true;
+		}
+
+		bool openFile(const char* file, FileAccess access, File::FileHandle* handle)
+		{
+#ifdef _VX_PLATFORM_ANDROID
+			auto tmp = open(file, O_TRUNC, static_cast<s32>(access));
+			if (tmp < 0)
+				return false;
+#else
+			auto tmp = CreateFileA(file, static_cast<u32>(access), 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+			if (tmp == INVALID_HANDLE_VALUE)
+			{
+				return false;
+			}
+			*handle = tmp;
+#endif
+			return true;
+		}
+	}
+
+	File::File()
+		:m_handle(0)
+	{
 	}
 
 	File::~File()
@@ -57,16 +98,15 @@ namespace vx
 
 	bool File::create(const char* file, FileAccess access)
 	{
-		auto r = CreateFileA(file, static_cast<u32>(access), 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-		if (r == INVALID_HANDLE_VALUE)
-		{
-			return false;
-		}
-
-		m_pFile = r;
-		return true;
+		return FileCpp::createFile(file, access, &m_handle);
 	}
 
+	bool File::open(const char *file, FileAccess access)
+	{
+		return FileCpp::openFile(file, access, &m_handle);
+	}
+
+#ifdef _VX_PLATFORM_WINDOWS
 	bool File::create(const wchar_t* file, FileAccess access)
 	{
 		auto r = CreateFileW(file, static_cast<u32>(access), 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
@@ -75,19 +115,7 @@ namespace vx
 			return false;
 		}
 
-		m_pFile = r;
-		return true;
-	}
-
-	bool File::open(const char *file, FileAccess access)
-	{
-		auto r = CreateFileA(file, static_cast<u32>(access), 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-		if (r == INVALID_HANDLE_VALUE)
-		{
-			return false;
-		}
-
-		m_pFile = r;
+		m_handle = r;
 		return true;
 	}
 
@@ -99,62 +127,99 @@ namespace vx
 			return false;
 		}
 
-		m_pFile = r;
+		m_handle = r;
 		return true;
 	}
+#endif
 
 	bool File::close()
 	{
+#ifdef _VX_PLATFORM_WINDOWS
 		bool result = false;
-		if (m_pFile && CloseHandle(m_pFile) != 0)
+		if (m_handle && CloseHandle(m_handle) != 0)
 		{
-			m_pFile = nullptr;
+			m_handle = 0;
 			result = true;
 		}
-
 		return result;
+#else
+		if (m_handle == 0)
+			return true;
+
+		return (::close(m_handle) == 0);
+#endif
 	}
 
 	bool File::read(void *ptr, s32 size)
 	{
-		return (ReadFile(m_pFile, ptr, size, nullptr, nullptr) != 0);
+#ifdef _VX_PLATFORM_WINDOWS
+		return (ReadFile(m_handle, ptr, size, nullptr, nullptr) != 0);
+#else
+		return (::read(m_handle, ptr, size) >= 0);
+#endif
 	}
 
 	bool File::write(const u8 *ptr, s32 size, s32 *pWrittenBytes)
 	{
-		return (WriteFile(m_pFile, ptr, size, (DWORD*)pWrittenBytes, nullptr) != 0);
+#ifdef _VX_PLATFORM_WINDOWS
+		return (WriteFile(m_handle, ptr, size, (DWORD*)pWrittenBytes, nullptr) != 0);
+#else
+		auto written = ::write(m_handle, ptr, size);
+		if (written < 0)
+			return false;
+		*pWrittenBytes = written;
+		return true;
+#endif
 	}
 
 	bool File::setEof()
 	{
-		return (SetEndOfFile(m_pFile) != 0);
+#ifdef _VX_PLATFORM_WINDOWS
+		return (SetEndOfFile(m_handle) != 0);
+#else
+		return (::lseek(m_handle, 0, SEEK_END) >= 0);
+#endif
 	}
 
 	bool File::seek(s64 offset, FileSeekPosition from)
 	{
+#ifdef _VX_PLATFORM_WINDOWS
 		LARGE_INTEGER tmp;
 		tmp.QuadPart = offset;
-		return (SetFilePointerEx(m_pFile, tmp, nullptr, (u32)from) != 0);
+		return (SetFilePointerEx(m_handle, tmp, nullptr, (u32)from) != 0);
+#else
+		return (::lseek(m_handle, offset, static_cast<s32>(from)) >= 0);
+#endif
 	}
 
 	s64 File::getSize() const
 	{
+#ifdef _VX_PLATFORM_WINDOWS
 		LARGE_INTEGER fileSize;
-		if (GetFileSizeEx(m_pFile, &fileSize) == 0)
+		if (GetFileSizeEx(m_handle, &fileSize) == 0)
 		{
 			fileSize.QuadPart = 0;
 		}
 
 		return fileSize.QuadPart;
+#else
+		struct stat stat_buf;
+		auto rc = ::fstat(m_handle, &stat_buf);
+		return rc == 0 ? stat_buf.st_size : -1;
+#endif
 	}
 
 	bool File::isOpen() const
 	{
-		return (m_pFile != nullptr);
+		return (m_handle != 0);
 	}
 
 	bool File::flush()
 	{
-		return FlushFileBuffers(m_pFile);
+#ifdef _VX_PLATFORM_WINDOWS
+		return (FlushFileBuffers(m_handle) != 0);
+#else
+		return (::fsync(m_handle) == 0);
+#endif
 	}
 }

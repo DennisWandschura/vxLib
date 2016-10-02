@@ -23,12 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#if !defined _VX_GCC && !defined _VX_ANDROID
+#include <vxLib/math/math.h>
+
+#ifdef _VX_PLATFORM_WINDOWS
 #pragma warning( push )
 #pragma warning(disable : 4201)
 #endif
-
-#include <vxLib/math/math.h>
 
 #define VX_PERMUTE_PS(V, U) _mm_shuffle_ps(V, V, U)
 #define _VX_DOT(M0, M1, M2, M3, X, Y, Z, W) M0 << 0 | M1 << 1 | M2 << 2 | M3 << 3 | X << 4 | Y << 5 | Z << 6 | W << 7
@@ -846,6 +846,7 @@ namespace vx
 			};
 
 			vec4a() :v() {}
+			explicit vec4a(value_type v) :x(v), y(v), z(v), w(v) {}
 			vec4a(value_type vx, value_type vy, value_type vz, value_type vw) :x(vx), y(vy), z(vz), w(vw) {}
 			vec4a(const vec4<T> &vu) :v(XMM_TYPE<value_type>::load(vu)) {}
 			vec4a(const vec2a<T> &xy, const vec2a<T> &zw) :x(xy.x), y(xy.y), z(zw.x), w(zw.y) {}
@@ -876,7 +877,7 @@ namespace vx
 		};
 	}
 
-#ifndef _VX_ANDROID
+#ifndef _VX_PLATFORM_ANDROID
 	union ivec4l
 	{
 		long long i[4];
@@ -1083,7 +1084,7 @@ namespace vx
 	VX_GLOBALCONST vector_type_int g_VXMask3 = { { (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, 0x00000000 } };
 	VX_GLOBALCONST vector_type_int g_VXMask4 = { { (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF, (s32)0xFFFFFFFF } };
 
-#ifndef _VX_ANDROID
+#ifndef _VX_PLATFORM_ANDROID
 	VX_GLOBALCONST ivec4l g_VXInfinity_d = { 0x7FF0000000000000, 0x7FF0000000000000, 0x7FF0000000000000, 0x7FF0000000000000 };
 	VX_GLOBALCONST ivec4l g_VXQNaN_d = { 0x7FF8000000000000, 0x7FF8000000000000, 0x7FF8000000000000, 0x7FF8000000000000 };
 	VX_GLOBALCONST ivec4l g_VXSelect1110_d = { (s64)0xFFFFFFFFFFFFFFFF, (s64)0xFFFFFFFFFFFFFFFF, (s64)0xFFFFFFFFFFFFFFFF, 0 };
@@ -1649,10 +1650,35 @@ namespace vx
 	{
 		return min(max(value, vmin), vmax);
 	}
+
+	inline __m128 VX_CALLCONV clamp(CVEC4 value, CVEC4 vmin, CVEC4 vmax)
+	{
+		return _mm_min_ps(_mm_max_ps(value, vmin), vmax);
+	}
+}
+
+inline vx::float4a VX_CALLCONV operator+(vx::float4a lhs, vx::float4a rhs)
+{
+	return _mm_add_ps(lhs, rhs);
+}
+
+inline vx::float4a VX_CALLCONV operator-(vx::float4a lhs, vx::float4a rhs)
+{
+	return _mm_sub_ps(lhs, rhs);
+}
+
+inline vx::float4a VX_CALLCONV operator*(vx::float4a lhs, vx::float4a rhs)
+{
+	return _mm_mul_ps(lhs, rhs);
+}
+
+inline vx::float4a VX_CALLCONV operator/(vx::float4a lhs, vx::float4a rhs)
+{
+	return _mm_div_ps(lhs, rhs);
 }
 
 #include "Vector.inl"
 
-#if !defined _VX_GCC && !defined _VX_ANDROID
+#ifdef _VX_PLATFORM_WINDOWS
 #pragma warning( pop )
 #endif

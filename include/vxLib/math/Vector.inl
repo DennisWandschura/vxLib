@@ -101,6 +101,34 @@ namespace vx
 		return _mm_max_ps(a, b);
 	}
 
+	inline float4a VX_CALLCONV max(float4a a, float4a b)
+	{
+		return _mm_max_ps(a.v, b.v);
+	}
+
+	inline float4a VX_CALLCONV max3(float4a a)
+	{
+		__m128 x = a;
+		__m128 y = _mm_load_ss(&a.y);
+		__m128 z = _mm_load_ss(&a.z);
+
+		return _mm_max_ss(x, _mm_max_ss(y, z));
+	}
+
+	inline float4a VX_CALLCONV min(float4a a, float4a b)
+	{
+		return _mm_min_ps(a.v, b.v);
+	}
+
+	inline float4a VX_CALLCONV min3(float4a a)
+	{
+		__m128 x = a;
+		__m128 y = _mm_load_ss(&a.y);
+		__m128 z = _mm_load_ss(&a.z);
+
+		return _mm_min_ss(x, _mm_min_ss(y, z));
+	}
+
 	inline __m128 VX_CALLCONV abs(CVEC4 v)
 	{
 		__m128 mask = g_VXAbsMaskFloat;
@@ -406,8 +434,8 @@ namespace vx
 
 	inline void VX_CALLCONV quaternionToAxisAngle(CVEC4 Q, __m128* pAxis, f32* pAngle)
 	{
-		assert(pAxis);
-		assert(pAngle);
+		VX_ASSERT(pAxis);
+		VX_ASSERT(pAngle);
 
 		*pAxis = Q;
 

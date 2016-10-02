@@ -26,7 +26,7 @@ SOFTWARE.
 
 namespace vx
 {
-	namespace Graphics
+	namespace graphics
 	{
 		Font::Font()
 			:m_texture(nullptr),

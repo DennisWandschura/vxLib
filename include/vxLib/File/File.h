@@ -30,9 +30,15 @@ namespace vx
 {
 	enum class FileAccess : u32
 	{
+#ifdef _VX_PLATFORM_WINDOWS
 		Read = 0x80000000L,
 		Write = 0x40000000L,
 		Read_Write = Read | Write
+#else
+		Read = 0,
+		Write = 00000001,
+		Read_Write = 00000002
+#endif
 	};
 
 	enum class FileSeekPosition : u32
@@ -44,16 +50,28 @@ namespace vx
 
 	class File
 	{
-		void *m_pFile;
+	public:
+#ifdef _VX_PLATFORM_WINDOWS
+		typedef void* FileHandle;
+#else
+		typedef s32 FileHandle;
+#endif
+
+	private:
+		FileHandle m_handle;
 
 	public:
 		File();
 		~File();
 
 		bool create(const char* file, FileAccess access);
-		bool create(const wchar_t* file, FileAccess access);
 		bool open(const char *file, FileAccess access);
+
+#ifdef _VX_PLATFORM_WINDOWS
+		bool create(const wchar_t* file, FileAccess access);
 		bool open(const wchar_t *file, FileAccess access);
+#endif
+
 		bool close();
 
 		bool read(void *ptr, s32 size);

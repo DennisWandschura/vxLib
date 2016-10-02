@@ -24,24 +24,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/types.h>
+#include <vxLib/Allocator/Allocator.h>
 
 namespace vx
 {
-	class CpuTimer
+	struct GpuAllocatedBlock
 	{
-		static u64 s_frequency;
-
-		u64 m_start;
-
-	public:
-		CpuTimer();
-		~CpuTimer();
-
-		void reset();
-
-		f64 getTimeSeconds() const;
-		f64 getTimeMiliseconds() const;
-		f64 getTimeMicroseconds() const;
+		u64 offset;
+		u64 size;
 	};
 }

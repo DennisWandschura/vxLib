@@ -1,14 +1,16 @@
 #include <vxLib/print.h>
 
+#ifdef _VX_PLATFORM_WINDOWS
+
 namespace vx
 {
 	namespace detail
 	{
 		namespace print
 		{
-			thread_local int g_bufferSize{ 0 };
+			thread_local s32 g_bufferSize{ 0 };
 			thread_local char* g_buffer{ nullptr };
-			thread_local HANDLE g_consoleHandle{ nullptr };
+			thread_local void* g_consoleHandle{ nullptr };
 		}
 	}
 
@@ -33,3 +35,4 @@ namespace vx
 		return block;
 	}
 }
+#endif

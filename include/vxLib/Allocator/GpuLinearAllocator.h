@@ -24,24 +24,72 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/types.h>
+#include <vxLib/Allocator/GpuAllocator.h>
 
 namespace vx
 {
-	class CpuTimer
+	class GpuLinearAllocator
 	{
-		static u64 s_frequency;
-
-		u64 m_start;
+		u64 m_head;
+		u64 m_capacity;
 
 	public:
-		CpuTimer();
-		~CpuTimer();
+		typedef u64 Marker;
 
-		void reset();
+		GpuLinearAllocator() :m_head(0), m_capacity(0){}
+		~GpuLinearAllocator() {}
 
-		f64 getTimeSeconds() const;
-		f64 getTimeMiliseconds() const;
-		f64 getTimeMicroseconds() const;
+		void initialize(u64 capacity)
+		{
+			m_capacity = capacity; 
+		}
+
+		vx::GpuAllocatedBlock allocate(u64 size, u64 alignment)
+		{
+			auto alignedSize = vx::getAlignedSize(size, alignment);
+			auto alignedHead = vx::getAlignedSize(m_head, alignment);
+
+			auto newHead = alignedHead + alignedSize;
+			if (newHead > m_capacity)
+			{
+				return{ 0, 0 };
+			}
+
+			m_head = newHead;
+
+			return{ alignedHead, alignedSize };
+		}
+
+		void deallocate(const vx::GpuAllocatedBlock &block)
+		{
+			if (block.size == 0)
+				return;
+
+			auto tmp = block.offset + block.size;
+			if (tmp == m_head)
+			{
+				m_head = block.offset;
+			}
+		}
+
+		Marker getMarker() { return m_head; }
+
+		void setHeadToCapacity()
+		{
+			m_head = m_capacity;
+		}
+
+		void clearToMarker(Marker marker)
+		{
+			if(m_head > marker)
+				m_head = marker;
+		}
+
+		void clearAll()
+		{
+			m_head = 0;
+		}
+
+		u64 capacity() const { return m_capacity; }
 	};
 }

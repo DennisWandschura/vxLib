@@ -74,18 +74,18 @@ namespace vx
 	}
 
 	template<typename T>
-	std::enable_if_t<
+	typename std::enable_if<
 		std::is_trivially_copyable<T>::value, 
-		void>
+		void>::type
 	copy(T* first, T* last, T* dst)
 	{
 		::memmove(dst, first, sizeof(T) * (last - first));
 	}
 
 	template<typename T>
-	std::enable_if_t<
+	typename std::enable_if<
 		!std::is_trivially_copyable<T>::value,
-		void>
+		void>::type
 	copy(T* first, T* last, T* dst)
 	{
 		for (; first != last; ++dst, ++first)
@@ -93,18 +93,18 @@ namespace vx
 	}
 
 	template<typename T>
-	std::enable_if_t<
+	typename std::enable_if<
 		std::is_trivially_move_assignable<T>::value,
-		void>
+		void>::type
 	move(T* first, T* last, T* dst)
 	{
 		::memmove(dst, first, sizeof(T) * (last - first));
 	}
 
 	template<typename T>
-	std::enable_if_t<
+	typename std::enable_if<
 		!std::is_trivially_move_assignable<T>::value,
-		void>
+		void>::type
 	move(T* first, T* last, T* dst)
 	{
 		for (; first != last; ++dst, ++first)
@@ -112,18 +112,18 @@ namespace vx
 	}
 
 	template<typename T>
-	std::enable_if_t<
+	typename std::enable_if<
 		std::is_trivially_move_assignable<T>::value,
-		void>
+		void>::type
 		moveConstruct(T* first, T* last, T* dst)
 	{
 		::memmove(dst, first, sizeof(T) * (last - first));
 	}
 
 	template<typename T>
-	std::enable_if_t<
+	typename std::enable_if<
 		!std::is_trivially_move_assignable<T>::value,
-		void>
+		void>::type
 		moveConstruct(T* first, T* last, T* dst)
 	{
 		for (; first != last; ++dst, ++first)
@@ -131,9 +131,9 @@ namespace vx
 	}
 
 	template<typename T>
-	std::enable_if_t<
+	typename std::enable_if<
 		std::is_trivially_destructible<T>::value,
-		void>
+		void>::type
 	destruct(T* begin, T* end)
 	{
 		VX_UNREFERENCED_PARAMETER(begin);
@@ -141,18 +141,18 @@ namespace vx
 	}
 
 	template<typename T>
-	std::enable_if_t<
+	typename std::enable_if<
 		std::is_trivially_destructible<T>::value,
-		void>
+		void>::type
 		destruct(T* p)
 	{
 		VX_UNREFERENCED_PARAMETER(p);
 	}
 
 	template<typename T>
-	std::enable_if_t<
+	typename std::enable_if<
 		!std::is_trivially_destructible<T>::value,
-		void>
+		void>::type
 		destruct(T* begin, T* end)
 	{
 		while (begin != end)
@@ -162,9 +162,9 @@ namespace vx
 	}
 
 	template<typename T>
-	std::enable_if_t<
+	typename std::enable_if<
 		!std::is_trivially_destructible<T>::value,
-		void>
+		void>::type
 		destruct(T* p)
 	{
 		p->~T();

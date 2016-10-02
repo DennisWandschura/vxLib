@@ -1,8 +1,9 @@
 #pragma once
 
 #include <vxLib/Allocator/Allocator.h>
-#include <Windows.h>
+#ifdef _VX_PLATFORM_WINDOWS
 #include <double-conversion/double-conversion.h>
+#include <Windows.h>
 
 namespace vx
 {
@@ -17,7 +18,7 @@ namespace vx
 
 			extern thread_local int g_bufferSize;
 			extern thread_local char* g_buffer;
-			extern thread_local HANDLE g_consoleHandle;
+			extern thread_local void* g_consoleHandle;
 
 			inline bool copy_string_until_var(char** dst_inout, const char** src_inout, int dstSize, int* written)
 			{
@@ -149,7 +150,7 @@ namespace vx
 				auto size = data->size;
 				auto remainingSize = data->remainingSize;
 
-				if (format != '\0')
+				if (format != nullptr)
 				{
 					int writtenChars = 0;
 					while (!copy_string_until_end(dst, format, remainingSize, &writtenChars))
@@ -297,3 +298,4 @@ namespace vx
 		detail::print::writeToConsole(format, (int)len);
 	}
 }
+#endif

@@ -111,6 +111,4 @@ inline uint64 Hash128to64(const uint128& x) {
 	return b;
 }
 
-#define CITYHASH64(str) CityHash64(str, std::char_traits<char>::length(str))
-
 #endif  // CITY_HASH_H_

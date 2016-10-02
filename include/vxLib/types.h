@@ -23,14 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#if _VX_NO_EXCEPTIONS
-#define _HAS_EXCEPTIONS 0
-#endif
-
-#if _VX_WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#endif
-
+#include <vxLib/platform.h>
 #include <stdint.h>
 
 typedef int8_t s8;
@@ -51,7 +44,9 @@ static_assert(sizeof(u8) == 1, "Wrong type size");
 static_assert(sizeof(s16) == 2, "Wrong type size");
 static_assert(sizeof(u16) == 2, "Wrong type size");
 static_assert(sizeof(s32) == 4, "Wrong type size");
+#ifndef  _VX_PLATFORM_ANDROID
 static_assert(sizeof(s32) == sizeof(long), "Wrong type size");
+#endif // ! _VX_PLATFORM_ANDROID
 static_assert(sizeof(u32) == 4, "Wrong type size");
 static_assert(sizeof(s64) == 8, "Wrong type size");
 static_assert(sizeof(u64) == 8, "Wrong type size");
@@ -72,58 +67,6 @@ namespace vx
 	static const s64 s64_max = 0x7fffffffffffffff;
 	static const u64 u64_max = 0xffffffffffffffff;
 }
-
-#if _VX_ASSERT
-#include <assert.h>
-#if _VX_ANDROID
-#define VX_ASSERT(_Expression) _assert(_Expression)
-#else // _VX_ANDROID
-
-#ifdef  NDEBUG
-#ifdef __cplusplus
-extern "C" {
-#endif  /* __cplusplus */
-
-	_CRTIMP void __cdecl _wassert(_In_z_ const wchar_t * _Message, _In_z_ const wchar_t *_File, _In_ unsigned _Line);
-
-#ifdef __cplusplus
-}
-#endif  /* __cplusplus */
-#endif
-#define VX_ASSERT(_Expression) (void)( (!!(_Expression)) || (_wassert(_CRT_WIDE(#_Expression), _CRT_WIDE(__FILE__), __LINE__), 0) )
-#endif // _VX_ANDROID
-
-#else // _VX_ASSERT
-#define VX_ASSERT(_Expression) ((void)0)
-#endif // _VX_ASSERT
-
-#if _VX_ANDROID
-#define VX_ALIGN(X) __attribute__((aligned(X)))
-#elif defined(_VX_GCC) || defined(_VX_CLANG) || (_MSC_VER > 1800)
-#define VX_ALIGN(X) alignas(X)
-#else
-#define VX_ALIGN(X) __declspec( align( X ) )
-#endif
-
-#define VX_GLOBAL extern __declspec(selectany)
-#if defined (_VX_GCC)
-#define VX_GLOBALCONST extern const __attribute__((selectany))
-#elif defined (_VX_CLANG) || defined(_VX_ANDROID)
-#define VX_GLOBALCONST static const
-#else
-#define VX_GLOBALCONST extern const __declspec(selectany)
-#endif
-
-#if defined _VX_ANDROID
-#define VX_CALLCONV 
-#define _VX_CALLCONV_TYPE 0
-#elif defined(_VX_CUDA) || defined (_VX_GCC)
-#define VX_CALLCONV __fastcall
-#define _VX_CALLCONV_TYPE 0
-#else
-#define VX_CALLCONV __vectorcall
-#define _VX_CALLCONV_TYPE 1
-#endif
 
 #define VX_UNREFERENCED_PARAMETER(P) (P)
 
@@ -147,7 +90,7 @@ namespace vx
 {
 	namespace detail
 	{
-		template<size_t>
+		template<u64>
 		struct EnumDataType;
 
 		template<>

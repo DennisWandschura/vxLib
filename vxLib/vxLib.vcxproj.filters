@@ -60,9 +60,6 @@
     <ClCompile Include="..\source\stb_image_write.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\math\half.cpp">
       <Filter>Source Files\math</Filter>
     </ClCompile>

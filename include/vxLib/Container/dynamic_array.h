@@ -205,7 +205,7 @@ namespace vx
 		}
 
 		template<typename ...Args>
-		void push_back(Args&& ...value)
+		void push_back(Args&& ...args)
 		{
 			auto cap = capacity();
 			auto sz = size();
@@ -214,7 +214,59 @@ namespace vx
 				reserve(cap * 2);
 			}
 
-			new (&(begin()[m_size++])) value_type{ std::forward<Args>(value)... };
+			new (&(begin()[m_size++])) value_type{ std::forward<Args>(args)... };
+		}
+
+		void push_back_range(const_iterator first, const_iterator last)
+		{
+			auto cap = capacity();
+			auto sz = size();
+			auto count = last - first;
+			auto newSize = static_cast<u32>(sz + count);
+			if (newSize >= cap)
+			{
+				reserve(newSize);
+			}
+
+			auto dst = begin() + sz;
+			while (first != last)
+			{
+				new (dst++) value_type{ *(first++) };
+			}
+
+			m_size = newSize;
+		}
+
+		void push_back_range(const dynamic_array &other)
+		{
+			auto first = other.begin();
+			auto last = other.end();
+
+			push_back_range(first, last);
+		}
+
+		template<typename U, typename Cvt>
+		void push_back_range(const dynamic_array<U> &other, Cvt cvt)
+		{
+			auto first = other.begin();
+			auto last = other.end();
+
+			auto cap = capacity();
+			auto sz = size();
+			auto count = last - first;
+			auto newSize = static_cast<u32>(sz + count);
+			if (newSize >= cap)
+			{
+				reserve(newSize);
+			}
+
+			auto dst = begin() + sz;
+			while (first != last)
+			{
+				new (dst++) value_type{ cvt(*(first++)) };
+			}
+
+			m_size = newSize;
 		}
 
 		void pop_back()

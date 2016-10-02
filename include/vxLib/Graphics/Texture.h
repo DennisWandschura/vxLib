@@ -24,33 +24,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include <vxLib/Graphics/TextureFormat.h>
 #include <vxlib/Graphics/Surface.h>
-#include <vector>
 
 namespace vx
 {
-	namespace Graphics
+	namespace graphics
 	{
-		enum class TextureFormat : u8
-		{
-			Unkown,
-			RED,
-			BG,
-			BGR,
-			BGRA,
-			RG,
-			RGB,
-			RGBA,
-			SRGBA,
-			DXT1,
-			DXT3,
-			DXT5,
-			BC7_UNORM_SRGB,
-			BC7_UNORM,
-			BC6H_UF16,
-			BC6H_SF16
-		};
-
 		enum class TextureType : u8 { Flat, Cubemap, Volume };
 
 		namespace detail
@@ -72,7 +52,9 @@ namespace vx
 		{
 			Surface* m_mipmaps;
 			u32 m_mipmapCount;
+#ifdef _VX_X64
 			u32 m_padding;
+#endif
 			size_t m_allocatedSize;
 
 		public:

@@ -28,7 +28,7 @@ SOFTWARE.
 
 namespace vx
 {
-	namespace Graphics
+	namespace graphics
 	{
 		class Surface
 		{

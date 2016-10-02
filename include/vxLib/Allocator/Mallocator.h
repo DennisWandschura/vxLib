@@ -25,6 +25,7 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/Allocator.h>
+#include <stdlib.h>
 
 namespace vx
 {
@@ -39,18 +40,33 @@ namespace vx
 		{
 			auto alignedSize = getAlignedSize(size, alignment);
 
+#ifdef  _VX_PLATFORM_WINDOWS
 			return{ (u8*)_aligned_malloc(alignedSize, alignment), alignedSize };
+#else
+			return{ (u8*)_mm_malloc(alignedSize, alignment), alignedSize };
+#endif //  _VX_PLATFORM_WINDOWS
 		}
 
 		vx::AllocatedBlock reallocate(const vx::AllocatedBlock &block, u64 size, u64 alignment)
 		{
 			auto alignedSize = getAlignedSize(size, alignment);
+#ifdef  _VX_PLATFORM_WINDOWS
 			return{ (u8*)_aligned_realloc(block.ptr, alignedSize, alignment), alignedSize };
+#else
+			auto newBlock = allocate(size, alignedSize);
+			::memcpy(newBlock.ptr, block.ptr, block.size);
+			deallocate(block);
+			return newBlock;
+#endif
 		}
 
 		u32 deallocate(const vx::AllocatedBlock &block)
 		{
+#ifdef  _VX_PLATFORM_WINDOWS
 			_aligned_free(block.ptr);
+#else
+			_mm_free(block.ptr);
+#endif //  _VX_PLATFORM_WINDOWS
 			return 1;
 		}
 

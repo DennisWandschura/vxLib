@@ -77,8 +77,8 @@ namespace vx
 			}
 		}
 
-		template<typename T>
-		sorted_array(T* alloc, size_t capacity) : sorted_array(std::move(Allocator(alloc)), capacity) {}
+		template<typename Alloc>
+		sorted_array(Alloc* alloc, size_t capacity) : sorted_array(std::move(Allocator(alloc)), capacity) {}
 
 		sorted_array(const sorted_array&) = delete;
 

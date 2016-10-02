@@ -26,7 +26,7 @@ SOFTWARE.
 
 namespace vx
 {
-	namespace Graphics
+	namespace graphics
 	{
 		Camera::Camera()
 			:m_position(_mm_setzero_ps()),
