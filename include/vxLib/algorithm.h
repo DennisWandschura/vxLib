@@ -170,6 +170,43 @@ namespace vx
 		p->~T();
 	}
 
+	template<typename T>
+	void construct(T* dst)
+	{
+		new (dst)T{};
+	}
+
+	template<typename T>
+	void construct(T* dst, const T &value)
+	{
+		new (dst)T{value};
+	}
+
+	template<typename T, typename ...Args>
+	void construct(T* dst, Args&& ...args)
+	{
+		new (dst)T{ std::forward<Args>(args)... };
+	}
+
+	template<typename T>
+	typename std::enable_if<
+		std::is_pod<T>::value, void>::type
+		construct(T* begin, T* end)
+	{
+		::memset(begin, 0, end - begin);
+	}
+
+	template<typename T>
+	typename std::enable_if<
+		!std::is_pod<T>::value, void>::type
+		construct(T* begin, T* end)
+	{
+		while (begin != end)
+		{
+			new (begin++) T{};
+		}
+	}
+
 	template<typename T, typename Cmp>
 	inline void sort_subrange(T f, T l, T sf, T sl, Cmp cmp)
 	{

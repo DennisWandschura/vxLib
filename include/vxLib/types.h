@@ -56,18 +56,6 @@ static_assert(sizeof(f64) == 8, "Wrong type size");
 #define CONCATENATE_IMPL(s1, s2) s1##s2
 #define CONCATENATE(s1, s2) CONCATENATE_IMPL(s1, s2)
 
-namespace vx
-{
-	static const s8 s8_max = 0x7f;
-	static const u8 u8_max = 0xff;
-	static const s16 s16_max = 0x7fff;
-	static const u16 u16_max = 0xffff;
-	static const s32 s32_max = 0x7fffffff;
-	static const u32 u32_max = 0xffffffff;
-	static const s64 s64_max = 0x7fffffffffffffff;
-	static const u64 u64_max = 0xffffffffffffffff;
-}
-
 #define VX_UNREFERENCED_PARAMETER(P) (P)
 
 #if defined(__GNUC__) || defined(__INTEL_COMPILER)
@@ -85,6 +73,53 @@ namespace vx
 #define thread_local __declspec(thread)
 #define noexcept
 #endif
+
+#ifdef _VX_ARRAY_ANALYZER
+#ifndef _VX_TYPEINFO
+#define _VX_TYPEINFO
+#endif
+#endif
+
+#define VX_TYPE_INFO 
+
+#define VX_TYPEINFO_GENERATOR(TYPE)\
+namespace vx \
+{ \
+	namespace detail \
+	{ \
+		template<> \
+		struct GetTypeInfo<TYPE> \
+		{ \
+			static const auto& get() \
+			{ \
+				static const auto typeInfo{ getTypeInfo<TYPE>(#TYPE) }; \
+				return typeInfo; \
+			} \
+			\
+			static constexpr auto get_constexpr() \
+			{ \
+				return getTypeInfo<TYPE>(#TYPE); \
+			} \
+		}; \
+	}\
+}
+
+#define VX_TYPEINFO_GENERATOR_PARENT(TYPE, PARENT)\
+namespace vx \
+{ \
+	namespace detail \
+	{ \
+		template<> \
+		struct GetTypeInfo<TYPE> \
+		{ \
+			static const auto& get() \
+			{ \
+				static const auto typeInfo{ getTypeInfoParent<TYPE>(#TYPE, &GetTypeInfo<PARENT>::get()) }; \
+				return typeInfo; \
+			} \
+		}; \
+	}\
+}
 
 namespace vx
 {
@@ -123,6 +158,15 @@ namespace vx
 			typedef typename EnumDataType<sizeof(T)>::type type;
 		};
 	}
+
+	VX_GLOBALCONST s8 s8_max = 0x7f;
+	VX_GLOBALCONST u8 u8_max = 0xff;
+	VX_GLOBALCONST s16 s16_max = 0x7fff;
+	VX_GLOBALCONST u16 u16_max = 0xffff;
+	VX_GLOBALCONST s32 s32_max = 0x7fffffff;
+	VX_GLOBALCONST u32 u32_max = 0xffffffff;
+	VX_GLOBALCONST s64 s64_max = 0x7fffffffffffffff;
+	VX_GLOBALCONST u64 u64_max = 0xffffffffffffffff;
 }
 
 #define VX_ENUM_OPERATIONS(ENUM) \

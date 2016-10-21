@@ -25,6 +25,7 @@ SOFTWARE.
 
 #include <vxLib/math/Vector.h>
 #include <vxLib/Allocator/Allocator.h>
+#include <vxLib/TypeInfo.h>
 
 namespace vx
 {
@@ -32,6 +33,8 @@ namespace vx
 	{
 		class Surface
 		{
+			VX_TYPE_INFO;
+
 			vx::uint3 m_dimension;
 			u32 m_size;
 			vx::AllocatedBlock m_pixels;
@@ -57,3 +60,5 @@ namespace vx
 		};
 	}
 }
+
+VX_TYPEINFO_GENERATOR(vx::graphics::Surface)

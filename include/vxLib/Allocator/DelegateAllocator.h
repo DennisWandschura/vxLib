@@ -25,6 +25,7 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/Allocator.h>
+#include <vxLib/TypeInfo.h>
 
 namespace vx
 {
@@ -81,4 +82,22 @@ namespace vx
 			m_ptr->deallocate(block);
 		}
 	};
+
+	namespace detail
+	{
+		template<typename T>
+		struct GetTypeInfo<DelegateAllocator<T>>
+		{
+			static const auto& get()
+			{
+				static const auto typeInfo{ get_constexpr(); };
+				return typeInfo;
+			}
+
+			constexpr static auto get_constexpr()
+			{
+				return getTypeInfo(concat("vx::DelegateAllocator<", GetTypeInfo<T>::get_constexpr().m_name, ">"), sizeof(DelegateAllocator<T>), __alignof(DelegateAllocator<T>));
+			}
+		};
+	}
 }

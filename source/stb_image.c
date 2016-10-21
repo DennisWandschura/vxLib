@@ -1,4 +1,4 @@
-#include <vxLib\stb_image.h>
+#include <vxLib/stb_image.h>
 
 #ifndef STBI_HEADER_FILE_ONLY
 
@@ -1049,7 +1049,7 @@ static int parse_entropy_coded_data(jpeg *z)
 	if (z->scan_n == 1) {
 		int i, j;
 #ifdef STBI_SIMD
-		VX_ALIGN(16)
+		__declspec(align(16))
 #endif
 			short data[64];
 		int n = z->order[0];

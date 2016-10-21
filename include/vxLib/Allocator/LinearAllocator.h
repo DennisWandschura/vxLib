@@ -91,21 +91,26 @@ namespace vx
 
 		AllocatedBlock reallocate(const vx::AllocatedBlock &block, u64 size, u64 alignment)
 		{
-			auto tmp = block.ptr + block.size;
-			if (m_head == tmp)
+			AllocatedBlock newBlock{ nullptr, 0 };
+
+			auto alignedPtr = getAlignedPtr(block.ptr, alignment);
+			if (alignedPtr != block.ptr)
 			{
-				m_head = block.ptr;
-				auto newBlock = allocate(size, alignment);
+				newBlock = allocate(size, alignment);
+				::memcpy(newBlock.ptr, block.ptr, block.size);
+				::memset(block.ptr, 0, block.size);
 
-				if (newBlock.ptr != block.ptr)
-				{
-					memmove(newBlock.ptr, block.ptr, block.size);
-				}
+				deallocate(block);
+			}
+			else if (m_head == (block.ptr + block.size))
+			{
+				auto alignedSize = getAlignedSize(size, alignment);
 
-				return newBlock;
+				newBlock = { block.ptr, alignedSize };
+				m_head = newBlock.ptr + newBlock.size;
 			}
 
-			return{ nullptr, 0 };
+			return newBlock;
 		}
 
 		u32 deallocate(const AllocatedBlock &block)

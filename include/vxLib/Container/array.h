@@ -3,7 +3,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2015 Dennis Wandschura
+Copyright (c) 2016 Dennis Wandschura
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,58 +24,86 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <vxLib/Allocator/DelegateAllocator.h>
-#include <vxLib/algorithm.h>
+#include <vxLib/Container/ArrayBase.h>
+#include <vxLib/ArrayAnalyzer.h>
+#include <vxLib/TypeInfo.h>
 
 namespace vx
 {
-	template<typename T, typename Allocator>
-	class array
+	template<typename T, u64 SIZE>
+	class Array : public ArrayBase<T>
 	{
-		typedef T value_type;
-		typedef value_type* pointer;
+		VX_TYPE_INFO;
 
-		pointer m_begin;
-		pointer m_end;
-		pointer m_last;
-		Allocator m_allocator;
+		typedef ArrayBase<T> MyBase;
+
+		enum { BUFFERSIZE = sizeof(T) * SIZE };
 
 	public:
-		array() : m_begin(nullptr), m_end(nullptr), m_last(nullptr), m_allocator() {}
+		typedef typename MyBase::value_type value_type;
+		typedef typename MyBase::pointer pointer;
+		typedef typename MyBase::const_pointer const_pointer;
+		typedef typename MyBase::reference reference;
+		typedef typename MyBase::const_reference const_reference;
 
-		array(Allocator &&alloc, size_t capacity) : m_begin(nullptr), m_end(nullptr), m_last(nullptr), m_allocator(std::move(alloc))
+	private:
+		u8 m_buffer[BUFFERSIZE];
+
+	public:
+		Array() 
+			:MyBase(reinterpret_cast<pointer>(m_buffer), reinterpret_cast<pointer>(m_buffer + BUFFERSIZE)),
+			m_buffer()
 		{
-			auto block = m_allocator.allocate(sizeof(value_type) * capacity, __alignof(value_type));
-			if (block.ptr)
+		}
+
+		Array(const Array &rhs) 
+			:MyBase(m_buffer, m_buffer + BUFFERSIZE),
+			m_buffer()
+		{
+			auto first = rhs.begin();
+			auto end = rhs.end();
+			while (first != end)
 			{
-				m_begin = m_end = (pointer)block.ptr;
-				m_last = (pointer)(block.ptr + block.size);
+				new (m_end++) value_type{*(first++)};
 			}
 		}
 
-		template<typename T>
-		array(T* alloc, size_t capacity) : array(std::move(Allocator(alloc)), capacity) {}
-
-		array(const array&) = delete;
-
-		array(array &&other)
-			: m_begin(other.m_begin),
-			m_end(other.m_end),
-			m_last(other.m_last),
-			m_allocator(std::move(other.m_allocator))
+		Array(Array &&rhs) 
+			:MyBase(m_buffer, m_buffer + BUFFERSIZE),
+			m_buffer()
 		{
-			other.m_begin = nullptr;
-			other.m_last = nullptr;
+			::memcpy(m_buffer, rhs.m_buffer, BUFFERSIZE);
+			::memset(rhs.m_buffer, 0xd, BUFFERSIZE);
+			rhs.m_end = rhs.m_begin;
+			/*auto first = rhs.begin();
+			auto end = rhs.end();
+			while (first != end)
+			{
+				new (m_end++) value_type{ std::move(*(first++)) };
+			}
+
+			rhs.m_end = reinterpret_cast<pointer>(rhs.m_begin);*/
 		}
 
-		~array()
+		~Array() { clear(); }
+
+		Array& operator=(const Array &rhs)
 		{
-			release();
+			if (this != &rhs)
+			{
+				clear();
+
+				auto first = rhs.begin();
+				auto end = rhs.end();
+				while (first != end)
+				{
+					new (m_end++) value_type{ *(first++) };
+				}
+			}
+			return *this;
 		}
 
-		array& operator=(const array&) = delete;
-
-		array& operator=(array &&rhs)
+		Array& operator=(Array &&rhs)
 		{
 			if (this != &rhs)
 			{
@@ -84,132 +112,46 @@ namespace vx
 			return *this;
 		}
 
-		void swap(array &other)
+		void swap(Array &rhs)
 		{
-			std::swap(m_begin, other.m_begin);
-			std::swap(m_end, other.m_end);
-			std::swap(m_last, other.m_last);
-			m_allocator.swap(other.m_allocator);
-		}
-
-		template<typename ...Args>
-		u32 push_back(Args&&... args)
-		{
-			auto last = m_last;
-			auto end = m_end;
-			if (end >= last)
 			{
-				return 0;
+				u8 tmpBuffer[BUFFERSIZE];
+				::memcpy(tmpBuffer, m_begin, BUFFERSIZE);
+
+				::memcpy(m_begin, rhs.m_begin, BUFFERSIZE);
+				::memcpy(rhs.m_begin, tmpBuffer, BUFFERSIZE);
 			}
 
-			new(m_end) value_type{ std::forward<Args>(args)... };
-			++m_end;
-
-			return 1;
+			m_end = reinterpret_cast<pointer>(m_begin) + rhs.size();
+			rhs.m_end = reinterpret_cast<pointer>(rhs.m_begin) + size();
 		}
 
-		void pop_back()
-		{
-			vx::destruct(--m_end);
-		}
-
-		bool assign(const value_type* p, size_t count)
-		{
-			if (capacity() >= count)
-			{
-				clear();
-
-				vx::copy(p, p + count, m_begin);
-				m_end = m_begin + count;
-				return true;
-			}
-
-			return false;
-		}
-
-		void clear()
-		{
-			vx::destruct(begin(), end());
-
-			m_end = m_begin;
-		}
-
-		void release()
-		{
-			if (m_begin)
-			{
-				clear();
-
-				auto blockSize = (u8*)m_last - (u8*)m_begin;
-				m_allocator.deallocate(AllocatedBlock{ (u8*)m_begin, (size_t)blockSize });
-
-				m_begin = m_end = m_last = nullptr;
-			}
-		}
-
-		inline value_type& operator[](size_t idx)
-		{
-			return m_begin[idx];
-		}
-
-		inline const value_type& operator[](size_t idx) const
-		{
-			return m_begin[idx];
-		}
-
-		value_type& back()
-		{
-			return *(m_end - 1);
-		}
-
-		const value_type& back() const
-		{
-			return *(m_end - 1);
-		}
-
-		inline const pointer data() const
-		{
-			return m_begin;
-		}
-
-		inline pointer begin()
-		{
-			return m_begin;
-		}
-
-		inline pointer end()
-		{
-			return m_end;
-		}
-
-		inline const pointer begin() const
-		{
-			return m_begin;
-		}
-
-		inline const pointer end() const
-		{
-			return m_end;
-		}
-
-		inline bool empty() const
-		{
-			return (end() == begin());
-		}
-
-		inline size_t size() const
-		{
-			return end() - begin();
-		}
-
-		inline size_t sizeInBytes() const
-		{
-			return size() * sizeof(value_type);
-		}
-
-		inline size_t capacity() const
-		{
-			return m_last - m_begin;
-		}
+		constexpr u64 capacity() const { return SIZE; }
 	};
+}
+
+namespace vx
+{
+	namespace detail
+	{
+		template<typename T, u64 SIZE>
+		struct GetTypeInfo<vx::Array<T, SIZE>>
+		{
+			static const auto& get()
+			{
+				static const auto typeInfo
+				{
+					get_constexpr()
+				};
+				return typeInfo;
+			}
+
+			constexpr static auto get_constexpr()
+			{
+				return getTypeInfo(concat("vx::Array<", GetTypeInfo<T>::get_constexpr().m_name, ", ", IntToString<SIZE>::get().data, ">"),
+					sizeof(vx::Array<T, SIZE>),
+					__alignof(vx::Array<T, SIZE>));
+			}
+		};
+	}
 }

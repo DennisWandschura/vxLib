@@ -25,12 +25,15 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/Allocator.h>
+#include <vxLib/TypeInfo.h>
 #include <stdlib.h>
 
 namespace vx
 {
 	class Mallocator : public Allocator<Mallocator>
 	{
+		VX_TYPE_INFO
+
 	public:
 		inline Mallocator() {}
 
@@ -82,3 +85,5 @@ namespace vx
 		void swap(Mallocator&) {}
 	};
 }
+
+VX_TYPEINFO_GENERATOR(vx::Mallocator)

@@ -101,12 +101,12 @@ namespace vx
 		return _mm_max_ps(a, b);
 	}
 
-	inline float4a VX_CALLCONV max(float4a a, float4a b)
+	inline float4a VX_CALLCONV max(const float4a &a, const float4a &b)
 	{
 		return _mm_max_ps(a.v, b.v);
 	}
 
-	inline float4a VX_CALLCONV max3(float4a a)
+	inline float4a VX_CALLCONV max3(const float4a &a)
 	{
 		__m128 x = a;
 		__m128 y = _mm_load_ss(&a.y);
@@ -115,12 +115,12 @@ namespace vx
 		return _mm_max_ss(x, _mm_max_ss(y, z));
 	}
 
-	inline float4a VX_CALLCONV min(float4a a, float4a b)
+	inline float4a VX_CALLCONV min(const float4a &a, const float4a &b)
 	{
 		return _mm_min_ps(a.v, b.v);
 	}
 
-	inline float4a VX_CALLCONV min3(float4a a)
+	inline float4a VX_CALLCONV min3(const float4a &a)
 	{
 		__m128 x = a;
 		__m128 y = _mm_load_ss(&a.y);

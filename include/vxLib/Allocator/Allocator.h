@@ -41,6 +41,14 @@ namespace vx
 		return (size + (alignment - 1) & ~(alignment - 1));
 	}
 
+	template<typename T>
+	inline u64 getAlignedSize(u64 count)
+	{
+		const auto size = sizeof(T) * count;
+		const auto alignment = __alignof(T);
+		return (size + (alignment - 1) & ~(alignment - 1));
+	}
+
 	inline u8* getAlignedPtr(u8* ptr, u64 alignment)
 	{
 		return (u8*)getAlignedSize((u64)ptr, alignment);

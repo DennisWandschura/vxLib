@@ -27,11 +27,6 @@
 	.AsmCompiler = '$VS14Path$/ml64.exe'
 ]
 
-.DefaultCompilerSettingsIntel =
-[
-	.CompilerSettingsDefault = '/fp:fast/W4 /Qrestrict /GS /Zc:wchar_t /GR- /arch:SSE2'
-]
-
 .DefaultCompilerSettingsVS =
 [
 	.CompilerSettingsDefault = '/fp:fast /W4 /GS /Zc:wchar_t /GR- /arch:SSE2'
@@ -42,8 +37,8 @@
 .ProjectName = 'vxLib'
 
 .DefinesCommon   = '/D "_UNICODE" /D "UNICODE" /D "_VX_WINDOWS" /D "NOMINMAX" /D "_CRT_SECURE_NO_WARNINGS" /D "_VX_NO_EXCEPTIONS"'	
-.DefinesDebug = '/D "_DEBUG" /D "_VX_ASSERT"'
-.DefinesRelease = '/D "NDEBUG"'
+.DefinesDebug = '/D "_DEBUG" /D "_VX_ASSERT" /D "_VX_TYPEINFO"'
+.DefinesRelease = '/D "NDEBUG" /D "_VX_TYPEINFO"'
 .Includes = '/I..\include\ /I..\..\double-conversion\include\'
 .IncludesASM = '/I..\source\'
 

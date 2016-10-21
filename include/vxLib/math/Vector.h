@@ -1657,22 +1657,22 @@ namespace vx
 	}
 }
 
-inline vx::float4a VX_CALLCONV operator+(vx::float4a lhs, vx::float4a rhs)
+inline vx::float4a VX_CALLCONV operator+(const vx::float4a &lhs, const vx::float4a &rhs)
 {
 	return _mm_add_ps(lhs, rhs);
 }
 
-inline vx::float4a VX_CALLCONV operator-(vx::float4a lhs, vx::float4a rhs)
+inline vx::float4a VX_CALLCONV operator-(const vx::float4a &lhs, const vx::float4a &rhs)
 {
 	return _mm_sub_ps(lhs, rhs);
 }
 
-inline vx::float4a VX_CALLCONV operator*(vx::float4a lhs, vx::float4a rhs)
+inline vx::float4a VX_CALLCONV operator*(const vx::float4a &lhs, const vx::float4a &rhs)
 {
 	return _mm_mul_ps(lhs, rhs);
 }
 
-inline vx::float4a VX_CALLCONV operator/(vx::float4a lhs, vx::float4a rhs)
+inline vx::float4a VX_CALLCONV operator/(const vx::float4a &lhs, const vx::float4a &rhs)
 {
 	return _mm_div_ps(lhs, rhs);
 }

@@ -53,16 +53,16 @@ namespace vx
 	{
 		bool createFile(const char* file, FileAccess access, File::FileHandle* handle)
 		{
-#ifdef _VX_PLATFORM_ANDROID
-			auto tmp = creat(file, static_cast<s32>(access));
-			if (tmp < 0)
-				return false;
-#else
+#ifdef _VX_PLATFORM_WINDOWS
 			auto tmp = CreateFileA(file, static_cast<u32>(access), 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 			if (tmp == INVALID_HANDLE_VALUE)
 			{
 				return false;
 			}
+#else
+			auto tmp = creat(file, static_cast<s32>(access));
+			if (tmp < 0)
+				return false;
 #endif
 			*handle = tmp;
 			return true;
@@ -70,18 +70,18 @@ namespace vx
 
 		bool openFile(const char* file, FileAccess access, File::FileHandle* handle)
 		{
-#ifdef _VX_PLATFORM_ANDROID
-			auto tmp = open(file, O_TRUNC, static_cast<s32>(access));
-			if (tmp < 0)
-				return false;
-#else
+#ifdef _VX_PLATFORM_WINDOWS
 			auto tmp = CreateFileA(file, static_cast<u32>(access), 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 			if (tmp == INVALID_HANDLE_VALUE)
 			{
 				return false;
 			}
-			*handle = tmp;
+#else
+			auto tmp = open(file, O_TRUNC, static_cast<s32>(access));
+			if (tmp < 0)
+				return false;
 #endif
+			*handle = tmp;
 			return true;
 		}
 	}

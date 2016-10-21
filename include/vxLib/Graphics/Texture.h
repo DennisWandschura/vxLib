@@ -50,6 +50,8 @@ namespace vx
 
 		class Face : public Surface
 		{
+			VX_TYPE_INFO;
+
 			Surface* m_mipmaps;
 			u32 m_mipmapCount;
 #ifdef _VX_X64
@@ -97,6 +99,8 @@ namespace vx
 
 		class Texture
 		{
+			VX_TYPE_INFO;
+
 			Face* m_faces;
 			u32 m_faceCount;
 			TextureFormat m_format;
@@ -144,3 +148,6 @@ namespace vx
 		};
 	}
 }
+
+VX_TYPEINFO_GENERATOR_PARENT(vx::graphics::Face, vx::graphics::Surface)
+VX_TYPEINFO_GENERATOR(vx::graphics::Texture)

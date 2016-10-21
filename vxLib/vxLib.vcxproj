@@ -25,10 +25,10 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -70,16 +70,17 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>F:\Visual Studio 2015\Projects\double-conversion\include;../include;$(IncludePath)</IncludePath>
+    <IncludePath>../../double-conversion/include;../include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>../include;$(IncludePath)</IncludePath>
+    <IncludePath>../../double-conversion/include;../include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_VX_ASSERT;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -92,10 +93,12 @@
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_VX_ASSERT;_VX_WINDOWS;_VX_NO_EXCEPTIONS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_VX_ASSERT;_VX_NO_EXCEPTIONS;NOMINMAX;_VX_TYPEINFO;_VX_ARRAY_ANALYZER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -130,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\ArrayAnalyzer.cpp" />
     <ClCompile Include="..\source\CityHash.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
@@ -156,13 +160,16 @@
     <ClCompile Include="..\source\math\half.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\source\murmurhash.cpp" />
     <ClCompile Include="..\source\print.cpp" />
+    <ClCompile Include="..\source\ReflectionManager.cpp" />
     <ClCompile Include="..\source\stb_image.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\source\stb_image_write.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\source\string.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\include\vxLib\math\matrix.inl" />
@@ -179,11 +186,17 @@
     <ClInclude Include="..\include\vxLib\Allocator\Mallocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\MultiBlockAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\StackAllocator.h" />
-    <ClInclude Include="..\include\vxLib\Container\array.h" />
+    <ClInclude Include="..\include\vxLib\ArrayAnalyzer.h" />
+    <ClInclude Include="..\include\vxLib\Container\Array.h" />
+    <ClInclude Include="..\include\vxLib\Container\ArrayBase.h" />
+    <ClInclude Include="..\include\vxLib\Container\DynamicArray.h" />
     <ClInclude Include="..\include\vxLib\Container\bitset.h" />
     <ClInclude Include="..\include\vxLib\Container\DoubleBuffer.h" />
+    <ClInclude Include="..\include\vxLib\Container\InplaceArray.h" />
     <ClInclude Include="..\include\vxLib\Container\list.h" />
     <ClInclude Include="..\include\vxLib\Container\sorted_array.h" />
+    <ClInclude Include="..\include\vxLib\Container\String.h" />
+    <ClInclude Include="..\include\vxLib\Container\StringArray.h" />
     <ClInclude Include="..\include\vxLib\CpuTimer.h" />
     <ClInclude Include="..\include\vxLib\File\File.h" />
     <ClInclude Include="..\include\vxLib\File\FileHandle.h" />
@@ -195,13 +208,17 @@
     <ClInclude Include="..\include\vxLib\Graphics\Mesh.h" />
     <ClInclude Include="..\include\vxLib\Graphics\Surface.h" />
     <ClInclude Include="..\include\vxLib\Graphics\Texture.h" />
+    <ClInclude Include="..\include\vxLib\hash.h" />
     <ClInclude Include="..\include\vxLib\Keyboard.h" />
     <ClInclude Include="..\include\vxLib\math\half.h" />
     <ClInclude Include="..\include\vxLib\math\math.h" />
     <ClInclude Include="..\include\vxLib\math\matrix.h" />
     <ClInclude Include="..\include\vxLib\math\Vector.h" />
+    <ClInclude Include="..\include\vxLib\platform.h" />
     <ClInclude Include="..\include\vxLib\print.h" />
     <ClInclude Include="..\include\vxLib\RawInput.h" />
+    <ClInclude Include="..\include\vxLib\ReflectionData.h" />
+    <ClInclude Include="..\include\vxLib\ReflectionManager.h" />
     <ClInclude Include="..\include\vxLib\ScopeGuard.h" />
     <ClInclude Include="..\include\vxLib\Singleton.h" />
     <ClInclude Include="..\include\vxLib\stb_image.h" />
@@ -210,6 +227,7 @@
     <ClInclude Include="..\include\vxLib\StringID.h" />
     <ClInclude Include="..\include\vxLib\thread\spinlock.h" />
     <ClInclude Include="..\include\vxLib\thread\thread.h" />
+    <ClInclude Include="..\include\vxLib\TypeInfo.h" />
     <ClInclude Include="..\include\vxLib\types.h" />
     <ClInclude Include="..\include\vxLib\type_traits.h" />
     <ClInclude Include="..\include\vxLib\util\bitops.h" />

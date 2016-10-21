@@ -46,6 +46,7 @@
 #define VX_CALLCONV __vectorcall
 #define _VX_CALLCONV_TYPE 1
 #endif
+
 #if defined (_VX_GCC)
 #define VX_GLOBALCONST extern const __attribute__((selectany))
 #define VX_GLOBAL extern __attribute__((selectany))

@@ -188,8 +188,6 @@ isn't let Sean know. Guillaume George
 // The three functions you must define are "read" (reads some bytes of data),
 // "skip" (skips some bytes of data), "eof" (reports if the stream is at the end).
 
-#include <vxLib/types.h>
-
 #ifndef STBI_NO_STDIO
 
 #if defined (_MSC_VER) && _MSC_VER >= 1400

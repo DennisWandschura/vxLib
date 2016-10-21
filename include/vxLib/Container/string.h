@@ -139,12 +139,21 @@ namespace vx
 		basic_string() :m_data(), m_size(0), m_capacity(BUFFER_LENGTH), m_allocator() {}
 		explicit basic_string(MyAllocator &&alloc) :m_data(), m_size(0), m_capacity(BUFFER_LENGTH), m_allocator(std::move(alloc)) {}
 
-		basic_string(const_pointer str)
+		explicit basic_string(const_pointer str)
 			:m_data(),
 			m_size(0),
 			m_capacity(BUFFER_LENGTH)
 		{
 			assign(str);
+		}
+
+		explicit basic_string(value_type c)
+			:m_data(),
+			m_size(1),
+			m_capacity(BUFFER_LENGTH)
+		{
+			m_buffer[0] = c;
+			m_buffer[1] = 0;
 		}
 
 		basic_string(const basic_string &rhs)
@@ -170,7 +179,7 @@ namespace vx
 			release();
 		}
 
-		basic_string& operator=(const_pointer  str)
+		basic_string& operator=(const_pointer str)
 		{
 			assign(str);
 			return *this;
@@ -316,7 +325,7 @@ namespace vx
 		}
 	};
 
-	typedef basic_string<char, Mallocator> string;
+	typedef basic_string<char, Mallocator> String;
 	typedef basic_string<wchar_t, Mallocator> wstring;
 
 	template<typename T, typename Allocator>
@@ -351,6 +360,24 @@ namespace vx
 	{
 		basic_string<T, Allocator> result(std::move(lhs));
 		result.append(rhs);
+
+		return result;
+	}
+
+	template<typename T, typename Allocator>
+	inline basic_string<T, Allocator> operator+(const basic_string<T, Allocator> &lhs, char rhs)
+	{
+		basic_string<T, Allocator> result(lhs);
+		result.push_back(rhs);
+
+		return result;
+	}
+
+	template<typename T, typename Allocator>
+	inline basic_string<T, Allocator> operator+(basic_string<T, Allocator> &&lhs, char rhs)
+	{
+		basic_string<T, Allocator> result(std::move(lhs));
+		result.push_back(rhs);
 
 		return result;
 	}

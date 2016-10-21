@@ -1,6 +1,8 @@
 #include <vxLib/print.h>
 #include <cstring>
 
+#include <vxLib/Container/Array.h>
+
 namespace vx
 {
 	namespace detail
