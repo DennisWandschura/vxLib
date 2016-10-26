@@ -28,10 +28,10 @@ SOFTWARE.
 
 namespace vx
 {
-	template<u64 SIZE, u64 ALIGNMENT>
+	template<size_t SIZE, size_t ALIGNMENT>
 	class alignas(ALIGNMENT) StackAllocator : public Allocator<StackAllocator<SIZE, ALIGNMENT>>
 	{
-		enum : u64 { ClassDataSize = SIZE + sizeof(u8*) + sizeof(u8*) };
+		enum : size_t { ClassDataSize = SIZE + sizeof(u8*) + sizeof(u8*) };
 
 		u8 m_data[SIZE];
 		u8* m_head;
@@ -43,7 +43,7 @@ namespace vx
 
 		inline ~StackAllocator() {}
 
-		vx::AllocatedBlock allocate(u64 size, u64 alignment)
+		vx::AllocatedBlock allocate(size_t size, size_t alignment)
 		{
 			if (size == 0)
 			{
@@ -63,7 +63,7 @@ namespace vx
 			return{ alignedPtr, alignedSize };
 		}
 
-		AllocatedBlock reallocate(const vx::AllocatedBlock &block, u64 size, u64 alignment)
+		AllocatedBlock reallocate(const vx::AllocatedBlock &block, size_t size, size_t alignment)
 		{
 			AllocatedBlock newBlock{nullptr, 0};
 

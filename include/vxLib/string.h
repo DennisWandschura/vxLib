@@ -69,7 +69,7 @@ namespace vx
 	}
 
 	// writes data from src to dst and returns a ptr offset by size of src from dst
-	inline u8* write(u8* dst, const u8* src, u64 size)
+	inline u8* write(u8* dst, const u8* src, size_t size)
 	{
 		::memcpy((u8*)dst, (u8*)src, size);
 

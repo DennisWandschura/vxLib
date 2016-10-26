@@ -28,7 +28,7 @@ SOFTWARE.
 
 namespace vx
 {
-	template<u64 CHUNK_SIZE, u64 ALIGNMENT, typename Super>
+	template<size_t CHUNK_SIZE, size_t ALIGNMENT, typename Super>
 	class ChuckAllocator : public Super
 	{
 		static_assert(GetAlignedSize<CHUNK_SIZE, ALIGNMENT>::size == CHUNK_SIZE, "");
@@ -56,12 +56,12 @@ namespace vx
 			return *this;
 		}
 
-		AllocatedBlock allocate(u64, u64)
+		AllocatedBlock allocate(size_t, size_t)
 		{
 			return Super::allocate(CHUNK_SIZE, ALIGNMENT);
 		}
 
-		AllocatedBlock reallocate(const AllocatedBlock &block, u64, u64)
+		AllocatedBlock reallocate(const AllocatedBlock &block, size_t, size_t)
 		{
 			return Super::reallocate(block, CHUNK_SIZE, ALIGNMENT);
 		}

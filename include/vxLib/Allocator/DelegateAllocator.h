@@ -67,12 +67,12 @@ namespace vx
 			other.m_ptr = tmp;
 		}
 
-		vx::AllocatedBlock allocate(u64 size, u64 alignment)
+		vx::AllocatedBlock allocate(size_t size, size_t alignment)
 		{
 			return m_ptr->allocate(size, alignment);
 		}
 
-		AllocatedBlock reallocate(const vx::AllocatedBlock &block, u64 size, u64 alignment)
+		AllocatedBlock reallocate(const vx::AllocatedBlock &block, size_t size, size_t alignment)
 		{
 			return m_ptr->reallocate(block, size, alignment);
 		}

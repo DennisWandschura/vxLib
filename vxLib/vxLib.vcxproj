@@ -137,9 +137,6 @@
     <ClCompile Include="..\source\CityHash.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\source\CpuTimer.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\source\DebugPrint.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
@@ -190,17 +187,11 @@
     <ClInclude Include="..\include\vxLib\Container\Array.h" />
     <ClInclude Include="..\include\vxLib\Container\ArrayBase.h" />
     <ClInclude Include="..\include\vxLib\Container\DynamicArray.h" />
-    <ClInclude Include="..\include\vxLib\Container\bitset.h" />
-    <ClInclude Include="..\include\vxLib\Container\DoubleBuffer.h" />
     <ClInclude Include="..\include\vxLib\Container\InplaceArray.h" />
-    <ClInclude Include="..\include\vxLib\Container\list.h" />
-    <ClInclude Include="..\include\vxLib\Container\sorted_array.h" />
+    <ClInclude Include="..\include\vxLib\Container\SortedArray.h" />
     <ClInclude Include="..\include\vxLib\Container\String.h" />
     <ClInclude Include="..\include\vxLib\Container\StringArray.h" />
-    <ClInclude Include="..\include\vxLib\CpuTimer.h" />
     <ClInclude Include="..\include\vxLib\File\File.h" />
-    <ClInclude Include="..\include\vxLib\File\FileHandle.h" />
-    <ClInclude Include="..\include\vxLib\File\FileHeader.h" />
     <ClInclude Include="..\include\vxLib\Graphics\Camera.h" />
     <ClInclude Include="..\include\vxLib\Graphics\dds.h" />
     <ClInclude Include="..\include\vxLib\Graphics\Font.h" />
@@ -209,14 +200,12 @@
     <ClInclude Include="..\include\vxLib\Graphics\Surface.h" />
     <ClInclude Include="..\include\vxLib\Graphics\Texture.h" />
     <ClInclude Include="..\include\vxLib\hash.h" />
-    <ClInclude Include="..\include\vxLib\Keyboard.h" />
     <ClInclude Include="..\include\vxLib\math\half.h" />
     <ClInclude Include="..\include\vxLib\math\math.h" />
     <ClInclude Include="..\include\vxLib\math\matrix.h" />
     <ClInclude Include="..\include\vxLib\math\Vector.h" />
     <ClInclude Include="..\include\vxLib\platform.h" />
     <ClInclude Include="..\include\vxLib\print.h" />
-    <ClInclude Include="..\include\vxLib\RawInput.h" />
     <ClInclude Include="..\include\vxLib\ReflectionData.h" />
     <ClInclude Include="..\include\vxLib\ReflectionManager.h" />
     <ClInclude Include="..\include\vxLib\ScopeGuard.h" />
@@ -225,8 +214,6 @@
     <ClInclude Include="..\include\vxLib\stb_image_write.h" />
     <ClInclude Include="..\include\vxLib\string.h" />
     <ClInclude Include="..\include\vxLib\StringID.h" />
-    <ClInclude Include="..\include\vxLib\thread\spinlock.h" />
-    <ClInclude Include="..\include\vxLib\thread\thread.h" />
     <ClInclude Include="..\include\vxLib\TypeInfo.h" />
     <ClInclude Include="..\include\vxLib\types.h" />
     <ClInclude Include="..\include\vxLib\type_traits.h" />
@@ -235,7 +222,6 @@
     <ClInclude Include="..\include\vxLib\util\DebugPrint.h" />
     <ClInclude Include="..\include\vxLib\util\streamHelper.h" />
     <ClInclude Include="..\include\vxLib\Variant.h" />
-    <ClInclude Include="..\include\vxLib\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -147,12 +147,12 @@ namespace vx
 			return *(m_end - 1);
 		}
 
-		reference operator[](u64 index)
+		reference operator[](size_t index)
 		{
 			return m_begin[index];
 		}
 
-		const_reference operator[](u64 index) const
+		const_reference operator[](size_t index) const
 		{
 			return m_begin[index];
 		}
@@ -168,7 +168,7 @@ namespace vx
 
 		bool empty() const { return (m_end == m_begin); }
 
-		u64 size() const { return (m_end - m_begin); }
-		u64 capacity() const { return (m_last - m_begin); }
+		size_t size() const { return (m_end - m_begin); }
+		size_t capacity() const { return (m_last - m_begin); }
 	};
 }

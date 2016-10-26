@@ -63,7 +63,7 @@ namespace vx
 		}
 
 
-		explicit StringArray(u64 value)
+		explicit StringArray(size_t value)
 			: ArrayBase(m_data, m_data + COUNT), m_data()
 		{
 			u32 size = 0;
@@ -162,7 +162,7 @@ namespace vx
 		template<size_t OTHER>
 		void append(const StringArray<OTHER> &other)
 		{
-			append(other.c_str(), other.size());
+			append(other.c_str(), static_cast<u32>(other.size()));
 		}
 
 		void clear()

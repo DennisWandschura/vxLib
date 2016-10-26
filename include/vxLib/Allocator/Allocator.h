@@ -30,31 +30,31 @@ SOFTWARE.
 
 namespace vx
 {
-	template<u64 SIZE, u64 ALIGNMENT>
+	template<size_t SIZE, size_t ALIGNMENT>
 	struct GetAlignedSize
 	{
 		enum { size = (SIZE + (ALIGNMENT - 1) & ~(ALIGNMENT - 1)) };
 	};
 
-	inline u64 getAlignedSize(u64 size, u64 alignment)
+	inline size_t getAlignedSize(size_t size, size_t alignment)
 	{
 		return (size + (alignment - 1) & ~(alignment - 1));
 	}
 
 	template<typename T>
-	inline u64 getAlignedSize(u64 count)
+	inline size_t getAlignedSize(size_t count)
 	{
 		const auto size = sizeof(T) * count;
 		const auto alignment = __alignof(T);
 		return (size + (alignment - 1) & ~(alignment - 1));
 	}
 
-	inline u8* getAlignedPtr(u8* ptr, u64 alignment)
+	inline u8* getAlignedPtr(u8* ptr, size_t alignment)
 	{
-		return (u8*)getAlignedSize((u64)ptr, alignment);
+		return (u8*)getAlignedSize((size_t)ptr, alignment);
 	}
 
-	template<u64 PADDING_SIZE>
+	template<size_t PADDING_SIZE>
 	struct Padding
 	{
 		u8 m_padding[PADDING_SIZE];
@@ -66,7 +66,7 @@ namespace vx
 	struct AllocatedBlock
 	{
 		u8* ptr;
-		u64 size;
+		size_t size;
 	};
 
 	template<typename T>
@@ -76,12 +76,12 @@ namespace vx
 		T& get() { return static_cast<T&>(*this); }
 
 	public:
-		AllocatedBlock allocate(u64 size, u64 alignment)
+		AllocatedBlock allocate(size_t size, size_t alignment)
 		{
 			return get().allocate(size, alignment);
 		}
 
-		AllocatedBlock reallocate(const AllocatedBlock &block, u64 size, u64 alignment)
+		AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment)
 		{
 			return get().reallocate(size, alignment);
 		}
@@ -108,13 +108,13 @@ namespace vx
 		AllocatorBase() {}
 		virtual ~AllocatorBase() {}
 
-		virtual AllocatedBlock allocate(u64 size, u64 alignment) = 0;
-		virtual AllocatedBlock reallocate(const AllocatedBlock &block, u64 size, u64 alignment) = 0;
+		virtual AllocatedBlock allocate(size_t size, size_t alignment) = 0;
+		virtual AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment) = 0;
 		virtual void deallocate(const AllocatedBlock &block) = 0;
 
 		virtual bool contains(const AllocatedBlock &block) const = 0;
 	};
 
-	typedef vx::AllocatedBlock(*AllocationCallbackSignature)(u64 size, u64 alignment);
+	typedef vx::AllocatedBlock(*AllocationCallbackSignature)(size_t size, size_t alignment);
 	typedef u32 (*DeallocationCallbackSignature)(const vx::AllocatedBlock &block);
 }

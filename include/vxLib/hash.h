@@ -24,9 +24,12 @@ SOFTWARE.
 */
 
 #include <vxLib/types.h>
+#include <cstring>
 
 namespace vx
 {
+	typedef u32 hash_type;
+
 	namespace detail
 	{
 		constexpr u32 get_k_1(u32 k)
@@ -132,14 +135,35 @@ namespace vx
 		{
 			return finalize_h1(h ^ len);
 		}
+
+		extern hash_type murmurhashImpl(const char *key, size_t len, u32 seed);
 	}
 
 	template<size_t LEN>
-	constexpr u32 murmurhash(const char(&key)[LEN])
+	constexpr hash_type murmurhash(const char(&key)[LEN])
 	{
 		return detail::finalize_h(detail::remainder_3(key, detail::loop_body(key), (LEN - 1) & 3, ((LEN - 1) / 4) * 4), LEN - 1);
 	}
 
-	extern u32 murmurhash(const char *key, size_t len, u32 seed);
-	extern u32 murmurhash0(const char *key, size_t len, u32 seed);
+	inline hash_type murmurhash(const char* value, size_t len)
+	{
+		return detail::murmurhashImpl(value, len, 0);
+	}
+
+	template<size_t LEN>
+	inline constexpr hash_type make_hash(const char(&key)[LEN])
+	{
+		return murmurhash(key);
+	}
+
+	template<typename T>
+	inline hash_type make_hash(const T* key, size_t size)
+	{
+		return detail::murmurhashImpl(reinterpret_cast<const char*>(key), size, 0);
+	}
+
+	inline hash_type make_hash(const char* key)
+	{
+		return make_hash(key, strlen(key));
+	}
 }

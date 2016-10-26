@@ -62,8 +62,8 @@ namespace vx
 
 			void swap(Mesh &rhs) noexcept;
 
-			const u8* loadFromMemoryDataSize(const u8 *src, u64* dataSizeInBytes);
-			const u8* loadFromMemoryData(const u8* src, u8* dst, u64 size);
+			const u8* loadFromMemoryDataSize(const u8 *src, size_t* dataSizeInBytes);
+			const u8* loadFromMemoryData(const u8* src, u8* dst, size_t size);
 			u8* saveToMemory(u8 *ptr) const;
 
 			bool saveToFile(File* file) const;
@@ -73,7 +73,7 @@ namespace vx
 			u32 getVertexCount() const { return m_vertexCount; }
 			u32 getIndexCount() const { return m_indexCount; }
 
-			static u64 getArraySize(u32 vertexCount, u32 indexCount);
+			static size_t getArraySize(u32 vertexCount, u32 indexCount);
 		};
 	}
 }

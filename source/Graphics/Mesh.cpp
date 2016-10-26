@@ -87,7 +87,7 @@ namespace vx
 			m_pIndices = (u32*)p;
 		}
 
-		const u8* Mesh::loadFromMemoryDataSize(const u8 *src, u64* dataSizeInBytes)
+		const u8* Mesh::loadFromMemoryDataSize(const u8 *src, size_t* dataSizeInBytes)
 		{
 			m_vertexCount = *reinterpret_cast<const u32*>(src);
 			src += sizeof(u32);
@@ -102,7 +102,7 @@ namespace vx
 			return src;
 		}
 
-		const u8* Mesh::loadFromMemoryData(const u8* src, u8* dst, u64 size)
+		const u8* Mesh::loadFromMemoryData(const u8* src, u8* dst, size_t size)
 		{
 			memcpy(dst, src, size);
 			src += size;
@@ -150,7 +150,7 @@ namespace vx
 			return true;
 		}
 
-		u64 Mesh::getArraySize(u32 vertexCount, u32 indexCount)
+		size_t Mesh::getArraySize(u32 vertexCount, u32 indexCount)
 		{
 			return sizeof(MeshVertex) * vertexCount + sizeof(u32) * indexCount;
 		}

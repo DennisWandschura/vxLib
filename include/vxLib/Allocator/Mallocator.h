@@ -39,7 +39,7 @@ namespace vx
 
 		inline ~Mallocator() {}
 
-		vx::AllocatedBlock allocate(u64 size, u64 alignment)
+		vx::AllocatedBlock allocate(size_t size, size_t alignment)
 		{
 			auto alignedSize = getAlignedSize(size, alignment);
 
@@ -50,7 +50,7 @@ namespace vx
 #endif //  _VX_PLATFORM_WINDOWS
 		}
 
-		vx::AllocatedBlock reallocate(const vx::AllocatedBlock &block, u64 size, u64 alignment)
+		vx::AllocatedBlock reallocate(const vx::AllocatedBlock &block, size_t size, size_t alignment)
 		{
 			auto alignedSize = getAlignedSize(size, alignment);
 #ifdef  _VX_PLATFORM_WINDOWS

@@ -97,7 +97,7 @@ namespace vx
 		s_initialized = true;
 	}
 
-	void ReflectionManager::addData(const ReflectionData* p, uint64_t size)
+	void ReflectionManager::addData(const ReflectionData* p, size_t size)
 	{
 		if (!s_data)
 			initData();
@@ -111,7 +111,7 @@ namespace vx
 		}
 	}
 
-	const ReflectionData* ReflectionManager::find(uint32_t key)
+	const ReflectionData* ReflectionManager::find(u32 key)
 	{
 		return s_data->find(key);
 	}

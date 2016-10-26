@@ -30,7 +30,7 @@ SOFTWARE.
 
 namespace vx
 {
-	template<typename T, u64 SIZE>
+	template<typename T, size_t SIZE>
 	class Array : public ArrayBase<T>
 	{
 		VX_TYPE_INFO;
@@ -126,7 +126,7 @@ namespace vx
 			rhs.m_end = reinterpret_cast<pointer>(rhs.m_begin) + size();
 		}
 
-		constexpr u64 capacity() const { return SIZE; }
+		constexpr size_t capacity() const { return SIZE; }
 	};
 }
 
@@ -134,7 +134,7 @@ namespace vx
 {
 	namespace detail
 	{
-		template<typename T, u64 SIZE>
+		template<typename T, size_t SIZE>
 		struct GetTypeInfo<vx::Array<T, SIZE>>
 		{
 			static const auto& get()

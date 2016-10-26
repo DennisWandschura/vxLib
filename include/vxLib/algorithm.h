@@ -132,7 +132,7 @@ namespace vx
 
 	template<typename T>
 	typename std::enable_if<
-		std::is_trivially_destructible<T>::value,
+		std::is_pod<T>::value,
 		void>::type
 	destruct(T* begin, T* end)
 	{
@@ -142,7 +142,7 @@ namespace vx
 
 	template<typename T>
 	typename std::enable_if<
-		std::is_trivially_destructible<T>::value,
+		std::is_pod<T>::value,
 		void>::type
 		destruct(T* p)
 	{
@@ -151,7 +151,7 @@ namespace vx
 
 	template<typename T>
 	typename std::enable_if<
-		!std::is_trivially_destructible<T>::value,
+		!std::is_pod<T>::value,
 		void>::type
 		destruct(T* begin, T* end)
 	{
@@ -163,10 +163,11 @@ namespace vx
 
 	template<typename T>
 	typename std::enable_if<
-		!std::is_trivially_destructible<T>::value,
+		!std::is_pod<T>::value,
 		void>::type
 		destruct(T* p)
 	{
+		VX_UNREFERENCED_PARAMETER(p);
 		p->~T();
 	}
 

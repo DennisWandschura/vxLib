@@ -16,8 +16,8 @@ namespace vx
 		static bool s_initialized;
 
 	public:
-		static void addData(const ReflectionData* p, uint64_t size);
+		static void addData(const ReflectionData* p, size_t size);
 
-		static const ReflectionData* find(uint32_t key);
+		static const ReflectionData* find(u32 key);
 	};
 }

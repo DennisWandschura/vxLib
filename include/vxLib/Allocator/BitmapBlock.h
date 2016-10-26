@@ -29,17 +29,17 @@ SOFTWARE.
 
 namespace vx
 {
-	template<typename Super, u64 BLOCK_SIZE, u64 ALIGNMENT>
+	template<typename Super, size_t BLOCK_SIZE, size_t ALIGNMENT>
 	class BitmapBlock
 	{
 		static_assert(GetAlignedSize<BLOCK_SIZE, ALIGNMENT>::size == BLOCK_SIZE, "");
 
 		typedef BitmapBlock<Super, BLOCK_SIZE, ALIGNMENT> MyBitmapBlock;
 
-		enum : u64 
+		enum : size_t
 		{
-			BitsSizeT = sizeof(u64) * 8,
-			ClassDataSize = sizeof(u8*) * 2 + sizeof(u64) * 2,
+			BitsSizeT = sizeof(size_t) * 8,
+			ClassDataSize = sizeof(u8*) * 2 + sizeof(size_t) * 2,
 			ClassAlignment = __alignof(Super),
 			ClassAlignedDataSize = GetAlignedSize<ClassDataSize, ClassAlignment>::size,
 			PaddingSize = ClassAlignedDataSize - ClassDataSize
@@ -49,10 +49,10 @@ namespace vx
 		union
 		{
 			u32* m_bitsPtr;
-			u64 m_bits;
+			size_t m_bits;
 		};
-		u64 m_remainingBlocks;
-		u64 m_blockCount;
+		size_t m_remainingBlocks;
+		size_t m_blockCount;
 		Padding<PaddingSize> m_padding;
 		Super m_parent;
 
@@ -61,9 +61,9 @@ namespace vx
 			return (m_blockCount <= BitsSizeT) ? (u32*)&m_bits : m_bitsPtr;
 		}
 
-		u64 countBlocks()
+		size_t countBlocks()
 		{
-			u64 blockCount = 0;
+			size_t blockCount = 0;
 			auto block = m_parent.allocate(BLOCK_SIZE, ALIGNMENT);
 			while (block.ptr != nullptr)
 			{
@@ -77,9 +77,9 @@ namespace vx
 			return blockCount;
 		}
 
-		bool findEmptyBit(u32* bitPtr, u64* resultBit)
+		bool findEmptyBit(u32* bitPtr, size_t* resultBit)
 		{
-			u64 block = 0;
+			size_t block = 0;
 			auto remainingBlocks = m_blockCount;
 			while (remainingBlocks > 0)
 			{
@@ -102,7 +102,7 @@ namespace vx
 			return false;
 		}
 
-		void setBit(u64 blockIndex)
+		void setBit(size_t blockIndex)
 		{
 			auto bitPtr = getBitsPtr();
 
@@ -112,7 +112,7 @@ namespace vx
 			bitPtr[byte] |= (1 << bit);
 		}
 
-		void clearBit(u32* bitPtr, u64 blockIndex)
+		void clearBit(u32* bitPtr, size_t blockIndex)
 		{
 			auto byte = blockIndex / 32;
 			auto bit = blockIndex & 31;
@@ -129,7 +129,7 @@ namespace vx
 			if (blockCount <= BitsSizeT)
 			{
 				// small string optimization
-				m_bits = u64(-1);
+				m_bits = size_t(-1);
 			}
 			else
 			{
@@ -153,7 +153,7 @@ namespace vx
 		}
 
 	public:
-		enum : u64 { BlockSize = BLOCK_SIZE, Alignment = ALIGNMENT };
+		enum : size_t { BlockSize = BLOCK_SIZE, Alignment = ALIGNMENT };
 
 		BitmapBlock() : m_firstBlock(nullptr), m_bitsPtr(nullptr), m_remainingBlocks(0), m_blockCount(0), m_parent() { initializeImpl(); }
 
@@ -176,14 +176,14 @@ namespace vx
 			return m_parent.release();
 		}
 
-		AllocatedBlock allocate(u64 size, u64 alignment)
+		AllocatedBlock allocate(size_t size, size_t alignment)
 		{
 			if (size == 0 || size > BLOCK_SIZE || alignment > ALIGNMENT || m_remainingBlocks == 0)
 			{
 				return{ nullptr, 0 };
 			}
 
-			u64 blockIndex = 0;
+			size_t blockIndex = 0;
 
 			auto bitPtr = getBitsPtr();
 			if (!findEmptyBit(bitPtr, &blockIndex))
@@ -198,7 +198,7 @@ namespace vx
 			return{ m_firstBlock + offset, BLOCK_SIZE };
 		}
 
-		AllocatedBlock reallocate(const AllocatedBlock &block, u64 size, u64 alignment)
+		AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment)
 		{
 			if (size > BLOCK_SIZE || alignment > ALIGNMENT)
 				return{nullptr, 0};

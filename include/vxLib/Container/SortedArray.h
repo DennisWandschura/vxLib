@@ -30,7 +30,7 @@ SOFTWARE.
 namespace vx
 {
 	template<typename K, typename T, typename Allocator, typename Cmp = std::less<>>
-	class sorted_array
+	class SortedArray
 	{
 		typedef K key_type;
 		typedef T value_type;
@@ -63,9 +63,9 @@ namespace vx
 		}
 
 	public:
-		sorted_array() : m_keyBlock(), m_dataBlock(), m_size(0), m_capacity(0), m_allocator() {}
+		SortedArray() : m_keyBlock(), m_dataBlock(), m_size(0), m_capacity(0), m_allocator() {}
 
-		sorted_array(Allocator &&alloc, size_t capacity)
+		SortedArray(Allocator &&alloc, size_t capacity)
 			: m_keyBlock(), m_dataBlock(), m_size(0), m_capacity(0), m_allocator(std::move(alloc))
 		{
 			m_keyBlock = m_allocator.allocate(sizeof(key_type) * capacity, __alignof(key_type));
@@ -78,11 +78,11 @@ namespace vx
 		}
 
 		template<typename Alloc>
-		sorted_array(Alloc* alloc, size_t capacity) : sorted_array(std::move(Allocator(alloc)), capacity) {}
+		SortedArray(Alloc* alloc, size_t capacity) : SortedArray(std::move(Allocator(alloc)), capacity) {}
 
-		sorted_array(const sorted_array&) = delete;
+		SortedArray(const SortedArray&) = delete;
 
-		sorted_array(sorted_array &&other)
+		SortedArray(SortedArray &&other)
 			: m_keyBlock(other.m_keyBlock),
 			m_dataBlock(other.m_dataBlock),
 			m_size(other.m_size),
@@ -95,14 +95,14 @@ namespace vx
 			other.m_capacity = 0;
 		}
 
-		~sorted_array()
+		~SortedArray()
 		{
 			release();
 		}
 
-		sorted_array& operator=(const sorted_array&) = delete;
+		SortedArray& operator=(const SortedArray&) = delete;
 
-		sorted_array& operator=(sorted_array &&rhs)
+		SortedArray& operator=(SortedArray &&rhs)
 		{
 			if (this != &rhs)
 			{
@@ -111,7 +111,7 @@ namespace vx
 			return *this;
 		}
 
-		void swap(sorted_array &other)
+		void swap(SortedArray &other)
 		{
 			std::swap(m_keyBlock, other.m_keyBlock);
 			std::swap(m_dataBlock, other.m_dataBlock);
@@ -277,7 +277,7 @@ namespace vx
 	};
 
 	template<typename K, typename T, typename Allocator, typename Cmp>
-	void swap(sorted_array<K, T, Allocator, Cmp> &l, sorted_array<K, T, Allocator, Cmp> &r)
+	void swap(SortedArray<K, T, Allocator, Cmp> &l, SortedArray<K, T, Allocator, Cmp> &r)
 	{
 		l.swap(r);
 	}

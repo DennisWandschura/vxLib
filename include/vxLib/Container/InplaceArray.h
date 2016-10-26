@@ -40,7 +40,7 @@ namespace vx
 		enum {BUFFER_SIZE = sizeof(T) * COUNT };
 
 		u8 m_data[BUFFER_SIZE];
-		u64 m_blockSize;
+		size_t m_blockSize;
 		MyAllocator m_allocator;
 #ifdef _VX_ARRAY_ANALYZER
 		ArrayStats m_arrayStats;
@@ -258,7 +258,7 @@ namespace vx
 			}
 		}
 
-		void resize(u64 sz)
+		void resize(size_t sz)
 		{
 			auto currentSize = size();
 			if (currentSize >= sz)
@@ -274,7 +274,7 @@ namespace vx
 			}
 		}
 
-		void reserve(u64 c)
+		void reserve(size_t c)
 		{
 			auto currentCapacity = capacity();
 			if (c <= currentCapacity)

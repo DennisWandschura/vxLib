@@ -40,9 +40,6 @@
     <Filter Include="Header Files\util">
       <UniqueIdentifier>{f9f3fd3b-102f-4092-a984-29de70993295}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\thread">
-      <UniqueIdentifier>{d1ef3b71-b935-4073-b706-93fb75fff134}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\util">
       <UniqueIdentifier>{5ab5a843-6f5c-4c88-98bc-88f7892e1095}</UniqueIdentifier>
     </Filter>
@@ -68,9 +65,6 @@
     </ClCompile>
     <ClCompile Include="..\source\Graphics\Mesh.cpp">
       <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\CpuTimer.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\Graphics\FontAtlas.cpp">
       <Filter>Source Files\Graphics</Filter>
@@ -118,12 +112,6 @@
     <ClInclude Include="..\include\vxLib\algorithm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vxLib\Keyboard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vxLib\RawInput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\vxLib\ScopeGuard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -147,15 +135,6 @@
     </ClInclude>
     <ClInclude Include="..\include\vxLib\Variant.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vxLib\Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vxLib\File\FileHandle.h">
-      <Filter>Header Files\file</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vxLib\File\FileHeader.h">
-      <Filter>Header Files\file</Filter>
     </ClInclude>
     <ClInclude Include="..\include\vxLib\File\File.h">
       <Filter>Header Files\file</Filter>
@@ -205,20 +184,11 @@
     <ClInclude Include="..\include\vxLib\Allocator\Allocator.h">
       <Filter>Header Files\Allocator</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vxLib\CpuTimer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\vxLib\Allocator\Mallocator.h">
       <Filter>Header Files\Allocator</Filter>
     </ClInclude>
     <ClInclude Include="..\include\vxLib\Allocator\StackAllocator.h">
       <Filter>Header Files\Allocator</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vxLib\thread\thread.h">
-      <Filter>Header Files\thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vxLib\thread\spinlock.h">
-      <Filter>Header Files\thread</Filter>
     </ClInclude>
     <ClInclude Include="..\include\vxLib\Graphics\FontAtlas.h">
       <Filter>Header Files\graphics</Filter>
@@ -253,18 +223,6 @@
     <ClInclude Include="..\include\vxLib\TypeInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\vxLib\Container\bitset.h">
-      <Filter>Header Files\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vxLib\Container\DoubleBuffer.h">
-      <Filter>Header Files\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vxLib\Container\list.h">
-      <Filter>Header Files\container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vxLib\Container\sorted_array.h">
-      <Filter>Header Files\container</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\vxLib\ArrayAnalyzer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -294,6 +252,9 @@
     </ClInclude>
     <ClInclude Include="..\include\vxLib\ReflectionData.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\Container\SortedArray.h">
+      <Filter>Header Files\container</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

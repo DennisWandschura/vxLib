@@ -125,7 +125,7 @@ namespace vx
 {
 	namespace detail
 	{
-		template<u64>
+		template<size_t>
 		struct EnumDataType;
 
 		template<>

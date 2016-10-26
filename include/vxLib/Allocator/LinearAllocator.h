@@ -71,7 +71,7 @@ namespace vx
 			m_last = block.ptr + block.size;
 		}
 
-		AllocatedBlock allocate(u64 size, u64 alignment)
+		AllocatedBlock allocate(size_t size, size_t alignment)
 		{
 			if (size == 0)
 				return{ nullptr, 0 };
@@ -89,7 +89,7 @@ namespace vx
 			return{ alignedPtr, alignedSize };
 		}
 
-		AllocatedBlock reallocate(const vx::AllocatedBlock &block, u64 size, u64 alignment)
+		AllocatedBlock reallocate(const vx::AllocatedBlock &block, size_t size, size_t alignment)
 		{
 			AllocatedBlock newBlock{ nullptr, 0 };
 
@@ -137,14 +137,14 @@ namespace vx
 
 		AllocatedBlock release()
 		{
-			AllocatedBlock block{ m_data, (u64)m_last - (u64)m_data};
+			AllocatedBlock block{ m_data, (size_t)m_last - (size_t)m_data};
 
 			m_data = m_head = m_last = nullptr;
 
 			return block;
 		}
 
-		u64 capacity() const { return m_last - m_data; }
+		size_t capacity() const { return m_last - m_data; }
 
 		void zeroMemory()
 		{

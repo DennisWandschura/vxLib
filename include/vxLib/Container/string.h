@@ -50,12 +50,12 @@ namespace vx
 		u32 m_capacity;
 		MyAllocator m_allocator;
 
-		u64 strlen(const char* str)
+		size_t strlen(const char* str)
 		{
 			return ::strlen(str);
 		}
 
-		u64 strlen(const wchar_t* str)
+		size_t strlen(const wchar_t* str)
 		{
 			return ::wcslen(str);
 		}
@@ -260,7 +260,7 @@ namespace vx
 
 		void append(const basic_string &str)
 		{
-			return append(str.c_str(), static_cast<u64>(str.size()));
+			return append(str.c_str(), static_cast<size_t>(str.size()));
 		}
 
 		void append(const_pointer str)
@@ -268,14 +268,14 @@ namespace vx
 			return append(str, strlen(str));
 		}
 
-		void append(const_pointer str, u64 size)
+		void append(const_pointer str, size_t size)
 		{
 			auto currentSize = m_size;
 			auto newSize = currentSize + size;
 			auto reqSize = newSize + 1;
 			if (reqSize > m_capacity)
 			{
-				reserve(static_cast<u32>(reqSize * 1.5f) + 1);
+				reserve(static_cast<u32>(reqSize * 2));
 			}
 
 			auto copySize = size * sizeof(value_type);
