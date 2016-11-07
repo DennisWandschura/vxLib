@@ -71,13 +71,10 @@ namespace vx
 		}
 	}
 
-#define VX_RF_DATA_BEGIN(TYPE) \
-const auto g_rf_##TYPE \
-{ \
-::vx::detail::createReflectionData(#TYPE, sizeof(TYPE), __alignof(TYPE), murmurhash(#TYPE)
+#define VX_REFLECTION \
+static const vx::hash_type s_reflectionId
 
-#define VX_RF_DATA_END(TYPE) ) };
-
-#define VX_RF_DATA(TYPE, VALUETYPE, MEMBER) \
-, ReflectionDataMember(#VALUETYPE, #MEMBER, sizeof(VALUETYPE), __alignof(VALUETYPE), offsetof(TYPE, MEMBER), murmurhash(#VALUETYPE))
+#define VX_RF_DATA_BEGIN(TYPE) 
+#define VX_RF_DATA_END(TYPE)
+#define VX_RF_DATA(TYPE, VALUETYPE, MEMBER)
 }

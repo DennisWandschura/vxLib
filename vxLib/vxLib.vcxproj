@@ -184,6 +184,7 @@
     <ClInclude Include="..\include\vxLib\Allocator\MultiBlockAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\StackAllocator.h" />
     <ClInclude Include="..\include\vxLib\ArrayAnalyzer.h" />
+    <ClInclude Include="..\include\vxLib\BufferStream.h" />
     <ClInclude Include="..\include\vxLib\Container\Array.h" />
     <ClInclude Include="..\include\vxLib\Container\ArrayBase.h" />
     <ClInclude Include="..\include\vxLib\Container\DynamicArray.h" />
@@ -191,7 +192,8 @@
     <ClInclude Include="..\include\vxLib\Container\SortedArray.h" />
     <ClInclude Include="..\include\vxLib\Container\String.h" />
     <ClInclude Include="..\include\vxLib\Container\StringArray.h" />
-    <ClInclude Include="..\include\vxLib\File\File.h" />
+    <ClInclude Include="..\include\vxLib\File.h" />
+    <ClInclude Include="..\include\vxLib\FileStream.h" />
     <ClInclude Include="..\include\vxLib\Graphics\Camera.h" />
     <ClInclude Include="..\include\vxLib\Graphics\dds.h" />
     <ClInclude Include="..\include\vxLib\Graphics\Font.h" />
@@ -212,6 +214,7 @@
     <ClInclude Include="..\include\vxLib\Singleton.h" />
     <ClInclude Include="..\include\vxLib\stb_image.h" />
     <ClInclude Include="..\include\vxLib\stb_image_write.h" />
+    <ClInclude Include="..\include\vxLib\Stream.h" />
     <ClInclude Include="..\include\vxLib\string.h" />
     <ClInclude Include="..\include\vxLib\StringID.h" />
     <ClInclude Include="..\include\vxLib\TypeInfo.h" />

@@ -22,10 +22,16 @@ namespace vx
 		pointer m_end;
 		pointer m_last;
 
-	public:
-		//constexpr ArrayBase() :m_begin(nullptr), m_end(nullptr), m_last(nullptr) {}
 		constexpr ArrayBase(pointer begin, pointer last) :m_begin(begin), m_end(begin), m_last(last) {}
 		constexpr ArrayBase(pointer begin, pointer end, pointer last) : m_begin(begin), m_end(end), m_last(last) {}
+
+		ArrayBase(ArrayBase &&rhs)
+			:m_begin(rhs.m_begin), m_end(rhs.m_end), m_last(rhs.m_last)
+		{
+			rhs.m_begin = rhs.m_end = rhs.m_last = nullptr;
+		}
+
+	public:
 
 		void swap(ArrayBase &rhs)
 		{

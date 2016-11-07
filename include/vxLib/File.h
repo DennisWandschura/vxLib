@@ -74,12 +74,12 @@ namespace vx
 
 		bool close();
 
-		bool read(void *ptr, s32 size);
+		bool read(void *ptr, s32 size, s32* readBytes = nullptr);
 
 		template<typename T>
-		bool read(T &value)
+		bool read(T &value, s32* readBytes = nullptr)
 		{
-			return read(&value, sizeof(T));
+			return read(&value, sizeof(T), readBytes);
 		}
 
 		bool write(const u8 *ptr, s32 size, s32* pWrittenBytes = nullptr);

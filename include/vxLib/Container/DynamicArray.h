@@ -86,6 +86,8 @@ namespace vx
 		{
 			rhs.m_blockSize = 0;
 #ifdef _VX_ARRAY_ANALYZER
+			VX_REGISTER_ANALYZER;
+
 			m_arrayStats.swap(rhs.m_arrayStats);
 #endif
 		}
@@ -93,7 +95,7 @@ namespace vx
 		~DynamicArray()
 		{
 #ifdef _VX_ARRAY_ANALYZER
-			if (m_begin != m_last)
+			if (m_blockSize != 0)
 			{
 				auto &data = getArrayStats();
 				data.m_size = static_cast<u32>(size());

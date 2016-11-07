@@ -348,4 +348,15 @@ namespace vx
 		return leading_zero;
 	}
 #endif
+
+	inline u64 nextPowerOf2(u64 A)
+	{
+		A |= (A >> 1);
+		A |= (A >> 2);
+		A |= (A >> 4);
+		A |= (A >> 8);
+		A |= (A >> 16);
+		A |= (A >> 32);
+		return A + 1;
+	}
 }

@@ -29,6 +29,7 @@ namespace vx
 {
 	union Variant
 	{
+		void* ptr;
 		u8 u8;
 		s8 i8;
 		u16 u16;
@@ -39,6 +40,5 @@ namespace vx
 		s64 s64;
 		f32 f32;
 		f64 f64;
-		void* ptr;
 	};
 }

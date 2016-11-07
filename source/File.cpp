@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#include <vxLib/File/File.h>
+#include <vxLib/File.h>
 #ifdef _VX_PLATFORM_ANDROID
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -150,10 +150,10 @@ namespace vx
 #endif
 	}
 
-	bool File::read(void *ptr, s32 size)
+	bool File::read(void *ptr, s32 size, s32* readBytes)
 	{
 #ifdef _VX_PLATFORM_WINDOWS
-		return (ReadFile(m_handle, ptr, size, nullptr, nullptr) != 0);
+		return (ReadFile(m_handle, ptr, size, (DWORD*)readBytes, nullptr) != 0);
 #else
 		return (::read(m_handle, ptr, size) >= 0);
 #endif

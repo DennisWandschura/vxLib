@@ -25,6 +25,7 @@ SOFTWARE.
 
 #include <vxLib/types.h>
 #include <cstring>
+#include <type_traits>
 
 namespace vx
 {
@@ -137,6 +138,38 @@ namespace vx
 		}
 
 		extern hash_type murmurhashImpl(const char *key, size_t len, u32 seed);
+
+		template<typename T>
+		struct HashMaker;
+
+		template<>
+		struct HashMaker<char>
+		{
+			static vx::hash_type run(const char* key)
+			{
+				return vx::detail::murmurhashImpl(key, strlen(key), 0);
+			}
+		};
+
+		template<typename T, size_t SIZE>
+		struct HashMakerArray
+		{
+			static typename
+				std::enable_if<!std::is_same<T, char>::value, vx::hash_type>::type
+				run(const T(&key)[SIZE])
+			{
+				return vx::detail::murmurhashImpl(reinterpret_cast<const char*>(key), sizeof(T) * SIZE, 0);
+			}
+		};
+
+		template<size_t SIZE>
+		struct HashMakerArray<char, SIZE>
+		{
+			constexpr static vx::hash_type run(const char(&key)[SIZE])
+			{
+				return vx::murmurhash(key);
+			}
+		};
 	}
 
 	template<size_t LEN>
@@ -150,20 +183,21 @@ namespace vx
 		return detail::murmurhashImpl(value, len, 0);
 	}
 
-	template<size_t LEN>
-	inline constexpr hash_type make_hash(const char(&key)[LEN])
+	template<typename T, size_t SIZE>
+	inline constexpr hash_type make_hash(const T(&key)[SIZE])
 	{
-		return murmurhash(key);
+		return detail::HashMakerArray<T, SIZE>::run(key);
 	}
 
 	template<typename T>
-	inline hash_type make_hash(const T* key, size_t size)
+	inline hash_type make_hash(const T &key)
 	{
-		return detail::murmurhashImpl(reinterpret_cast<const char*>(key), size, 0);
+		return detail::HashMaker<T>::run(key);
 	}
 
-	inline hash_type make_hash(const char* key)
+	template<typename T>
+	inline hash_type make_hash(const T* value, size_t size)
 	{
-		return make_hash(key, strlen(key));
+		return detail::murmurhashImpl(reinterpret_cast<const char*>(value), len, 0);
 	}
 }

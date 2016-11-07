@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 #include <vxLib/Graphics/Mesh.h>
-#include <vxLib/File/File.h>
+#include <vxLib/File.h>
 #include <algorithm>
 
 namespace vx

@@ -34,9 +34,6 @@
     <Filter Include="Header Files\container">
       <UniqueIdentifier>{6a2f0151-0002-492d-922d-1f2db12994e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\file">
-      <UniqueIdentifier>{f5c1e29f-3f2d-4d01-bc64-fa11f00e203d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\util">
       <UniqueIdentifier>{f9f3fd3b-102f-4092-a984-29de70993295}</UniqueIdentifier>
     </Filter>
@@ -135,9 +132,6 @@
     </ClInclude>
     <ClInclude Include="..\include\vxLib\Variant.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\vxLib\File\File.h">
-      <Filter>Header Files\file</Filter>
     </ClInclude>
     <ClInclude Include="..\include\vxLib\Graphics\Mesh.h">
       <Filter>Header Files\graphics</Filter>
@@ -255,6 +249,18 @@
     </ClInclude>
     <ClInclude Include="..\include\vxLib\Container\SortedArray.h">
       <Filter>Header Files\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\File.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\Stream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\FileStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\vxLib\BufferStream.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

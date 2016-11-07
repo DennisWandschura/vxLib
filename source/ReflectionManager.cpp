@@ -1,11 +1,15 @@
 #include <vxLib/ReflectionManager.h>
 #include <vxLib/ReflectionData.h>
 #include <memory>
+#include <vxLib/string.h>
 
 namespace vx
 {
 	ReflectionManager::Data* ReflectionManager::s_data{ nullptr };
 	bool ReflectionManager::s_initialized{ false };
+
+	const s32 g_reflectionMetaDataSize = sizeof(ReflectionData::size) + sizeof(ReflectionData::hash) + sizeof(ReflectionData::memberCount);
+	static_assert(g_reflectionMetaDataSize == 12, "");
 
 	struct ReflectionManager::Data
 	{
@@ -114,5 +118,70 @@ namespace vx
 	const ReflectionData* ReflectionManager::find(u32 key)
 	{
 		return s_data->find(key);
+	}
+
+	void ReflectionManager::serializeImpl(OutStream* outStream, const u8* src, const vx::ReflectionData* reflection)
+	{
+		auto dataSize = reflection->size;
+		auto hash = reflection->hash;
+		auto memberCount = reflection->memberCount;
+
+		outStream->write((u8*)&dataSize, sizeof(dataSize));
+		outStream->write((u8*)&hash, sizeof(hash));
+		outStream->write((u8*)&memberCount, sizeof(memberCount));
+
+		if (memberCount == 0)
+		{
+			outStream->write(src, dataSize);
+		}
+		else
+		{
+			for (s32 i = 0; i < memberCount; ++i)
+			{
+				auto &memberReflection = reflection->members[i];
+				auto offset = memberReflection.offset;
+
+				serializeImpl(outStream, src + offset, &memberReflection.typeData);
+			}
+		}
+	}
+
+	bool ReflectionManager::deserializeImpl(InStream* inStream, u8* dst, const vx::ReflectionData* reflection)
+	{
+		auto dataSize = reflection->size;
+		auto hash = reflection->hash;
+		auto memberCount = reflection->memberCount;
+
+		u32 readDataSize;
+		inStream->read((u8*)&readDataSize, sizeof(readDataSize));
+
+		u32 readHash;
+		inStream->read((u8*)&readHash, sizeof(readHash));
+
+		u32 readMemberCount;
+		inStream->read((u8*)&readMemberCount, sizeof(readMemberCount));
+
+		if (readDataSize != dataSize ||
+			hash != readHash ||
+			readMemberCount != memberCount)
+			return false;
+
+		if (memberCount == 0)
+		{
+			inStream->read(dst, readDataSize);
+		}
+		else
+		{
+			for (s32 i = 0; i < memberCount; ++i)
+			{
+				auto &memberReflection = reflection->members[i];
+				auto offset = memberReflection.offset;
+
+				if (!deserializeImpl(inStream, dst + offset, &memberReflection.typeData))
+					return false;
+			}
+		}
+
+		return true;
 	}
 }
