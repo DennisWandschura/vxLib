@@ -69,7 +69,7 @@ namespace vx
 			return (m_blockCount <= BitsSizeT) ? (u32*)&m_bits : m_bitsPtr;
 		}
 
-		size_t countBlocks(const AllocatedBlock &block)
+		size_t countBlocks(const AllocatedBlock block)
 		{
 			auto alignedPtr = getAlignedPtr(block.ptr, ALIGNMENT);
 			auto offset = (size_t)(alignedPtr - block.ptr);
@@ -183,11 +183,11 @@ namespace vx
 
 		MultiBlockAllocator() : m_firstBlock(nullptr), m_bitsPtr(nullptr), m_remainingBlocks(0), m_blockCount(0), m_block() { }
 
-		explicit MultiBlockAllocator(const AllocatedBlock &block) : m_firstBlock(nullptr), m_bitsPtr(nullptr), m_remainingBlocks(0), m_blockCount(0), m_block(block){ initialize(block); }
+		explicit MultiBlockAllocator(const AllocatedBlock block) : m_firstBlock(nullptr), m_bitsPtr(nullptr), m_remainingBlocks(0), m_blockCount(0), m_block(block){ initialize(block); }
 
 		~MultiBlockAllocator() {}
 
-		void initialize(const AllocatedBlock &block)
+		void initialize(const AllocatedBlock block)
 		{
 			auto blockCount = countBlocks(block);
 			if (blockCount == 0)
@@ -257,7 +257,7 @@ namespace vx
 			return{ m_firstBlock + offset, blockCount * BLOCK_SIZE };
 		}
 
-		AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment)
+		AllocatedBlock reallocate(const AllocatedBlock block, size_t size, size_t alignment)
 		{
 			bool isAligned = (getAlignedPtr(block.ptr, alignment) == block.ptr);
 			auto alignedSize = getAlignedSize(size, alignment);
@@ -294,7 +294,7 @@ namespace vx
 			return newBlock;
 		}
 
-		u32 deallocate(const AllocatedBlock &block)
+		u32 deallocate(const AllocatedBlock block)
 		{
 			if (block.ptr == nullptr || block.size == 0)
 				return 1;
@@ -316,7 +316,7 @@ namespace vx
 		{
 		}
 
-		bool contains(const AllocatedBlock &block) const
+		bool contains(const AllocatedBlock block) const
 		{
 			auto last = m_firstBlock + BLOCK_SIZE * m_blockCount;
 			return (block.ptr >= m_firstBlock) && (block.ptr < last);

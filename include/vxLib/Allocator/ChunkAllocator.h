@@ -61,12 +61,12 @@ namespace vx
 			return Super::allocate(CHUNK_SIZE, ALIGNMENT);
 		}
 
-		AllocatedBlock reallocate(const AllocatedBlock &block, size_t, size_t)
+		AllocatedBlock reallocate(const AllocatedBlock block, size_t, size_t)
 		{
 			return Super::reallocate(block, CHUNK_SIZE, ALIGNMENT);
 		}
 
-		u32 deallocate(const AllocatedBlock &block)
+		u32 deallocate(const AllocatedBlock block)
 		{
 			return Super::deallocate(block);
 		}
@@ -76,7 +76,7 @@ namespace vx
 			Super::deallocateAll();
 		}
 
-		bool contains(const AllocatedBlock &block) const
+		bool contains(const AllocatedBlock block) const
 		{
 			return (block.size == CHUNK_SIZE) && Super::contains(block);
 		}

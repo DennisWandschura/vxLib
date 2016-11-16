@@ -73,58 +73,72 @@ namespace vx
 		::memcpy((u8*)dst, (u8*)src, size);
 	}
 
+	// src and dst can not overlap
 	template<typename T>
 	typename std::enable_if<
 		std::is_trivially_copyable<T>::value, 
 		void>::type
-	copy(T* first, T* last, T* dst)
+	copy(const T* __restrict first, const T* __restrict last, T* __restrict dst)
 	{
-		::memmove(dst, first, sizeof(T) * (last - first));
+		::memcpy(dst, first, sizeof(T) * (last - first));
 	}
 
+	// src and dst can not overlap
 	template<typename T>
 	typename std::enable_if<
 		!std::is_trivially_copyable<T>::value,
 		void>::type
-	copy(T* first, T* last, T* dst)
+	copy(const T* __restrict first, const T* __restrict last, T* __restrict dst)
 	{
 		for (; first != last; ++dst, ++first)
 			*dst = *first;
 	}
 
+	// src and dst can not overlap
+	template<typename T>
+	inline void copy(const T* __restrict src, const T* __restrict srcLast, T* __restrict dst, T* __restrict dstLast)
+	{
+		VX_ASSERT((dstLast - dst) == (srcLast - src));
+		vx::copy(src, srcLast, dst);
+	}
+
+	// src and dst can not overlap
 	template<typename T>
 	typename std::enable_if<
 		std::is_trivially_move_assignable<T>::value,
 		void>::type
-	move(T* first, T* last, T* dst)
+	move(T* __restrict first, T* __restrict last, T* __restrict dst)
 	{
-		::memmove(dst, first, sizeof(T) * (last - first));
+		::memcpy(dst, first, sizeof(T) * (last - first));
 	}
 
+	// src and dst can not overlap
 	template<typename T>
 	typename std::enable_if<
 		!std::is_trivially_move_assignable<T>::value,
 		void>::type
-	move(T* first, T* last, T* dst)
+	move(T* __restrict first, T* __restrict last, T* __restrict dst)
 	{
 		for (; first != last; ++dst, ++first)
 			*dst = std::move(*first);
 	}
 
+	// src and dst can not overlap
 	template<typename T>
 	typename std::enable_if<
-		std::is_trivially_move_assignable<T>::value,
+		std::is_trivially_move_constructible<T>::value,
 		void>::type
-		moveConstruct(T* first, T* last, T* dst)
+		moveConstruct(T* __restrict first, T* __restrict last, T* __restrict dst)
 	{
-		::memmove(dst, first, sizeof(T) * (last - first));
+		::memcpy(dst, first, sizeof(T) * (last - first));
 	}
 
+	// src and dst can not overlap
 	template<typename T>
 	typename std::enable_if<
-		!std::is_trivially_move_assignable<T>::value,
+		!std::is_trivially_move_constructible<T>::value,
 		void>::type
-		moveConstruct(T* first, T* last, T* dst)
+		moveConstruct(T* __restrict first, T* __restrict last, T* __restrict dst)
 	{
 		for (; first != last; ++dst, ++first)
 			new (dst) T{ std::move(*first) };
@@ -134,7 +148,7 @@ namespace vx
 	typename std::enable_if<
 		std::is_pod<T>::value,
 		void>::type
-	destruct(T* begin, T* end)
+	destruct(T* __restrict begin, T* __restrict end)
 	{
 		VX_UNREFERENCED_PARAMETER(begin);
 		VX_UNREFERENCED_PARAMETER(end);
@@ -153,7 +167,7 @@ namespace vx
 	typename std::enable_if<
 		!std::is_pod<T>::value,
 		void>::type
-		destruct(T* begin, T* end)
+		destruct(T* __restrict begin, T* __restrict end)
 	{
 		while (begin != end)
 		{
@@ -191,16 +205,16 @@ namespace vx
 
 	template<typename T>
 	typename std::enable_if<
-		std::is_pod<T>::value, void>::type
-		construct(T* begin, T* end)
+		std::is_trivially_constructible<T>::value, void>::type
+		construct(T* __restrict begin, T* __restrict end)
 	{
 		::memset(begin, 0, end - begin);
 	}
 
 	template<typename T>
 	typename std::enable_if<
-		!std::is_pod<T>::value, void>::type
-		construct(T* begin, T* end)
+		!std::is_trivially_constructible<T>::value, void>::type
+		construct(T* __restrict begin, T* __restrict end)
 	{
 		while (begin != end)
 		{

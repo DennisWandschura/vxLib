@@ -63,7 +63,7 @@ namespace vx
 			return{ alignedPtr, alignedSize };
 		}
 
-		AllocatedBlock reallocate(const vx::AllocatedBlock &block, size_t size, size_t alignment)
+		AllocatedBlock reallocate(const vx::AllocatedBlock block, size_t size, size_t alignment)
 		{
 			AllocatedBlock newBlock{nullptr, 0};
 
@@ -87,7 +87,7 @@ namespace vx
 			return newBlock;
 		}
 
-		u32 deallocate(const vx::AllocatedBlock &block)
+		u32 deallocate(const vx::AllocatedBlock block)
 		{
 			auto tmp = block.ptr + block.size;
 			if (m_head == tmp)
@@ -104,7 +104,7 @@ namespace vx
 			m_head = m_data;
 		}
 
-		bool contains(const vx::AllocatedBlock &block) const
+		bool contains(const vx::AllocatedBlock block) const
 		{
 			return (block.ptr >= m_data) && (block.ptr < m_last);
 		}

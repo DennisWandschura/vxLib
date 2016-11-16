@@ -198,6 +198,6 @@ namespace vx
 	template<typename T>
 	inline hash_type make_hash(const T* value, size_t size)
 	{
-		return detail::murmurhashImpl(reinterpret_cast<const char*>(value), len, 0);
+		return detail::murmurhashImpl(reinterpret_cast<const char*>(value), size, 0);
 	}
 }

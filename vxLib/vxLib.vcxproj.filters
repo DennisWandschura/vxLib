@@ -262,5 +262,8 @@
     <ClInclude Include="..\include\vxLib\BufferStream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\vxLib\Allocator\GpuMultiBlockAllocator.h">
+      <Filter>Header Files\Allocator</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

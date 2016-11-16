@@ -25,7 +25,6 @@ SOFTWARE.
 */
 
 #include <vxLib/Allocator/MultiBlockAllocator.h>
-#include <vxLib/Allocator/GpuAllocator.h>
 
 namespace vx
 {
@@ -231,7 +230,7 @@ namespace vx
 			return{ m_firstOffset + offset, blockCount * BLOCK_SIZE };
 		}
 
-		GpuAllocatedBlock reallocate(const GpuAllocatedBlock &block, u64 size, u64 alignment)
+		GpuAllocatedBlock reallocate(const GpuAllocatedBlock block, u64 size, u64 alignment)
 		{
 			bool isAligned = (getAlignedPtr(block.ptr, alignment) == block.ptr);
 			auto alignedSize = getAlignedSize(size, alignment);
@@ -268,7 +267,7 @@ namespace vx
 			return newBlock;
 		}
 
-		u32 deallocate(const GpuAllocatedBlock &block)
+		u32 deallocate(const GpuAllocatedBlock block)
 		{
 			if (block.size == 0)
 				return 1;
@@ -290,7 +289,7 @@ namespace vx
 		{
 		}
 
-		bool contains(const AllocatedBlock &block) const
+		bool contains(const AllocatedBlock block) const
 		{
 			auto last = m_firstOffset + BLOCK_SIZE * m_blockCount;
 			return (block.ptr >= m_firstOffset) && (block.ptr < last);

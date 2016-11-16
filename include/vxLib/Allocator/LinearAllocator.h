@@ -29,126 +29,203 @@ SOFTWARE.
 
 namespace vx
 {
-	class LinearAllocator : public Allocator<LinearAllocator>
+	namespace detail
 	{
-		u8* m_data;
-		u8* m_head;
-		u8* m_last;
-
-	public:
-		inline LinearAllocator() :m_data(), m_head(nullptr), m_last(nullptr) {}
-
-		inline explicit LinearAllocator(const AllocatedBlock &block) : m_data(block.ptr), m_head(block.ptr), m_last(block.ptr + block.size) {}
-
-		LinearAllocator(const LinearAllocator&) = delete;
-
-		LinearAllocator(LinearAllocator &&rhs)
-			:m_data(rhs.m_data), m_head(rhs.m_head), m_last(rhs.m_last) {}
-
-		inline ~LinearAllocator() {}
-
-		LinearAllocator& operator=(const LinearAllocator&) = delete;
-
-		LinearAllocator& operator=(LinearAllocator &&rhs)
+		template<bool GPU>
+		struct LinearAllocatorImpl
 		{
-			if (this != &rhs)
+			typedef GpuAllocatedBlock BlockType;
+
+			static void initialize(const BlockType block, size_t* begin, size_t* end, size_t* last)
 			{
-				this->swap(rhs);
-			}
-			return *this;
-		}
-
-		void swap(LinearAllocator &rhs)
-		{
-			std::swap(m_data, rhs.m_data);
-			std::swap(m_head, rhs.m_head);
-			std::swap(m_last, rhs.m_last);
-		}
-
-		void initialize(const AllocatedBlock &block)
-		{
-			m_data = m_head = block.ptr;
-			m_last = block.ptr + block.size;
-		}
-
-		AllocatedBlock allocate(size_t size, size_t alignment)
-		{
-			if (size == 0)
-				return{ nullptr, 0 };
-			auto alignedPtr = getAlignedPtr(m_head, alignment);
-			auto alignedSize = getAlignedSize(size, alignment);
-
-			auto next = alignedPtr + alignedSize;
-			if (next > m_last)
-			{
-				return{ nullptr, 0 };
+				*begin = *end = (size_t)block.offset;
+				*last = (size_t)block.offset + block.size;
 			}
 
-			m_head = next;
-
-			return{ alignedPtr, alignedSize };
-		}
-
-		AllocatedBlock reallocate(const vx::AllocatedBlock &block, size_t size, size_t alignment)
-		{
-			AllocatedBlock newBlock{ nullptr, 0 };
-
-			auto alignedPtr = getAlignedPtr(block.ptr, alignment);
-			if (alignedPtr != block.ptr)
+			static BlockType allocate(size_t size, size_t alignment)
 			{
-				newBlock = allocate(size, alignment);
-				::memcpy(newBlock.ptr, block.ptr, block.size);
-				::memset(block.ptr, 0, block.size);
+				auto alignedSize = vx::getAlignedSize(size, alignment);
+				auto alignedHead = vx::getAlignedSize(m_head, alignment);
 
-				deallocate(block);
+				auto newHead = alignedHead + alignedSize;
+				if (newHead > m_capacity)
+				{
+					return{ 0, 0 };
+				}
+
+				m_head = newHead;
+
+				return{ alignedHead, alignedSize };
 			}
-			else if (m_head == (block.ptr + block.size))
+
+			static void deallocate(const BlockType block, size_t* end)
 			{
+				if (block.size == 0)
+					return;
+
+				auto tmp = block.offset + block.size;
+				if (tmp == *end)
+				{
+					*end = block.offset;
+				}
+			}
+		};
+
+		template<>
+		struct LinearAllocatorImpl<false>
+		{
+			typedef AllocatedBlock BlockType;
+
+			static void initialize(const BlockType block, size_t* begin, size_t* end, size_t* last)
+			{
+				*begin = *end = (size_t)block.ptr;
+				*last = (size_t)block.ptr + block.size;
+			}
+
+			static BlockType allocate(size_t size, size_t alignment, size_t* end, size_t last)
+			{
+				if (size == 0)
+					return { 0, 0 };
+
+				auto alignedPtr = getAlignedSize(*end, alignment);
 				auto alignedSize = getAlignedSize(size, alignment);
 
-				newBlock = { block.ptr, alignedSize };
-				m_head = newBlock.ptr + newBlock.size;
+				auto next = alignedPtr + alignedSize;
+				if (next > last)
+				{
+					return{ 0, 0 };
+				}
+
+				*end = next;
+
+				return { (u8*)alignedPtr, alignedSize };
 			}
 
-			return newBlock;
-		}
-
-		u32 deallocate(const AllocatedBlock &block)
-		{
-			auto tmp = block.ptr + block.size;
-			if (m_head == tmp)
+			static BlockType reallocate(const BlockType block, size_t size, size_t alignment, size_t* end, size_t last)
 			{
-				m_head = block.ptr;
-				return 1;
+				BlockType newBlock{ nullptr, 0 };
+
+				auto alignedPtr = getAlignedPtr(block.ptr, alignment);
+				if (alignedPtr != block.ptr)
+				{
+					newBlock = allocate(size, alignment, end, last);
+					::memcpy(newBlock.ptr, block.ptr, block.size);
+					::memset(block.ptr, 0, block.size);
+
+					deallocate(block, end);
+				}
+				else if (*end == (size_t)(block.ptr + block.size))
+				{
+					auto alignedSize = getAlignedSize(size, alignment);
+
+					newBlock = { block.ptr, alignedSize };
+					*end = (size_t)(newBlock.ptr + newBlock.size);
+				}
+
+				return newBlock;
 			}
 
-			return 0;
-		}
+			static u32 deallocate(const BlockType block, size_t* end)
+			{
+				auto tmp = block.ptr + block.size;
+				if (*end == (size_t)tmp)
+				{
+					*end = (size_t)block.ptr;
+					return 1;
+				}
 
-		void deallocateAll()
+				return 0;
+			}
+
+			static BlockType release(size_t begin, size_t last)
+			{
+				return  { (u8*)begin, last - begin };
+			}
+
+			static bool contains(const BlockType block, size_t begin, size_t last)
+			{
+				return ((size_t)block.ptr >= begin) && ((size_t)block.ptr < last);
+			}
+		};
+
+		template<bool GPU>
+		class LinearAllocator : public Allocator<LinearAllocator<GPU>>
 		{
-			m_head = m_data;
-		}
+			typedef LinearAllocatorImpl<GPU> MyImpl;
+			typedef typename MyImpl::BlockType BlockType;
 
-		bool contains(const AllocatedBlock &block) const
-		{
-			return (block.ptr >= m_data) && (block.ptr < m_last);
-		}
+			size_t m_begin;
+			size_t m_end;
+			size_t m_last;
 
-		AllocatedBlock release()
-		{
-			AllocatedBlock block{ m_data, (size_t)m_last - (size_t)m_data};
+		public:
+			LinearAllocator() :m_begin(0), m_end(0), m_last(0) {}
+			~LinearAllocator() = default;
 
-			m_data = m_head = m_last = nullptr;
+			LinearAllocator(const LinearAllocator&) = delete;
 
-			return block;
-		}
+			LinearAllocator(LinearAllocator &&rhs)
+				:m_begin(rhs.m_begin), m_end(rhs.m_end), m_last(rhs.m_last) {}
 
-		size_t capacity() const { return m_last - m_data; }
+			void swap(LinearAllocator &rhs)
+			{
+				std::swap(m_begin, rhs.m_begin);
+				std::swap(m_end, rhs.m_end);
+				std::swap(m_last, rhs.m_last);
+			}
 
-		void zeroMemory()
-		{
-			::memset(m_data, 0, capacity());
-		}
-	};
+			LinearAllocator& operator=(const LinearAllocator&) = delete;
+
+			LinearAllocator& operator=(LinearAllocator &&rhs)
+			{
+				if (this != &rhs)
+				{
+					this->swap(rhs);
+				}
+				return *this;
+			}
+
+			void initialize(const BlockType block)
+			{
+				MyImpl::initialize(block, &m_begin, &m_end, &m_last);
+			}
+
+			BlockType allocate(size_t size, size_t alignment)
+			{
+				return MyImpl::allocate(size, alignment, &m_end, m_last);
+			}
+
+			static BlockType reallocate(const BlockType block, size_t size, size_t alignment)
+			{
+				return MyImpl::reallocate(block, size, alignment, &m_end, m_last);
+			}
+
+			u32 deallocate(const BlockType block)
+			{
+				return MyImpl::deallocate(block, &m_end);
+			}
+
+			BlockType release()
+			{
+				auto block =  MyImpl::release(m_begin, m_last);
+				m_begin = m_end = m_last = 0;
+				return block;
+			}
+
+			void deallocateAll()
+			{
+				m_end = m_begin;
+			}
+
+			bool contains(const BlockType block) const
+			{
+				return MyImpl::contains(block, m_begin, m_last);
+			}
+
+			size_t capacity() const { return m_last - m_data; }
+		};
+	}
+
+	typedef detail::LinearAllocator<false> LinearAllocator;
+	typedef detail::LinearAllocator<true> GpuLinearAllocator;
 }

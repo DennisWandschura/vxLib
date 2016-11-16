@@ -50,7 +50,7 @@ namespace vx
 #endif //  _VX_PLATFORM_WINDOWS
 		}
 
-		vx::AllocatedBlock reallocate(const vx::AllocatedBlock &block, size_t size, size_t alignment)
+		vx::AllocatedBlock reallocate(const vx::AllocatedBlock block, size_t size, size_t alignment)
 		{
 			auto alignedSize = getAlignedSize(size, alignment);
 #ifdef  _VX_PLATFORM_WINDOWS
@@ -63,7 +63,7 @@ namespace vx
 #endif
 		}
 
-		u32 deallocate(const vx::AllocatedBlock &block)
+		u32 deallocate(const vx::AllocatedBlock block)
 		{
 #ifdef  _VX_PLATFORM_WINDOWS
 			_aligned_free(block.ptr);
@@ -77,7 +77,7 @@ namespace vx
 		{
 		}
 
-		bool contains(const vx::AllocatedBlock&) const
+		bool contains(const vx::AllocatedBlock) const
 		{
 			return true;
 		}

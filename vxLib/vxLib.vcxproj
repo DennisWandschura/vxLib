@@ -179,6 +179,7 @@
     <ClInclude Include="..\include\vxLib\Allocator\ChunkAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\DelegateAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\Freelist.h" />
+    <ClInclude Include="..\include\vxLib\Allocator\GpuMultiBlockAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\LinearAllocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\Mallocator.h" />
     <ClInclude Include="..\include\vxLib\Allocator\MultiBlockAllocator.h" />

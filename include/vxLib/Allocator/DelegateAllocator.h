@@ -67,17 +67,17 @@ namespace vx
 			other.m_ptr = tmp;
 		}
 
-		vx::AllocatedBlock allocate(size_t size, size_t alignment)
+		AllocatedBlock allocate(size_t size, size_t alignment)
 		{
 			return m_ptr->allocate(size, alignment);
 		}
 
-		AllocatedBlock reallocate(const vx::AllocatedBlock &block, size_t size, size_t alignment)
+		AllocatedBlock reallocate(const AllocatedBlock block, size_t size, size_t alignment)
 		{
 			return m_ptr->reallocate(block, size, alignment);
 		}
 
-		void deallocate(const vx::AllocatedBlock &block)
+		void deallocate(const AllocatedBlock block)
 		{
 			m_ptr->deallocate(block);
 		}

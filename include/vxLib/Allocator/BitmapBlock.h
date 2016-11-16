@@ -157,11 +157,11 @@ namespace vx
 
 		BitmapBlock() : m_firstBlock(nullptr), m_bitsPtr(nullptr), m_remainingBlocks(0), m_blockCount(0), m_parent() { initializeImpl(); }
 
-		explicit BitmapBlock(const AllocatedBlock &block) : m_firstBlock(nullptr), m_bitsPtr(nullptr), m_remainingBlocks(0), m_blockCount(0), m_parent(block) { initializeImpl(); }
+		explicit BitmapBlock(const AllocatedBlock block) : m_firstBlock(nullptr), m_bitsPtr(nullptr), m_remainingBlocks(0), m_blockCount(0), m_parent(block) { initializeImpl(); }
 
 		~BitmapBlock() {}
 
-		void initialize(const AllocatedBlock &block)
+		void initialize(const AllocatedBlock block)
 		{
 			m_parent.initialize(block);
 
@@ -198,7 +198,7 @@ namespace vx
 			return{ m_firstBlock + offset, BLOCK_SIZE };
 		}
 
-		AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment)
+		AllocatedBlock reallocate(const AllocatedBlock block, size_t size, size_t alignment)
 		{
 			if (size > BLOCK_SIZE || alignment > ALIGNMENT)
 				return{nullptr, 0};
@@ -206,7 +206,7 @@ namespace vx
 			return block;
 		}
 
-		u32 deallocate(const AllocatedBlock &block)
+		u32 deallocate(const AllocatedBlock block)
 		{
 			if (block.size != BLOCK_SIZE)
 			{
@@ -226,7 +226,7 @@ namespace vx
 			m_parent.deallocateAll();
 		}
 
-		bool contains(const AllocatedBlock &block) const
+		bool contains(const AllocatedBlock block) const
 		{
 			return (block.size == BLOCK_SIZE) && m_parent.contains(block);
 		}

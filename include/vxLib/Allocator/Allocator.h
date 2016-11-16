@@ -69,6 +69,12 @@ namespace vx
 		size_t size;
 	};
 
+	struct GpuAllocatedBlock
+	{
+		size_t offset;
+		size_t size;
+	};
+
 	template<typename T>
 	struct Allocator
 	{
@@ -81,12 +87,12 @@ namespace vx
 			return get().allocate(size, alignment);
 		}
 
-		AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment)
+		AllocatedBlock reallocate(const AllocatedBlock block, size_t size, size_t alignment)
 		{
 			return get().reallocate(size, alignment);
 		}
 
-		void deallocate(const AllocatedBlock &block)
+		void deallocate(const AllocatedBlock block)
 		{
 			return get().deallocate(block);
 		}
@@ -96,7 +102,7 @@ namespace vx
 			return get().deallocateAll();
 		}
 
-		bool contains(const AllocatedBlock &block) const
+		bool contains(const AllocatedBlock block) const
 		{
 			return get().contains(block);
 		}
@@ -109,12 +115,12 @@ namespace vx
 		virtual ~AllocatorBase() {}
 
 		virtual AllocatedBlock allocate(size_t size, size_t alignment) = 0;
-		virtual AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment) = 0;
-		virtual void deallocate(const AllocatedBlock &block) = 0;
+		virtual AllocatedBlock reallocate(const AllocatedBlock block, size_t size, size_t alignment) = 0;
+		virtual void deallocate(const AllocatedBlock block) = 0;
 
-		virtual bool contains(const AllocatedBlock &block) const = 0;
+		virtual bool contains(const AllocatedBlock block) const = 0;
 	};
 
 	typedef vx::AllocatedBlock(*AllocationCallbackSignature)(size_t size, size_t alignment);
-	typedef u32 (*DeallocationCallbackSignature)(const vx::AllocatedBlock &block);
+	typedef u32 (*DeallocationCallbackSignature)(const vx::AllocatedBlock block);
 }

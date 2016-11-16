@@ -57,15 +57,10 @@ namespace vx
 		}
 
 		Array(const Array &rhs) 
-			:MyBase(m_buffer, m_buffer + BUFFERSIZE),
+			:MyBase(m_buffer, (pointer)m_buffer + rhs.size(), (pointer)(m_buffer + BUFFERSIZE)),
 			m_buffer()
 		{
-			auto first = rhs.begin();
-			auto end = rhs.end();
-			while (first != end)
-			{
-				new (m_end++) value_type{*(first++)};
-			}
+			vx::copy(rhs.begin(), rhs.end(), begin());
 		}
 
 		Array(Array &&rhs) 
@@ -75,14 +70,6 @@ namespace vx
 			::memcpy(m_buffer, rhs.m_buffer, BUFFERSIZE);
 			::memset(rhs.m_buffer, 0xd, BUFFERSIZE);
 			rhs.m_end = rhs.m_begin;
-			/*auto first = rhs.begin();
-			auto end = rhs.end();
-			while (first != end)
-			{
-				new (m_end++) value_type{ std::move(*(first++)) };
-			}
-
-			rhs.m_end = reinterpret_cast<pointer>(rhs.m_begin);*/
 		}
 
 		~Array() { clear(); }

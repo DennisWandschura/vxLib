@@ -167,7 +167,7 @@ namespace vx
 
 		void clear()
 		{
-			m_data[0] = 0;
+			::memset(rhs.m_data, 0, COUNT);
 			m_end = m_data;
 		}
 

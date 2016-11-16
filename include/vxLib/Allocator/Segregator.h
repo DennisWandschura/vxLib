@@ -70,7 +70,7 @@ namespace vx
 			return Large::allocate(size, alignment);
 		}
 
-		u32 deallocate(const vx::AllocatedBlock &block)
+		u32 deallocate(const vx::AllocatedBlock block)
 		{
 			if (block.size <= SMALL_LIMIT)
 			{
@@ -80,12 +80,12 @@ namespace vx
 			return Large::deallocate(block);
 		}
 
-		bool contains(const vx::AllocatedBlock &block) const
+		bool contains(const vx::AllocatedBlock block) const
 		{
 			return Large::contains(block) || Small::contains(block);
 		}
 
-		decltype(auto) release()
+		auto release()
 		{
 			return tuple_cat(Large::release(), Small::release());
 		}

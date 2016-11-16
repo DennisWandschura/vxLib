@@ -109,7 +109,7 @@ namespace vx
 			m_nodeCount(0)
 		{}
 
-		explicit Freelist(const AllocatedBlock &block)
+		explicit Freelist(const AllocatedBlock block)
 			:Super(block),
 			m_head(nullptr),
 			m_nodeCount(0)
@@ -162,7 +162,7 @@ namespace vx
 			return Super::allocate(size, alignment);;
 		}
 
-		AllocatedBlock reallocate(const AllocatedBlock &block, size_t size, size_t alignment)
+		AllocatedBlock reallocate(const AllocatedBlock block, size_t size, size_t alignment)
 		{
 			if ((block.size >= size) && (getAlignedPtr(block.ptr, alignment) == block.ptr))
 				return block;
@@ -179,7 +179,7 @@ namespace vx
 			return newBlock;
 		}
 
-		u32 deallocate(const AllocatedBlock &block)
+		u32 deallocate(const AllocatedBlock block)
 		{
 			if (!MySizeCheck()(block.size) ||
 				!MyNodeCountCheck()(m_nodeCount))
@@ -201,7 +201,7 @@ namespace vx
 			Super::deallocateAll();
 		}
 
-		bool contains(const AllocatedBlock &block) const
+		bool contains(const AllocatedBlock block) const
 		{
 			return Super::contains(block);
 		}
